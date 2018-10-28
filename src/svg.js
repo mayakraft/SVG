@@ -104,7 +104,7 @@ function group(className, id, parent) {
 
 function svg(className, id, parent) {
 	let svg = document.createElementNS(svgNS, "svg");
-	svg.setAttributeNS(null, "viewBox", "0 0 1 1");
+	// svg.setAttributeNS(null, "viewBox", "0 0 1 1");
 	if (className != null) {
 		svg.setAttributeNS(null, "class", className);
 	}
@@ -148,6 +148,13 @@ function setId(xmlNode, newID) {
 		return;
 	}
 	xmlNode.setAttributeNS(null, "id", newID);
+}
+
+function setAttribute(xmlNode, attribute, value) {
+	if (xmlNode == undefined) {
+		return;
+	}
+	xmlNode.setAttributeNS(null, attribute, value);
 }
 
 function removeChildren(group) {
@@ -198,7 +205,7 @@ function convertToViewbox(svg, x, y) {
 	return array;
 }
 
-export default { line, circle, polygon, bezier, group, SVG,
-	addClass, removeClass, setId, removeChildren, 
+export default { line, circle, polygon, bezier, group, svg,
+	addClass, removeClass, setId, removeChildren, setAttribute,
 	setViewBox, convertToViewbox
 }

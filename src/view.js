@@ -11,7 +11,7 @@ import SVG from "./svg";
 export default function View(){
 
 	// create a new SVG
-	let _svg = SVG.svg();
+	let svg = SVG.svg();
 
 	// view properties
 	let _zoom = 1.0;
@@ -34,13 +34,12 @@ export default function View(){
 	}
 
 	const setViewBox = function(x, y, width, height){
-		SVG.setViewBox(_svg, x, y, width, height, _padding);
+		SVG.setViewBox(svg, x, y, width, height, _padding);
 	}
-
 
 	// find a parent element for the new SVG in the arguments
 	document.addEventListener("DOMContentLoaded", function(){
-		//  wait until after the <body> has rendered
+		// wait until after the <body> has rendered
 		let args = Array.from(arguments);
 		let element = args.filter((arg) =>
 				arg instanceof HTMLElement)
@@ -58,6 +57,7 @@ export default function View(){
 	});
 
 	return Object.freeze({
+		svg,
 		zoomView,
 		translate,
 		setViewBox
