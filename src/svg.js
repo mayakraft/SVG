@@ -15,7 +15,10 @@
 
 const svgNS = "http://www.w3.org/2000/svg";
 
-/**  Geometry Primitives  */
+/**
+ * geometry primitives
+ */
+
 function line(x1, y1, x2, y2, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "line");
 	shape.setAttributeNS(null, "x1", x1);
@@ -51,12 +54,9 @@ function circle(x, y, radius, className, id, parent) {
 	return shape;
 }
 
-function polygon(pointArray, className, id, parent) {
-	let pointsString = pointArray.map((el) => (
-		el.constructor === Array ? el : [el.x, el.y]
-	)).reduce((prev, curr) => prev + curr[0] + "," + curr[1] + " ", "");
+function polygon(pointsArray, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "polygon");
-	shape.setAttributeNS(null, "points", pointsString);
+	setPolygonPoints(shape, pointsArray);
 	if (className != null) {
 		shape.setAttributeNS(null, "class", className);
 	}
@@ -86,9 +86,13 @@ function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
 	}
 	return shape;
 }
+
 // function curve(fromX, fromY, midX, midY, toX, toY, className, id)
 
-/**  Container Types  */
+/**
+ * container types
+ */
+
 function group(className, id, parent) {
 	let g = document.createElementNS(svgNS, "g");
 	if (className != null) {
@@ -118,7 +122,24 @@ function svg(className, id, parent) {
 	return svg;
 }
 
-/**  Operations that modify  */
+/**
+ * geometry modifiers
+ */
+
+function setPolygonPoints(polygon, pointsArray){
+	if (pointsArray == null || pointsArray.constructor !== Array) {
+		return;
+	}
+	let pointsString = pointsArray.map((el) => (
+		el.constructor === Array ? el : [el.x, el.y]
+	)).reduce((prev, curr) => prev + curr[0] + "," + curr[1] + " ", "");
+	polygon.setAttributeNS(null, "points", pointsString);
+}
+
+/**
+ * element modifiers
+ */
+
 function addClass(xmlNode, newClass) {
 	if (xmlNode == undefined) {
 		return;
@@ -164,21 +185,33 @@ function removeChildren(group) {
 	}
 }
 
-/**  Math  */
+/**
+ * math, view
+ */
+
 function setViewBox(svg, x, y, width, height, padding = 0) {
 	let zoom = 1.0;
-	// let isInvalid = isNaN(x) || isNaN(y) ||
-	// 			  isNaN(width) || isNaN(height);
-	// if(x==null || y==null || width==null || height==null){
-	// 	return;
-	// }
 	let d = (width / zoom) - width;
 	let X = (x - d) - padding;
 	let Y = (y - d) - padding;
 	let W = (width + d * 2) + padding * 2;
 	let H = (height + d * 2) + padding * 2;
 	let viewBoxString = [X, Y, W, H].join(" ");
-	svg.setAttribute("viewBox", viewBoxString);
+	svg.setAttributeNS(null, "viewBox", viewBoxString);
+}
+
+function setDefaultViewBox(svg){
+	let rect = svg.getBoundingClientRect();
+	let width = rect.width == 0 ? 640 : rect.width;
+	let height = rect.height == 0 ? 480 : rect.height;
+	setViewBox(svg, 0, 0, width, height);
+}
+
+function getViewBox(svg){
+	let vb = svg.getAttribute("viewBox");
+	return vb == null
+		? undefined
+		: vb.split(" ").map(n => parseFloat(n));
 }
 
 function zoom(svg, scale, origin_x, origin_y){
@@ -186,16 +219,16 @@ function zoom(svg, scale, origin_x, origin_y){
 }
 
 function translate(svg, dx, dy){
-	let viewBox = svg
-		.getAttribute("viewBox")
-		.split(" ")
-		.map(n => parseFloat(n));
+	let viewBox = getViewBox(svg);
+	if (viewBox == null){
+		setDefaultViewBox(svg);
+	}
 	viewBox[0] += dx;
 	viewBox[1] += dy;
 	svg.setAttributeNS(null, "viewBox", viewBox.join(" "));
 }
 
-function convertToViewbox(svg, x, y) {
+function convertToViewBox(svg, x, y) {
 	let pt = svg.createSVGPoint();
 	pt.x = x;
 	pt.y = y;
@@ -208,5 +241,5 @@ function convertToViewbox(svg, x, y) {
 
 export default { line, circle, polygon, bezier, group, svg,
 	addClass, removeClass, setId, removeChildren, setAttribute,
-	setViewBox, convertToViewbox
+	setViewBox, getViewBox, convertToViewBox, translate, zoom, setPolygonPoints
 }

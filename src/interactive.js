@@ -30,7 +30,7 @@ export default function Interactive(){
 	var that = this;
 	svg.onmousedown = function(event){
 		mouse.isPressed = true;
-		mouse.pressed = SVG.convertToViewbox(svg, event.clientX, event.clientY);
+		mouse.pressed = SVG.convertToViewBox(svg, event.clientX, event.clientY);
 		that.event.onMouseDown(mouse);
 	};
 	svg.onmouseup = function(event){
@@ -38,7 +38,7 @@ export default function Interactive(){
 		that.event.onMouseUp(mouse);
 	};
 	svg.onmousemove = function(event){
-		mouse.position = SVG.convertToViewbox(svg, event.clientX, event.clientY);
+		mouse.position = SVG.convertToViewBox(svg, event.clientX, event.clientY);
 		if(mouse.isPressed){
 			mouse.drag = [mouse.position[0] - mouse.pressed[0], 
 			              mouse.position[1] - mouse.pressed[1]];

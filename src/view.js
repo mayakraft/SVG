@@ -9,6 +9,8 @@
 import SVG from "./svg";
 
 export default function View(){
+	// get constructor parameters
+	let params = Array.from(arguments);
 
 	// create a new SVG
 	let svg = SVG.svg();
@@ -30,7 +32,7 @@ export default function View(){
 	}
 
 	const translate = function(dx, dy){
-		// translate view
+		SVG.translate(svg, dx, dy);
 	}
 
 	const setViewBox = function(x, y, width, height){
@@ -40,11 +42,11 @@ export default function View(){
 	// find a parent element for the new SVG in the arguments
 	document.addEventListener("DOMContentLoaded", function(){
 		// wait until after the <body> has rendered
-		let args = Array.from(arguments);
-		let element = args.filter((arg) =>
+		let numbers = params.filter((arg) => !isNaN(arg));
+		let element = params.filter((arg) =>
 				arg instanceof HTMLElement)
 			.shift();
-		let idElement = args.filter((a) =>
+		let idElement = params.filter((a) =>
 				typeof a === "string" || a instanceof String)
 			.map(str => document.getElementById(str))
 			.shift();
@@ -54,12 +56,22 @@ export default function View(){
 				? idElement 
 				: document.body));
 		parent.appendChild(svg);
+		if(numbers.length >= 2){
+			svg.setAttributeNS(null, "width", numbers[0]);
+			svg.setAttributeNS(null, "height", numbers[1]);
+			SVG.setViewBox(svg, 0, 0, numbers[0], numbers[1]);
+		} else{
+			let rect = svg.getBoundingClientRect();
+			SVG.setViewBox(svg, 0, 0, rect.width, rect.height);
+		}
 	});
 
-	return Object.freeze({
+	// return Object.freeze({
+	return {
 		svg,
 		zoomView,
 		translate,
 		setViewBox
-	});
+	};
+	// });
 }
