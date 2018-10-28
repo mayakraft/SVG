@@ -61,10 +61,9 @@ export default function Interactive(){
 
 	// return Object.freeze({
 	return {
-		setPadding,
 		zoomView,
 		translate,
-		setViewBox
+		setViewBox,
 		event:this.event,
 		mouse,
 	};

@@ -17,13 +17,13 @@ export default function View(){
 	let _zoom = 1.0;
 	let _padding = 0.01;
 
-	set padding(pad){
-		_padding = isNaN(pad) ? _padding : pad;
-	}
+	// set padding(pad){
+	// 	_padding = isNaN(pad) ? _padding : pad;
+	// }
 
-	set zoom(new_zoom){
-		_zoom = isNaN(new_zoom) ? _zoom : new_zoom;
-	}
+	// set zoom(new_zoom){
+	// 	_zoom = isNaN(new_zoom) ? _zoom : new_zoom;
+	// }
 
 	const zoomView = function(scale, origin_x, origin_y){
 		// zoom view
@@ -58,7 +58,6 @@ export default function View(){
 	});
 
 	return Object.freeze({
-		setPadding,
 		zoomView,
 		translate,
 		setViewBox
