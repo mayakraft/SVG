@@ -1,11 +1,12 @@
 /** simple svg in javascript
  *
- * order of parameters in the geometry functions follow a general guideline
+ * @param: the order in the geometry functions follow a general guideline
  *  - the necessary parameters for the geometry, number of params varies
  *  - className
  *  - id
  *  - the parent container to append this new element (or none)
  *
+ * you can set all these later. some are more important than others.
  * if you don't use the parent parameter, you'll want to append 
  * this object to an SVG or group using .appendChild 
  *
