@@ -220,8 +220,30 @@
 			: vb.split(" ").map(n => parseFloat(n));
 	}
 
-	function zoom(svg, scale, origin_x, origin_y){
-		// zoom view
+	function zoom(svg, scale, origin_x = 0, origin_y = 0){
+		if(scale < 1e-8){ scale = 0.01; }
+		let matrix = svg.createSVGMatrix()
+			.translate(origin_x, origin_y)
+			.scale(1/scale)
+			.translate(-origin_x, -origin_y);
+		let viewBox = getViewBox(svg);
+		if (viewBox == null){
+			setDefaultViewBox(svg);
+		}
+		let top_left = svg.createSVGPoint();
+		let bot_right = svg.createSVGPoint();
+		top_left.x = viewBox[0];
+		top_left.y = viewBox[1];
+		bot_right.x = viewBox[0] + viewBox[2];
+		bot_right.y = viewBox[1] + viewBox[3];
+		let new_top_left = top_left.matrixTransform(matrix);
+		let new_bot_right = bot_right.matrixTransform(matrix);
+		setViewBox(svg, 
+			new_top_left.x,
+			new_top_left.y,
+			new_bot_right.x - new_top_left.x,
+			new_bot_right.y - new_top_left.y
+		);
 	}
 
 	function translate(svg, dx, dy){
