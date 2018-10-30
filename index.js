@@ -1,6 +1,6 @@
 import SVG from "./src/svg";
 import View from "./src/view";
-import interactive from "./src/interactive";
+// import interactive from "./src/interactive";
 
 let line = SVG.line;
 let circle = SVG.circle;
@@ -16,7 +16,7 @@ let setAttribute = SVG.setAttribute;
 let setViewBox = SVG.setViewBox;
 let convertToViewBox = SVG.convertToViewBox;
 let translate = SVG.translate;
-let zoom = SVG.zoom;
+let scale = SVG.scale;
 let setPolygonPoints = SVG.setPolygonPoints;
 let getViewBox = SVG.getViewBox;
 
@@ -37,7 +37,7 @@ export {
 	convertToViewBox,
 	translate,
 	setPolygonPoints,
-	zoom,
+	scale,
 	View,
-	interactive
+	// interactive
 };

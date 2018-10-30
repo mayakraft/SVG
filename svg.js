@@ -10,7 +10,7 @@
 	 *  - the necessary parameters for the geometry, number of params varies
 	 *  - className
 	 *  - id
-	 *  - the parent container to append this new element (or none)
+	 *  - the parent container to append this new element
 	 *
 	 * you can set all these later. some are more important than others.
 	 * if you don't use the parent parameter, you'll want to append 
@@ -31,15 +31,7 @@
 		shape.setAttributeNS(null, "y1", y1);
 		shape.setAttributeNS(null, "x2", x2);
 		shape.setAttributeNS(null, "y2", y2);
-		if (className != null) {
-			shape.setAttributeNS(null, "class", className);
-		}
-		if (id != null) {
-			shape.setAttributeNS(null, "id", id);
-		}
-		if (parent != null) {
-			parent.appendChild(shape);
-		}
+		setClassIdParent(shape, className, id, parent);
 		return shape;
 	}
 
@@ -48,30 +40,14 @@
 		shape.setAttributeNS(null, "cx", x);
 		shape.setAttributeNS(null, "cy", y);
 		shape.setAttributeNS(null, "r", radius);
-		if (className != null) {
-			shape.setAttributeNS(null, "class", className);
-		}
-		if (id != null) {
-			shape.setAttributeNS(null, "id", id);
-		}
-		if (parent != null) {
-			parent.appendChild(shape);
-		}
+		setClassIdParent(shape, className, id, parent);
 		return shape;
 	}
 
 	function polygon(pointsArray, className, id, parent) {
 		let shape = document.createElementNS(svgNS, "polygon");
 		setPolygonPoints(shape, pointsArray);
-		if (className != null) {
-			shape.setAttributeNS(null, "class", className);
-		}
-		if (id != null) {
-			shape.setAttributeNS(null, "id", id);
-		}
-		if (parent != null) {
-			parent.appendChild(shape);
-		}
+		setClassIdParent(shape, className, id, parent);
 		return shape;
 	}
 
@@ -81,15 +57,7 @@
 				" " + c2X + "," + c2Y + " " + toX + "," + toY;
 		let shape = document.createElementNS(svgNS, "path");
 		shape.setAttributeNS(null, "d", d);
-		if (className != null) {
-			shape.setAttributeNS(null, "class", className);
-		}
-		if (id != null) {
-			shape.setAttributeNS(null, "id", id);
-		}
-		if (parent != null) {
-			parent.appendChild(shape);
-		}
+		setClassIdParent(shape, className, id, parent);
 		return shape;
 	}
 
@@ -101,31 +69,27 @@
 
 	function group(className, id, parent) {
 		let g = document.createElementNS(svgNS, "g");
-		if (className != null) {
-			g.setAttributeNS(null, "class", className);
-		}
-		if (id != null) {
-			g.setAttributeNS(null, "id", id);
-		}
-		if (parent != null) {
-			parent.appendChild(g);
-		}
+		setClassIdParent(g, className, id, parent);
 		return g;
 	}
 
-	function svg$1(className, id, parent) {
+	function svg(className, id, parent) {
 		let svg = document.createElementNS(svgNS, "svg");
 		// svg.setAttributeNS(null, "viewBox", "0 0 1 1");
+		setClassIdParent(svg, className, id, parent);
+		return svg;
+	}
+
+	function setClassIdParent(element, className, id, parent) {
 		if (className != null) {
-			svg.setAttributeNS(null, "class", className);
+			element.setAttributeNS(null, "class", className);
 		}
 		if (id != null) {
-			svg.setAttributeNS(null, "id", id);
+			element.setAttributeNS(null, "id", id);
 		}
 		if (parent != null) {
-			parent.appendChild(svg);
+			parent.appendChild(element);
 		}
-		return svg;
 	}
 
 	/**
@@ -196,8 +160,8 @@
 	 */
 
 	function setViewBox(svg, x, y, width, height, padding = 0) {
-		let zoom = 1.0;
-		let d = (width / zoom) - width;
+		let scale = 1.0;
+		let d = (width / scale) - width;
 		let X = (x - d) - padding;
 		let Y = (y - d) - padding;
 		let W = (width + d * 2) + padding * 2;
@@ -220,7 +184,7 @@
 			: vb.split(" ").map(n => parseFloat(n));
 	}
 
-	function zoom(svg, scale, origin_x = 0, origin_y = 0){
+	function scale(svg, scale, origin_x = 0, origin_y = 0){
 		if(scale < 1e-8){ scale = 0.01; }
 		let matrix = svg.createSVGMatrix()
 			.translate(origin_x, origin_y)
@@ -267,9 +231,9 @@
 		return array;
 	}
 
-	var SVG = { line, circle, polygon, bezier, group, svg: svg$1,
+	var SVG = { line, circle, polygon, bezier, group, svg,
 		addClass, removeClass, setId, removeChildren, setAttribute,
-		setViewBox, getViewBox, convertToViewBox, translate, zoom, setPolygonPoints
+		setViewBox, getViewBox, convertToViewBox, translate, scale, setPolygonPoints
 	};
 
 	/** svg file viewer
@@ -283,30 +247,57 @@
 		let params = Array.from(arguments);
 
 		// create a new SVG
-		let svg = SVG.svg();
-		let _padding = 0.01;
+		let _svg = SVG.svg();
 
-		// set padding(pad){
-		// 	_padding = isNaN(pad) ? _padding : pad;
-		// }
+		let _parent = undefined;  // parent xml node
 
-		// set zoom(new_zoom){
-		// 	_zoom = isNaN(new_zoom) ? _zoom : new_zoom;
-		// }
+		// view properties
+		let _scale = 1.0;
+		let _padding = 0;
 
-		const zoomView = function(scale, origin_x, origin_y){
-			// zoom view
+		let _matrix = _svg.createSVGMatrix();
+
+		const zoom = function(scale, origin_x = 0, origin_y = 0){
+			_scale = scale;
+			SVG.scale(_svg, scale, origin_x, origin_y);
 		};
 
 		const translate = function(dx, dy){
-			SVG.translate(svg, dx, dy);
+			SVG.translate(_svg, dx, dy);
 		};
 
 		const setViewBox = function(x, y, width, height){
-			SVG.setViewBox(svg, x, y, width, height, _padding);
+			SVG.setViewBox(_svg, x, y, width, height, _padding);
 		};
 
-		// find a parent element for the new SVG in the arguments
+		// load an SVG. XML tree, file blob, or filename string
+		const load = function(data, callback){
+			// are they giving us a filename, or the data of an already loaded file?
+			if (typeof data === "string" || data instanceof String){
+				fetch(data)
+					.then(response => response.text())
+					.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+					.then(svgData => {
+						_parent.removeChild(_svg);
+						var cssStyle, styleTag = svgData.getElementsByTagName('style')[0];
+						if(styleTag != undefined && styleTag.childNodes != undefined && styleTag.childNodes.length > 0){
+							cssStyle = parseCSSText( styleTag.childNodes[0].nodeValue );
+						}
+						var allSVGs = svgData.getElementsByTagName('svg');
+						if(allSVGs == undefined || allSVGs.length == 0){ throw "error, the svg parser couldn't find an SVG element"; }
+						_svg = allSVGs[0];
+						_parent.appendChild(_svg);
+
+						if(callback != undefined){ callback(cp); }
+
+					});
+			}
+			if(data instanceof HTMLElement){
+				console.log("data instanceof HTMLElement");
+				rootElement = (new window.DOMParser()).parseFromString(string, "text/xml");
+			}
+		};
+		// onload, find a parent element for the new SVG in the arguments
 		document.addEventListener("DOMContentLoaded", function(){
 			// wait until after the <body> has rendered
 			let numbers = params.filter((arg) => !isNaN(arg));
@@ -317,106 +308,42 @@
 					typeof a === "string" || a instanceof String)
 				.map(str => document.getElementById(str))
 				.shift();
-			let parent = (element != null 
-				? element 
-				: (idElement != null 
-					? idElement 
+			_parent = (element != null
+				? element
+				: (idElement != null
+					? idElement
 					: document.body));
-			parent.appendChild(svg);
+			_parent.appendChild(_svg);
 			if(numbers.length >= 2){
-				svg.setAttributeNS(null, "width", numbers[0]);
-				svg.setAttributeNS(null, "height", numbers[1]);
-				SVG.setViewBox(svg, 0, 0, numbers[0], numbers[1]);
+				_svg.setAttributeNS(null, "width", numbers[0]);
+				_svg.setAttributeNS(null, "height", numbers[1]);
+				SVG.setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
 			} else{
-				let rect = svg.getBoundingClientRect();
-				SVG.setViewBox(svg, 0, 0, rect.width, rect.height);
+				let rect = _svg.getBoundingClientRect();
+				SVG.setViewBox(_svg, 0, 0, rect.width, rect.height);
 			}
 		});
 
 		// return Object.freeze({
 		return {
-			svg,
-			zoomView,
+			zoom,
 			translate,
-			setViewBox
+			setViewBox,
+			load,
+			get scale() { return _scale; },
+			get svg() { return _svg; },
 		};
 		// });
 	}
 
-	function Interactive(){
-
-		let {setPadding,
-			 zoomView,
-			 translate,
-			 setViewBox} = View(...arguments);
-
-		// implement these, they will get called when the event fires
-		this.event = {
-			animate: function(){},
-			onResize: function(){},
-			onMouseMove: function(){},
-			onMouseDown: function(){},
-			onMouseUp: function(){},
-			onMouseDidBeginDrag: function(){},
-		};
-
-		// interaction
-		let mouse = {
-			isPressed: false,// is the mouse button pressed (y/n)
-			position: [0,0], // the current position of the mouse
-			pressed: [0,0],  // the last location the mouse was pressed
-			drag: [0,0]      // vector, displacement from start to now
-		};
-
-		var that = this;
-		svg.onmousedown = function(event){
-			mouse.isPressed = true;
-			mouse.pressed = SVG.convertToViewBox(svg, event.clientX, event.clientY);
-			that.event.onMouseDown(mouse);
-		};
-		svg.onmouseup = function(event){
-			mouse.isPressed = false;
-			that.event.onMouseUp(mouse);
-		};
-		svg.onmousemove = function(event){
-			mouse.position = SVG.convertToViewBox(svg, event.clientX, event.clientY);
-			if(mouse.isPressed){
-				mouse.drag = [mouse.position[0] - mouse.pressed[0], 
-				              mouse.position[1] - mouse.pressed[1]];
-				that.event.onMouseDidBeginDrag(mouse);
-			}
-			that.event.onMouseMove(mouse);
-		};
-		svg.onResize = function(event){
-			that.event.onResize(event);
-		};
-
-		// javascript get Date()
-		// todo: watch for the variable getting set
-		animateTimer = setInterval(function(){
-			if(typeof that.event.animate === "function"){
-				that.event.animate({"time":svg.getCurrentTime(), "frame":frameNum});
-			}
-			frameNum += 1;
-		}, 1000/60);
-
-		// return Object.freeze({
-		return {
-			zoomView,
-			translate,
-			setViewBox,
-			event:this.event,
-			mouse,
-		};
-
-	}
+	// import interactive from "./src/interactive";
 
 	let line$1 = SVG.line;
 	let circle$1 = SVG.circle;
 	let polygon$1 = SVG.polygon;
 	let bezier$1 = SVG.bezier;
 	let group$1 = SVG.group;
-	let svg$2 = SVG.svg;
+	let svg$1 = SVG.svg;
 	let addClass$1 = SVG.addClass;
 	let removeClass$1 = SVG.removeClass;
 	let setId$1 = SVG.setId;
@@ -425,7 +352,7 @@
 	let setViewBox$1 = SVG.setViewBox;
 	let convertToViewBox$1 = SVG.convertToViewBox;
 	let translate$1 = SVG.translate;
-	let zoom$1 = SVG.zoom;
+	let scale$1 = SVG.scale;
 	let setPolygonPoints$1 = SVG.setPolygonPoints;
 	let getViewBox$1 = SVG.getViewBox;
 
@@ -434,7 +361,7 @@
 	exports.polygon = polygon$1;
 	exports.bezier = bezier$1;
 	exports.group = group$1;
-	exports.svg = svg$2;
+	exports.svg = svg$1;
 	exports.addClass = addClass$1;
 	exports.removeClass = removeClass$1;
 	exports.setId = setId$1;
@@ -445,9 +372,8 @@
 	exports.convertToViewBox = convertToViewBox$1;
 	exports.translate = translate$1;
 	exports.setPolygonPoints = setPolygonPoints$1;
-	exports.zoom = zoom$1;
+	exports.scale = scale$1;
 	exports.View = View;
-	exports.interactive = Interactive;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 

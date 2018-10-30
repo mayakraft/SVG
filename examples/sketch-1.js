@@ -16,7 +16,3 @@ view.svg.onmousemove = function(event){
 	color += 3;
 	prev = mouse;
 }
-
-view.svg.onmousedown = function(event){
-	SVG.translate(view.svg, Math.random()*100-50, Math.random()*100-50);
-}

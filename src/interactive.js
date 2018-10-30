@@ -5,7 +5,7 @@ import View from "./view"
 export default function Interactive(){
 
 	let {setPadding,
-		 zoomView,
+		 zoom,
 		 translate,
 		 setViewBox} = View(...arguments);
 
@@ -61,7 +61,7 @@ export default function Interactive(){
 
 	// return Object.freeze({
 	return {
-		zoomView,
+		zoom,
 		translate,
 		setViewBox,
 		event:this.event,

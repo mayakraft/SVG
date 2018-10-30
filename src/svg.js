@@ -4,7 +4,7 @@
  *  - the necessary parameters for the geometry, number of params varies
  *  - className
  *  - id
- *  - the parent container to append this new element (or none)
+ *  - the parent container to append this new element
  *
  * you can set all these later. some are more important than others.
  * if you don't use the parent parameter, you'll want to append 
@@ -25,15 +25,7 @@ function line(x1, y1, x2, y2, className, id, parent) {
 	shape.setAttributeNS(null, "y1", y1);
 	shape.setAttributeNS(null, "x2", x2);
 	shape.setAttributeNS(null, "y2", y2);
-	if (className != null) {
-		shape.setAttributeNS(null, "class", className);
-	}
-	if (id != null) {
-		shape.setAttributeNS(null, "id", id);
-	}
-	if (parent != null) {
-		parent.appendChild(shape);
-	}
+	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
 
@@ -42,30 +34,14 @@ function circle(x, y, radius, className, id, parent) {
 	shape.setAttributeNS(null, "cx", x);
 	shape.setAttributeNS(null, "cy", y);
 	shape.setAttributeNS(null, "r", radius);
-	if (className != null) {
-		shape.setAttributeNS(null, "class", className);
-	}
-	if (id != null) {
-		shape.setAttributeNS(null, "id", id);
-	}
-	if (parent != null) {
-		parent.appendChild(shape);
-	}
+	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
 
 function polygon(pointsArray, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "polygon");
 	setPolygonPoints(shape, pointsArray);
-	if (className != null) {
-		shape.setAttributeNS(null, "class", className);
-	}
-	if (id != null) {
-		shape.setAttributeNS(null, "id", id);
-	}
-	if (parent != null) {
-		parent.appendChild(shape);
-	}
+	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
 
@@ -75,15 +51,7 @@ function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
 			" " + c2X + "," + c2Y + " " + toX + "," + toY;
 	let shape = document.createElementNS(svgNS, "path");
 	shape.setAttributeNS(null, "d", d);
-	if (className != null) {
-		shape.setAttributeNS(null, "class", className);
-	}
-	if (id != null) {
-		shape.setAttributeNS(null, "id", id);
-	}
-	if (parent != null) {
-		parent.appendChild(shape);
-	}
+	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
 
@@ -95,31 +63,27 @@ function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
 
 function group(className, id, parent) {
 	let g = document.createElementNS(svgNS, "g");
-	if (className != null) {
-		g.setAttributeNS(null, "class", className);
-	}
-	if (id != null) {
-		g.setAttributeNS(null, "id", id);
-	}
-	if (parent != null) {
-		parent.appendChild(g);
-	}
+	setClassIdParent(g, className, id, parent);
 	return g;
 }
 
 function svg(className, id, parent) {
 	let svg = document.createElementNS(svgNS, "svg");
 	// svg.setAttributeNS(null, "viewBox", "0 0 1 1");
+	setClassIdParent(svg, className, id, parent);
+	return svg;
+}
+
+function setClassIdParent(element, className, id, parent) {
 	if (className != null) {
-		svg.setAttributeNS(null, "class", className);
+		element.setAttributeNS(null, "class", className);
 	}
 	if (id != null) {
-		svg.setAttributeNS(null, "id", id);
+		element.setAttributeNS(null, "id", id);
 	}
 	if (parent != null) {
-		parent.appendChild(svg);
+		parent.appendChild(element);
 	}
-	return svg;
 }
 
 /**
@@ -190,8 +154,8 @@ function removeChildren(group) {
  */
 
 function setViewBox(svg, x, y, width, height, padding = 0) {
-	let zoom = 1.0;
-	let d = (width / zoom) - width;
+	let scale = 1.0;
+	let d = (width / scale) - width;
 	let X = (x - d) - padding;
 	let Y = (y - d) - padding;
 	let W = (width + d * 2) + padding * 2;
@@ -214,7 +178,7 @@ function getViewBox(svg){
 		: vb.split(" ").map(n => parseFloat(n));
 }
 
-function zoom(svg, scale, origin_x = 0, origin_y = 0){
+function scale(svg, scale, origin_x = 0, origin_y = 0){
 	if(scale < 1e-8){ scale = 0.01; }
 	let matrix = svg.createSVGMatrix()
 		.translate(origin_x, origin_y)
@@ -263,5 +227,5 @@ function convertToViewBox(svg, x, y) {
 
 export default { line, circle, polygon, bezier, group, svg,
 	addClass, removeClass, setId, removeChildren, setAttribute,
-	setViewBox, getViewBox, convertToViewBox, translate, zoom, setPolygonPoints
+	setViewBox, getViewBox, convertToViewBox, translate, scale, setPolygonPoints
 }

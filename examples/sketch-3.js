@@ -1,10 +1,7 @@
 let view = SVG.View(window.innerWidth, window.innerHeight);
 
-let mousedown;
-let screenMousedown;
-let startViewbox;
+let mousedown, screenMousedown, startViewbox, prev;
 let zoom = 1.0;
-let prev;
 
 // some grids
 var i = 0;
@@ -16,7 +13,6 @@ for(var h = 0; h < window.innerHeight; h += (Math.sin((i++)*0.5)+1.2)*10){
 	SVG.line(0, h, window.innerWidth, h, "grid", null, view.svg);
 }
 SVG.line(0, window.innerHeight, window.innerWidth, window.innerHeight, "grid", null, view.svg);
-
 
 view.svg.onmousedown = function(event){
 	startViewbox = SVG.getViewBox(view.svg);
@@ -45,8 +41,4 @@ view.svg.onmousemove = function(event){
 		}
 	}
 	prev = mouse;
-}
-
-document.onscroll = function(event){
-	console.log(event);
 }
