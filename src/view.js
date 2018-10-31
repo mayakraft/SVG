@@ -50,9 +50,9 @@ export default function View(){
 					}
 					var allSVGs = svgData.getElementsByTagName('svg');
 					if(allSVGs == undefined || allSVGs.length == 0){ throw "error, the svg parser couldn't find an SVG element"; }
-					_svg = allSVGs[0];
 					// success, we found an svg
 					_parent.removeChild(_svg);
+					_svg = allSVGs[0];
 					_parent.appendChild(_svg);
 
 					if(callback != undefined){ callback(cp); }

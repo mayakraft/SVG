@@ -1,44 +1,46 @@
-let view = SVG.View(window.innerWidth, window.innerHeight);
+let views = [
+	SVG.View("canvas-1"),
+	SVG.View("canvas-2"),
+	SVG.View("canvas-3")
+];
 
-let mousedown, screenMousedown, startViewbox, prev;
-let zoom = 1.0;
+let colors = ["#F80", "#9CF", "#5C3"];
+var headers = ["coordinates-1", "coordinates-2", "coordinates-3"];
 
-// some grids
-var i = 0;
-for(var w = 0; w < window.innerWidth; w += (Math.sin((i++)*0.5)+1.2)*10){
-	SVG.line(w, 0, w, window.innerHeight, "grid", null, view.svg);
+document.onmousemove = function(event){
+	let pageCoords = `page x, y: (${event.pageX}, ${event.pageY})`;
+	var bodyRect = document.body.getBoundingClientRect();
+	views.forEach((view, i) => {
+		var viewRect = view.svg.getBoundingClientRect();
+		var offset = [viewRect.left - bodyRect.left, viewRect.top - bodyRect.top];
+		let viewCoords = "client x, y: " + (event.pageX - offset[0]) + ", " + (event.pageY - offset[1]);
+		document.getElementById(headers[i]).innerHTML = pageCoords + "<br>" + viewCoords;
+	});
 }
-SVG.line(window.innerWidth, 0, window.innerWidth, window.innerHeight, "grid", null, view.svg);
-for(var h = 0; h < window.innerHeight; h += (Math.sin((i++)*0.5)+1.2)*10){
-	SVG.line(0, h, window.innerWidth, h, "grid", null, view.svg);
-}
-SVG.line(0, window.innerHeight, window.innerWidth, window.innerHeight, "grid", null, view.svg);
+document.onmousemove({pageX:0, pageY:0}); // fill data on boot
 
-view.svg.onmousedown = function(event){
-	startViewbox = SVG.getViewBox(view.svg);
-	screenMousedown = [event.clientX, event.clientY];
-	prev = SVG.convertToViewBox(view.svg, event.clientX, event.clientY);
-	mousedown = prev;
-}
+views.forEach((view, i) => {
+	view.drawingLayer = SVG.group(undefined, "drawing");
+	view.svg.appendChild(view.drawingLayer);
 
-view.svg.onmousemove = function(event){
-	let mouse = SVG.convertToViewBox(view.svg, event.clientX, event.clientY);
-	if(event.buttons > 0){ // mouse pressed
-		if(event.shiftKey == true){
-			let y_change = mouse[1] - prev[1];
-			let zoom = Math.pow(1.01, y_change);
-			console.log(y_change, zoom);
-			SVG.zoom(view.svg, zoom, mousedown[0], mousedown[1]);
-		} else{
-			let screenMouse = [event.clientX, event.clientY];
-			let screenTravel = [screenMouse[0] - screenMousedown[0], screenMouse[1] - screenMousedown[1]];
-			SVG.setViewBox(view.svg, 
-				startViewbox[0] - screenTravel[0],
-				startViewbox[1] - screenTravel[1],
-				startViewbox[2],
-				startViewbox[3]
-			);
-		}
+	view.svg.onmouseenter = function(event){
+		view.brushPoly = SVG.polygon();
+		SVG.setAttribute(view.brushPoly, "style", "stroke:black;fill:" + colors[i]);
+		view.drawingLayer.appendChild(view.brushPoly);
+		view.points = [];
+		view.prev = SVG.convertToViewBox(view.svg, event.clientX, event.clientY);
 	}
-	prev = mouse;
-}
+
+	view.svg.onmousemove = function(event){
+		let mouse = SVG.convertToViewBox(view.svg, event.clientX, event.clientY);
+		let vector = [mouse[0] - view.prev[0], mouse[1] - view.prev[1]];
+		var sideA = [mouse[0] + -vector[1]*1, mouse[1] + vector[0]*1];
+		var sideB = [mouse[0] + vector[1]*1, mouse[1] + -vector[0]*1];
+
+		view.points.unshift(sideA);
+		view.points.push(sideB);
+		SVG.setPolygonPoints(view.brushPoly, view.points);
+
+		view.prev = mouse;
+	}
+});

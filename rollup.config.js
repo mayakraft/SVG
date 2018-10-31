@@ -1,5 +1,7 @@
+import minify from 'rollup-plugin-babel-minify';
+
 module.exports = {
-	input: 'index.js',
+	input: './src/index.js',
 	output: {
 		name: 'SVG',
 		file: 'svg.js',
@@ -7,4 +9,11 @@ module.exports = {
 		strict: false,
 		banner: "/* SVG (c) Robby Kraft, MIT License */"
 	},
+	plugins: [
+        minify( {
+        	bannerNewLine: true,
+        	comments: false
+            // Options for babel-minify.
+        } )
+    ]
 };

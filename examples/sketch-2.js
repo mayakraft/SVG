@@ -1,3 +1,4 @@
+// create multiple canvases
 let views = [
 	SVG.View(window.innerWidth, window.innerHeight / 3),
 	SVG.View(window.innerWidth, window.innerHeight / 3),

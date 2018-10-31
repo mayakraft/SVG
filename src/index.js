@@ -1,6 +1,6 @@
-import SVG from "./src/svg";
-import View from "./src/view";
-// import interactive from "./src/interactive";
+import SVG from "./svg";
+import View from "./view";
+// import interactive from "./interactive";
 
 let line = SVG.line;
 let circle = SVG.circle;
