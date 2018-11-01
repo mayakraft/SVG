@@ -10,10 +10,9 @@ module.exports = {
 		banner: "/* SVG (c) Robby Kraft, MIT License */"
 	},
 	plugins: [
-        minify( {
-        	bannerNewLine: true,
-        	comments: false
-            // Options for babel-minify.
-        } )
-    ]
+		minify( {
+			bannerNewLine: true,
+			comments: false
+		} )
+	]
 };

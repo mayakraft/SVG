@@ -6,7 +6,7 @@
 
 "use strict";
 
-import SVG from "./svg";
+import * as SVG from "./svg";
 
 export default function View(){
 	// get constructor parameters

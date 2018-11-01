@@ -19,7 +19,7 @@ const svgNS = "http://www.w3.org/2000/svg";
  * geometry primitives
  */
 
-function line(x1, y1, x2, y2, className, id, parent) {
+export function line(x1, y1, x2, y2, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "line");
 	shape.setAttributeNS(null, "x1", x1);
 	shape.setAttributeNS(null, "y1", y1);
@@ -29,7 +29,7 @@ function line(x1, y1, x2, y2, className, id, parent) {
 	return shape;
 }
 
-function circle(x, y, radius, className, id, parent) {
+export function circle(x, y, radius, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "circle");
 	shape.setAttributeNS(null, "cx", x);
 	shape.setAttributeNS(null, "cy", y);
@@ -38,14 +38,14 @@ function circle(x, y, radius, className, id, parent) {
 	return shape;
 }
 
-function polygon(pointsArray, className, id, parent) {
+export function polygon(pointsArray, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "polygon");
 	setPolygonPoints(shape, pointsArray);
 	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
 
-function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
+export function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
 		toX, toY, className, id, parent) {
 	let d = "M " + fromX + "," + fromY + " C " + c1X + "," + c1Y +
 			" " + c2X + "," + c2Y + " " + toX + "," + toY;
@@ -55,19 +55,19 @@ function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
 	return shape;
 }
 
-// function curve(fromX, fromY, midX, midY, toX, toY, className, id)
+// export function curve(fromX, fromY, midX, midY, toX, toY, className, id)
 
 /**
  * container types
  */
 
-function group(className, id, parent) {
+export function group(className, id, parent) {
 	let g = document.createElementNS(svgNS, "g");
 	setClassIdParent(g, className, id, parent);
 	return g;
 }
 
-function svg(className, id, parent) {
+export function svg(className, id, parent) {
 	let svg = document.createElementNS(svgNS, "svg");
 	// svg.setAttributeNS(null, "viewBox", "0 0 1 1");
 	setClassIdParent(svg, className, id, parent);
@@ -90,7 +90,7 @@ function setClassIdParent(element, className, id, parent) {
  * geometry modifiers
  */
 
-function setPolygonPoints(polygon, pointsArray){
+export function setPolygonPoints(polygon, pointsArray){
 	if (pointsArray == null || pointsArray.constructor !== Array) {
 		return;
 	}
@@ -104,7 +104,7 @@ function setPolygonPoints(polygon, pointsArray){
  * element modifiers
  */
 
-function addClass(xmlNode, newClass) {
+export function addClass(xmlNode, newClass) {
 	if (xmlNode == undefined) {
 		return;
 	}
@@ -117,7 +117,7 @@ function addClass(xmlNode, newClass) {
 	xmlNode.setAttributeNS(null, "class", classes.join(" "));
 }
 
-function removeClass(xmlNode, newClass) {
+export function removeClass(xmlNode, newClass) {
 	if (xmlNode == undefined) {
 		return;
 	}
@@ -129,21 +129,21 @@ function removeClass(xmlNode, newClass) {
 	xmlNode.setAttributeNS(null, "class", classes.join(" "));
 }
 
-function setId(xmlNode, newID) {
+export function setId(xmlNode, newID) {
 	if (xmlNode == undefined) {
 		return;
 	}
 	xmlNode.setAttributeNS(null, "id", newID);
 }
 
-function setAttribute(xmlNode, attribute, value) {
+export function setAttribute(xmlNode, attribute, value) {
 	if (xmlNode == undefined) {
 		return;
 	}
 	xmlNode.setAttributeNS(null, attribute, value);
 }
 
-function removeChildren(group) {
+export function removeChildren(group) {
 	while (group.lastChild) {
 		group.removeChild(group.lastChild);
 	}
@@ -153,7 +153,7 @@ function removeChildren(group) {
  * math, view
  */
 
-function setViewBox(svg, x, y, width, height, padding = 0) {
+export function setViewBox(svg, x, y, width, height, padding = 0) {
 	let scale = 1.0;
 	let d = (width / scale) - width;
 	let X = (x - d) - padding;
@@ -164,21 +164,21 @@ function setViewBox(svg, x, y, width, height, padding = 0) {
 	svg.setAttributeNS(null, "viewBox", viewBoxString);
 }
 
-function setDefaultViewBox(svg){
+export function setDefaultViewBox(svg){
 	let rect = svg.getBoundingClientRect();
 	let width = rect.width == 0 ? 640 : rect.width;
 	let height = rect.height == 0 ? 480 : rect.height;
 	setViewBox(svg, 0, 0, width, height);
 }
 
-function getViewBox(svg){
+export function getViewBox(svg){
 	let vb = svg.getAttribute("viewBox");
 	return vb == null
 		? undefined
 		: vb.split(" ").map(n => parseFloat(n));
 }
 
-function scale(svg, scale, origin_x = 0, origin_y = 0){
+export function scale(svg, scale, origin_x = 0, origin_y = 0){
 	if(scale < 1e-8){ scale = 0.01; }
 	let matrix = svg.createSVGMatrix()
 		.translate(origin_x, origin_y)
@@ -204,7 +204,7 @@ function scale(svg, scale, origin_x = 0, origin_y = 0){
 	);
 }
 
-function translate(svg, dx, dy){
+export function translate(svg, dx, dy){
 	let viewBox = getViewBox(svg);
 	if (viewBox == null){
 		setDefaultViewBox(svg);
@@ -214,7 +214,7 @@ function translate(svg, dx, dy){
 	svg.setAttributeNS(null, "viewBox", viewBox.join(" "));
 }
 
-function convertToViewBox(svg, x, y) {
+export function convertToViewBox(svg, x, y) {
 	let pt = svg.createSVGPoint();
 	pt.x = x;
 	pt.y = y;
@@ -223,9 +223,4 @@ function convertToViewBox(svg, x, y) {
 	array.x = svgPoint.x;
 	array.y = svgPoint.y;
 	return array;
-}
-
-export default { line, circle, polygon, bezier, group, svg,
-	addClass, removeClass, setId, removeChildren, setAttribute,
-	setViewBox, getViewBox, convertToViewBox, translate, scale, setPolygonPoints
 }

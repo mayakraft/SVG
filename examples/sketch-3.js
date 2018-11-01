@@ -10,11 +10,17 @@ var headers = ["coordinates-1", "coordinates-2", "coordinates-3"];
 document.onmousemove = function(event){
 	let pageCoords = `page x, y: (${event.pageX}, ${event.pageY})`;
 	var bodyRect = document.body.getBoundingClientRect();
+	let rec = views[0].svg.getBoundingClientRect();
 	views.forEach((view, i) => {
 		var viewRect = view.svg.getBoundingClientRect();
-		var offset = [viewRect.left - bodyRect.left, viewRect.top - bodyRect.top];
-		let viewCoords = "client x, y: " + (event.pageX - offset[0]) + ", " + (event.pageY - offset[1]);
-		document.getElementById(headers[i]).innerHTML = pageCoords + "<br>" + viewCoords;
+		var svgX = parseInt(event.clientX - viewRect.left);
+		var svgY = parseInt(event.clientY - viewRect.top);
+		let viewCoords = "client x, y: " + svgX + ", " + svgY;
+		let inside = svgX > 0 && svgY > 0 && svgX < viewRect.width && svgY < viewRect.height;
+		let insideString = inside 
+			? "<span style='color:green'>inside</span>"
+			: "<span style='color:red'>not inside</span>";
+		document.getElementById(headers[i]).innerHTML = pageCoords + "<br>" + viewCoords + "<br>" + insideString;
 	});
 }
 document.onmousemove({pageX:0, pageY:0}); // fill data on boot
