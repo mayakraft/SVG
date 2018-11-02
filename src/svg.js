@@ -38,6 +38,16 @@ export function circle(x, y, radius, className, id, parent) {
 	return shape;
 }
 
+export function rect(x, y, width, height, className, id, parent) {
+	let shape = document.createElementNS(svgNS, "rect");
+	shape.setAttributeNS(null, "x", x);
+	shape.setAttributeNS(null, "y", y);
+	shape.setAttributeNS(null, "width", width);
+	shape.setAttributeNS(null, "height", height);
+	setClassIdParent(shape, className, id, parent);
+	return shape;
+}
+
 export function polygon(pointsArray, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "polygon");
 	setPolygonPoints(shape, pointsArray);
