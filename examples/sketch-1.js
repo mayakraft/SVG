@@ -16,9 +16,10 @@ view.svg.onmousemove = function(event){
 	let radius = 1 * Math.sqrt( Math.pow(mouse[0] - prev[0], 2) + 
 	                            Math.pow(mouse[1] - prev[1], 2) );
 	// create a circle
-	let circle = SVG.circle(mouse[0], mouse[1], radius);
+	let circle = SVG.circle(mouse[0], mouse[1], parseFloat(radius.toFixed(2)));
 	// set some attributes
-	SVG.setAttribute(circle, "style", "fill:hsl(" + color + ", 100%, 50%)");
+	SVG.setAttribute(circle, "fill", "hsl(" + (color%360) + ", 100%, 50%)");
+	// SVG.setAttribute(circle, "style", "fill:hsl(" + color + ", 100%, 50%)");
 	// similar to document.createElement, this puts the circle on the page
 	drawingLayer.appendChild(circle);
 
@@ -28,4 +29,8 @@ view.svg.onmousemove = function(event){
 
 view.svg.onmouseleave = function(event){
 	prev = undefined;
+}
+
+document.getElementById("download-button").onclick = function(event){
+	SVG.download(view.svg);
 }

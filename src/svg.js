@@ -13,6 +13,8 @@
  * @returns: the new geometry XML object.
  */
 
+import vkbeautify from '../lib/vkbeautify';
+
 const svgNS = "http://www.w3.org/2000/svg";
 
 /**
@@ -233,4 +235,14 @@ export function convertToViewBox(svg, x, y) {
 	array.x = svgPoint.x;
 	array.y = svgPoint.y;
 	return array;
+}
+
+export function download(svg, filename = "image.svg"){
+	var a = document.createElement('a');
+	var source = (new XMLSerializer()).serializeToString(svg);
+	let formatted = vkbeautify.xml(source);
+	var blob = new Blob([formatted], {type: 'text/plain'});
+	a.setAttribute('href', window.URL.createObjectURL(blob));
+	a.setAttribute('download', filename);
+	a.click();	
 }

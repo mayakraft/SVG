@@ -30,46 +30,5 @@ for(var i = 0; i < 30; i++){
 }
 
 document.getElementById("download-button").onclick = function(event){
-	var filename = "file.svg";
-	var pom = document.createElement('a');
-
-	var serializer = new XMLSerializer();
-	var source = serializer.serializeToString(view.svg);
-
-	var bb = new Blob([source], {type: 'text/plain'});
-	pom.setAttribute('href', window.URL.createObjectURL(bb));
-	pom.setAttribute('download', filename);
-
-	pom.dataset.downloadurl = ['text/plain', pom.download, pom.href].join(':');
-	pom.draggable = true; 
-	pom.classList.add('dragout');
-
-	pom.click();
+	SVG.download(view.svg);
 }
-
-// 	//get svg element.
-// 	var svg = view.svg;
-
-// 	//get svg source.
-// 	var serializer = new XMLSerializer();
-// 	var source = serializer.serializeToString(svg);
-
-// 	//add name spaces.
-// 	if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
-// 	    source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-// 	}
-// 	if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
-// 	    source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-// 	}
-
-// 	//add xml declaration
-// 	source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-
-// 	//convert svg source to URI data scheme.
-// 	var url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
-
-// 	//set url value to a element's href attribute.
-// 	document.getElementById("download-button").href = url;
-// 	//you can download svg file by right click menu.
-// 	// document.open(url);
-// }
