@@ -52,7 +52,14 @@ export function rect(x, y, width, height, className, id, parent) {
 
 export function polygon(pointsArray, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "polygon");
-	setPolygonPoints(shape, pointsArray);
+	setPoints(shape, pointsArray);
+	setClassIdParent(shape, className, id, parent);
+	return shape;
+}
+
+export function polyline(pointsArray, className, id, parent) {
+	let shape = document.createElementNS(svgNS, "polyline");
+	setPoints(shape, pointsArray);
 	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
@@ -102,7 +109,7 @@ function setClassIdParent(element, className, id, parent) {
  * geometry modifiers
  */
 
-export function setPolygonPoints(polygon, pointsArray){
+export function setPoints(polygon, pointsArray){
 	if (pointsArray == null || pointsArray.constructor !== Array) {
 		return;
 	}

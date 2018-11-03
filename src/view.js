@@ -15,7 +15,7 @@ export default function View(){
 	// create a new SVG
 	let _svg = SVG.svg();
 
-	let _parent = undefined;  // parent xml node
+	let _parent = undefined;  // parent node
 
 	// view properties
 	let _scale = 1.0;
@@ -27,7 +27,10 @@ export default function View(){
 		isPressed: false,// is the mouse button pressed (y/n)
 		position: [0,0], // the current position of the mouse
 		pressed: [0,0],  // the last location the mouse was pressed
-		drag: [0,0]      // vector, displacement from start to now
+		drag: [0,0],     // vector, displacement from start to now
+		prev: [0,0],     // on mouseMoved, this was the previous location
+		x: 0,      // redundant data --
+		y: 0       // -- these are the same as position
 	};
 
 	// exported
@@ -44,23 +47,8 @@ export default function View(){
 	const getViewBox = function() {
 		return SVG.getViewBox(_svg);
 	}
-	const group = function(className, id) {
-		return SVG.group(className, id, _svg);
-	}
-	const line = function(x1, y1, x2, y2, className, id) {
-		return SVG.line(x1, y1, x2, y2, className, id, _svg);
-	}
-	const circle = function(x, y, radius, className, id) {
-		return SVG.circle(x, y, radius, className, id, _svg);
-	}
-	const rect = function(x, y, width, height, className, id) {
-		return SVG.rect(x, y, width, height, className, id, _svg);
-	}
-	const polygon = function(pointsArray, className, id) {
-		return SVG.polygon(pointsArray, className, id, _svg);
-	}
-	const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y) {
-		return SVG.bezier(fromX, fromY, c1X, c1Y, c2X, c2Y);
+	const appendChild = function(element){
+		_svg.appendChild(element);
 	}
 	const download = function(filename = "image.svg"){
 		return SVG.download(_svg, filename);
@@ -120,34 +108,50 @@ export default function View(){
 		}
 	});
 
-	let _onmousemove, _onmousedown, _onmouseup;
+	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter;
+
+	// clientX and clientY are from the browser event data
+	function updateMousePosition(clientX, clientY){
+		_mouse.prev = _mouse.position;
+		_mouse.position = SVG.convertToViewBox(_svg, clientX, clientY);
+		_mouse.x = _mouse.position[0];
+		_mouse.y = _mouse.position[1];
+	}
 
 	function updateHandlers(){
 		_svg.onmousemove = function(event){
-			_mouse.position = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
+			updateMousePosition(event.clientX, event.clientY);
 			if(_mouse.isPressed){
-				// todo, make this also have x,y keys
 				_mouse.drag = [_mouse.position[0] - _mouse.pressed[0], 
 				               _mouse.position[1] - _mouse.pressed[1]];
+				_mouse.drag.x = _mouse.drag[0];
+				_mouse.drag.y = _mouse.drag[1];
 			}
-			if(_onmousemove != null){ _onmousemove(_mouse); }
+			if(_onmousemove != null){ _onmousemove( Object.assign({}, _mouse) ); }
 		}
 		_svg.onmousedown = function(event){
 			_mouse.isPressed = true;
 			_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
-			if(_onmousedown != null){ _onmousedown(_mouse); }
+			if(_onmousedown != null){ _onmousedown( Object.assign({}, _mouse) ); }
 		}
 		_svg.onmouseup = function(event){
 			_mouse.isPressed = false;
-			if(_onmouseup != null){ _onmouseup(_mouse); }
+			if(_onmouseup != null){ _onmouseup( Object.assign({}, _mouse) ); }
+		}
+		_svg.onmouseleave = function(event){
+			updateMousePosition(event.clientX, event.clientY);
+			if(_onmouseleave != null){ _onmouseleave( Object.assign({}, _mouse) ); }
+		}
+		_svg.onmouseenter = function(event){
+			updateMousePosition(event.clientX, event.clientY);
+			if(_onmouseenter != null){ _onmouseenter( Object.assign({}, _mouse) ); }
 		}
 	}
 
 	// return Object.freeze({
 	return {
-		zoom, translate,
+		zoom, translate, appendChild,
 		load, download,
-		group, line, circle, rect, polygon, bezier,
 		setViewBox, getViewBox,
 		get scale() { return _scale; },
 		get svg() { return _svg; },
@@ -163,6 +167,14 @@ export default function View(){
 		},
 		set onMouseUp(handler) {
 			_onmouseup = handler;
+			updateHandlers();
+		},
+		set onMouseLeave(handler) {
+			_onmouseleave = handler;
+			updateHandlers();
+		},
+		set onMouseEnter(handler) {
+			_onmouseenter = handler;
 			updateHandlers();
 		}
 		// set onMouseDidBeginDrag(handler) {}

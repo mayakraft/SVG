@@ -1,3 +1,8 @@
+<!--
+These two intros do the same thing in different ways
+A: vanilla Javascript
+B: using this SVG library
+-->
 <!DOCTYPE html>
 <title>SVG example: introduction</title>
 <style>body{margin:0}</style>
@@ -9,20 +14,22 @@
 // create a new SVG, it will automatically appends to the DOM
 let mySVG = SVG.View(window.innerWidth, window.innerHeight);
 
-// fills the canvas with a red rectangle, automatically appended to the SVG
-let rect = mySVG.rect(0, 0, window.innerWidth, window.innerHeight);
+// fill the canvas with a rectangle, append it to the SVG
+let rect = SVG.rect(0, 0, window.innerWidth, window.innerHeight);
 SVG.setAttribute(rect, "fill", "black");
+mySVG.appendChild(rect);
 
-// create, style, and append a polygon
-let poly = mySVG.polygon();
-SVG.setAttribute(poly, "stroke", "white");
+// create, style, and append a polyline
+let poly = SVG.polyline();
+let pStyle = "stroke:white; stroke-width:5; stroke-dasharray:6 12; stroke-linecap:round";
+SVG.setAttribute(poly, "style", pStyle);
+mySVG.appendChild(poly);
 
 // create a simple draw handler
 let points = [];
 mySVG.onMouseMove = function(event){
-	console.log(event);
 	points.push(event.position);
-	SVG.setPolygonPoints(poly, points);
+	SVG.setPoints(poly, points);
 }
 
 </script>

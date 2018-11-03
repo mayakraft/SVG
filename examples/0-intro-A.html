@@ -1,35 +1,51 @@
+<!--
+These two intros do the same thing in different ways
+A: vanilla Javascript
+B: using this SVG library
+-->
 <!DOCTYPE html>
 <title>SVG example: introduction</title>
 <style>body{margin:0}</style>
 <body></body>
 
-<script type="text/javascript" src="../svg.js"></script>
 <script>
 
 // create a new SVG, append it to the DOM
-let mySVG = SVG.svg();
+let mySVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+mySVG.setAttributeNS(null, "width", window.innerWidth);
+mySVG.setAttributeNS(null, "height", window.innerHeight);
 document.body.appendChild(mySVG);
 
-SVG.setAttribute(mySVG, "width", window.innerWidth);
-SVG.setAttribute(mySVG, "height", window.innerHeight);
-
-// fills the canvas with a red rectangle
-let rect = SVG.rect(0, 0, window.innerWidth, window.innerHeight);
-SVG.setAttribute(rect, "fill", "black");
+// fill the canvas with a rectangle
+let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+rect.setAttributeNS(null, "x", 0);
+rect.setAttributeNS(null, "y", 0);
+rect.setAttributeNS(null, "width", window.innerWidth);
+rect.setAttributeNS(null, "height", window.innerHeight);
+rect.setAttributeNS(null, "fill", "black");
 
 // append the rectangle to the svg
 mySVG.appendChild(rect);
 
-// create, style, and append a polygon
-let poly = SVG.polygon();
-SVG.setAttribute(poly, "stroke", "white");
+// create, style, and append a polyline
+let poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+poly.setAttributeNS(null, "stroke", "white");
+poly.setAttributeNS(null, "stroke-width", 5);
+poly.setAttributeNS(null, "stroke-dasharray", "6 12");
+poly.setAttributeNS(null, "stroke-linecap", "round");
 mySVG.appendChild(poly);
 
 // create a simple draw handler
 let points = [];
 mySVG.onmousemove = function(event){
-	points.push( SVG.convertToViewBox(mySVG, event.clientX, event.clientY) );
-	SVG.setPolygonPoints(poly, points);
+	let pt = mySVG.createSVGPoint();
+	pt.x = event.clientX;
+	pt.y = event.clientY;
+	let svgPoint = pt.matrixTransform(mySVG.getScreenCTM().inverse());
+	points.push(svgPoint);
+	let pointsString = points
+		.reduce((prev, curr) => prev + curr.x + "," + curr.y + " ", "");
+	poly.setAttributeNS(null, "points", pointsString);
 }
 
 </script>
