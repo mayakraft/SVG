@@ -239,10 +239,66 @@ export function convertToViewBox(svg, x, y) {
 
 export function download(svg, filename = "image.svg"){
 	var a = document.createElement('a');
-	var source = (new XMLSerializer()).serializeToString(svg);
+	var source = (new window.XMLSerializer()).serializeToString(svg);
 	let formatted = vkbeautify.xml(source);
 	var blob = new Blob([formatted], {type: 'text/plain'});
 	a.setAttribute('href', window.URL.createObjectURL(blob));
 	a.setAttribute('download', filename);
 	a.click();	
 }
+
+const parserErrorNS = (new window.DOMParser())
+	.parseFromString('INVALID', 'text/xml')
+	.getElementsByTagName("parsererror")[0]
+	.namespaceURI;
+
+function parseCSSText(styleContent) {
+	var styleElement = document.createElement("style");
+	styleElement.textContent = styleContent;
+	document.body.appendChild(styleElement);
+	var rules = styleElement.sheet.cssRules;
+	document.body.removeChild(styleElement);
+	return rules;
+}
+
+// the SVG is returned, or given as the argument in the callback(svg, error)
+export function load(input, callback){
+	// try cascading attempts at different possible param types
+	// "input" is a (1) raw text encoding of the svg (2) filename (3) already parsed DOM element
+	if (typeof input === "string" || input instanceof String){
+		// (1) raw text encoding
+		var xml = (new window.DOMParser()).parseFromString(input, 'text/xml');
+		if(xml.getElementsByTagNameNS(parserErrorNS, 'parsererror').length === 0) {
+			if(callback != null){
+				callback(xml);
+			}
+			return xml;
+		}
+		// (2) filename
+		fetch(input)
+			.then(response => response.text())
+			.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+			.then(svgData => {
+				var cssStyle, styleTag = svgData.getElementsByTagName('style')[0];
+				if(styleTag != null
+					&& styleTag.childNodes != null
+					&& styleTag.childNodes.length > 0) {
+					cssStyle = parseCSSText( styleTag.childNodes[0].nodeValue );
+				}
+				var allSVGs = svgData.getElementsByTagName('svg');
+				if(allSVGs == null || allSVGs.length == 0) {
+					throw "error, the svg parser found valid XML but couldn't find an SVG element";
+				}
+				let svg = allSVGs[0];
+				if(callback != null) {
+					callback(svg);
+				}
+				return svg;
+			}).catch(err => callback(null, err))
+	} else if (input instanceof Document){
+		// (3) already parsed SVG... why would this happen? IDK. just return it
+		callback(input);
+		return input;
+	}
+}
+

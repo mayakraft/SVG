@@ -23,49 +23,66 @@ export default function View(){
 
 	let _matrix = _svg.createSVGMatrix();
 
+	// exported
 	const zoom = function(scale, origin_x = 0, origin_y = 0){
 		_scale = scale;
 		SVG.scale(_svg, scale, origin_x, origin_y);
 	}
-
 	const translate = function(dx, dy){
 		SVG.translate(_svg, dx, dy);
 	}
-
 	const setViewBox = function(x, y, width, height){
 		SVG.setViewBox(_svg, x, y, width, height, _padding);
 	}
-
-	// load an SVG. XML tree, file blob, or filename string
-	const load = function(data, callback){
-		// are they giving us a filename, or the data of an already loaded file?
-		if (typeof data === "string" || data instanceof String){
-			fetch(data)
-				.then(response => response.text())
-				.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-				.then(svgData => {
-					var cssStyle, styleTag = svgData.getElementsByTagName('style')[0];
-					if(styleTag != undefined && styleTag.childNodes != undefined && styleTag.childNodes.length > 0){
-						cssStyle = parseCSSText( styleTag.childNodes[0].nodeValue );
-					}
-					var allSVGs = svgData.getElementsByTagName('svg');
-					if(allSVGs == undefined || allSVGs.length == 0){ throw "error, the svg parser couldn't find an SVG element"; }
-					// success, we found an svg
-					_parent.removeChild(_svg);
-					_svg = allSVGs[0];
-					_parent.appendChild(_svg);
-
-					if(callback != undefined){ callback(cp); }
-				});
-		}
-		if(data instanceof HTMLElement){
-			console.log("data instanceof HTMLElement");
-			rootElement = (new window.DOMParser()).parseFromString(string, "text/xml");
-		}
+	const getViewBox = function() {
+		return SVG.getViewBox(_svg);
 	}
+	const group = function(className, id) {
+		return SVG.group(className, id, _svg);
+	}
+	const line = function(x1, y1, x2, y2, className, id) {
+		return SVG.line(x1, y1, x2, y2, className, id, _svg);
+	}
+	const circle = function(x, y, radius, className, id) {
+		return SVG.circle(x, y, radius, className, id, _svg);
+	}
+	const rect = function(x, y, width, height, className, id) {
+		return SVG.rect(x, y, width, height, className, id, _svg);
+	}
+	const polygon = function(pointsArray, className, id) {
+		return SVG.polygon(pointsArray, className, id, _svg);
+	}
+	const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y) {
+		return SVG.bezier(fromX, fromY, c1X, c1Y, c2X, c2Y);
+	}
+	const download = function(filename = "image.svg"){
+		return SVG.download(_svg, filename);
+	}
+	const load = function(data, callback){
+		SVG.load(data, function(newSVG, error){
+			if(newSVG != null){
+				_parent.removeChild(_svg);
+				_svg = newSVG;
+				_parent.appendChild(_svg);
+			}
+			if(callback != null){ callback(newSVG, error); }
+		});
+	}
+
+	// not exported
+	const getWidth = function(){
+		let w = _svg.getAttributeNS(null, "width");
+		return w != null ? w : _svg.getBoundingClientRect().width;
+	}
+	const getHeight = function(){
+		let h = _svg.getAttributeNS(null, "height");
+		return h != null ? h : _svg.getBoundingClientRect().height;
+	}
+
 	// onload, find a parent element for the new SVG in the arguments
 	document.addEventListener("DOMContentLoaded", function(){
 		// wait until after the <body> has rendered
+		let functions = params.filter((arg) => typeof arg === "function");
 		let numbers = params.filter((arg) => !isNaN(arg));
 		let element = params.filter((arg) =>
 				arg instanceof HTMLElement)
@@ -88,16 +105,21 @@ export default function View(){
 			let rect = _svg.getBoundingClientRect();
 			SVG.setViewBox(_svg, 0, 0, rect.width, rect.height);
 		}
+		if(functions.length >= 1){
+			functions[0]();
+		}
 	});
 
 	// return Object.freeze({
 	return {
-		zoom,
-		translate,
-		setViewBox,
-		load,
+		zoom, translate,
+		load, download,
+		group, line, circle, rect, polygon, bezier,
+		setViewBox, getViewBox,
 		get scale() { return _scale; },
 		get svg() { return _svg; },
+		get width() { return getWidth(); },
+		get height() { return getHeight(); },
 	};
 	// });
 }

@@ -1,18 +1,24 @@
 let view = SVG.View(window.innerWidth, window.innerHeight);
+let drawLayer = SVG.group();
+SVG.setAttribute(drawLayer, "stroke", "black");
+view.svg.appendChild(drawLayer);
 
 let mousedown, screenMousedown, startViewbox, prev;
 let zoom = 1.0;
 
-// some grids
-var i = 0;
-for(var w = 0; w < window.innerWidth; w += (Math.sin((i++)*0.5)+1.2)*10){
-	SVG.line(w, 0, w, window.innerHeight, "grid", null, view.svg);
+function grid(parent, level, x, y, width, height){
+	if(level <= 0){ return; }
+	let hw = width * 0.5;
+	let hh = height * 0.5;
+	let lines = [SVG.line(x, y+hh, x+width, y+hh), SVG.line(x+hw, y, x+hw, y+height)];
+	lines.forEach(line => SVG.setAttribute(line, "stroke-width", level*2));
+	lines.forEach(line => parent.appendChild(line));
+	grid(parent, level-1, x+hw, y, hw, hh);
+	grid(parent, level-1, x, y, hw, hh);
+	grid(parent, level-1, x, y+hh, hw, hh);
+	grid(parent, level-1, x+hw, y+hh, hw, hh);
 }
-SVG.line(window.innerWidth, 0, window.innerWidth, window.innerHeight, "grid", null, view.svg);
-for(var h = 0; h < window.innerHeight; h += (Math.sin((i++)*0.5)+1.2)*10){
-	SVG.line(0, h, window.innerWidth, h, "grid", null, view.svg);
-}
-SVG.line(0, window.innerHeight, window.innerWidth, window.innerHeight, "grid", null, view.svg);
+grid(drawLayer, 4, 0, 0, window.innerWidth, window.innerHeight);
 
 view.svg.onmousedown = function(event){
 	startViewbox = SVG.getViewBox(view.svg);
@@ -28,7 +34,7 @@ view.svg.onmousemove = function(event){
 			let y_change = mouse[1] - prev[1];
 			let zoom = Math.pow(1.01, y_change);
 			console.log(y_change, zoom);
-			SVG.zoom(view.svg, zoom, mousedown[0], mousedown[1]);
+			SVG.scale(view.svg, zoom, mousedown[0], mousedown[1]);
 		} else{
 			let screenMouse = [event.clientX, event.clientY];
 			let screenTravel = [screenMouse[0] - screenMousedown[0], screenMouse[1] - screenMousedown[1]];

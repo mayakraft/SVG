@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<title>SVG example: introduction</title>
+<style>body{margin:0}</style>
+<body></body>
+
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+
+	// create a new SVG, it will automatically appends to the DOM
+	let mySVG = SVG.View(window.innerWidth, window.innerHeight);
+
+	// fills the canvas with a red rectangle, automatically appended to the SVG
+	let rect = mySVG.rect(0, 0, window.innerWidth, window.innerHeight);
+	SVG.setAttribute(rect, "fill", "black");
+
+	// create, style, and append a polygon
+	let poly = mySVG.polygon();
+	SVG.setAttribute(poly, "stroke", "white");
+
+	// create a simple draw handler
+	let points = [];
+	mySVG.svg.onmousemove = function(event){
+		points.push( SVG.convertToViewBox(mySVG.svg, event.clientX, event.clientY) );
+		SVG.setPolygonPoints(poly, points);
+	}
+
+</script>
