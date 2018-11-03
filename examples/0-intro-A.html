@@ -6,30 +6,30 @@
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
-	// create a new SVG, append it to the DOM
-	let mySVG = SVG.svg();
-	document.body.appendChild(mySVG);
+// create a new SVG, append it to the DOM
+let mySVG = SVG.svg();
+document.body.appendChild(mySVG);
 
-	SVG.setAttribute(mySVG, "width", window.innerWidth);
-	SVG.setAttribute(mySVG, "height", window.innerHeight);
+SVG.setAttribute(mySVG, "width", window.innerWidth);
+SVG.setAttribute(mySVG, "height", window.innerHeight);
 
-	// fills the canvas with a red rectangle
-	let rect = SVG.rect(0, 0, window.innerWidth, window.innerHeight);
-	SVG.setAttribute(rect, "fill", "black");
+// fills the canvas with a red rectangle
+let rect = SVG.rect(0, 0, window.innerWidth, window.innerHeight);
+SVG.setAttribute(rect, "fill", "black");
 
-	// append the rectangle to the svg
-	mySVG.appendChild(rect);
+// append the rectangle to the svg
+mySVG.appendChild(rect);
 
-	// create, style, and append a polygon
-	let poly = SVG.polygon();
-	SVG.setAttribute(poly, "stroke", "white");
-	mySVG.appendChild(poly);
+// create, style, and append a polygon
+let poly = SVG.polygon();
+SVG.setAttribute(poly, "stroke", "white");
+mySVG.appendChild(poly);
 
-	// create a simple draw handler
-	let points = [];
-	mySVG.onmousemove = function(event){
-		points.push( SVG.convertToViewBox(mySVG, event.clientX, event.clientY) );
-		SVG.setPolygonPoints(poly, points);
-	}
+// create a simple draw handler
+let points = [];
+mySVG.onmousemove = function(event){
+	points.push( SVG.convertToViewBox(mySVG, event.clientX, event.clientY) );
+	SVG.setPolygonPoints(poly, points);
+}
 
 </script>

@@ -6,19 +6,20 @@ view.svg.appendChild(drawLayer);
 let mousedown, screenMousedown, startViewbox, prev;
 let zoom = 1.0;
 
+// recursively grid 2D space
 function grid(parent, level, x, y, width, height){
 	if(level <= 0){ return; }
 	let hw = width * 0.5;
 	let hh = height * 0.5;
 	let lines = [SVG.line(x, y+hh, x+width, y+hh), SVG.line(x+hw, y, x+hw, y+height)];
-	lines.forEach(line => SVG.setAttribute(line, "stroke-width", level*2));
+	lines.forEach(line => SVG.setAttribute(line, "stroke-width", level));
 	lines.forEach(line => parent.appendChild(line));
 	grid(parent, level-1, x+hw, y, hw, hh);
 	grid(parent, level-1, x, y, hw, hh);
 	grid(parent, level-1, x, y+hh, hw, hh);
 	grid(parent, level-1, x+hw, y+hh, hw, hh);
 }
-grid(drawLayer, 4, 0, 0, window.innerWidth, window.innerHeight);
+grid(drawLayer, 5, 0, 0, window.innerWidth, window.innerHeight);
 
 view.svg.onmousedown = function(event){
 	startViewbox = SVG.getViewBox(view.svg);

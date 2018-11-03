@@ -23,6 +23,13 @@ export default function View(){
 
 	let _matrix = _svg.createSVGMatrix();
 
+	let _mouse = {
+		isPressed: false,// is the mouse button pressed (y/n)
+		position: [0,0], // the current position of the mouse
+		pressed: [0,0],  // the last location the mouse was pressed
+		drag: [0,0]      // vector, displacement from start to now
+	};
+
 	// exported
 	const zoom = function(scale, origin_x = 0, origin_y = 0){
 		_scale = scale;
@@ -61,9 +68,12 @@ export default function View(){
 	const load = function(data, callback){
 		SVG.load(data, function(newSVG, error){
 			if(newSVG != null){
+				// todo: do we need to remove any existing handlers to properly free memory?
 				_parent.removeChild(_svg);
 				_svg = newSVG;
 				_parent.appendChild(_svg);
+				// re-attach any preexisting handlers
+				updateHandlers();
 			}
 			if(callback != null){ callback(newSVG, error); }
 		});
@@ -110,6 +120,29 @@ export default function View(){
 		}
 	});
 
+	let _onmousemove, _onmousedown, _onmouseup;
+
+	function updateHandlers(){
+		_svg.onmousemove = function(event){
+			_mouse.position = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
+			if(_mouse.isPressed){
+				// todo, make this also have x,y keys
+				_mouse.drag = [_mouse.position[0] - _mouse.pressed[0], 
+				               _mouse.position[1] - _mouse.pressed[1]];
+			}
+			if(_onmousemove != null){ _onmousemove(_mouse); }
+		}
+		_svg.onmousedown = function(event){
+			_mouse.isPressed = true;
+			_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
+			if(_onmousedown != null){ _onmousedown(_mouse); }
+		}
+		_svg.onmouseup = function(event){
+			_mouse.isPressed = false;
+			if(_onmouseup != null){ _onmouseup(_mouse); }
+		}
+	}
+
 	// return Object.freeze({
 	return {
 		zoom, translate,
@@ -120,6 +153,30 @@ export default function View(){
 		get svg() { return _svg; },
 		get width() { return getWidth(); },
 		get height() { return getHeight(); },
+		set onMouseMove(handler) {
+			_onmousemove = handler;
+			updateHandlers();
+		},
+		set onMouseDown(handler) {
+			_onmousedown = handler;
+			updateHandlers();
+		},
+		set onMouseUp(handler) {
+			_onmouseup = handler;
+			updateHandlers();
+		}
+		// set onMouseDidBeginDrag(handler) {}
+		// set animate(handler) {}
+		// set onResize(handler) {}
 	};
 	// });
+
+	// animateTimer = setInterval(function(){
+	// 	if(typeof that.event.animate === "function"){
+	// 		that.event.animate({"time":svg.getCurrentTime(), "frame":frameNum});
+	// 	}
+	// 	frameNum += 1;
+	// }, 1000/60);
+
+
 }
