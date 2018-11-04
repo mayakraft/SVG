@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<title>SVG example: load an SVG file</title>
+<style>
+body{
+	margin:0;
+}
+</style>
+<body></body>
+<script type="text/javascript" src="../svg.js"></script>
+<script type="text/javascript">
+
+SVG.View().load("dragon.svg", completion);
+
+function completion(file, err){
+	if(err){
+		document.body.innerHTML = "<div style='margin:1em'><h1>Loading a file requires running a server</h1><p>using TERMINAL, navigate to this project's root directory and type:</p><pre><code>php -S localhost:8000</code></pre><p>then open <a href='http://localhost:8000/examples/5-load.html'>localhost:8000/examples/5-load.html</a>.</p></div>";
+	}
+}
+</script>
