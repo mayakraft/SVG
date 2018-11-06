@@ -173,6 +173,7 @@ export function removeChildren(group) {
  */
 
 export function setViewBox(svg, x, y, width, height, padding = 0) {
+// let d = (bounds.size.width / _zoom) - bounds.size.width;
 	let scale = 1.0;
 	let d = (width / scale) - width;
 	let X = (x - d) - padding;

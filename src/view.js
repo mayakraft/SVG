@@ -98,7 +98,9 @@ export default function View(){
 			_svg.setAttributeNS(null, "width", numbers[0]);
 			_svg.setAttributeNS(null, "height", numbers[1]);
 			SVG.setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
-		} else{
+		} 
+		else if(_svg.getAttribute("viewBox") == null){
+			// set a viewBox if viewBox doesn't yet exist
 			let rect = _svg.getBoundingClientRect();
 			SVG.setViewBox(_svg, 0, 0, rect.width, rect.height);
 		}
