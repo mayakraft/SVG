@@ -77,9 +77,8 @@ export default function View(){
 		return h != null ? h : _svg.getBoundingClientRect().height;
 	}
 
-	// onload, find a parent element for the new SVG in the arguments
-	document.addEventListener("DOMContentLoaded", function(){
-		// wait until after the <body> has rendered
+	// after page load, find a parent element for the new SVG in the arguments
+	const attachToDOM = function(){
 		let functions = params.filter((arg) => typeof arg === "function");
 		let numbers = params.filter((arg) => !isNaN(arg));
 		let element = params.filter((arg) =>
@@ -106,7 +105,13 @@ export default function View(){
 		if(functions.length >= 1){
 			functions[0]();
 		}
-	});
+	}
+	if(document.readyState === 'loading') {
+		// wait until after the <body> has rendered
+		document.addEventListener('DOMContentLoaded', attachToDOM);
+	} else {
+		attachToDOM();
+	}
 
 	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter;
 
