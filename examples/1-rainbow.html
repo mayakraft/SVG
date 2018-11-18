@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <title>SVG example: draw rainbow circles</title>
 <style>
-body{
-	margin:0;
-}
+body{ margin:0; }
 button{
 	position:absolute;
 	top:20px;
@@ -14,4 +12,30 @@ button{
 	<button id="download-button">Download</button>
 </body>
 <script type="text/javascript" src="../svg.js"></script>
-<script type="text/javascript" src="rainbow.js"></script>
+<script>
+
+// create the view, which creates an svg and adds it to the document
+let sketch = SVG.View(window.innerWidth, window.innerHeight);
+let prev, color = 0;
+
+sketch.onMouseMove = function(mouse){
+	if(prev == null){
+		prev = mouse;
+		return;
+	}
+	let colorString = "hsl(" + (color%360) + ", 100%, 50%)";
+	let radius = Math.sqrt( Math.pow(mouse.x - prev.x, 2) +
+	                        Math.pow(mouse.y - prev.y, 2) );
+	let circle = SVG.circle(mouse.x, mouse.y, parseFloat(radius.toFixed(2)));
+	SVG.setAttribute(circle, "fill", colorString);
+	sketch.appendChild(circle);
+	color += 3;
+	prev = mouse;
+}
+sketch.onMouseLeave = function(mouse){
+	prev = undefined;
+}
+document.getElementById("download-button").onclick = function(event){
+	sketch.download();
+}
+</script>

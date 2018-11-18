@@ -74,6 +74,19 @@ export function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
 	return shape;
 }
 
+export function regularPolygon(cX, cY, radius, sides, className, id, parent){
+	let halfwedge = 2*Math.PI/sides * 0.5;
+	let r = Math.cos(halfwedge) * radius;
+	let points = Array.from(Array(sides))
+		.map((_,i) => {
+			var a = -2 * Math.PI * i / sides + halfwedge;
+			var x = cX + r * Math.sin(a);
+			var y = cY + r * Math.cos(a);
+			return [x, y];
+		});
+	return polygon(points, className, id, parent);
+}
+
 // export function curve(fromX, fromY, midX, midY, toX, toY, className, id)
 
 /**

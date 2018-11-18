@@ -24,7 +24,7 @@ svg{
 }
 </style>
 <body>
-<h1>Section Header</h1>
+<h1>Page Header</h1>
 <div class="row">
 	<div class="column-lg">
 		<p>The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex! Fox nymphs grab quick-jived waltz. Brick quiz whangs jumpy veldt fox. Bright vixens jump; dozy fowl quack.</p>
@@ -52,4 +52,24 @@ svg{
 </body>
 
 <script type="text/javascript" src="../svg.js"></script>
-<script type="text/javascript" src="multiple-2.js"></script>
+<script type="text/javascript" src="multiple.js"></script>
+<script>
+var headers = ["coordinates-1", "coordinates-2", "coordinates-3"];
+document.onmousemove = function(event){
+	let pageCoords = `page x, y: (${event.pageX}, ${event.pageY})`;
+	var bodyRect = document.body.getBoundingClientRect();
+	let rec = sketches[0].svg.getBoundingClientRect();
+	sketches.forEach((sketch, i) => {
+		var viewRect = sketch.svg.getBoundingClientRect();
+		var svgX = parseInt(event.clientX - viewRect.left);
+		var svgY = parseInt(event.clientY - viewRect.top);
+		let viewCoords = "client x, y: " + svgX + ", " + svgY;
+		let inside = svgX > 0 && svgY > 0 && svgX < viewRect.width && svgY < viewRect.height;
+		let insideString = inside 
+			? "<span style='color:green'>inside</span>"
+			: "<span style='color:red'>not inside</span>";
+		document.getElementById(headers[i]).innerHTML = pageCoords + "<br>" + viewCoords + "<br>" + insideString;
+	});
+}
+document.onmousemove({pageX:0, pageY:0}); // fill data on boot
+</script>
