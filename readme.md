@@ -2,7 +2,7 @@
 
 a simple creative coding Javascript module to make SVG interactive and a little bit more accessible.
 
-![device](https://raw.github.com/robbykraft/SVG/master/examples/dragon.svg)
+![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/dragon.svg)
 
 # Features
 
