@@ -115,7 +115,7 @@ export default function View(){
 		attachToDOM();
 	}
 
-	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter;
+	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter, _animate, _animationFrame;
 
 	// clientX and clientY are from the browser event data
 	function updateMousePosition(clientX, clientY){
@@ -183,19 +183,25 @@ export default function View(){
 		set onMouseEnter(handler) {
 			_onmouseenter = handler;
 			updateHandlers();
+		},
+		set animate(handler) {
+			if (_animate != null) {
+				clearInterval(_animate);
+			}
+			_animate = handler;
+			if (_animate != null) {
+				_animationFrame = 0;
+				setInterval(function(){
+					let animObj = {
+						"time": _svg.getCurrentTime(),
+						"frame": _animationFrame++
+					};
+					_animate(animObj);
+				}, 1000/60);
+			}
 		}
 		// set onMouseDidBeginDrag(handler) {}
-		// set animate(handler) {}
 		// set onResize(handler) {}
 	};
 	// });
-
-	// animateTimer = setInterval(function(){
-	// 	if(typeof that.event.animate === "function"){
-	// 		that.event.animate({"time":svg.getCurrentTime(), "frame":frameNum});
-	// 	}
-	// 	frameNum += 1;
-	// }, 1000/60);
-
-
 }
