@@ -74,6 +74,40 @@ export function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y,
 	return shape;
 }
 
+export function text(textString, x, y, className, id, parent) {
+	let shape = document.createElementNS(svgNS, "text");
+	shape.innerHTML = textString;
+	shape.setAttributeNS(null, "x", x);
+	shape.setAttributeNS(null, "y", y);
+	setClassIdParent(shape, className, id, parent);
+	return shape;
+}
+
+export function arc(x, y, radius, startAngle, endAngle, className, id, parent){
+//	var arcdir = Math.atan2(v[0].x*v[1].y - v[0].y*v[1].x, v[0].x*v[1].x + v[0].y*v[1].y) > 0 ? 0 : 1;
+	let vecStart = [
+		Math.cos(startAngle) * radius,
+		Math.sin(startAngle) * radius ];
+	let vecEnd = [
+		Math.cos(endAngle) * radius,
+		Math.sin(endAngle) * radius ];
+	var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
+	let arcdir = 0;
+	// var arcdir = Math.atan2(v[0].x*v[1].y - v[0].y*v[1].x, v[0].x*v[1].x + v[0].y*v[1].y) > 0 ? 0 : 1;
+	let d = "M " + x + "," + y + " l " + vecStart[0] + "," + vecStart[1] + " ";
+	d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
+	d += " Z";
+	let shape = document.createElementNS(svgNS, "path");
+	shape.setAttributeNS(null, "d", d);
+	setClassIdParent(shape, className, id, parent);
+	return shape;
+}
+// export function curve(fromX, fromY, midX, midY, toX, toY, className, id)
+
+/**
+ * compound shapes
+ */
+
 export function regularPolygon(cX, cY, radius, sides, className, id, parent){
 	let halfwedge = 2*Math.PI/sides * 0.5;
 	let r = Math.cos(halfwedge) * radius;
@@ -86,8 +120,6 @@ export function regularPolygon(cX, cY, radius, sides, className, id, parent){
 		});
 	return polygon(points, className, id, parent);
 }
-
-// export function curve(fromX, fromY, midX, midY, toX, toY, className, id)
 
 /**
  * container types
