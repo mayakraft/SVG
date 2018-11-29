@@ -17,9 +17,9 @@ for(; radius > 20; radius -= 2){
 	let poly = SVG.regularPolygon(cX, cY, radius, 10);
 	let angle = Math.sin(radius*0.04) / Math.PI * 80;
 	let transform = "rotate(" + angle + " " + cX + " " + cY + ")";
-	SVG.setAttribute(poly, "transform", transform);
-	SVG.setAttribute(poly, "stroke", "black");
-	SVG.setAttribute(poly, "fill", "none");
+	poly.setAttribute("transform", transform);
+	poly.setAttribute("stroke", "black");
+	poly.setAttribute("fill", "none");
 	sketch.appendChild(poly);
 }
 

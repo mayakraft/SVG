@@ -8,7 +8,7 @@ let sketch = SVG.View(window.innerWidth, window.innerHeight);
 
 let polyline = SVG.polyline();
 let style = "fill:none; stroke:black; stroke-dasharray:1 1;";
-SVG.setAttribute(polyline, "style", style);
+polyline.setAttribute("style", style);
 sketch.appendChild(polyline);
 
 let x = window.innerWidth*0.5;

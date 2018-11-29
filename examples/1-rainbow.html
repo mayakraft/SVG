@@ -27,7 +27,7 @@ sketch.onMouseMove = function(mouse){
 	let radius = Math.sqrt( Math.pow(mouse.x - prev.x, 2) +
 	                        Math.pow(mouse.y - prev.y, 2) );
 	let circle = SVG.circle(mouse.x, mouse.y, parseFloat(radius.toFixed(2)));
-	SVG.setAttribute(circle, "fill", colorString);
+	circle.setAttribute("fill", colorString);
 	sketch.appendChild(circle);
 	color += 3;
 	prev = mouse;

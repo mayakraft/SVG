@@ -46,7 +46,7 @@ Drawing a shape might look something like:
 
 ```javascript
 let circle = SVG.circle(100, 100, 50);
-SVG.setAttribute(circle, "fill", "red");
+circle.setAttribute("fill", "red");  // using builtin setAttribute
 sketch.appendChild(circle);
 ```
 

@@ -12,7 +12,7 @@ sketches.forEach((sketch, i) => {
 
 	sketch.onMouseEnter = function(mouse){
 		sketch.brushPoly = SVG.polygon();
-		SVG.setAttribute(sketch.brushPoly, "style", "stroke:black;fill:" + colors[i]);
+		sketch.brushPoly.setAttribute("style", "stroke:black;fill:" + colors[i]);
 		sketch.drawingLayer.appendChild(sketch.brushPoly);
 		sketch.points = [];
 		sketch.prev = mouse;

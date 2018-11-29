@@ -83,8 +83,7 @@ export function text(textString, x, y, className, id, parent) {
 	return shape;
 }
 
-export function arc(x, y, radius, startAngle, endAngle, className, id, parent){
-//	var arcdir = Math.atan2(v[0].x*v[1].y - v[0].y*v[1].x, v[0].x*v[1].x + v[0].y*v[1].y) > 0 ? 0 : 1;
+export function wedge(x, y, radius, startAngle, endAngle, className, id, parent){
 	let vecStart = [
 		Math.cos(startAngle) * radius,
 		Math.sin(startAngle) * radius ];
@@ -92,8 +91,7 @@ export function arc(x, y, radius, startAngle, endAngle, className, id, parent){
 		Math.cos(endAngle) * radius,
 		Math.sin(endAngle) * radius ];
 	var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
-	let arcdir = 0;
-	// var arcdir = Math.atan2(v[0].x*v[1].y - v[0].y*v[1].x, v[0].x*v[1].x + v[0].y*v[1].y) > 0 ? 0 : 1;
+	var arcdir = Math.atan2(vecStart[0]*vecEnd[1] - vecStart[1]*vecEnd[0], vecStart[0]*vecEnd[0] + vecStart[1]*vecEnd[1]) > 0 ? 0 : 1;
 	let d = "M " + x + "," + y + " l " + vecStart[0] + "," + vecStart[1] + " ";
 	d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
 	d += " Z";
@@ -102,6 +100,28 @@ export function arc(x, y, radius, startAngle, endAngle, className, id, parent){
 	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
+
+export function arc(x, y, radius, startAngle, endAngle, className, id, parent){
+	let start = [
+		x + Math.cos(startAngle) * radius,
+		y + Math.sin(startAngle) * radius ];
+	let vecStart = [
+		Math.cos(startAngle) * radius,
+		Math.sin(startAngle) * radius ];
+	let vecEnd = [
+		Math.cos(endAngle) * radius,
+		Math.sin(endAngle) * radius ];
+	var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
+	var arcdir = Math.atan2(vecStart[0]*vecEnd[1] - vecStart[1]*vecEnd[0], vecStart[0]*vecEnd[0] + vecStart[1]*vecEnd[1]) > 0 ? 0 : 1;
+	let d = "M " + start[0] + "," + start[1] + " ";
+	d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
+	let shape = document.createElementNS(svgNS, "path");
+	shape.setAttributeNS(null, "d", d);
+	setClassIdParent(shape, className, id, parent);
+	return shape;
+}
+
+
 // export function curve(fromX, fromY, midX, midY, toX, toY, className, id)
 
 /**
@@ -198,13 +218,6 @@ export function setId(xmlNode, newID) {
 		return;
 	}
 	xmlNode.setAttributeNS(null, "id", newID);
-}
-
-export function setAttribute(xmlNode, attribute, value) {
-	if (xmlNode == undefined) {
-		return;
-	}
-	xmlNode.setAttributeNS(null, attribute, value);
 }
 
 export function removeChildren(group) {
