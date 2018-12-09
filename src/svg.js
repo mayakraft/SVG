@@ -249,6 +249,7 @@ export function setDefaultViewBox(svg){
 	setViewBox(svg, 0, 0, width, height);
 }
 
+/** @returns {number} array of 4 numbers: x, y, width, height */
 export function getViewBox(svg){
 	let vb = svg.getAttribute("viewBox");
 	return vb == null
