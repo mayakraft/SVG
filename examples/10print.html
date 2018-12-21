@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<title>SVG example: 10PRINT</title>
+<style>
+body{
+	background-color: #332698;
+	margin:0;
+}
+.char{
+	stroke: #7164d3;
+	stroke-width:5px;
+	stroke-linecap: round;
+}
+</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+let view = SVG.View(window.innerWidth, window.innerHeight);
+// character size
+let s = 20;
+// window
+let w = view.width, h = view.height;
+// text pointer
+let x = 0, y = 0;
+// 10 PRINT CHR$(205.5+RND(1)); : GOTO 10 
+while(y < h){ dash(Math.random()-0.5>0); x+=s; if(x>w){ x=0; y+=s; } }
+// draw a dash
+function dash(forward){
+	forward
+		? SVG.line(x, y+s, x+s, y, "char", null, view)
+		: SVG.line(x, y, x+s, y+s, "char", null, view);
+}
+</script>
