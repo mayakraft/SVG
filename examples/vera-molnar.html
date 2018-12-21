@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<title></title>
+<style>
+html,body{ height:100%; }
+body{
+	background-color: black;
+	margin:0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+svg{
+	max-height: 90vh;
+	max-width: 90vw;
+}
+</style>
+
+<script type="text/javascript" src="../svg.js"></script>
+<script type="text/javascript">
+
+let sketch = SVG.View(window.innerWidth, window.innerWidth / 3);
+let rect = SVG.rect(0, 0, sketch.width, sketch.height);
+rect.setAttribute("fill", "white");
+sketch.appendChild(rect);
+
+sketch.onMouseDown = function(mouse){
+	sketch.download();
+}
+
+var COLUMNS = 3;
+var ROWS = 1;
+var SPACING = window.innerWidth * 0.3;
+var SIDE = window.innerWidth * 0.22;
+var TL = {
+	x:(sketch.width*.5 - SIDE*0.5 - SPACING),
+	y:(sketch.height*.5-.5*SIDE)
+};
+var PERTURB = 6;
+var FREQUENCY = 7;
+var SLIDER_W = 130;
+
+function perturbedRect(x, y, width, height, X_PERTURB, Y_PERTURB){
+
+	var topLeft = {x:(x + Math.random()*width*X_PERTURB - (width*X_PERTURB*.5)), 
+	               y:(y + Math.random()*height*Y_PERTURB - (height*Y_PERTURB*.5))};
+	var topRight = {x:(x + width + Math.random()*width*X_PERTURB - (width*X_PERTURB*.5)), 
+	                y:(y + Math.random()*height*Y_PERTURB - (height*Y_PERTURB*.5))};
+	var bottomRight = {x:(x + width + Math.random()*width*X_PERTURB - (width*X_PERTURB*.5)),
+	                   y:(y + height + Math.random()*height*Y_PERTURB - (height*Y_PERTURB*.5))};
+	var bottomLeft = {x:(x + Math.random()*width*X_PERTURB - (width*X_PERTURB*.5)),
+	                  y:(y + height + Math.random()*height*Y_PERTURB - (height*Y_PERTURB*.5))};
+	let group = SVG.group(null, null, sketch);
+	let l = [];
+	l.push(SVG.line(parseInt(topLeft.x), parseInt(topLeft.y), parseInt(topRight.x), parseInt(topRight.y)));
+	l.push(SVG.line(parseInt(topRight.x), parseInt(topRight.y), parseInt(bottomRight.x), parseInt(bottomRight.y)));
+	l.push(SVG.line(parseInt(bottomRight.x), parseInt(bottomRight.y), parseInt(bottomLeft.x), parseInt(bottomLeft.y)));
+	l.push(SVG.line(parseInt(bottomLeft.x), parseInt(bottomLeft.y), parseInt(topLeft.x), parseInt(topLeft.y)));
+	l.forEach(line => {
+		line.setAttribute("stroke", "black");
+		group.appendChild(line);
+	})
+	return group;
+}
+
+function draw() {
+
+	var c;
+	c = 0;
+	var width = SIDE;
+	while(width > 0){
+		perturbedRect( TL.x + (SIDE*.5) + c * SPACING-(width*.5), TL.y + (SIDE*.5) - (width*.5), width, width, PERTURB/100.0, PERTURB/100.0);
+		width -= Math.random() * FREQUENCY/80 * SIDE *.5 + 1;
+	}
+	c = 1;
+	var width = SIDE;
+	while(width > 0){
+		perturbedRect( TL.x + (SIDE*.5) + c * SPACING-(width*.5), TL.y + (SIDE*.5) - (width*.5), width, width, PERTURB/100.0, PERTURB/100.0);
+		width -= Math.random() * FREQUENCY/80 * SIDE * 0.5 + 1;
+		if(Math.random()*10 < 1){
+			perturbedRect( TL.x + (SIDE*.5) + c * SPACING-(width*.5), TL.y + (SIDE*.5) - (width*.5), width, width, PERTURB/100.0, PERTURB/100.0);
+			width -= Math.random() * FREQUENCY/80 * SIDE * 2 + 1;
+		}
+	}
+	c = 2;
+	var width = SIDE;
+	while(width > 0){
+		perturbedRect( TL.x + (SIDE*.5) + c * SPACING-(width*.5), TL.y + (SIDE*.5) - (width*.5), width, width, PERTURB/100.0, PERTURB/100.0);
+		if(Math.random() * 10 < 1){
+			perturbedRect( TL.x + (SIDE*.5) + c * SPACING-(width*.5), TL.y + (SIDE*.5) - (width*.5), width, width, PERTURB/100.0, PERTURB/100.0);
+			width -= Math.random() * FREQUENCY/80 * SIDE * 2 + 1;
+		}
+		if(Math.random() * 10 < 1){
+			var count = 0;
+			while(width > 0 && count < Math.random() * 6+2){
+				perturbedRect( TL.x + (SIDE*.5) + c * SPACING-(width*.5), TL.y + (SIDE*.5) - (width*.5), width, width, PERTURB/100.0, PERTURB/100.0);
+				width -= Math.random() * FREQUENCY/10 + 1;
+				count++;
+			}
+		}
+		width -= Math.random() * FREQUENCY/80 * SIDE *.5 + 1;
+	}
+}
+
+draw();
+
+</script>

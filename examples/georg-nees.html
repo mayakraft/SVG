@@ -10,8 +10,8 @@ body{
 	justify-content: center;
 }
 svg{
-	max-height: 90vmin;
-	max-width: 90vmin;
+	max-height: 90vh;
+	max-width: 90vw;
 }
 .box{
 	stroke:black;
@@ -45,6 +45,10 @@ for(var h = 0; h < countH; h++){
 		rect.setAttribute("transform", translate + " " + rotate);
 		view.appendChild(rect);
 	}
+}
+
+sketch.onMouseDown = function(mouse){
+	sketch.download();
 }
 
 </script>
