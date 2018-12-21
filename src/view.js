@@ -50,6 +50,17 @@ export default function View() {
 	const appendChild = function(element) {
 		_svg.appendChild(element);
 	}
+	const removeChildren = function(group) {
+		// serves 2 functions:
+		// removeChildren() will remove all children from this SVG.
+		// removeChildren(group) will remove children from *group*
+		if(group == null) {
+			group = _svg;
+		}
+		while (group.lastChild) {
+			group.removeChild(group.lastChild);
+		}
+	}
 	const download = function(filename = "image.svg") {
 		return SVG.download(_svg, filename);
 	}
@@ -75,11 +86,11 @@ export default function View() {
 
 	// not exported
 	const getWidth = function() {
-		let w = _svg.getAttributeNS(null, "width");
+		let w = parseInt(_svg.getAttributeNS(null, "width"));
 		return w != null ? w : _svg.getBoundingClientRect().width;
 	}
 	const getHeight = function() {
-		let h = _svg.getAttributeNS(null, "height");
+		let h = parseInt(_svg.getAttributeNS(null, "height"));
 		return h != null ? h : _svg.getBoundingClientRect().height;
 	}
 
@@ -109,7 +120,6 @@ export default function View() {
 		else if(_svg.getAttribute("viewBox") == null) {
 			// set a viewBox if viewBox doesn't yet exist
 			let rect = _svg.getBoundingClientRect();
-			console.log(rect);
 			SVG.setViewBox(_svg, 0, 0, rect.width, rect.height);
 		}
 
@@ -176,7 +186,7 @@ export default function View() {
 
 	// return Object.freeze({
 	return {
-		zoom, translate, appendChild,
+		zoom, translate, appendChild, removeChildren,
 		load, download,
 		setViewBox, getViewBox, size,
 		get scale() { return _scale; },

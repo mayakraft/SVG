@@ -5,8 +5,8 @@ module.exports = {
 	output: {
 		name: 'SVG',
 		file: 'svg.js',
-		format: 'umd',
-		// format: 'es',
+		format: 'umd',    // for standalone <script src="">
+		// format: 'es',  // for including in other modules
 		banner: "/* SVG (c) Robby Kraft, MIT License */"
 	},
 	plugins: [

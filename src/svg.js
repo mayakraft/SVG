@@ -84,39 +84,15 @@ export function text(textString, x, y, className, id, parent) {
 }
 
 export function wedge(x, y, radius, startAngle, endAngle, className, id, parent){
-	let vecStart = [
-		Math.cos(startAngle) * radius,
-		Math.sin(startAngle) * radius ];
-	let vecEnd = [
-		Math.cos(endAngle) * radius,
-		Math.sin(endAngle) * radius ];
-	var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
-	var arcdir = Math.atan2(vecStart[0]*vecEnd[1] - vecStart[1]*vecEnd[0], vecStart[0]*vecEnd[0] + vecStart[1]*vecEnd[1]) > 0 ? 0 : 1;
-	let d = "M " + x + "," + y + " l " + vecStart[0] + "," + vecStart[1] + " ";
-	d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
-	d += " Z";
 	let shape = document.createElementNS(svgNS, "path");
-	shape.setAttributeNS(null, "d", d);
+	setArc(shape, x, y, radius, startAngle, endAngle, true);
 	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
 
 export function arc(x, y, radius, startAngle, endAngle, className, id, parent){
-	let start = [
-		x + Math.cos(startAngle) * radius,
-		y + Math.sin(startAngle) * radius ];
-	let vecStart = [
-		Math.cos(startAngle) * radius,
-		Math.sin(startAngle) * radius ];
-	let vecEnd = [
-		Math.cos(endAngle) * radius,
-		Math.sin(endAngle) * radius ];
-	var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
-	var arcdir = Math.atan2(vecStart[0]*vecEnd[1] - vecStart[1]*vecEnd[0], vecStart[0]*vecEnd[0] + vecStart[1]*vecEnd[1]) > 0 ? 0 : 1;
-	let d = "M " + start[0] + "," + start[1] + " ";
-	d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
 	let shape = document.createElementNS(svgNS, "path");
-	shape.setAttributeNS(null, "d", d);
+	setArc(shape, x, y, radius, startAngle, endAngle, false);
 	setClassIdParent(shape, className, id, parent);
 	return shape;
 }
@@ -133,9 +109,9 @@ export function regularPolygon(cX, cY, radius, sides, className, id, parent){
 	let r = Math.cos(halfwedge) * radius;
 	let points = Array.from(Array(sides))
 		.map((_,i) => {
-			var a = -2 * Math.PI * i / sides + halfwedge;
-			var x = cX + r * Math.sin(a);
-			var y = cY + r * Math.cos(a);
+			let a = -2 * Math.PI * i / sides + halfwedge;
+			let x = cX + r * Math.sin(a);
+			let y = cY + r * Math.cos(a);
 			return [x, y];
 		});
 	return polygon(points, className, id, parent);
@@ -183,6 +159,27 @@ export function setPoints(polygon, pointsArray){
 	)).reduce((prev, curr) => prev + curr[0] + "," + curr[1] + " ", "");
 	polygon.setAttributeNS(null, "points", pointsString);
 }
+
+export function setArc(shape, x, y, radius, startAngle, endAngle, includeCenter = false){
+	let start = [
+		x + Math.cos(startAngle) * radius,
+		y + Math.sin(startAngle) * radius ];
+	let vecStart = [
+		Math.cos(startAngle) * radius,
+		Math.sin(startAngle) * radius ];
+	let vecEnd = [
+		Math.cos(endAngle) * radius,
+		Math.sin(endAngle) * radius ];
+	let arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
+	let arcdir = Math.atan2(vecStart[0]*vecEnd[1] - vecStart[1]*vecEnd[0], vecStart[0]*vecEnd[0] + vecStart[1]*vecEnd[1]) > 0 ? 0 : 1;
+	let d = includeCenter 
+		? "M " + x + "," + y + " l " + vecStart[0] + "," + vecStart[1] + " "
+		: "M " + start[0] + "," + start[1] + " ";
+	d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
+	if(includeCenter){ d += " Z"; }
+	shape.setAttributeNS(null, "d", d);
+}
+
 
 /**
  * element modifiers
@@ -298,17 +295,17 @@ export function convertToViewBox(svg, x, y) {
 	pt.x = x;
 	pt.y = y;
 	let svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
-	var array = [svgPoint.x, svgPoint.y];
+	let array = [svgPoint.x, svgPoint.y];
 	array.x = svgPoint.x;
 	array.y = svgPoint.y;
 	return array;
 }
 
 export function download(svg, filename = "image.svg"){
-	var a = document.createElement('a');
-	var source = (new window.XMLSerializer()).serializeToString(svg);
+	let a = document.createElement('a');
+	let source = (new window.XMLSerializer()).serializeToString(svg);
 	let formatted = vkbeautify.xml(source);
-	var blob = new Blob([formatted], {type: 'text/plain'});
+	let blob = new Blob([formatted], {type: 'text/plain'});
 	a.setAttribute('href', window.URL.createObjectURL(blob));
 	a.setAttribute('download', filename);
 	a.click();	
@@ -320,10 +317,10 @@ const parserErrorNS = (new window.DOMParser())
 	.namespaceURI;
 
 function parseCSSText(styleContent) {
-	var styleElement = document.createElement("style");
+	let styleElement = document.createElement("style");
 	styleElement.textContent = styleContent;
 	document.body.appendChild(styleElement);
-	var rules = styleElement.sheet.cssRules;
+	let rules = styleElement.sheet.cssRules;
 	document.body.removeChild(styleElement);
 	return rules;
 }
@@ -334,7 +331,7 @@ export function load(input, callback){
 	// "input" is a (1) raw text encoding of the svg (2) filename (3) already parsed DOM element
 	if (typeof input === "string" || input instanceof String){
 		// (1) raw text encoding
-		var xml = (new window.DOMParser()).parseFromString(input, 'text/xml');
+		let xml = (new window.DOMParser()).parseFromString(input, 'text/xml');
 		if(xml.getElementsByTagNameNS(parserErrorNS, 'parsererror').length === 0) {
 			if(callback != null){
 				callback(xml);
@@ -346,13 +343,13 @@ export function load(input, callback){
 			.then(response => response.text())
 			.then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
 			.then(svgData => {
-				var cssStyle, styleTag = svgData.getElementsByTagName('style')[0];
+				let cssStyle, styleTag = svgData.getElementsByTagName('style')[0];
 				if(styleTag != null
 					&& styleTag.childNodes != null
 					&& styleTag.childNodes.length > 0) {
 					cssStyle = parseCSSText( styleTag.childNodes[0].nodeValue );
 				}
-				var allSVGs = svgData.getElementsByTagName('svg');
+				let allSVGs = svgData.getElementsByTagName('svg');
 				if(allSVGs == null || allSVGs.length == 0) {
 					throw "error, the svg parser found valid XML but couldn't find an SVG element";
 				}

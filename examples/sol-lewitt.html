@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<title>SVG example: Sol Lewitt</title>
+<style>
+html,body{height:100%;}
+body{
+	margin:0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.pen{
+	stroke:white;
+	fill:none;
+	stroke-width:2px;
+}
+</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+
+let canvasW = 0.875 * Math.min(window.innerWidth, window.innerHeight);
+let view = SVG.View(canvasW, canvasW);
+let rect = SVG.rect(0, 0, canvasW, canvasW);
+rect.setAttribute("fill", "black");
+view.appendChild(rect);
+
+const count = 16;
+let pad = canvasW * 0.1;
+let unit = (canvasW - pad*2) / count;
+for(var i = 0; i < count; i++){
+	for(var j = 0; j < count; j++){
+		let rotate = Math.floor(Math.random()*4);
+		let o, a;
+		switch(rotate){
+			case 0: o = [pad+i*unit, pad+j*unit]; a = [0, Math.PI/2]; break;
+			case 1: o = [pad+i*unit, pad+(j+1)*unit]; a = [Math.PI/2*3, Math.PI*2]; break;
+			case 2: o = [pad+(i+1)*unit, pad+(j+1)*unit]; a = [Math.PI, Math.PI/2*3]; break;
+			default: o = [pad+(i+1)*unit, pad+j*unit]; a = [Math.PI/2, Math.PI]; break;
+		}
+		let arc = SVG.arc(o[0], o[1], unit, a[0], a[1], "pen", null, view);
+		a.map(angle => SVG.line(o[0], o[1], o[0]+unit*Math.cos(angle), o[1]+unit*Math.sin(angle), "pen", null, view))
+	}
+}
+
+</script>
