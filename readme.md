@@ -2,15 +2,50 @@
 
 a simple creative coding Javascript module to make SVG interactive and a little bit more accessible.
 
-# Features
-
-create a `View()` object, think of it like an SVG. it *contains* the SVG, but also comes with event handlers and convenience functions.
+## View
 
 ```
 let sketch = SVG.View()
 ```
 
-## View() constructors
+This is the `View()` object. Treat it like the SVG itself. It *contains* the SVG, but also comes with event handlers and convenience functions.
+
+## View methods / properties
+
+* `svg` the svg element
+* `width`, `height` size of the image (viewbox)
+
+append and remove children 
+
+* `appendChild(node)`
+* `removeChildren(node)`
+
+import/export
+
+* `load(file)`
+* `download()`
+
+dimensions
+
+* `size(width, height)`
+* `setViewBox(x, y, width, height)`
+* `getViewBox()`
+
+think of the View() object as the svg:
+
+```javascript
+sketch.appendChild(line);
+// is the same as
+sketch.svg.appendChild(line);
+```
+
+```javascript
+sketch.download();
+// is the same as
+SVG.download(sketch.svg);
+```
+
+## View constructors
 
 * `id` *string* the name of DOM object-the SVG will be appended as a child. otherwise, the SVG will be appended to the body.
 
@@ -29,6 +64,8 @@ let sketch = SVG.View(window.innerWidth, window.innerHeight);
 ```javascript
 let sketch = SVG.View("introduction", 500, 300);
 ```
+
+![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/vera.svg)
 
 ## Drawing primitives
 
@@ -99,8 +136,6 @@ It's possible to download the current state of the SVG, or load from file.
 
 * `download(svg, filename)`
 * `load(input, callback)`
-
-![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/vera.svg)
 
 # Usage
 

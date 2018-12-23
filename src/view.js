@@ -1,10 +1,8 @@
-/** svg file viewer
+/** interactive svg file viewer
  * converts .fold file into SVG, binds it to the DOM
  * @param: (constructor) a DOM object or "string" DOM id
  *  and this will bind the SVG to it.
  */
-
-"use strict";
 
 import * as SVG from "./svg";
 

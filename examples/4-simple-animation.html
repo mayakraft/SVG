@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<title></title>
+<style>body{margin:0}</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+
+let walker = SVG.View(window.innerWidth, window.innerHeight);
+
+(function(){
+	walker.polyline = SVG.polyline();
+	walker.polyline.setAttribute("style", "fill:none; stroke:black;");
+	walker.appendChild(walker.polyline);
+
+	walker.x = window.innerWidth*0.5;
+	walker.y = window.innerHeight*0.5;
+	walker.points = [];
+})()
+
+walker.animate = function(event){
+	walker.x += Math.random()*20 - 10;
+	walker.y += Math.random()*20 - 10;
+	walker.points.push([walker.x, walker.y]);
+	SVG.setPoints(walker.polyline, walker.points);
+}
+
+</script>

@@ -22,33 +22,39 @@ svg{
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
-let view = SVG.View(600, 1030);
-let rect = SVG.rect(0, 0, view.width, view.height);
-rect.setAttribute("fill", "white");
-view.appendChild(rect);
+let nees = SVG.View(600, 1030);
 
-const countW = 12;
-const countH = 22;
+nees.draw = function(){
+	const countW = 12;
+	const countH = 22;
+	let unit = 600 / (countW + 2);
 
-let unit = 600 / (countW + 2);
-for(var h = 0; h < countH; h++){
-	for(var w = 0; w < countW; w++){
-		let origin = [1.5*unit + w*unit, 1.5*unit + h*unit];
-		let angle = (Math.random()-0.5)*h * 5;
-		let trans = [
-			(Math.random()-0.5)*h * 2,
-			(Math.random()-0.5)*h * 2
-		];
-		let rect = SVG.rect(-0.5*unit, -0.5*unit, unit, unit, "box");
-		let translate = "translate(" + (origin[0] + trans[0]) + "," + (origin[1] + trans[1]) + ")";
-		let rotate = "rotate(" + parseInt(angle) + ")";
-		rect.setAttribute("transform", translate + " " + rotate);
-		view.appendChild(rect);
+	nees.removeChildren();
+
+	let rect = SVG.rect(0, 0, nees.width, nees.height);
+	rect.setAttribute("fill", "white");
+	nees.appendChild(rect);
+
+	for(var h = 0; h < countH; h++){
+		for(var w = 0; w < countW; w++){
+			let origin = [1.5*unit + w*unit, 1.5*unit + h*unit];
+			let angle = (Math.random()-0.5)*h * 5;
+			let trans = [
+				(Math.random()-0.5)*h * 2,
+				(Math.random()-0.5)*h * 2
+			];
+			let rect = SVG.rect(-0.5*unit, -0.5*unit, unit, unit, "box");
+			let translate = "translate(" + (origin[0] + trans[0]) + "," + (origin[1] + trans[1]) + ")";
+			let rotate = "rotate(" + parseInt(angle) + ")";
+			rect.setAttribute("transform", translate + " " + rotate);
+			nees.appendChild(rect);
+		}
 	}
 }
+nees.draw();
 
-sketch.onMouseDown = function(mouse){
-	sketch.download();
+nees.onMouseDown = function(mouse){
+	nees.draw();
 }
 
 </script>

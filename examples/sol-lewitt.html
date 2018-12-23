@@ -18,31 +18,111 @@ body{
 <script>
 
 let canvasW = 0.875 * Math.min(window.innerWidth, window.innerHeight);
-let view = SVG.View(canvasW, canvasW);
-let rect = SVG.rect(0, 0, canvasW, canvasW);
-rect.setAttribute("fill", "black");
-view.appendChild(rect);
+// let canvasW = 800;
+let sol = SVG.View("sol-lewitt", canvasW, canvasW);
 
-const count = 16;
-let pad = canvasW * 0.1;
-let unit = (canvasW - pad*2) / count;
-for(var i = 0; i < count; i++){
-	for(var j = 0; j < count; j++){
-		let rotate = Math.floor(Math.random()*4);
-		let o, a;
-		switch(rotate){
-			case 0: o = [pad+i*unit, pad+j*unit]; a = [0, Math.PI/2]; break;
-			case 1: o = [pad+i*unit, pad+(j+1)*unit]; a = [Math.PI/2*3, Math.PI*2]; break;
-			case 2: o = [pad+(i+1)*unit, pad+(j+1)*unit]; a = [Math.PI, Math.PI/2*3]; break;
-			default: o = [pad+(i+1)*unit, pad+j*unit]; a = [Math.PI/2, Math.PI]; break;
-		}
-		let arc = SVG.arc(o[0], o[1], unit, a[0], a[1], "pen", null, view);
-		a.map(angle => SVG.line(o[0], o[1], o[0]+unit*Math.cos(angle), o[1]+unit*Math.sin(angle), "pen", null, view))
+sol.setup = function(){
+	const count = 16;
+
+	sol.pad = canvasW * 0.1;
+	sol.unit = (canvasW - sol.pad*2) / count;
+
+	sol.removeChildren();
+	let rect = SVG.rect(0, 0, canvasW, canvasW);
+	rect.setAttribute("fill", "black");
+	sol.appendChild(rect);
+
+	sol.cells = Array.from(Array(count))
+		.map((_,r) => Array.from(Array(count)).map((_,c) => ({
+			x: sol.pad+c*sol.unit, y: sol.pad+r*sol.unit, w: sol.unit, h: sol.unit,
+			r: Math.floor(Math.random()*4),
+			arc: SVG.arc(0, 0, 0, 0, 0, null, null, sol),
+			lines: [
+				SVG.line(0, 0, 0, 0, null, null, sol),
+				SVG.line(0, 0, 0, 0, null, null, sol)
+			],
+			move: 0
+		})));
+	sol.cells.forEach(c => c.forEach(cell => {
+		cell.arc.setAttribute("stroke", "white");
+		cell.arc.setAttribute("fill", "none");
+		cell.arc.setAttribute("stroke-width", "2px");
+		cell.lines.forEach(l => {
+			l.setAttribute("stroke", "white");
+			l.setAttribute("stroke-width", "2px");
+		})
+	}));
+	// layout entire slide
+	sol.layout(true);
+}
+
+sol.layout = function(all = false){
+	let subset = all 
+		? sol.cells
+		: sol.cells.map((columns, col) => columns.filter(cell => cell.move != 0));
+
+	subset.forEach((columns) => {
+		columns.forEach((cell) => {
+			let pct = cell.r - Math.floor(cell.r);
+			let xp = parseInt(((cell.r+1)/2)%2);
+			let yp = parseInt((cell.r/2)%2);
+			if(cell.move != 0){
+				if     (cell.r < 1){ xp += pct; }
+				else if(cell.r < 2){ yp += pct; }
+				else if(cell.r < 3){ xp -= pct; }
+				else if(cell.r < 4){ yp -= pct; }
+			} 
+			let arcX = cell.x + cell.w * xp;
+			let arcY = cell.y + cell.h * yp;
+			let arcA = [Math.PI/2 * cell.r, Math.PI/2 * (cell.r+1)];
+			SVG.setArc(cell.arc, arcX, arcY, sol.unit, arcA[0], arcA[1]);
+			arcA.map((angle,i) => {
+				cell.lines[i].setAttribute("x1", arcX);
+				cell.lines[i].setAttribute("y1", arcY);
+				cell.lines[i].setAttribute("x2", arcX+sol.unit*Math.cos(angle));
+				cell.lines[i].setAttribute("y2", arcY+sol.unit*Math.sin(angle));
+			});
+		});
+	});
+}
+
+sol.onMouseMove = function(mouse){
+	let col = Math.floor((mouse.x - sol.pad) / sol.unit);
+	let row = Math.floor((mouse.y - sol.pad) / sol.unit);
+	if(col >= 0 && row >= 0 
+		&& row < sol.cells.length 
+		&& col < sol.cells[row].length 
+		&& sol.cells[row][col].move == 0)
+	{
+		// sol.cells[row][col].move = Math.random() < 0.5 ? 1 : -1;
+		sol.cells[row][col].move = Math.random() < 0.5 ? 1 : 1;
 	}
 }
 
-sketch.onMouseDown = function(mouse){
-	sketch.download();
+sol.animate = function(event){
+	sol.cells.forEach((columns, col) => 
+		columns.filter(cell => cell.move != 0)
+			.forEach(cell => {
+				let whole = (cell.move === 1) ? Math.floor(cell.r) : Math.ceil(cell.r);
+				cell.r += 0.025 * cell.move;
+				let newWhole = (cell.move === 1) ? Math.floor(cell.r) : Math.ceil(cell.r);
+				if(newWhole != whole){
+					cell.r = (cell.move === 1) ? newWhole : newWhole;
+					cell.move = 999;
+				}
+				if(cell.r < 0){ cell.r += 4; }
+				if(cell.r >= 4){ cell.r -= 4; }
+			})
+	)
+	sol.layout();
+	sol.cells.forEach((columns, col) => 
+		columns.filter(cell => cell.move === 999)
+			.forEach(cell => {
+				cell.move = 0;
+			})
+	);
 }
+
+sol.setup();
 
 </script>

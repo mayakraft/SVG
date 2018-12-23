@@ -1,18 +1,13 @@
-// create multiple canvases
-let sketches = [
-	SVG.View(window.innerWidth, window.innerHeight / 3, "canvas-1"),
-	SVG.View(window.innerWidth, window.innerHeight / 3, "canvas-2"),
-	SVG.View(window.innerWidth, window.innerHeight / 3, "canvas-3")
-];
-let colors = ["#fff", "#888", "#000"];
+function Drawing(){
+	let sketch = SVG.View(...arguments);
+	sketch.color = "#000000";
 
-sketches.forEach((sketch, i) => {
 	sketch.drawingLayer = SVG.group(undefined, "drawing");
 	sketch.svg.appendChild(sketch.drawingLayer);
 
 	sketch.onMouseEnter = function(mouse){
 		sketch.brushPoly = SVG.polygon();
-		sketch.brushPoly.setAttribute("style", "stroke:black;fill:" + colors[i]);
+		sketch.brushPoly.setAttribute("style", "stroke:black; fill:" + sketch.color);
 		sketch.drawingLayer.appendChild(sketch.brushPoly);
 		sketch.points = [];
 		sketch.prev = mouse;
@@ -20,8 +15,8 @@ sketches.forEach((sketch, i) => {
 
 	sketch.onMouseMove = function(mouse){
 		let vector = [mouse.x - sketch.prev.x, mouse.y - sketch.prev.y];
-		var sideA = [mouse.x + -vector[1]*1, mouse.y + vector[0]*1];
-		var sideB = [mouse.x + vector[1]*1, mouse.y + -vector[0]*1];
+		var sideA = [mouse.x + -vector[1]*0.2, mouse.y + vector[0]*0.2];
+		var sideB = [mouse.x + vector[1]*0.2, mouse.y + -vector[0]*0.2];
 
 		sketch.points.unshift(sideA);
 		sketch.points.push(sideB);
@@ -29,4 +24,6 @@ sketches.forEach((sketch, i) => {
 
 		sketch.prev = mouse;
 	}
-})
+
+	return sketch;
+}

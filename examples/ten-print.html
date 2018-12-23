@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<title>SVG example: 10PRINT</title>
+<style>
+body{ margin:0; }
+</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+let tenPrint = SVG.View(window.innerWidth, window.innerHeight, "ten-print");
+// window
+let w = tenPrint.width, h = tenPrint.height;
+// character size. commodore 64 window contains 40x25 characters
+let s = w / 40, strokeWidth = parseInt(w / 150);
+// text pointer
+let x = 0, y = 0, yt = 0
+// setup layers
+let back = SVG.rect(0,0,w,h,null,null,tenPrint);
+back.setAttribute("fill", "#332698");
+let layer = SVG.group(null, null, tenPrint);
+let rows = [SVG.group(null, null, layer)]
+// draw a slash
+function slash(forward){
+	let slash = forward
+		? SVG.line(x, y+s, x+s, y)
+		: SVG.line(x, y, x+s, y+s);
+	slash.setAttribute("stroke", "#7164d3");
+	slash.setAttribute("stroke-width", strokeWidth);
+	slash.setAttribute("stroke-linecap","round");
+	return slash;
+}
+tenPrint.animate = function(){
+	let row = rows[rows.length-1];
+	// 10 PRINT CHR$(205.5+RND(1)); : GOTO 10
+	row.appendChild(slash(Math.random()-0.5>0));
+	x+=s;
+	if(x>w){
+		x=0;
+		y+=s;
+		rows.push(SVG.group(null, null, layer));
+	}
+	// scroll page
+	if(y >= h+yt){ 
+		yt+=s;
+		layer.setAttribute("transform","translate(0,-"+yt+")");
+		layer.removeChild(rows[0]);
+		rows.shift();
+	}
+}
+</script>

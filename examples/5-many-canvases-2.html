@@ -1,30 +1,26 @@
 <!DOCTYPE html>
-<title>SVG example: multiple canvases</title>
+<title>SVG example: many canvases</title>
 <style>
 svg{
 	width:100%;
 	height:100%;
 }
-.row{
-	display:flex;
-	flex-direction: row;
-}
-.row div{
-	margin:0 1rem;
-}
-.full-width-row{
-	height:10rem;
-}
-.column-lg{ flex:2; }
-.column-sm{ flex:1; }
 .canvas{
 	border-color: black;
 	border-width: 1px;
 	border-style: solid;
 }
+.row{
+	display:flex;
+	flex-direction: row;
+}
+.row div{ margin:0 1rem; }
+.full-width-row{ height:10rem; }
+.column-lg{ flex:2; }
+.column-sm{ flex:1; }
 </style>
 <body>
-<h1>Page Header</h1>
+<h1>The quick brown fox</h1>
 <div class="row">
 	<div class="column-lg">
 		<p>The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex! Fox nymphs grab quick-jived waltz. Brick quiz whangs jumpy veldt fox. Bright vixens jump; dozy fowl quack.</p>
@@ -41,7 +37,7 @@ svg{
 		<h4 class="touch-coordinates" id="coordinates-2"></h4>
 	</div>
 </div>
-<h1>Section Header</h1>
+<h1>Five quacking zephyrs</h1>
 <div id="canvas-3" class="canvas full-width-row"></div>
 <div class="row">
 	<div class="column-lg">
@@ -52,7 +48,16 @@ svg{
 </body>
 
 <script type="text/javascript" src="../svg.js"></script>
-<script type="text/javascript" src="multiple.js"></script>
+<script type="text/javascript" src="drawing.js"></script>
+<script>
+
+let sketches = ["#fff", "#aaa", "#333"].map((c,i) => {
+	let d = Drawing(window.innerWidth, window.innerHeight / 3, "canvas-"+(i+1));
+	d.color = c;
+	return d;
+});
+
+</script>
 <script>
 var headers = ["coordinates-1", "coordinates-2", "coordinates-3"];
 document.onmousemove = function(event){
@@ -67,7 +72,7 @@ document.onmousemove = function(event){
 		let inside = svgX > 0 && svgY > 0 && svgX < viewRect.width && svgY < viewRect.height;
 		let insideString = inside 
 			? "<span style='color:green'>inside</span>"
-			: "<span style='color:red'>not inside</span>";
+			: "<span style='color:red'>outside</span>";
 		document.getElementById(headers[i]).innerHTML = pageCoords + "<br>" + viewCoords + "<br>" + insideString;
 	});
 }

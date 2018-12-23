@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<title>SVG example: many canvases</title>
+<style>
+body{ margin:0; }
+</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script type="text/javascript" src="drawing.js"></script>
+<script>
+
+["#fff", "#aaa", "#333"].forEach((c,i) => {
+	let d = Drawing(window.innerWidth, window.innerHeight / 3, "canvas-"+i);
+	d.color = c;
+	return d;
+});
+
+</script>
