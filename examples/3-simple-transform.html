@@ -4,7 +4,7 @@
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
-let sketch = SVG.View(window.innerWidth, window.innerHeight);
+let sketch = SVG.Image(window.innerWidth, window.innerHeight);
 
 let cX = window.innerWidth*0.5;
 let cY = window.innerHeight*0.5;
@@ -24,6 +24,6 @@ for(; radius > 20; radius -= 2){
 }
 
 sketch.onMouseDown = function(mouse){
-	sketch.download();
+	sketch.save();
 }
 </script>

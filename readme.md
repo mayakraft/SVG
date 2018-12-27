@@ -2,15 +2,15 @@
 
 a simple creative coding Javascript module to make SVG interactive and a little bit more accessible.
 
-## View
+## Image
 
 ```
-let sketch = SVG.View()
+let sketch = SVG.Image()
 ```
 
-This is the `View()` object. Treat it like the SVG itself. It *contains* the SVG, but also comes with event handlers and convenience functions.
+This is the `Image()` object. Treat it like the SVG itself. It *contains* the SVG, but also comes with methods and event handlers.
 
-## View methods / properties
+## Image methods / properties
 
 * `svg` the svg element
 * `width`, `height` size of the image (viewbox)
@@ -23,7 +23,7 @@ append and remove children
 import/export
 
 * `load(file)`
-* `download()`
+* `save()`
 
 dimensions
 
@@ -31,7 +31,7 @@ dimensions
 * `setViewBox(x, y, width, height)`
 * `getViewBox()`
 
-think of the View() object as the svg:
+think of the Image() object as the svg:
 
 ```javascript
 sketch.appendChild(line);
@@ -40,12 +40,12 @@ sketch.svg.appendChild(line);
 ```
 
 ```javascript
-sketch.download();
+sketch.save();
 // is the same as
-SVG.download(sketch.svg);
+SVG.save(sketch.svg);
 ```
 
-## View constructors
+## Image constructors
 
 * `id` *string* the name of DOM object-the SVG will be appended as a child. otherwise, the SVG will be appended to the body.
 
@@ -54,7 +54,7 @@ SVG.download(sketch.svg);
 **example** full-screen svg:
 
 ```javascript
-let sketch = SVG.View(window.innerWidth, window.innerHeight);
+let sketch = SVG.Image(window.innerWidth, window.innerHeight);
 ```
 
 **example** 500px by 300px width/height svg, appended as a child to the element with id="introduction":
@@ -62,7 +62,7 @@ let sketch = SVG.View(window.innerWidth, window.innerHeight);
 *it's implied that width comes before height, otherwise these can be in any order.*
 
 ```javascript
-let sketch = SVG.View("introduction", 500, 300);
+let sketch = SVG.Image("introduction", 500, 300);
 ```
 
 ![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/vera.svg)
@@ -82,7 +82,7 @@ The drawing primitives are a growing list that includes:
 * `text (textString, x, y)`
 * `regularPolygon (cX, cY, radius, sides)`
 
-It's possible to `download()` and `load("filename.svg")` svg files to and from the View.
+It's possible to `save()` and `load("filename.svg")` svg files to and from the Image.
 
 All of these primitives end with an optional 3 parameters:
 
@@ -121,7 +121,7 @@ setArc(shape, x, y, radius, startAngle, endAngle, includeCenter)
 You're able to implement any of the following optional mouse handlers.
 
 ```javascript
-let sketch = SVG.View(window.innerWidth, window.innerHeight);
+let sketch = SVG.Image(window.innerWidth, window.innerHeight);
 
 sketch.onMouseMove = function(mouse) {}
 sketch.onMouseDown = function(mouse) {}
@@ -132,9 +132,9 @@ sketch.onMouseEnter = function(mouse) {}
 
 ## Import / Export
 
-It's possible to download the current state of the SVG, or load from file.
+It's possible to save the current state of the SVG, or load from file.
 
-* `download(svg, filename)`
+* `save(svg, filename)`
 * `load(input, callback)`
 
 # Usage
@@ -154,6 +154,6 @@ circle.setAttribute("fill", "red");  // using builtin setAttribute
 sketch.appendChild(circle);
 ```
 
-Nothing is overloaded, this library depends on conventional SVG, CSS, and HTML commands. *circle* is nothing more than a SVG circle object. It's possible to call familiar HTML DOM object methods on these, as is happening with `appendChild`. And the attributes being set are simply SVG-spec attributes.
+Nothing is overloaded, this library depends on conventional SVG, CSS, and HTML commands. *circle* is nothing more than a SVG circle object. It's possible to call familiar HTML DOM object methods on these, as is happening with `appendChild`. And the attributes being set are simply SVG CSS style attributes.
 
 ![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/dragon.svg)

@@ -1,5 +1,5 @@
 function Drawing(){
-	let sketch = SVG.View(...arguments);
+	let sketch = SVG.Image(...arguments);
 	sketch.color = "#000000";
 
 	sketch.drawingLayer = SVG.group(undefined, "drawing");

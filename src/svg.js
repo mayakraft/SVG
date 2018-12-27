@@ -301,7 +301,7 @@ export function convertToViewBox(svg, x, y) {
 	return array;
 }
 
-export function download(svg, filename = "image.svg"){
+export function save(svg, filename = "image.svg"){
 	let a = document.createElement('a');
 	let source = (new window.XMLSerializer()).serializeToString(svg);
 	let formatted = vkbeautify.xml(source);
@@ -333,10 +333,11 @@ export function load(input, callback){
 		// (1) raw text encoding
 		let xml = (new window.DOMParser()).parseFromString(input, 'text/xml');
 		if(xml.getElementsByTagNameNS(parserErrorNS, 'parsererror').length === 0) {
+			let svg = xml.documentElement;
 			if(callback != null){
-				callback(xml);
+				callback(svg);
 			}
-			return xml;
+			return svg;
 		}
 		// (2) filename
 		fetch(input)

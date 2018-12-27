@@ -15,7 +15,7 @@ button{
 <script>
 
 // create the view, which creates an svg and adds it to the document
-let sketch = SVG.View(window.innerWidth, window.innerHeight);
+let sketch = SVG.Image(window.innerWidth, window.innerHeight);
 let prev, color = 0;
 
 sketch.onMouseMove = function(mouse){
@@ -36,6 +36,6 @@ sketch.onMouseLeave = function(mouse){
 	prev = undefined;
 }
 document.getElementById("download-button").onclick = function(event){
-	sketch.download();
+	sketch.save();
 }
 </script>
