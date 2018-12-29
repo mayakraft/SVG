@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<title>SVG example: 10PRINT</title>
+<style>
+html, body{
+	margin: 0;
+	height: 100%;
+	background-color: black;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+
+let flag = SVG.Image(600, 400);
+
+let rect = SVG.rect(0, 0, flag.width, flag.height);
+rect.setAttribute("fill", "white");
+flag.appendChild(rect);
+
+let circle = SVG.circle(flag.width/2, flag.height/2, flag.height*0.3);
+circle.setAttribute("fill", "#BC002D");
+flag.appendChild(circle);
+
+</script>

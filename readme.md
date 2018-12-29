@@ -1,159 +1,177 @@
 # SVG
 
-a simple creative coding Javascript module to make SVG interactive and a little bit more accessible.
+A simple creative coding Javascript library to make SVG interactive and a little bit more accessible
 
-## Image
+# Usage
 
+Include svg.js in your project
+
+```html
+<script src="svg.js"></script>
 ```
-let sketch = SVG.Image()
-```
 
-This is the `Image()` object. Treat it like the SVG itself. It *contains* the SVG, but also comes with methods and event handlers.
+Read [this introduction blog post](https://blog.rabbitear.org/2018/12/29/svg/) and see the `examples/` folder included in this project to get started.
 
-## Image methods / properties
-
-* `svg` the svg element
-* `width`, `height` size of the image (viewbox)
-
-append and remove children 
-
-* `appendChild(node)`
-* `removeChildren(node)`
-
-import/export
-
-* `load(file)`
-* `save()`
-
-dimensions
-
-* `size(width, height)`
-* `setViewBox(x, y, width, height)`
-* `getViewBox()`
-
-think of the Image() object as the svg:
+The following code draws the Japanese flag:
 
 ```javascript
-sketch.appendChild(line);
-// is the same as
-sketch.svg.appendChild(line);
+let flag = SVG.Image(600, 400);
+let rect = SVG.rect(0, 0, flag.width, flag.height);
+let circle = SVG.circle(flag.width/2, flag.height/2, flag.height*0.3);
+
+rect.setAttribute("fill", "white");
+circle.setAttribute("fill", "#BC002D");
+
+flag.appendChild(rect);
+flag.appendChild(circle);
 ```
 
+# Methods
+
+create an SVG. create a group (a container, like *layers* in Photoshop)
+
 ```javascript
-sketch.save();
-// is the same as
-SVG.save(sketch.svg);
+svg(className, id, parent)
+group(className, id, parent)
 ```
 
-## Image constructors
-
-* `id` *string* the name of DOM object-the SVG will be appended as a child. otherwise, the SVG will be appended to the body.
-
-* `width` `height` *number* if you supply a pair of numbers, these define the canvas size.
-
-**example** full-screen svg:
+save or load an SVG
 
 ```javascript
-let sketch = SVG.Image(window.innerWidth, window.innerHeight);
+save(svg, filename = "image.svg")
+load(input, callback)
 ```
 
-**example** 500px by 300px width/height svg, appended as a child to the element with id="introduction":
-
-*it's implied that width comes before height, otherwise these can be in any order.*
+geometry primitives
 
 ```javascript
-let sketch = SVG.Image("introduction", 500, 300);
+line(x1, y1, x2, y2, className, id, parent)
+circle(x, y, radius, className, id, parent)
+rect(x, y, width, height, className, id, parent)
+polygon(pointsArray, className, id, parent)
+polyline(pointsArray, className, id, parent)
+bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY, className, id, parent)
+text(textString, x, y, className, id, parent)
+wedge(x, y, radius, startAngle, endAngle, className, id, parent)
+arc(x, y, radius, startAngle, endAngle, className, id, parent)
+curve(fromX, fromY, midX, midY, toX, toY, className, id)
+regularPolygon(cX, cY, radius, sides, className, id, parent)
+```
+
+update geometry for polygon/polyline or arc/wedge
+
+```javascript
+setPoints(polygon, pointsArray)
+setArc(shape, x, y, radius, startAngle, endAngle, includeCenter = false)
+```
+
+class/id convenience methods
+
+```javascript
+addClass(xmlNode, newClass)
+removeClass(xmlNode, newClass)
+setId(xmlNode, newID)
+```
+
+clear the contents of an SVG or a group
+
+```javascript
+removeChildren(group)
+```
+
+setDefaultViewBox matches viewBox to visible dimensions. getViewBox returns an array of 4 numbers
+
+```
+setViewBox(svg, x, y, width, height, padding = 0)
+setDefaultViewBox(svg)
+getViewBox(svg)
+```
+
+these alter the viewBox. no CSS transforms here.
+
+```
+scale(svg, scale, origin_x = 0, origin_y = 0)
+translate(svg, dx, dy)
 ```
 
 ![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/vera.svg)
 
-## Drawing primitives
+# the Image() object
 
-The drawing primitives are a growing list that includes:
+One Image() instance gives you an SVG with a bunch of convenience methods and event handlers. Optional initializers are 
 
-* `line (x1, y1, x2, y2)`
-* `circle (x, y, radius)`
-* `rect (x, y, width, height)`
-* `polygon (pointsArray)`
-* `polyline (pointsArray)`
-* `bezier (fromX, fromY, c1X, c1Y, c2X, c2, toX, toY)`
-* `arc (x, y, radius, startAngle, endAngle)`
-* `wedge (x, y, radius, startAngle, endAngle)`
-* `text (textString, x, y)`
-* `regularPolygon (cX, cY, radius, sides)`
-
-It's possible to `save()` and `load("filename.svg")` svg files to and from the Image.
-
-All of these primitives end with an optional 3 parameters:
-
-* className
-* id
-* parent node
-
-`circle (x, y, radius, className, id, parentNode)`
-
-abbreviate your code by turning these lines:
-
-```
-let c = circle (100, 50, 2);
-c.setAttribute("class", "fill-circle");
-sketch.appendChild(c);
-```
-
-into just one:
-
-```
-circle (100, 50, 2, "fill-circle", id, sketch);
-```
-
-## Update geometry once it's been created
-
-**setPoints** works on `polygon` and `polyline` objects:
-
-`setPoints(polygon, pointsArray)`
-
-**setArc** works on `arc` and `wedge` types (**path** objects):
-
-setArc(shape, x, y, radius, startAngle, endAngle, includeCenter)
-
-## Event handlers
-
-You're able to implement any of the following optional mouse handlers.
+* 2 numbers: width *then* height
+* string ID name, or DOM pointer to the parent element to append this SVG. otherwise the SVG will be appended to the body.
 
 ```javascript
-let sketch = SVG.Image(window.innerWidth, window.innerHeight);
-
-sketch.onMouseMove = function(mouse) {}
-sketch.onMouseDown = function(mouse) {}
-sketch.onMouseUp = function(mouse) {}
-sketch.onMouseLeave = function(mouse) {}
-sketch.onMouseEnter = function(mouse) {}
+let sketch = Image(640, 480, "parent-element");
 ```
 
-## Import / Export
-
-It's possible to save the current state of the SVG, or load from file.
-
-* `save(svg, filename)`
-* `load(input, callback)`
-
-# Usage
-
-See the `examples/` folder to get started.
-
-Everything is accessible under the `SVG` namespace. Include the script in the html file:
-
-```html
-<script type="text/javascript" src="svg.js"></script>
-```
-Drawing a shape might look something like:
+many of the methods are copied from greater SVG namespace, but often with fewer arguments as its implied that operations are performed on *this* SVG.
 
 ```javascript
-let circle = SVG.circle(100, 100, 50);
-circle.setAttribute("fill", "red");  // using builtin setAttribute
-sketch.appendChild(circle);
+load(data, callback)
+save(filename)
 ```
 
-Nothing is overloaded, this library depends on conventional SVG, CSS, and HTML commands. *circle* is nothing more than a SVG circle object. It's possible to call familiar HTML DOM object methods on these, as is happening with `appendChild`. And the attributes being set are simply SVG CSS style attributes.
+get or set the visible dimensions. not the viewBox
+
+```javascript
+width
+height
+```
+
+removeChildren can accept an optional *group* argument, otherwise it removes all children from this SVG.
+
+```javascript
+appendChild(node)
+removeChildren()
+```
+
+
+```javascript
+setViewBox(x, y, width, height)
+getViewBox()
+```
+
+a pointer to the actual DOM level SVG object
+
+```javascript
+svg
+```
+
+event handlers
+
+```javascript
+myImage.onMouseMove = function(mouse) { }
+myImage.onMouseDown = function(mouse) { }
+myImage.onMouseUp = function(mouse) { }
+myImage.onMouseLeave = function(mouse) { }
+myImage.onMouseEnter = function(mouse) { }
+myImage.animate = function(event) { }
+```
+
+all the mouse handlers provide this object
+
+```javascript
+{
+  isPressed: false, // is the mouse button pressed (y/n)
+  position: [0,0],  // the current position of the mouse [x,y]
+  pressed: [0,0],   // the last location the mouse was pressed
+  drag: [0,0],      // vector, displacement from start to now
+  prev: [0,0],      // on mouseMoved, the previous location
+  x: 0,             //
+  y: 0              // -- x and y, these are the same as position
+};
+```
+
+and the animate handler provides elapsed seconds (float) and frame number (integer)
+
+```
+{
+  time: 0.0
+  frame: 0
+};
+```
 
 ![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/dragon.svg)
