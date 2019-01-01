@@ -4,15 +4,23 @@ A simple creative coding Javascript library to make SVG interactive and a little
 
 # Usage
 
-Include svg.js in your project
+Include svg.js in your project.
 
 ```html
 <script src="svg.js"></script>
 ```
 
-Read [this introduction blog post](https://blog.rabbitear.org/2018/12/29/svg/) and see the `examples/` folder included in this project to get started.
+# Examples
 
-The following code draws the Japanese flag:
+Read [this introduction blog post](https://blog.rabbitear.org/2018/12/29/svg/) and check out the `examples/` folder included in this project for more demos:
+
+* [random walker](https://robbykraft.github.io/SVG/examples/random-walker.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/random-walker.html))
+* [Georg Nees](https://robbykraft.github.io/SVG/examples/georg-nees.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/georg-nees.html))
+* [Sol Lewitt](https://robbykraft.github.io/SVG/examples/sol-lewitt.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/sol-lewitt.html))
+* [Vera Molnar](https://robbykraft.github.io/SVG/examples/vera-molnar.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/vera-molnar.html))
+* [10-print](https://robbykraft.github.io/SVG/examples/ten-print.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/ten-print.html))
+
+The following code draws the [Japanese flag](https://robbykraft.github.io/SVG/examples/japanese-flag.html):
 
 ```javascript
 let flag = SVG.Image(600, 400);
@@ -81,7 +89,7 @@ removeChildren(group)
 
 setDefaultViewBox matches viewBox to visible dimensions. getViewBox returns an array of 4 numbers
 
-```
+```javascript
 setViewBox(svg, x, y, width, height, padding = 0)
 setDefaultViewBox(svg)
 getViewBox(svg)
@@ -89,7 +97,7 @@ getViewBox(svg)
 
 these alter the viewBox. no CSS transforms here.
 
-```
+```javascript
 scale(svg, scale, origin_x = 0, origin_y = 0)
 translate(svg, dx, dy)
 ```
@@ -104,7 +112,7 @@ One Image() instance gives you an SVG with a bunch of convenience methods and ev
 * string ID name, or DOM pointer to the parent element to append this SVG. otherwise the SVG will be appended to the body.
 
 ```javascript
-let sketch = Image(640, 480, "parent-element");
+let sketch = SVG.Image(640, 480, "parent-element");
 ```
 
 many of the methods are copied from greater SVG namespace, but often with fewer arguments as its implied that operations are performed on *this* SVG.
@@ -167,7 +175,7 @@ all the mouse handlers provide this object
 
 and the animate handler provides elapsed seconds (float) and frame number (integer)
 
-```
+```javascript
 {
   time: 0.0
   frame: 0

@@ -6,15 +6,13 @@
 
 let walker = SVG.Image(window.innerWidth, window.innerHeight);
 
-(function(){
-	walker.polyline = SVG.polyline();
-	walker.polyline.setAttribute("style", "fill:none; stroke:black;");
-	walker.appendChild(walker.polyline);
+walker.polyline = SVG.polyline();
+walker.polyline.setAttribute("style", "fill:none; stroke:black;");
+walker.appendChild(walker.polyline);
 
-	walker.x = window.innerWidth*0.5;
-	walker.y = window.innerHeight*0.5;
-	walker.points = [];
-})()
+walker.x = window.innerWidth*0.5;
+walker.y = window.innerHeight*0.5;
+walker.points = [];
 
 walker.animate = function(event){
 	walker.x += Math.random()*20 - 10;
