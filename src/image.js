@@ -52,7 +52,7 @@ export default function Image() {
 		// serves 2 functions:
 		// removeChildren() will remove all children from this SVG.
 		// removeChildren(group) will remove children from *group*
-		if(group == null) {
+		if (group == null) {
 			group = _svg;
 		}
 		while (group.lastChild) {
@@ -64,7 +64,7 @@ export default function Image() {
 	}
 	const load = function(data, callback) {
 		SVG.load(data, function(newSVG, error) {
-			if(newSVG != null) {
+			if (newSVG != null) {
 				// todo: do we need to remove any existing handlers to properly free memory?
 				_parent.removeChild(_svg);
 				_svg = newSVG;
@@ -72,7 +72,7 @@ export default function Image() {
 				// re-attach any preexisting handlers
 				updateHandlers();
 			}
-			if(callback != null) { callback(newSVG, error); }
+			if (callback != null) { callback(newSVG, error); }
 		});
 	}
 	const size = function(w, h) {
@@ -109,18 +109,18 @@ export default function Image() {
 				: document.body));
 		_parent.appendChild(_svg);
 
-		if(numbers.length >= 2) {
+		if (numbers.length >= 2) {
 			_svg.setAttributeNS(null, "width", numbers[0]);
 			_svg.setAttributeNS(null, "height", numbers[1]);
 			SVG.setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
 		} 
-		else if(_svg.getAttribute("viewBox") == null) {
+		else if (_svg.getAttribute("viewBox") == null) {
 			// set a viewBox if viewBox doesn't yet exist
 			let rect = _svg.getBoundingClientRect();
 			SVG.setViewBox(_svg, 0, 0, rect.width, rect.height);
 		}
 
-		if(functions.length >= 1) {
+		if (functions.length >= 1) {
 			functions[0]();
 		}
 	}
@@ -128,19 +128,20 @@ export default function Image() {
 	// set numbers if they exist, before page has even loaded
 	// this way the svg has a width and height even before document has loaded
 	let numbers = params.filter((arg) => !isNaN(arg));
-	if(numbers.length >= 2) {
+	if (numbers.length >= 2) {
 		_svg.setAttributeNS(null, "width", numbers[0]);
 		_svg.setAttributeNS(null, "height", numbers[1]);
 		SVG.setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
 	} 
 
-	if(document.readyState === 'loading') {
+	if (document.readyState === 'loading') {
 		// wait until after the <body> has rendered
 		document.addEventListener('DOMContentLoaded', attachToDOM);
 	} else {
 		attachToDOM();
 	}
 
+	// the user-defined event handlers are stored here
 	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter, _animate, _animationFrame;
 
 	// clientX and clientY are from the browser event data
@@ -150,36 +151,68 @@ export default function Image() {
 		_mouse.x = _mouse.position[0];
 		_mouse.y = _mouse.position[1];
 	}
-
-	function updateHandlers() {
-		_svg.onmousemove = function(event) {
-			updateMousePosition(event.clientX, event.clientY);
-			if(_mouse.isPressed) {
-				_mouse.drag = [_mouse.position[0] - _mouse.pressed[0], 
-				               _mouse.position[1] - _mouse.pressed[1]];
-				_mouse.drag.x = _mouse.drag[0];
-				_mouse.drag.y = _mouse.drag[1];
-			}
-			if(_onmousemove != null) { _onmousemove( Object.assign({}, _mouse) ); }
-		}
-		_svg.onmousedown = function(event) {
-			_mouse.isPressed = true;
-			_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
-			if(_onmousedown != null) { _onmousedown( Object.assign({}, _mouse) ); }
-		}
-		_svg.onmouseup = function(event) {
-			_mouse.isPressed = false;
-			if(_onmouseup != null) { _onmouseup( Object.assign({}, _mouse) ); }
-		}
-		_svg.onmouseleave = function(event) {
-			updateMousePosition(event.clientX, event.clientY);
-			if(_onmouseleave != null) { _onmouseleave( Object.assign({}, _mouse) ); }
-		}
-		_svg.onmouseenter = function(event) {
-			updateMousePosition(event.clientX, event.clientY);
-			if(_onmouseenter != null) { _onmouseenter( Object.assign({}, _mouse) ); }
-		}
+	function updateMouseDrag() {
+		// counting on updateMousePosition to have just been called
+		// using mouse.position instead of calling SVG.convertToViewBox again
+		_mouse.drag = [_mouse.position[0] - _mouse.pressed[0], 
+		               _mouse.position[1] - _mouse.pressed[1]];
+		_mouse.drag.x = _mouse.drag[0];
+		_mouse.drag.y = _mouse.drag[1];
 	}
+
+	// mouse
+	_svg.addEventListener("mouseup", mouseUpHandler, false);
+	_svg.addEventListener("mousedown", mouseDownHandler, false);
+	_svg.addEventListener("mousemove", mouseMoveHandler, false);
+	_svg.addEventListener("mouseleave", mouseLeaveHandler, false);
+	_svg.addEventListener("mouseenter", mouseEnterHandler, false);
+	// touches
+	_svg.addEventListener("touchend", mouseUpHandler, false);
+	_svg.addEventListener("touchmove", touchMoveHandler, false);
+	_svg.addEventListener("touchstart", touchStartHandler, false);
+	_svg.addEventListener("touchcancel", mouseUpHandler, false);
+
+	function mouseMoveHandler(event) {
+		updateMousePosition(event.clientX, event.clientY);
+		if (_mouse.isPressed) { updateMouseDrag(); }
+		if (_onmousemove != null) { _onmousemove( Object.assign({}, _mouse) ); }
+	}
+	function mouseDownHandler(event) {
+		_mouse.isPressed = true;
+		_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
+		if (_onmousedown != null) { _onmousedown( Object.assign({}, _mouse) ); }
+	}
+	function mouseUpHandler(event) {
+		_mouse.isPressed = false;
+		if (_onmouseup != null) { _onmouseup( Object.assign({}, _mouse) ); }
+	}
+	function mouseLeaveHandler(event) {
+		updateMousePosition(event.clientX, event.clientY);
+		if (_onmouseleave != null) { _onmouseleave( Object.assign({}, _mouse) ); }
+	}
+	function mouseEnterHandler(event) {
+		updateMousePosition(event.clientX, event.clientY);
+		if (_onmouseenter != null) { _onmouseenter( Object.assign({}, _mouse) ); }
+	}
+	function touchStartHandler(event) {
+		event.preventDefault();
+		let touch = event.touches[0];
+		if (touch == null) { return; }
+		_mouse.isPressed = true;
+		_mouse.pressed = SVG.convertToViewBox(_svg, touch.clientX, touch.clientY);
+		if (_onmousedown != null) { _onmousedown( Object.assign({}, _mouse) ); }
+	}
+	function touchMoveHandler(event) {
+		event.preventDefault();
+		let touch = event.touches[0];
+		if (touch == null) { return; }
+		updateMousePosition(touch.clientX, touch.clientY);
+		if (_mouse.isPressed) { updateMouseDrag(); }
+		if (_onmousemove != null) { _onmousemove( Object.assign({}, _mouse) ); }
+	}
+	// these are the same as mouseUpHandler
+	// function touchEndHandler(event) { }
+	// function touchCancelHandler(event) { }
 
 	// return Object.freeze({
 	return {
@@ -192,26 +225,11 @@ export default function Image() {
 		get height() { return getHeight(); },
 		set width(w) { _svg.setAttributeNS(null, "width", w); },
 		set height(h) { _svg.setAttributeNS(null, "height", h); },
-		set onMouseMove(handler) {
-			_onmousemove = handler;
-			updateHandlers();
-		},
-		set onMouseDown(handler) {
-			_onmousedown = handler;
-			updateHandlers();
-		},
-		set onMouseUp(handler) {
-			_onmouseup = handler;
-			updateHandlers();
-		},
-		set onMouseLeave(handler) {
-			_onmouseleave = handler;
-			updateHandlers();
-		},
-		set onMouseEnter(handler) {
-			_onmouseenter = handler;
-			updateHandlers();
-		},
+		set onMouseMove(handler) { _onmousemove = handler; },
+		set onMouseDown(handler) { _onmousedown = handler; },
+		set onMouseUp(handler) { _onmouseup = handler; },
+		set onMouseLeave(handler) { _onmouseleave = handler; },
+		set onMouseEnter(handler) { _onmouseenter = handler; },
 		set animate(handler) {
 			if (_animate != null) {
 				clearInterval(_animate);
@@ -228,7 +246,6 @@ export default function Image() {
 				}, 1000/60);
 			}
 		}
-		// set onMouseDidBeginDrag(handler) {}
 		// set onResize(handler) {}
 	};
 	// });
