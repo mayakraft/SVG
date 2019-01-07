@@ -28,7 +28,7 @@ export default function Image() {
 		drag: [0,0],      // vector, displacement from start to now
 		prev: [0,0],      // on mouseMoved, the previous location
 		x: 0,             //
-		y: 0              // -- x and y, these are the same as position
+		y: 0              // -- x and y, copy of position data
 	};
 
 	// exported
@@ -69,8 +69,8 @@ export default function Image() {
 				_parent.removeChild(_svg);
 				_svg = newSVG;
 				_parent.appendChild(_svg);
-				// re-attach any preexisting handlers
-				updateHandlers();
+				// re-attach handlers
+				attachHandlers();
 			}
 			if (callback != null) { callback(newSVG, error); }
 		});
@@ -123,6 +123,8 @@ export default function Image() {
 		if (functions.length >= 1) {
 			functions[0]();
 		}
+
+		attachHandlers();
 	}
 	// boot begin:
 	// set numbers if they exist, before page has even loaded
@@ -139,6 +141,20 @@ export default function Image() {
 		document.addEventListener('DOMContentLoaded', attachToDOM);
 	} else {
 		attachToDOM();
+	}
+
+	function attachHandlers() {
+		// mouse
+		_svg.addEventListener("mouseup", mouseUpHandler, false);
+		_svg.addEventListener("mousedown", mouseDownHandler, false);
+		_svg.addEventListener("mousemove", mouseMoveHandler, false);
+		_svg.addEventListener("mouseleave", mouseLeaveHandler, false);
+		_svg.addEventListener("mouseenter", mouseEnterHandler, false);
+		// touches
+		_svg.addEventListener("touchend", mouseUpHandler, false);
+		_svg.addEventListener("touchmove", touchMoveHandler, false);
+		_svg.addEventListener("touchstart", touchStartHandler, false);
+		_svg.addEventListener("touchcancel", mouseUpHandler, false);
 	}
 
 	// the user-defined event handlers are stored here
@@ -159,18 +175,6 @@ export default function Image() {
 		_mouse.drag.x = _mouse.drag[0];
 		_mouse.drag.y = _mouse.drag[1];
 	}
-
-	// mouse
-	_svg.addEventListener("mouseup", mouseUpHandler, false);
-	_svg.addEventListener("mousedown", mouseDownHandler, false);
-	_svg.addEventListener("mousemove", mouseMoveHandler, false);
-	_svg.addEventListener("mouseleave", mouseLeaveHandler, false);
-	_svg.addEventListener("mouseenter", mouseEnterHandler, false);
-	// touches
-	_svg.addEventListener("touchend", mouseUpHandler, false);
-	_svg.addEventListener("touchmove", touchMoveHandler, false);
-	_svg.addEventListener("touchstart", touchStartHandler, false);
-	_svg.addEventListener("touchcancel", mouseUpHandler, false);
 
 	function mouseMoveHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
