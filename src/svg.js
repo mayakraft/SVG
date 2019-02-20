@@ -352,14 +352,15 @@ export const load = function(input, callback) {
 				.parseFromString(str, "text/xml")
 			).then((svgData) => {
 				let allSVGs = svgData.getElementsByTagName("svg");
-				if (allSVGs == null || allSVGs.length == 0) {
+				if (allSVGs == null || allSVGs.length === 0) {
 					throw "error, valid XML found, but no SVG element";
 				}
 				if (callback != null) {
 					callback(allSVGs[0]);
 				}
 				return allSVGs[0];
-			}).catch((err) => callback(null, err));
+			// }).catch((err) => callback(null, err));
+			});
 	} else if (input instanceof Document) {
 		// (3) already parsed SVG... why would this happen? IDK. just return it
 		callback(input);

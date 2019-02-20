@@ -21,7 +21,8 @@ export default function Image() {
 
 	let _matrix = _svg.createSVGMatrix();
 
-	let _mouse = {
+	let _mouse = Object.create(null);
+	Object.assign(_mouse, {
 		isPressed: false, // is the mouse button pressed (y/n)
 		position: [0,0],  // the current position of the mouse [x,y]
 		pressed: [0,0],   // the last location the mouse was pressed
@@ -29,7 +30,7 @@ export default function Image() {
 		prev: [0,0],      // on mouseMoved, the previous location
 		x: 0,             //
 		y: 0              // -- x and y, copy of position data
-	};
+	});
 
 	// exported
 	const zoom = function(scale, origin_x = 0, origin_y = 0) {
@@ -76,6 +77,7 @@ export default function Image() {
 		});
 	}
 	const size = function(w, h) {
+		if (w == null || h == null) { return; }
 		let vb = SVG.getViewBox(_svg);
 		SVG.setViewBox(_svg, vb[0], vb[1], w, h, _padding);
 		_svg.setAttributeNS(null, "width", w);
@@ -158,8 +160,20 @@ export default function Image() {
 	}
 
 	// the user-defined event handlers are stored here
-	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter, _animate, _animationFrame;
+	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter, _animate, _animationFrame, _intervalID;
 
+	// deep copy mouse object
+	function getMouse() {
+		let m = _mouse.position.slice();
+		// all object properties are Arrays. we can .slice()
+		Object.keys(_mouse)
+			.filter(key => typeof key === "object")
+			.forEach(key => m[key] = _mouse[key].slice());
+		Object.keys(_mouse)
+			.filter(key => typeof key !== "object")
+			.forEach(key => m[key] = _mouse[key]);
+		return Object.freeze(m);
+	}
 	// clientX and clientY are from the browser event data
 	function updateMousePosition(clientX, clientY) {
 		_mouse.prev = _mouse.position;
@@ -179,24 +193,24 @@ export default function Image() {
 	function mouseMoveHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
 		if (_mouse.isPressed) { updateMouseDrag(); }
-		if (_onmousemove != null) { _onmousemove( Object.assign({}, _mouse) ); }
+		if (_onmousemove != null) { _onmousemove(getMouse()); }
 	}
 	function mouseDownHandler(event) {
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
-		if (_onmousedown != null) { _onmousedown( Object.assign({}, _mouse) ); }
+		if (_onmousedown != null) { _onmousedown(getMouse()); }
 	}
 	function mouseUpHandler(event) {
 		_mouse.isPressed = false;
-		if (_onmouseup != null) { _onmouseup( Object.assign({}, _mouse) ); }
+		if (_onmouseup != null) { _onmouseup(getMouse()); }
 	}
 	function mouseLeaveHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
-		if (_onmouseleave != null) { _onmouseleave( Object.assign({}, _mouse) ); }
+		if (_onmouseleave != null) { _onmouseleave(getMouse()); }
 	}
 	function mouseEnterHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
-		if (_onmouseenter != null) { _onmouseenter( Object.assign({}, _mouse) ); }
+		if (_onmouseenter != null) { _onmouseenter(getMouse()); }
 	}
 	function touchStartHandler(event) {
 		event.preventDefault();
@@ -204,7 +218,7 @@ export default function Image() {
 		if (touch == null) { return; }
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, touch.clientX, touch.clientY);
-		if (_onmousedown != null) { _onmousedown( Object.assign({}, _mouse) ); }
+		if (_onmousedown != null) { _onmousedown(getMouse()); }
 	}
 	function touchMoveHandler(event) {
 		event.preventDefault();
@@ -212,7 +226,23 @@ export default function Image() {
 		if (touch == null) { return; }
 		updateMousePosition(touch.clientX, touch.clientY);
 		if (_mouse.isPressed) { updateMouseDrag(); }
-		if (_onmousemove != null) { _onmousemove( Object.assign({}, _mouse) ); }
+		if (_onmousemove != null) { _onmousemove(getMouse()); }
+	}
+	function updateAnimationHandler(handler) {
+		if (_animate != null) {
+			clearInterval(_intervalID);
+		}
+		_animate = handler;
+		if (_animate != null) {
+			_animationFrame = 0;
+			_intervalID = setInterval(() => {
+				let animObj = {
+					"time": _svg.getCurrentTime(),
+					"frame": _animationFrame++
+				};
+				_animate(animObj);
+			}, 1000/60);
+		}
 	}
 	// these are the same as mouseUpHandler
 	// function touchEndHandler(event) { }
@@ -223,6 +253,7 @@ export default function Image() {
 		zoom, translate, appendChild, removeChildren,
 		load, save,
 		setViewBox, getViewBox, size,
+		get mouse() { return getMouse(); },
 		get scale() { return _scale; },
 		get svg() { return _svg; },
 		get width() { return getWidth(); },
@@ -234,22 +265,7 @@ export default function Image() {
 		set onMouseUp(handler) { _onmouseup = handler; },
 		set onMouseLeave(handler) { _onmouseleave = handler; },
 		set onMouseEnter(handler) { _onmouseenter = handler; },
-		set animate(handler) {
-			if (_animate != null) {
-				clearInterval(_animate);
-			}
-			_animate = handler;
-			if (_animate != null) {
-				_animationFrame = 0;
-				setInterval(function() {
-					let animObj = {
-						"time": _svg.getCurrentTime(),
-						"frame": _animationFrame++
-					};
-					_animate(animObj);
-				}, 1000/60);
-			}
-		}
+		set animate(handler) { updateAnimationHandler(handler); }
 		// set onResize(handler) {}
 	};
 	// });
