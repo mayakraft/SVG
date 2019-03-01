@@ -6,10 +6,18 @@ html, body, h1, h2, h3, h4, h5, h6, pre, code, p, ul, li {
 }
 body {
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif; 
-	font-weight: 300;
+	font-weight: 500;
 }
 h1, h2, h3, h4, h5, h6 {
 	font-family: Futura, "Helvetica Neue", Helvetica, sans-serif;
+}
+h1{
+	margin-top: 8rem;
+	margin-bottom: 2rem;
+}
+h1:first-of-type{
+	margin-top: 1rem;
+	margin-bottom: 0;
 }
 h3 {
 	margin: 2rem 0 0.5rem 0;
@@ -40,8 +48,17 @@ a, a:hover, a:visited, a:active {
 f { /* function */
 	color: #66D9EF;
 }
+n { /* number */
+	color: #AE81FF;
+}
 arg { /* argument */
 	color: #FD9720;
+}
+key{ /* operator */
+	color: #F92672;
+}
+str { /* string */
+	color: #E6DB74;
 }
 p a{
 	font-weight: 800;
@@ -118,4 +135,12 @@ body {
 		<pre><code><f>group</f>()</code></pre>
 		<p>creates a <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</p>
 		<p>like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
+
+	<h1>Notes</h1>
+		<pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)</code></pre>
+		<p>if you draw a line, you might notice that it doesn't show up. unfortunately, this is the SVG specification <i>working</i>.</p>
+		<pre><code><f>let</f> l <key>=</key> <f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>l.<f>setAttribute</f>(<str>"stroke"</str>, <str>"#F08"</str>)</code></pre>
+		<p>by default shapes have no stroke but <i>do</i> have a black fill, making a rect or circle easy to see.</p>
+		<pre><code>l.<f>setAttribute</f>(<str>"class"</str>, <str>"pen-line"</str>)</code></pre>
+		<p>every geometry object is a <a href="https://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#ID-745549614">DOM node</a> and is receptive to all relevant DOM Level 1 methods. all styling is in CSS and operations are easily searchable; everything is possible including CSS animations and transforms.</p>
 </body>
