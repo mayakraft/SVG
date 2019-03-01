@@ -89,6 +89,16 @@ export const circle = function(x, y, radius, className, id, parent) {
 	return shape;
 };
 
+export const ellipse = function(x, y, rx, ry, className, id, parent) {
+	let shape = document.createElementNS(svgNS, "ellipse");
+	shape.setAttributeNS(null, "cx", x);
+	shape.setAttributeNS(null, "cy", y);
+	shape.setAttributeNS(null, "rx", rx);
+	shape.setAttributeNS(null, "ry", ry);
+	setClassIdParent(shape, className, id, parent);
+	return shape;
+};
+
 export const rect = function(x, y, width, height, className, id, parent) {
 	let shape = document.createElementNS(svgNS, "rect");
 	shape.setAttributeNS(null, "x", x);
@@ -312,7 +322,9 @@ export const save = function(svg, filename = "image.svg") {
 	let blob = new window.Blob([formatted], {type: "text/plain"});
 	a.setAttribute("href", window.URL.createObjectURL(blob));
 	a.setAttribute("download", filename);
+	document.body.appendChild(a);
 	a.click();
+	a.remove();
 };
 
 const parseCSSText = function(styleContent) {

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<title></title>
+<style>
+html, body, h1, h2, h3, h4, h5, h6, pre, code, p, ul, li {
+	margin: 0;
+}
+body {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+	font-weight: 300;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-family: Futura, "Helvetica Neue", Helvetica, sans-serif;
+}
+h3 {
+	margin: 2rem 0 0.5rem 0;
+}
+h3:first-of-type{
+	margin-top: 1rem;
+}
+p {
+	background-color: #EEE;
+	padding: 0.5rem 1rem;
+}
+pre + p{
+	background-color: white;
+}
+pre {
+	background-color: black;
+	color: white;
+	padding: 1rem 2rem;
+	display: inline-block;
+}
+a, a:hover, a:visited, a:active {
+	color: #f92472;
+}
+f { /* function */
+	color: #66D9EF;
+}
+arg { /* argument */
+	color: #FD9720;
+}
+p a{
+	font-weight: 800;
+}
+
+body {
+	margin: 1rem;
+}
+@media (min-width: 600px) {
+	body { margin: 2rem 100px 4rem 100px; }
+}
+@media (min-width: 1000px) {
+	body { margin: 4rem 300px 6rem 300px; }
+}
+
+</style>
+<body>
+
+	<h1>SVG Reference</h1>
+
+	<h3>group</h3>
+		<pre><code><f>group</f>()</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</p>
+		<p>like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
+	<h3>line</h3>
+		<pre><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#LineElement">&lt;line&gt;</a> element</p>
+		<p>this is a 2D line segment, defined by its endpoints (x1,y1) and (x2,y2).</p>
+	<h3>circle</h3>
+		<pre><code><f>circle</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#CircleElement">&lt;circle&gt;</a> element</p>
+		<p>a circle is defined by its center (x,y) and its radius.</p>
+	<h3>ellipse</h3>
+		<pre><code><f>ellipse</f>(<arg>x</arg>, <arg>y</arg>, <arg>rx</arg>, <arg>ry</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#EllipseElement">&lt;ellipse&gt;</a> element</p>
+		<p>an ellipse is defined by its center (x,y) and its radius along two axes rx and ry. the axes of the ellipse are always aligned to the x,y axes, you have to apply a rotate transform to make it otherwise.</p>
+	<h3>rect</h3>
+		<pre><code><f>rect</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#RectElement">&lt;rect&gt;</a> element</p>
+		<p>the (x,y) point defines the top left corner of the rectangle.</p>
+	<h3>polygon</h3>
+		<pre><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</p>
+		<p>a polygon is a closed shape defined by a series of points that trace the outline of the polygon. the stroke will automatically connect the last point back to the first.</p>
+	<h3>polyline</h3>
+		<pre><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolylineElement">&lt;polyline&gt;</a> element</p>
+		<p>similar to a polygon, a polyline is defined by a sequence of points, but the stroked path will not connect the last point to the first.</p>
+	<h3>bezier</h3>
+		<pre><code><f>bezier</f>(<arg>fromX</arg>, <arg>fromY</arg>, <arg>c1X</arg>, <arg>c1Y</arg>, <arg>c2X</arg>, <arg>c2Y</arg>, <arg>toX</arg>, <arg>toY</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</p>
+		<p>a bezier curve is defined between two points (fromX, fromY) and (toX, toY) with two control points (c1X, c1Y) and (c2X, c2Y). The curve is encoded as a path object.</p>
+	<h3>arc</h3>
+		<pre><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</p>
+		<p>an arc is the curve along the boundary of a circle. the arc is encoded as a path object.</p>
+	<h3>wedge</h3>
+		<pre><code><f>wedge</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</p>
+		<p>a wedge is a filled arc, like a slice of a pie that includes the center of the circle. the wedge is encoded as a path object.</p>
+	<h3>regularPolygon</h3>
+		<pre><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</p>
+		<p>this is a convenient function for creating regular polygons of n number of sides, centered at point (cX, cY), with a circumscribed radius.</p>
+	<h3>text</h3>
+		<pre><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/text.html#TextElement">&lt;text&gt;</a> element</p>
+		<p>the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
+</body>

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<title>SVG example: code console</title>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/theme/material.min.css">
+<head>
+	<meta charset="utf-8">
+	<title>💻✍️ svg</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/codemirror.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/theme/material.min.css">
 <style>
 html,body{
 	margin: 0;
@@ -10,6 +12,10 @@ html,body{
 	height: 100vh;
 	display: flex;
 	flex-direction: row;
+}
+svg{
+	height: 95%;
+	width: 95%;
 }
 .column{
 	flex: 1;
@@ -22,10 +28,6 @@ html,body{
 	align-items: center;
 	background-color: #ddd;
 }
-svg{
-	height: 95%;
-	width: 95%;
-}
 #code-container{
 	height: 100%;
 }
@@ -37,20 +39,20 @@ svg{
 .CodeMirror-scroll {
 	width: 50vw;
 }
-.console{
+#console-container{
 	position: absolute;
 	z-index: 7;
 	bottom: 0px;
 	left: 0px;
 	width: 50vw;
 }
-#console{
+.console{
 	width: calc(100% - 2rem);
 	margin: 1rem;
 	background-color: rgb(64,98,85);
 	border-radius: 1em;
 }
-#console p {
+.console p {
 	padding:1rem;
 	color: #ddd;
 	font-family: monospace;
@@ -59,19 +61,19 @@ svg{
 	position: absolute;
 	z-index: 8;
 	left: 50vw;
-	/*bottom: -0.75rem;*/
 	bottom: 0rem;
 	width: 3rem;
 	height: 1.5rem;
 	border-radius: 1.5rem 1.5rem 0 0;
 	margin-left: -1.5rem;
-	background-color: rgb(64,98,85);
-	color: #ddd;
+	background-color: rgb(245, 89, 75);
+	color: white;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
 	overflow: hidden;
+	font-size: 70%;
 }
 #menu-button p{
 	margin: 0;
@@ -79,102 +81,152 @@ svg{
 	padding: 0;
 }
 </style>
+</head>
 <body>
-
 	<div class="column">
-		<div class="console">
-			<div id="console"></div>
-		</div>
+		<div id="console-container"></div>
 		<div id="code-container"></div>
 	</div>
 	<div class="column">
 		<div id="image-container"></div>
 	</div>
-
 	<div id="menu-button"><p>▼</p></div>
 
-</body>
-<script type="text/javascript" src="../svg.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/mode/javascript/javascript.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/mode/javascript/javascript.min.js"></script>
+	<script type="text/javascript" src="../svg.js"></script>
+	<script type="text/javascript" src="app.js"></script>
 <script>
-let errorConsole = document.querySelector("#console");
-var myCodeMirror = CodeMirror(document.getElementById("code-container"), {
-	value: "",
-	mode:  "javascript",
-	lineNumbers: true,
-	theme: "material"
-}).on('change', (editor,event) => {
-	try{
+
+const app = function(codeContainer, svgContainer, consoleContainer) {
+
+	let prop = {
+		svg: undefined,
+		codeMirror: undefined,
+		console: undefined,
+		image: undefined
+	};
+
+	const clearSketch = function() {
+		if (prop.svg === undefined) {
+			return;
+		}
+		while (prop.svg.lastChild) {
+			prop.svg.removeChild(prop.svg.lastChild);
+		}
+	};
+
+	const injectCode = function(string) {
+		let doc = prop.codeMirror.getDoc();
+		let cursor = doc.getCursor();
+		let line = doc.getLine(cursor.line);
+		let newline = "\n";
+		if(cursor.ch === 0) {
+			newline = "";
+		}
+		let pos = {
+			line: (doc.size+5),
+			ch: line.length - 1 // the end of the line
+		};
+		doc.replaceRange(newline+string, pos);
+	};
+
+	const codeDidUpdate = function(code) {
 		clearSketch();
-		eval(editor.getValue());
-		errorConsole.innerHTML = "";
-	}
-	catch(err){
-		errorConsole.innerHTML = "<p>" + err + "</p>";
-		// console.log(err);
-	}
-});
-</script>
-<script>
-// window.crease = cp.crease.bind(cp);
+		let error;
+		try {
+			eval(code);
+		}
+		catch(e) {
+			error = e;
+		}
+		updateConsole(error);
+	};
 
-let sketch = SVG.Image("image-container"); // the image
+	const updateConsole = function(message) {
+		prop.console.innerHTML = (message == null || message == ""
+			? ""
+			: "<p>" + message + "</p>");
+	};
 
+	const initDOM = function() {
+		prop.image = SVG.Image(svgContainer, 540, 540);
+		prop.svg = prop.image.svg;
+		CodeMirror(document.getElementById("code-container"), {
+			value: "",
+			mode:  "javascript",
+			lineNumbers: true,
+			theme: "material"
+		}).on("change", function(editor) {
+			codeDidUpdate(editor.getValue());
+		});
+		prop.codeMirror = document
+			.querySelectorAll(".CodeMirror")[0]
+			.CodeMirror;
 
-let clearSketch = function() {
-	let container = document.querySelectorAll("svg")[0];
-	if (container === undefined) { return; }
-	while (container.lastChild) {
-		container.removeChild(container.lastChild);
-	}
-}
+		prop.console = document.createElement("div");
+		prop.console.setAttribute("class", "console");
+		consoleContainer.appendChild(prop.console);
 
+		document.querySelector("#menu-button").onclick = function(event) {
+			prop.image.save();
+		};
+	};
 
-function injectCode(string){
-	var cm = document.querySelectorAll(".CodeMirror")[0].CodeMirror;
-	var doc = cm.getDoc();
-	var cursor = doc.getCursor();
-	var line = doc.getLine(cursor.line);
-	var newline = '\n';
-	if(cursor.ch == 0){ newline = ''; }
-	var pos = { // create a new object to avoid mutation of the original selection
-		line: (doc.size+5),
-		ch: line.length - 1 // set the character position to the end of the line
-	}
-	doc.replaceRange(newline+string, pos);
-}
+	const bindToWindow = function() {
+		// bind all methods to the window
+		// Object.getOwnPropertyNames(SVG)
+		//  .filter(p => typeof SVG[p] === "function")
+		//  .filter(name => name !== "svg")  // prevent creating SVGs
+		//  .forEach(name => window[name] = SVG[name].bind(SVG));
 
-
-
-Object.getOwnPropertyNames(SVG)
-	.filter(p => typeof SVG[p] === "function")
-	.forEach(name => window[name] = SVG[name].bind(SVG));
-
-// or just re-bind these when a new image gets made
-document.addEventListener('DOMContentLoaded', function(){
-	["line", "circle", "rect", "polygon", "polyline", "bezier", "text", "wedge", "arc", "curve", "regularPolygon", "group"]
-		.forEach(name => window[name] = function(){
+		// bind draw methods, insert an appendChild to our one svg
+		["line", "circle", "ellipse", "rect", "polygon", "polyline",
+		"bezier", "text", "wedge", "arc", "curve",
+		"regularPolygon", "group"].forEach((name) => window[name] = function() {
 			let element = SVG[name](...arguments);
-			sketch.appendChild(element);
+			prop.svg.appendChild(element);
 			return element;
 		});
 
-	window.image = function() {
-		if (sketch === undefined) {
-			sketch = SVG.Image("image-container", ...arguments);
-		} else {
-			sketch.size(...arguments);
-		}
-		return sketch;
+		window.image = function() {
+			if (prop.image === undefined) {
+				prop.image = SVG.Image(svgContainer, ...arguments);
+				window.svg = prop.image;
+				prop.svg = prop.image.svg;
+			} else {
+				prop.image.size(...arguments);
+			}
+			return prop.image;
+		};
+
+		window.svg = prop.image;
+	};
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", function() {
+			initDOM();
+			bindToWindow();
+		});
+	} else{
+		initDOM();
+		bindToWindow();
 	}
 
-	// injectCode("image(500, 500);\nlet r1 = rect(0, 0, 500, 500);\nr1.setAttribute(\"fill\", \"gray\");\nrect(0, 0, 100, 100);");
+	return {
+		clearSketch,
+		injectCode,
+		updateConsole
+	};
+};
 
-	injectCode("let flag = image(600, 400);\n\nlet r = rect(0, 0, flag.width, flag.height);\nlet c = circle(flag.width/2, flag.height/2, flag.height*0.3);\n\nr.setAttribute(\"fill\", \"white\");\nc.setAttribute(\"fill\", \"#BC002D\");");
 
-	document.querySelector("#menu-button").onclick = function(event) {
-		sketch.save();
-	}
+document.addEventListener("DOMContentLoaded", function() {
+	app(
+		document.querySelector("#code-container"),
+		document.querySelector("#image-container"),
+		document.querySelector("#console-container")
+	);
 });
 
 </script>
+</body>
