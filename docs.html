@@ -17,7 +17,7 @@ h3 {
 h3:first-of-type{
 	margin-top: 1rem;
 }
-p {
+p, ul {
 	background-color: #EEE;
 	padding: 0.5rem 1rem;
 }
@@ -29,6 +29,10 @@ pre {
 	color: white;
 	padding: 1rem 2rem;
 	display: inline-block;
+}
+ul{
+	list-style: none;
+	padding-left: 1em;
 }
 a, a:hover, a:visited, a:active {
 	color: #f92472;
@@ -58,10 +62,6 @@ body {
 
 	<h1>SVG Reference</h1>
 
-	<h3>group</h3>
-		<pre><code><f>group</f>()</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</p>
-		<p>like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
 	<h3>line</h3>
 		<pre><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
 		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#LineElement">&lt;line&gt;</a> element</p>
@@ -82,10 +82,18 @@ body {
 		<pre><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
 		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</p>
 		<p>a polygon is a closed shape defined by a series of points that trace the outline of the polygon. the stroke will automatically connect the last point back to the first.</p>
+		<p>the SVG specification for a polygon's <b>points</b> attribute is one space-separated string of points, each in the form of x,y:</p>
+		<ul><li><code>"0.5,1.0 3.5,2.5 10,10"</code></li></ul>
+		<p>because points are rarely stored in that way, this function accepts an array of points (arrays or objects), and will process it into the necessary string:</p>
+		<ul>
+			<li><code>[[0.5, 1.0], [3.5, 2.5], [10, 10]]</code></li>
+			<li><code>[{x:0.5, y:1.0}, {x:3.5, y:2.5}, {x:10, y:10}]</code></li>
+		</ul>
 	<h3>polyline</h3>
 		<pre><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
 		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolylineElement">&lt;polyline&gt;</a> element</p>
 		<p>similar to a polygon, a polyline is defined by a sequence of points, but the stroked path will not connect the last point to the first.</p>
+		<p>see "polygon" entry for information on points.</p>
 	<h3>bezier</h3>
 		<pre><code><f>bezier</f>(<arg>fromX</arg>, <arg>fromY</arg>, <arg>c1X</arg>, <arg>c1Y</arg>, <arg>c2X</arg>, <arg>c2Y</arg>, <arg>toX</arg>, <arg>toY</arg>)</code></pre>
 		<p>creates a <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</p>
@@ -106,4 +114,8 @@ body {
 		<pre><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
 		<p>creates a <a href="https://www.w3.org/TR/SVG/text.html#TextElement">&lt;text&gt;</a> element</p>
 		<p>the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
+	<h3>group</h3>
+		<pre><code><f>group</f>()</code></pre>
+		<p>creates a <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</p>
+		<p>like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
 </body>
