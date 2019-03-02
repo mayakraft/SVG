@@ -1,2 +1,2 @@
-export * from './svg';
-export { default as Image } from './image'
+export * from "./svg";
+export { default as Image } from "./image";
