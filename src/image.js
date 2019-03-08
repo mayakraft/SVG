@@ -5,7 +5,7 @@
  */
 
 import * as SVG from "./svg";
-import { default as TouchPoints } from "./touchPoints";
+import { default as ControlPoints } from "./controls";
 
 export default function Image() {
 	// get constructor parameters
@@ -34,7 +34,7 @@ export default function Image() {
 	});
 
 	let properties = {
-		touchPoints: []
+		controlPoints: undefined
 	};
 
 	// exported
@@ -198,7 +198,7 @@ export default function Image() {
 	function mouseMoveHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
 		let mouse = getMouse();
-		properties.touchPoints.onMouseMove(mouse);
+		if (properties.controlPoints){ properties.controlPoints.onMouseMove(mouse); }
 		if (_mouse.isPressed) { updateMouseDrag(); }
 		if (_onmousemove != null) { _onmousemove(mouse); }
 	}
@@ -206,13 +206,13 @@ export default function Image() {
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
 		let mouse = getMouse();
-		properties.touchPoints.onMouseDown(mouse);
+		if (properties.controlPoints){ properties.controlPoints.onMouseDown(mouse); }
 		if (_onmousedown != null) { _onmousedown(mouse); }
 	}
 	function mouseUpHandler(event) {
 		_mouse.isPressed = false;
 		let mouse = getMouse();
-		properties.touchPoints.onMouseUp(mouse);
+		if (properties.controlPoints){ properties.controlPoints.onMouseUp(mouse); }
 		if (_onmouseup != null) { _onmouseup(mouse); }
 	}
 	function mouseLeaveHandler(event) {
@@ -230,7 +230,7 @@ export default function Image() {
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, touch.clientX, touch.clientY);
 		let mouse = getMouse();
-		properties.touchPoints.onMouseDown(mouse);
+		if (properties.controlPoints){ properties.controlPoints.onMouseDown(mouse); }
 		if (_onmousedown != null) { _onmousedown(mouse); }
 	}
 	function touchMoveHandler(event) {
@@ -240,7 +240,7 @@ export default function Image() {
 		updateMousePosition(touch.clientX, touch.clientY);
 		if (_mouse.isPressed) { updateMouseDrag(); }
 		let mouse = getMouse();
-		properties.touchPoints.onMouseMove(mouse);
+		if (properties.controlPoints){ properties.controlPoints.onMouseMove(mouse); }
 		if (_onmousemove != null) { _onmousemove(mouse); }
 	}
 	function updateAnimationHandler(handler) {
@@ -263,14 +263,20 @@ export default function Image() {
 	// function touchEndHandler(event) { }
 	// function touchCancelHandler(event) { }
 
-	const removeTouchPoints = function() {
-		properties.touchPoints.forEach(tp => tp.remove());
-		properties.touchPoints = [];
+	const removeControlPoints = function() {
+		properties.controlPoints.forEach(tp => tp.remove());
+		properties.controlPoints = [];
 	}
-	const makeTouchPoints = function(number) {
-		removeTouchPoints();
-		properties.touchPoints = TouchPoints(_svg, number, getWidth() * 0.01);
-		return properties.touchPoints;
+	const makeControlPoints = function(number, options) {
+		let parent = _svg;
+		let radius = getWidth() * 0.01;
+		if (options != null) {
+			if (options.parent) { parent = options.parent; }
+			if (options.radius) { radius = options.radius; }
+		}
+		removeControlPoints();
+		properties.controlPoints = ControlPoints(parent, number, radius);
+		return properties.controlPoints;
 	}
 
 	// return Object.freeze({
@@ -291,8 +297,8 @@ export default function Image() {
 		set onMouseLeave(handler) { _onmouseleave = handler; },
 		set onMouseEnter(handler) { _onmouseenter = handler; },
 		set animate(handler) { updateAnimationHandler(handler); },
-		makeTouchPoints,
-		get touchPoints() { return properties.touchPoints; }
+		makeControlPoints,
+		get controlPoints() { return properties.controlPoints; }
 		// set onResize(handler) {}
 	};
 	// });

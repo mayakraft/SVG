@@ -186,6 +186,8 @@ export const group = function(className, id, parent) {
 
 export const svg = function(className, id, parent) {
 	let svgImage = document.createElementNS(svgNS, "svg");
+	svgImage.setAttribute("version", "1.1");
+	svgImage.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 	// svgImage.setAttributeNS(null, "viewBox", "0 0 1 1");
 	setClassIdParent(svgImage, className, id, parent);
 	return svgImage;

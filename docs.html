@@ -5,17 +5,13 @@ html, body, h1, h2, h3, h4, h5, h6, pre, code, p, ul, li {
 	margin: 0;
 }
 body {
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif; 
-	font-weight: 500;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+	font-weight: 400;
 }
 h1, h2, h3, h4, h5, h6 {
 	font-family: Futura, "Helvetica Neue", Helvetica, sans-serif;
 }
 h1{
-	margin-top: 8rem;
-	margin-bottom: 2rem;
-}
-h1:first-of-type{
 	margin-top: 1rem;
 	margin-bottom: 0;
 }
@@ -45,6 +41,29 @@ ul{
 a, a:hover, a:visited, a:active {
 	color: #f92472;
 }
+div {
+	margin-top: 8rem;
+	padding-bottom: 2rem;
+	margin-left: -0.5rem;
+	margin-right: -0.5rem;
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
+	border: 4px dashed #000;
+}
+div h1{
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+}
+div h3 {
+	margin: 2rem 0 0.5rem 0;
+}
+div p, div ul {
+	background-color: white;
+}
+div ul{
+ 	list-style: square;
+ 	padding-right: 3em;
+}
 f { /* function */
 	color: #66D9EF;
 }
@@ -69,6 +88,13 @@ body {
 }
 @media (min-width: 600px) {
 	body { margin: 2rem 100px 4rem 100px; }
+	div {
+		margin-left: -2rem;
+		margin-right: -2rem;
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
+
 }
 @media (min-width: 1000px) {
 	body { margin: 4rem 300px 6rem 300px; }
@@ -135,12 +161,22 @@ body {
 		<pre><code><f>group</f>()</code></pre>
 		<p>creates a <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</p>
 		<p>like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
-
+	
+	<div>
 	<h1>Notes</h1>
+	<h3>style</h3>
 		<pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)</code></pre>
 		<p>if you draw a line, you might notice that it doesn't show up. unfortunately, this is the SVG specification <i>working</i>.</p>
 		<pre><code><f>let</f> l <key>=</key> <f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>l.<f>setAttribute</f>(<str>"stroke"</str>, <str>"#F08"</str>)</code></pre>
-		<p>by default shapes have no stroke but <i>do</i> have a black fill, making a rect or circle easy to see.</p>
+		<p>until you apply styles, shapes have no stroke but <i>do</i> have a black fill, making shapes like a rect or circle initially visible. to make a line visible, set a stroke, like above.</p><p>there are three ways to apply style:</p>
+		<ul>
+			<li><b>setAttribute</b>, apply one style parameter and value</li>
+			<li><b>inline style</b>, use setAttribute to set "style" to a ";"-separated CSS string</li>
+			<li>define all style in a <b>CSS stylesheet</b></li>
+		</ul>
 		<pre><code>l.<f>setAttribute</f>(<str>"class"</str>, <str>"pen-line"</str>)</code></pre>
+	<h3>DOM</h3>
 		<p>every geometry object is a <a href="https://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#ID-745549614">DOM node</a> and is receptive to all relevant DOM Level 1 methods. all styling is in CSS and operations are easily searchable; everything is possible including CSS animations and transforms.</p>
+	</div>
+
 </body>

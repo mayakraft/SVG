@@ -1,6 +1,6 @@
 import * as SVG from "./svg";
 
-const touchPoint = function(parent, radius) {
+const controlPoint = function(parent, radius) {
 
 	let c = SVG.circle(0, 0, radius);
 	let _position = [0,0];
@@ -18,7 +18,8 @@ const touchPoint = function(parent, radius) {
 	}
 	const onMouseMove = function(mouse) {
 		if (_selected) {
-			setPosition(mouse[0], mouse[1]);
+			let pos = _updatePosition(mouse);
+			setPosition(pos[0], pos[1]);
 		}
 	}
 	const onMouseUp = function(mouse) {
@@ -30,47 +31,50 @@ const touchPoint = function(parent, radius) {
 			Math.pow(mouse[1] - _position[1], 2)
 		);
 	}
+	let _updatePosition = function(input){ return input; }
 	return {
 		circle: c,
 		set position(pos) {
 			if (pos[0] != null) { setPosition(pos[0], pos[1]); }
 			else if (pos.x != null) { setPosition(pos.x, pos.y); }
 		},
+		get position() { return [..._position]; },
 		onMouseUp,
 		onMouseMove,
 		distance,
+		set positionDidUpdate(method) { _updatePosition = method; },
 		set selected(value) { _selected = true; }
 	};
 }
 
 export default function(parent, number = 1, radius) {
-	let points = Array.from(Array(number)).map(_ => touchPoint(parent, radius));
-
+	let _points = Array.from(Array(number)).map(_ => controlPoint(parent, radius));
 	let _selected = undefined;
 
 	const onMouseDown = function(mouse) {
-		if (!(points.length > 0)) { return; }
-		_selected = points
+		if (!(_points.length > 0)) { return; }
+		_selected = _points
 			.map((p,i) => ({i:i, d:p.distance(mouse)}))
 			.sort((a,b) => a.d - b.d)
 			.shift()
 			.i;
-		points[_selected].selected = true;
+		_points[_selected].selected = true;
 	}
 
 	const onMouseMove = function(mouse) {
-		points.forEach(p => p.onMouseMove(mouse));
+		_points.forEach(p => p.onMouseMove(mouse));
 	}
 
 	const onMouseUp = function(mouse) {
-		points.forEach(p => p.onMouseUp(mouse));
+		_points.forEach(p => p.onMouseUp(mouse));
 		_selected = undefined;
 	}
 
-	Object.defineProperty(points, "onMouseDown", {value: onMouseDown});
-	Object.defineProperty(points, "onMouseMove", {value: onMouseMove});
-	Object.defineProperty(points, "onMouseUp", {value: onMouseUp});
-	Object.defineProperty(points, "selected", {get: function() { return _selected; }});
+	Object.defineProperty(_points, "onMouseDown", {value: onMouseDown});
+	Object.defineProperty(_points, "onMouseMove", {value: onMouseMove});
+	Object.defineProperty(_points, "onMouseUp", {value: onMouseUp});
+	Object.defineProperty(_points, "selectedIndex", {get: function() { return _selected; }});
+	Object.defineProperty(_points, "selected", {get: function() { return _points[_selected]; }});
 
-	return points;
+	return _points;
 }
