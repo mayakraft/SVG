@@ -5,7 +5,6 @@
  */
 
 import * as SVG from "./svg";
-import { default as ControlPoints } from "./controls";
 
 export default function Image() {
 	// get constructor parameters
@@ -22,6 +21,7 @@ export default function Image() {
 
 	let _matrix = _svg.createSVGMatrix();
 
+	let _events = {}; // mouse/touch event handlers are stored here
 	let _mouse = Object.create(null);
 	Object.assign(_mouse, {
 		isPressed: false, // is the mouse button pressed (y/n)
@@ -32,10 +32,6 @@ export default function Image() {
 		x: 0,             //
 		y: 0              // -- x and y, copy of position data
 	});
-
-	let properties = {
-		controlPoints: undefined
-	};
 
 	// exported
 	const zoom = function(scale, origin_x = 0, origin_y = 0) {
@@ -72,7 +68,7 @@ export default function Image() {
 		SVG.load(data, function(newSVG, error) {
 			if (newSVG != null) {
 				// todo: do we need to remove any existing handlers to properly free memory?
-				_parent.removeChild(_svg);
+				if (_svg != null) { _svg.remove(); }
 				_svg = newSVG;
 				_parent.appendChild(_svg);
 				// re-attach handlers
@@ -164,9 +160,6 @@ export default function Image() {
 		_svg.addEventListener("touchcancel", mouseUpHandler, false);
 	}
 
-	// the user-defined event handlers are stored here
-	let _onmousemove, _onmousedown, _onmouseup, _onmouseleave, _onmouseenter, _animate, _animationFrame, _intervalID;
-
 	// deep copy mouse object
 	function getMouse() {
 		let m = _mouse.position.slice();
@@ -198,30 +191,37 @@ export default function Image() {
 	function mouseMoveHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
 		let mouse = getMouse();
-		if (properties.controlPoints){ properties.controlPoints.onMouseMove(mouse); }
 		if (_mouse.isPressed) { updateMouseDrag(); }
-		if (_onmousemove != null) { _onmousemove(mouse); }
+		if (_events.mousemove) {
+			_events.mousemove.forEach(f => f(mouse));
+		}
 	}
 	function mouseDownHandler(event) {
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
 		let mouse = getMouse();
-		if (properties.controlPoints){ properties.controlPoints.onMouseDown(mouse); }
-		if (_onmousedown != null) { _onmousedown(mouse); }
+		if (_events.mousedown) {
+			_events.mousedown.forEach(f => f(mouse));
+		}
 	}
 	function mouseUpHandler(event) {
 		_mouse.isPressed = false;
 		let mouse = getMouse();
-		if (properties.controlPoints){ properties.controlPoints.onMouseUp(mouse); }
-		if (_onmouseup != null) { _onmouseup(mouse); }
+		if (_events.mouseup) {
+			_events.mouseup.forEach(f => f(mouse));
+		}
 	}
 	function mouseLeaveHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
-		if (_onmouseleave != null) { _onmouseleave(getMouse()); }
+		if (_events.mouseleave) {
+			_events.mouseleave.forEach(f => f(mouse));
+		}
 	}
 	function mouseEnterHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
-		if (_onmouseenter != null) { _onmouseenter(getMouse()); }
+		if (_events.mouseenter) {
+			_events.mouseenter.forEach(f => f(mouse));
+		}
 	}
 	function touchStartHandler(event) {
 		event.preventDefault();
@@ -230,8 +230,9 @@ export default function Image() {
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, touch.clientX, touch.clientY);
 		let mouse = getMouse();
-		if (properties.controlPoints){ properties.controlPoints.onMouseDown(mouse); }
-		if (_onmousedown != null) { _onmousedown(mouse); }
+		if (_events.mousedown) {
+			_events.mousedown.forEach(f => f(mouse));
+		}
 	}
 	function touchMoveHandler(event) {
 		event.preventDefault();
@@ -240,9 +241,11 @@ export default function Image() {
 		updateMousePosition(touch.clientX, touch.clientY);
 		if (_mouse.isPressed) { updateMouseDrag(); }
 		let mouse = getMouse();
-		if (properties.controlPoints){ properties.controlPoints.onMouseMove(mouse); }
-		if (_onmousemove != null) { _onmousemove(mouse); }
+		if (_events.mousemove) {
+			_events.mousemove.forEach(f => f(mouse));
+		}
 	}
+	let _animate, _intervalID, _animationFrame;
 	function updateAnimationHandler(handler) {
 		if (_animate != null) {
 			clearInterval(_intervalID);
@@ -263,24 +266,16 @@ export default function Image() {
 	// function touchEndHandler(event) { }
 	// function touchCancelHandler(event) { }
 
-	const removeControlPoints = function() {
-		properties.controlPoints.forEach(tp => tp.remove());
-		properties.controlPoints = [];
-	}
-	const makeControlPoints = function(number, options) {
-		let parent = _svg;
-		let radius = getWidth() * 0.01;
-		if (options != null) {
-			if (options.parent) { parent = options.parent; }
-			if (options.radius) { radius = options.radius; }
+	const addEventListener = function(eventName, func) {
+		if (typeof func !== "function") { throw "must supply a function type to addEventListener"; }
+		if (_events[eventName] === undefined) {
+			_events[eventName] = [];
 		}
-		removeControlPoints();
-		properties.controlPoints = ControlPoints(parent, number, radius);
-		return properties.controlPoints;
+		_events[eventName].push(func);
 	}
 
 	// return Object.freeze({
-	return {
+	let _this = {
 		zoom, translate, appendChild, removeChildren,
 		load, save,
 		setViewBox, getViewBox, size,
@@ -291,15 +286,15 @@ export default function Image() {
 		get height() { return getHeight(); },
 		set width(w) { _svg.setAttributeNS(null, "width", w); },
 		set height(h) { _svg.setAttributeNS(null, "height", h); },
-		set onMouseMove(handler) { _onmousemove = handler; },
-		set onMouseDown(handler) { _onmousedown = handler; },
-		set onMouseUp(handler) { _onmouseup = handler; },
-		set onMouseLeave(handler) { _onmouseleave = handler; },
-		set onMouseEnter(handler) { _onmouseenter = handler; },
+		set onMouseMove(handler) { addEventListener("mousemove", handler); },
+		set onMouseDown(handler) { addEventListener("mousedown", handler); },
+		set onMouseUp(handler) { addEventListener("mouseup", handler); },
+		set onMouseLeave(handler) { addEventListener("mouseleave", handler); },
+		set onMouseEnter(handler) { addEventListener("mouseenter", handler); },
 		set animate(handler) { updateAnimationHandler(handler); },
-		makeControlPoints,
-		get controlPoints() { return properties.controlPoints; }
+		addEventListener
 		// set onResize(handler) {}
 	};
+	return _this;
 	// });
 }

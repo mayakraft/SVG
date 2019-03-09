@@ -165,7 +165,7 @@ export const arc = function(x, y, radius, angleA, angleB, className, id, parent)
 export const regularPolygon = function(cX, cY, radius, sides, className, id, parent) {
 	let halfwedge = 2*Math.PI/sides * 0.5;
 	let r = Math.cos(halfwedge) * radius;
-	let points = Array.from(new Array(sides)).map((el,i) => {
+	let points = Array.from(Array(sides)).map((el,i) => {
 		let a = -2 * Math.PI * i / sides + halfwedge;
 		let x = cX + r * Math.sin(a);
 		let y = cY + r * Math.cos(a);

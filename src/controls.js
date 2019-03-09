@@ -1,9 +1,14 @@
 import * as SVG from "./svg";
 
-const controlPoint = function(parent, radius) {
+const controlPoint = function(parent, options) {
+	if (options == null) { options = {}; }
+	if (options.radius == null) { options.radius = 1; }
+	if (options.fill == null) { options.fill = "#000000"; }
+	if (options.position == null) { options.position = [0,0]; }
 
-	let c = SVG.circle(0, 0, radius);
-	let _position = [0,0];
+	let c = SVG.circle(0, 0, options.radius);
+	c.setAttribute("fill", options.fill);
+	let _position = options.position.slice();
 	let _selected = false;
 
 	if (parent != null) {
@@ -47,8 +52,14 @@ const controlPoint = function(parent, radius) {
 	};
 }
 
-export default function(parent, number = 1, radius) {
-	let _points = Array.from(Array(number)).map(_ => controlPoint(parent, radius));
+export default function(svgObject, number = 1, options) {
+	// constructor options
+	if (options == null) { options = {}; }
+	if (options.parent == null) { options.parent = svgObject; }
+	if (options.radius == null) { options.radius = 1; }
+	if (options.fill == null) { options.fill = "#000000"; }
+
+	let _points = Array.from(Array(number)).map(_ => controlPoint(options.parent, options));
 	let _selected = undefined;
 
 	const onMouseDown = function(mouse) {
@@ -60,21 +71,24 @@ export default function(parent, number = 1, radius) {
 			.i;
 		_points[_selected].selected = true;
 	}
-
 	const onMouseMove = function(mouse) {
 		_points.forEach(p => p.onMouseMove(mouse));
 	}
-
 	const onMouseUp = function(mouse) {
 		_points.forEach(p => p.onMouseUp(mouse));
 		_selected = undefined;
 	}
 
-	Object.defineProperty(_points, "onMouseDown", {value: onMouseDown});
-	Object.defineProperty(_points, "onMouseMove", {value: onMouseMove});
-	Object.defineProperty(_points, "onMouseUp", {value: onMouseUp});
+	svgObject.addEventListener("mousedown", onMouseDown);
+	svgObject.addEventListener("mouseup", onMouseUp);
+	svgObject.addEventListener("mousemove", onMouseMove);
+
 	Object.defineProperty(_points, "selectedIndex", {get: function() { return _selected; }});
 	Object.defineProperty(_points, "selected", {get: function() { return _points[_selected]; }});
+	Object.defineProperty(_points, "removeAll", {value: function() {
+		_points.forEach(tp => tp.remove());
+		// todo: untie all event handlers
+	}});
 
 	return _points;
 }
