@@ -13,17 +13,14 @@ export default function() {
 	// create a new SVG
 	let _svg = SVG.svg();
 
-	let _parent = undefined;  // parent node
+	let prop = {
+		parent: undefined,   // parent node
+		padding: 0,
+		events: {},  // mouse/touch event handlers are stored here
+		mouse: Object.create(null)
+	}
 
-	// view properties
-	// let _scale = 1.0;
-	let _padding = 0;
-
-	let _matrix = _svg.createSVGMatrix();
-
-	let _events = {}; // mouse/touch event handlers are stored here
-	let _mouse = Object.create(null);
-	Object.assign(_mouse, {
+	Object.assign(prop.mouse, {
 		isPressed: false, // is the mouse button pressed (y/n)
 		position: [0,0],  // the current position of the mouse [x,y]
 		pressed: [0,0],   // the last location the mouse was pressed
@@ -33,16 +30,8 @@ export default function() {
 		y: 0              // -- x and y, copy of position data
 	});
 
-	// exported
-	// const zoom = function(scale, origin_x = 0, origin_y = 0) {
-	// 	_scale = scale;
-	// 	SVG.scaleViewBox(_svg, scale, origin_x, origin_y);
-	// }
-	// const translate = function(dx, dy) {
-	// 	SVG.translateViewBox(_svg, dx, dy);
-	// }
 	const setViewBox = function(x, y, width, height) {
-		SVG.setViewBox(_svg, x, y, width, height, _padding);
+		SVG.setViewBox(_svg, x, y, width, height, prop.padding);
 	}
 	const getViewBox = function() { return SVG.getViewBox(_svg); }
 	const appendChild = function(element) { _svg.appendChild(element); }
@@ -56,8 +45,9 @@ export default function() {
 				// todo: do we need to remove any existing handlers to properly free memory?
 				if (_svg != null) { _svg.remove(); }
 				_svg = newSVG;
-				_parent.appendChild(_svg);
+				prop.parent.appendChild(_svg);
 				// re-attach handlers
+				removeHandlers()
 				attachHandlers();
 			}
 			if (callback != null) { callback(newSVG, error); }
@@ -66,7 +56,7 @@ export default function() {
 	const size = function(w, h) {
 		if (w == null || h == null) { return; }
 		let vb = SVG.getViewBox(_svg);
-		SVG.setViewBox(_svg, vb[0], vb[1], w, h, _padding);
+		SVG.setViewBox(_svg, vb[0], vb[1], w, h, prop.padding);
 		_svg.setAttributeNS(null, "width", w);
 		_svg.setAttributeNS(null, "height", h);
 	}
@@ -91,12 +81,12 @@ export default function() {
 				typeof a === "string" || a instanceof String)
 			.map(str => document.getElementById(str))
 			.shift();
-		_parent = (element != null
+		prop.parent = (element != null
 			? element
 			: (idElement != null
 				? idElement
 				: document.body));
-		_parent.appendChild(_svg);
+		prop.parent.appendChild(_svg);
 
 		if (numbers.length >= 2) {
 			_svg.setAttributeNS(null, "width", numbers[0]);
@@ -132,105 +122,91 @@ export default function() {
 		attachToDOM();
 	}
 
-	function attachHandlers() {
-		// mouse
-		_svg.addEventListener("mouseup", mouseUpHandler, false);
-		_svg.addEventListener("mousedown", mouseDownHandler, false);
-		_svg.addEventListener("mousemove", mouseMoveHandler, false);
-		_svg.addEventListener("mouseleave", mouseLeaveHandler, false);
-		_svg.addEventListener("mouseenter", mouseEnterHandler, false);
-		// touches
-		_svg.addEventListener("touchend", mouseUpHandler, false);
-		_svg.addEventListener("touchmove", touchMoveHandler, false);
-		_svg.addEventListener("touchstart", touchStartHandler, false);
-		_svg.addEventListener("touchcancel", mouseUpHandler, false);
-	}
-
 	// deep copy mouse object
 	function getMouse() {
-		let m = _mouse.position.slice();
+		let m = prop.mouse.position.slice();
 		// if a property is an object it's an array. we can .slice()
-		Object.keys(_mouse)
+		Object.keys(prop.mouse)
 			.filter(key => typeof key === "object")
-			.forEach(key => m[key] = _mouse[key].slice());
-		Object.keys(_mouse)
+			.forEach(key => m[key] = prop.mouse[key].slice());
+		Object.keys(prop.mouse)
 			.filter(key => typeof key !== "object")
-			.forEach(key => m[key] = _mouse[key]);
+			.forEach(key => m[key] = prop.mouse[key]);
 		return Object.freeze(m);
 	}
 	// clientX and clientY are from the browser event data
 	function updateMousePosition(clientX, clientY) {
-		_mouse.prev = _mouse.position;
-		_mouse.position = SVG.convertToViewBox(_svg, clientX, clientY);
-		_mouse.x = _mouse.position[0];
-		_mouse.y = _mouse.position[1];
+		prop.mouse.prev = prop.mouse.position;
+		prop.mouse.position = SVG.convertToViewBox(_svg, clientX, clientY);
+		prop.mouse.x = prop.mouse.position[0];
+		prop.mouse.y = prop.mouse.position[1];
 	}
 	function updateMouseDrag() {
 		// counting on updateMousePosition to have just been called
 		// using mouse.position instead of calling SVG.convertToViewBox again
-		_mouse.drag = [_mouse.position[0] - _mouse.pressed[0], 
-		               _mouse.position[1] - _mouse.pressed[1]];
-		_mouse.drag.x = _mouse.drag[0];
-		_mouse.drag.y = _mouse.drag[1];
+		prop.mouse.drag = [prop.mouse.position[0] - prop.mouse.pressed[0], 
+		               prop.mouse.position[1] - prop.mouse.pressed[1]];
+		prop.mouse.drag.x = prop.mouse.drag[0];
+		prop.mouse.drag.y = prop.mouse.drag[1];
 	}
 
-	function mouseMoveHandler(event) {
+	const mouseMoveHandler = function(event) {
 		updateMousePosition(event.clientX, event.clientY);
 		let mouse = getMouse();
-		if (_mouse.isPressed) { updateMouseDrag(); }
-		if (_events.mousemove) {
-			_events.mousemove.forEach(f => f(mouse));
+		if (prop.mouse.isPressed) { updateMouseDrag(); }
+		if (prop.events.mousemove) {
+			prop.events.mousemove.forEach(f => f(mouse));
 		}
 	}
-	function mouseDownHandler(event) {
-		_mouse.isPressed = true;
-		_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
-		if (_events.mousedown) {
+	const mouseDownHandler = function(event) {
+		prop.mouse.isPressed = true;
+		prop.mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
+		if (prop.events.mousedown) {
 			let mouse = getMouse();
-			_events.mousedown.forEach(f => f(mouse));
+			prop.events.mousedown.forEach(f => f(mouse));
 		}
 	}
-	function mouseUpHandler(event) {
-		_mouse.isPressed = false;
-		if (_events.mouseup) {
+	const mouseUpHandler = function(event) {
+		prop.mouse.isPressed = false;
+		if (prop.events.mouseup) {
 			let mouse = getMouse();
-			_events.mouseup.forEach(f => f(mouse));
+			prop.events.mouseup.forEach(f => f(mouse));
 		}
 	}
-	function mouseLeaveHandler(event) {
+	const mouseLeaveHandler = function(event) {
 		updateMousePosition(event.clientX, event.clientY);
-		if (_events.mouseleave) {
+		if (prop.events.mouseleave) {
 			let mouse = getMouse();
-			_events.mouseleave.forEach(f => f(mouse));
+			prop.events.mouseleave.forEach(f => f(mouse));
 		}
 	}
-	function mouseEnterHandler(event) {
+	const mouseEnterHandler = function(event) {
 		updateMousePosition(event.clientX, event.clientY);
-		if (_events.mouseenter) {
+		if (prop.events.mouseenter) {
 			let mouse = getMouse();
-			_events.mouseenter.forEach(f => f(mouse));
+			prop.events.mouseenter.forEach(f => f(mouse));
 		}
 	}
-	function touchStartHandler(event) {
+	const touchStartHandler = function(event) {
 		event.preventDefault();
 		let touch = event.touches[0];
 		if (touch == null) { return; }
-		_mouse.isPressed = true;
-		_mouse.pressed = SVG.convertToViewBox(_svg, touch.clientX, touch.clientY);
-		if (_events.mousedown) {
+		prop.mouse.isPressed = true;
+		prop.mouse.pressed = SVG.convertToViewBox(_svg, touch.clientX, touch.clientY);
+		if (prop.events.mousedown) {
 			let mouse = getMouse();
-			_events.mousedown.forEach(f => f(mouse));
+			prop.events.mousedown.forEach(f => f(mouse));
 		}
 	}
-	function touchMoveHandler(event) {
+	const touchMoveHandler = function(event) {
 		event.preventDefault();
 		let touch = event.touches[0];
 		if (touch == null) { return; }
 		updateMousePosition(touch.clientX, touch.clientY);
 		let mouse = getMouse();
-		if (_mouse.isPressed) { updateMouseDrag(); }
-		if (_events.mousemove) {
-			_events.mousemove.forEach(f => f(mouse));
+		if (prop.mouse.isPressed) { updateMouseDrag(); }
+		if (prop.events.mousemove) {
+			prop.events.mousemove.forEach(f => f(mouse));
 		}
 	}
 	let _animate, _intervalID, _animationFrame;
@@ -250,6 +226,31 @@ export default function() {
 			}, 1000/60);
 		}
 	}
+
+	const handlers = {
+		// mouse
+		mouseup: mouseUpHandler,
+		mousedown: mouseDownHandler,
+		mousemove: mouseMoveHandler,
+		mouseleave: mouseLeaveHandler,
+		mouseenter: mouseEnterHandler,
+		// touches
+		touchend: mouseUpHandler,
+		touchmove: touchMoveHandler,
+		touchstart: touchStartHandler,
+		touchcancel: mouseUpHandler,
+	};
+	const removeHandlers = function() {
+		Object.keys(handlers).forEach(key => 
+			_svg.removeEventListener(key, handlers[key], false)
+		);
+	}
+	const attachHandlers = function() {
+		Object.keys(handlers).forEach(key => 
+			_svg.addEventListener(key, handlers[key], false)
+		);
+	}
+
 	// these are the same as mouseUpHandler
 	// function touchEndHandler(event) { }
 	// function touchCancelHandler(event) { }
@@ -258,12 +259,12 @@ export default function() {
 		if (typeof func !== "function") {
 			throw "must supply a function type to addEventListener";
 		}
-		if (_events[eventName] === undefined) {
-			_events[eventName] = [];
+		if (prop.events[eventName] === undefined) {
+			prop.events[eventName] = [];
 		}
-		_events[eventName].push(func);
+		prop.events[eventName].push(func);
 	}
-
+/*
 	// return Object.freeze({
 	let _this = {
 		// zoom, translate, 
@@ -284,32 +285,32 @@ export default function() {
 		set onMouseEnter(handler) { addEventListener("mouseenter", handler); },
 		set animate(handler) { updateAnimationHandler(handler); },
 		addEventListener
-		// set onResize(handler) {}		
-	};
+		// set onResize(handler) {}
+	};*/
 
-	const drawingMethods = {
-		"line" : SVG.line,
-		"circle" : SVG.circle,
-		"ellipse" : SVG.ellipse,
-		"rect" : SVG.rect,
-		"polygon" : SVG.polygon,
-		"polyline" : SVG.polyline,
-		"bezier" : SVG.bezier,
-		"text" : SVG.text,
-		"wedge" : SVG.wedge,
-		"arc" : SVG.arc,
-		"regularPolygon" : SVG.regularPolygon,
-		"group" : SVG.group
-	};
+	Object.defineProperty(_svg, "mouse", {get: function(){ return getMouse(); }});
+	// Object.defineProperty(_svg, "width", {get: function(){ return getWidth(); }});
+	// Object.defineProperty(_svg, "height", {get: function(){ return getHeight(); }});
+	// Object.defineProperty(_svg, "width", {set: function(w){ _svg.setAttributeNS(null, "width", w); }});
+	// Object.defineProperty(_svg, "height", {set: function(h){ _svg.setAttributeNS(null, "height", h); }});
+	Object.defineProperty(_svg, "mousemove", {set: function(handler) { addEventListener("mousemove", handler); }});
+	Object.defineProperty(_svg, "mousedown", {set: function(handler) { addEventListener("mousedown", handler); }});
+	Object.defineProperty(_svg, "mouseup", {set: function(handler) { addEventListener("mouseup", handler); }});
+	Object.defineProperty(_svg, "mouseleave", {set: function(handler) { addEventListener("mouseleave", handler); }});
+	Object.defineProperty(_svg, "mouseenter", {set: function(handler) { addEventListener("mouseenter", handler); }});
+	Object.defineProperty(_svg, "animate", {set: function(handler) { updateAnimationHandler(handler); }});
 
-	Object.keys(drawingMethods).forEach(key => {
-		_this[key] = function() {
-			let g = drawingMethods[key](...arguments);
-			_this.appendChild(g);
-			return g;
-		};
-	});
+	// Object.defineProperty(_svg, "appendChild", {value: appendChild});
+	Object.defineProperty(_svg, "removeChildren", {value: removeChildren});
+	Object.defineProperty(_svg, "load", {value: load});
+	Object.defineProperty(_svg, "save", {value: save});
+	Object.defineProperty(_svg, "setViewBox", {value: setViewBox});
+	Object.defineProperty(_svg, "getViewBox", {value: getViewBox});
+	Object.defineProperty(_svg, "size", {value: size});
+	// Object.defineProperty(_svg, "addEventListener", {value: addEventListener});
 
-	return _this;
+	SVG.attachGeometryMethods(_svg);
+
+	return _svg;
 	// });
 }

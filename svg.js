@@ -541,12 +541,13 @@
 	function image() {
 		let params = Array.from(arguments);
 		let _svg = svg();
-		let _parent = undefined;
-		let _padding = 0;
-		let _matrix = _svg.createSVGMatrix();
-		let _events = {};
-		let _mouse = Object.create(null);
-		Object.assign(_mouse, {
+		let prop = {
+			parent: undefined,
+			padding: 0,
+			events: {},
+			mouse: Object.create(null)
+		};
+		Object.assign(prop.mouse, {
 			isPressed: false,
 			position: [0,0],
 			pressed: [0,0],
@@ -556,10 +557,9 @@
 			y: 0
 		});
 		const setViewBox$$1 = function(x, y, width, height) {
-			setViewBox(_svg, x, y, width, height, _padding);
+			setViewBox(_svg, x, y, width, height, prop.padding);
 		};
 		const getViewBox$$1 = function() { return getViewBox(_svg); };
-		const appendChild = function(element) { _svg.appendChild(element); };
 		const removeChildren$$1 = function() { removeChildren(_svg); };
 		const save$$1 = function(filename = "image.svg") {
 			return save(_svg, filename);
@@ -569,7 +569,8 @@
 				if (newSVG != null) {
 					if (_svg != null) { _svg.remove(); }
 					_svg = newSVG;
-					_parent.appendChild(_svg);
+					prop.parent.appendChild(_svg);
+					removeHandlers();
 					attachHandlers();
 				}
 				if (callback != null) { callback(newSVG, error); }
@@ -578,17 +579,9 @@
 		const size = function(w, h) {
 			if (w == null || h == null) { return; }
 			let vb = getViewBox(_svg);
-			setViewBox(_svg, vb[0], vb[1], w, h, _padding);
+			setViewBox(_svg, vb[0], vb[1], w, h, prop.padding);
 			_svg.setAttributeNS(null, "width", w);
 			_svg.setAttributeNS(null, "height", h);
-		};
-		const getWidth = function() {
-			let w = parseInt(_svg.getAttributeNS(null, "width"));
-			return w != null && !isNaN(w) ? w : _svg.getBoundingClientRect().width;
-		};
-		const getHeight = function() {
-			let h = parseInt(_svg.getAttributeNS(null, "height"));
-			return h != null && !isNaN(h) ? h : _svg.getBoundingClientRect().height;
 		};
 		const attachToDOM = function() {
 			let functions = params.filter((arg) => typeof arg === "function");
@@ -600,12 +593,12 @@
 					typeof a === "string" || a instanceof String)
 				.map(str => document.getElementById(str))
 				.shift();
-			_parent = (element != null
+			prop.parent = (element != null
 				? element
 				: (idElement != null
 					? idElement
 					: document.body));
-			_parent.appendChild(_svg);
+			prop.parent.appendChild(_svg);
 			if (numbers.length >= 2) {
 				_svg.setAttributeNS(null, "width", numbers[0]);
 				_svg.setAttributeNS(null, "height", numbers[1]);
@@ -631,6 +624,17 @@
 		} else {
 			attachToDOM();
 		}
+		function removeHandlers() {
+			_svg.removeEventListener("mouseup", mouseUpHandler, false);
+			_svg.removeEventListener("mousedown", mouseDownHandler, false);
+			_svg.removeEventListener("mousemove", mouseMoveHandler, false);
+			_svg.removeEventListener("mouseleave", mouseLeaveHandler, false);
+			_svg.removeEventListener("mouseenter", mouseEnterHandler, false);
+			_svg.removeEventListener("touchend", mouseUpHandler, false);
+			_svg.removeEventListener("touchmove", touchMoveHandler, false);
+			_svg.removeEventListener("touchstart", touchStartHandler, false);
+			_svg.removeEventListener("touchcancel", mouseUpHandler, false);
+		}
 		function attachHandlers() {
 			_svg.addEventListener("mouseup", mouseUpHandler, false);
 			_svg.addEventListener("mousedown", mouseDownHandler, false);
@@ -643,73 +647,73 @@
 			_svg.addEventListener("touchcancel", mouseUpHandler, false);
 		}
 		function getMouse() {
-			let m = _mouse.position.slice();
-			Object.keys(_mouse)
+			let m = prop.mouse.position.slice();
+			Object.keys(prop.mouse)
 				.filter(key => typeof key === "object")
-				.forEach(key => m[key] = _mouse[key].slice());
-			Object.keys(_mouse)
+				.forEach(key => m[key] = prop.mouse[key].slice());
+			Object.keys(prop.mouse)
 				.filter(key => typeof key !== "object")
-				.forEach(key => m[key] = _mouse[key]);
+				.forEach(key => m[key] = prop.mouse[key]);
 			return Object.freeze(m);
 		}
 		function updateMousePosition(clientX, clientY) {
-			_mouse.prev = _mouse.position;
-			_mouse.position = convertToViewBox(_svg, clientX, clientY);
-			_mouse.x = _mouse.position[0];
-			_mouse.y = _mouse.position[1];
+			prop.mouse.prev = prop.mouse.position;
+			prop.mouse.position = convertToViewBox(_svg, clientX, clientY);
+			prop.mouse.x = prop.mouse.position[0];
+			prop.mouse.y = prop.mouse.position[1];
 		}
 		function updateMouseDrag() {
-			_mouse.drag = [_mouse.position[0] - _mouse.pressed[0],
-			               _mouse.position[1] - _mouse.pressed[1]];
-			_mouse.drag.x = _mouse.drag[0];
-			_mouse.drag.y = _mouse.drag[1];
+			prop.mouse.drag = [prop.mouse.position[0] - prop.mouse.pressed[0],
+			               prop.mouse.position[1] - prop.mouse.pressed[1]];
+			prop.mouse.drag.x = prop.mouse.drag[0];
+			prop.mouse.drag.y = prop.mouse.drag[1];
 		}
 		function mouseMoveHandler(event) {
 			updateMousePosition(event.clientX, event.clientY);
 			let mouse = getMouse();
-			if (_mouse.isPressed) { updateMouseDrag(); }
-			if (_events.mousemove) {
-				_events.mousemove.forEach(f => f(mouse));
+			if (prop.mouse.isPressed) { updateMouseDrag(); }
+			if (prop.events.mousemove) {
+				prop.events.mousemove.forEach(f => f(mouse));
 			}
 		}
 		function mouseDownHandler(event) {
-			_mouse.isPressed = true;
-			_mouse.pressed = convertToViewBox(_svg, event.clientX, event.clientY);
-			if (_events.mousedown) {
+			prop.mouse.isPressed = true;
+			prop.mouse.pressed = convertToViewBox(_svg, event.clientX, event.clientY);
+			if (prop.events.mousedown) {
 				let mouse = getMouse();
-				_events.mousedown.forEach(f => f(mouse));
+				prop.events.mousedown.forEach(f => f(mouse));
 			}
 		}
 		function mouseUpHandler(event) {
-			_mouse.isPressed = false;
-			if (_events.mouseup) {
+			prop.mouse.isPressed = false;
+			if (prop.events.mouseup) {
 				let mouse = getMouse();
-				_events.mouseup.forEach(f => f(mouse));
+				prop.events.mouseup.forEach(f => f(mouse));
 			}
 		}
 		function mouseLeaveHandler(event) {
 			updateMousePosition(event.clientX, event.clientY);
-			if (_events.mouseleave) {
+			if (prop.events.mouseleave) {
 				let mouse = getMouse();
-				_events.mouseleave.forEach(f => f(mouse));
+				prop.events.mouseleave.forEach(f => f(mouse));
 			}
 		}
 		function mouseEnterHandler(event) {
 			updateMousePosition(event.clientX, event.clientY);
-			if (_events.mouseenter) {
+			if (prop.events.mouseenter) {
 				let mouse = getMouse();
-				_events.mouseenter.forEach(f => f(mouse));
+				prop.events.mouseenter.forEach(f => f(mouse));
 			}
 		}
 		function touchStartHandler(event) {
 			event.preventDefault();
 			let touch = event.touches[0];
 			if (touch == null) { return; }
-			_mouse.isPressed = true;
-			_mouse.pressed = convertToViewBox(_svg, touch.clientX, touch.clientY);
-			if (_events.mousedown) {
+			prop.mouse.isPressed = true;
+			prop.mouse.pressed = convertToViewBox(_svg, touch.clientX, touch.clientY);
+			if (prop.events.mousedown) {
 				let mouse = getMouse();
-				_events.mousedown.forEach(f => f(mouse));
+				prop.events.mousedown.forEach(f => f(mouse));
 			}
 		}
 		function touchMoveHandler(event) {
@@ -718,9 +722,9 @@
 			if (touch == null) { return; }
 			updateMousePosition(touch.clientX, touch.clientY);
 			let mouse = getMouse();
-			if (_mouse.isPressed) { updateMouseDrag(); }
-			if (_events.mousemove) {
-				_events.mousemove.forEach(f => f(mouse));
+			if (prop.mouse.isPressed) { updateMouseDrag(); }
+			if (prop.events.mousemove) {
+				prop.events.mousemove.forEach(f => f(mouse));
 			}
 		}
 		let _animate, _intervalID, _animationFrame;
@@ -744,29 +748,24 @@
 			if (typeof func !== "function") {
 				throw "must supply a function type to addEventListener";
 			}
-			if (_events[eventName] === undefined) {
-				_events[eventName] = [];
+			if (prop.events[eventName] === undefined) {
+				prop.events[eventName] = [];
 			}
-			_events[eventName].push(func);
+			prop.events[eventName].push(func);
 		};
-		let _this = {
-			appendChild, removeChildren: removeChildren$$1,
-			load: load$$1, save: save$$1,
-			setViewBox: setViewBox$$1, getViewBox: getViewBox$$1, size,
-			get mouse() { return getMouse(); },
-			get svg() { return _svg; },
-			get width() { return getWidth(); },
-			get height() { return getHeight(); },
-			set width(w) { _svg.setAttributeNS(null, "width", w); },
-			set height(h) { _svg.setAttributeNS(null, "height", h); },
-			set onMouseMove(handler) { addEventListener("mousemove", handler); },
-			set onMouseDown(handler) { addEventListener("mousedown", handler); },
-			set onMouseUp(handler) { addEventListener("mouseup", handler); },
-			set onMouseLeave(handler) { addEventListener("mouseleave", handler); },
-			set onMouseEnter(handler) { addEventListener("mouseenter", handler); },
-			set animate(handler) { updateAnimationHandler(handler); },
-			addEventListener
-		};
+		Object.defineProperty(_svg, "mouse", {get: function(){ return getMouse(); }});
+		Object.defineProperty(_svg, "mousemove", {set: function(handler) { addEventListener("mousemove", handler); }});
+		Object.defineProperty(_svg, "mousedown", {set: function(handler) { addEventListener("mousedown", handler); }});
+		Object.defineProperty(_svg, "mouseup", {set: function(handler) { addEventListener("mouseup", handler); }});
+		Object.defineProperty(_svg, "mouseleave", {set: function(handler) { addEventListener("mouseleave", handler); }});
+		Object.defineProperty(_svg, "mouseenter", {set: function(handler) { addEventListener("mouseenter", handler); }});
+		Object.defineProperty(_svg, "animate", {set: function(handler) { updateAnimationHandler(handler); }});
+		Object.defineProperty(_svg, "removeChildren", {value: removeChildren$$1});
+		Object.defineProperty(_svg, "load", {value: load$$1});
+		Object.defineProperty(_svg, "save", {value: save$$1});
+		Object.defineProperty(_svg, "setViewBox", {value: setViewBox$$1});
+		Object.defineProperty(_svg, "getViewBox", {value: getViewBox$$1});
+		Object.defineProperty(_svg, "size", {value: size});
 		const drawingMethods = {
 			"line" : line,
 			"circle" : circle,
@@ -782,13 +781,13 @@
 			"group" : group
 		};
 		Object.keys(drawingMethods).forEach(key => {
-			_this[key] = function() {
+			_svg[key] = function() {
 				let g = drawingMethods[key](...arguments);
-				_this.appendChild(g);
+				_svg.appendChild(g);
 				return g;
 			};
 		});
-		return _this;
+		return _svg;
 	}
 
 	const controlPoint = function(parent, options) {
