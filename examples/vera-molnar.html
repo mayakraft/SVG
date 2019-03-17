@@ -18,7 +18,7 @@ svg{
 <script type="text/javascript" src="../svg.js"></script>
 <script type="text/javascript">
 
-let sketch = SVG.Image(window.innerWidth, window.innerWidth / 3);
+let sketch = SVG.image(window.innerWidth, window.innerWidth / 3);
 let rect = SVG.rect(0, 0, sketch.width, sketch.height);
 rect.setAttribute("fill", "white");
 sketch.appendChild(rect);
@@ -49,7 +49,7 @@ function perturbedRect(x, y, width, height, X_PERTURB, Y_PERTURB){
 	                   y:(y + height + Math.random()*height*Y_PERTURB - (height*Y_PERTURB*.5))};
 	var bottomLeft = {x:(x + Math.random()*width*X_PERTURB - (width*X_PERTURB*.5)),
 	                  y:(y + height + Math.random()*height*Y_PERTURB - (height*Y_PERTURB*.5))};
-	let group = SVG.group(null, null, sketch);
+	let group = sketch.group();
 	let l = [];
 	l.push(SVG.line(parseInt(topLeft.x), parseInt(topLeft.y), parseInt(topRight.x), parseInt(topRight.y)));
 	l.push(SVG.line(parseInt(topRight.x), parseInt(topRight.y), parseInt(bottomRight.x), parseInt(bottomRight.y)));

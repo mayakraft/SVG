@@ -14,10 +14,10 @@ compare the two to see what is or isn't made easier.
 <script>
 
 // create a new SVG, append it to the DOM
-let mySVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-mySVG.setAttribute("width", window.innerWidth);
-mySVG.setAttribute("height", window.innerHeight);
-document.body.appendChild(mySVG);
+let drawing = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+drawing.setAttribute("width", window.innerWidth);
+drawing.setAttribute("height", window.innerHeight);
+document.body.appendChild(drawing);
 
 // fill the canvas with a rectangle
 let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -28,7 +28,7 @@ rect.setAttribute("height", window.innerHeight);
 rect.setAttribute("fill", "black");
 
 // append the rectangle to the svg
-mySVG.appendChild(rect);
+drawing.appendChild(rect);
 
 // create, style, and append a polyline
 let poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
@@ -36,15 +36,15 @@ poly.setAttribute("stroke", "white");
 poly.setAttribute("stroke-width", 5);
 poly.setAttribute("stroke-dasharray", "6 12");
 poly.setAttribute("stroke-linecap", "round");
-mySVG.appendChild(poly);
+drawing.appendChild(poly);
 
 // create a simple draw handler
 let points = [];
-mySVG.onmousemove = function(event){
-	let pt = mySVG.createSVGPoint();
+drawing.onmousemove = function(event){
+	let pt = drawing.createSVGPoint();
 	pt.x = event.clientX;
 	pt.y = event.clientY;
-	let svgPoint = pt.matrixTransform(mySVG.getScreenCTM().inverse());
+	let svgPoint = pt.matrixTransform(drawing.getScreenCTM().inverse());
 	points.push(svgPoint);
 	let pointsString = points
 		.reduce((prev, curr) => prev + curr.x + "," + curr.y + " ", "");

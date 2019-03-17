@@ -19,7 +19,7 @@ body{
 
 let canvasW = 0.875 * Math.min(window.innerWidth, window.innerHeight);
 // let canvasW = 800;
-let sol = SVG.Image("sol-lewitt", canvasW, canvasW);
+let sol = SVG.image("sol-lewitt", canvasW, canvasW);
 
 sol.setup = function(){
 	const count = 16;
@@ -28,18 +28,17 @@ sol.setup = function(){
 	sol.unit = (canvasW - sol.pad*2) / count;
 
 	sol.removeChildren();
-	let rect = SVG.rect(0, 0, canvasW, canvasW);
+	let rect = sol.rect(0, 0, canvasW, canvasW);
 	rect.setAttribute("fill", "black");
-	sol.appendChild(rect);
 
 	sol.cells = Array.from(Array(count))
 		.map((_,r) => Array.from(Array(count)).map((_,c) => ({
 			x: sol.pad+c*sol.unit, y: sol.pad+r*sol.unit, w: sol.unit, h: sol.unit,
 			r: Math.floor(Math.random()*4),
-			arc: SVG.arc(0, 0, 0, 0, 0, null, null, sol),
+			arc: sol.arc(0, 0, 0, 0, 0),
 			lines: [
-				SVG.line(0, 0, 0, 0, null, null, sol),
-				SVG.line(0, 0, 0, 0, null, null, sol)
+				sol.line(0, 0, 0, 0),
+				sol.line(0, 0, 0, 0)
 			],
 			move: 0
 		})));

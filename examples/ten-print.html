@@ -5,7 +5,7 @@ body{ margin:0; }
 </style>
 <script type="text/javascript" src="../svg.js"></script>
 <script>
-let tenPrint = SVG.Image(window.innerWidth, window.innerHeight, "ten-print");
+let tenPrint = SVG.image(window.innerWidth, window.innerHeight, "ten-print");
 // window
 let w = tenPrint.width, h = tenPrint.height;
 // character size. commodore 64 window contains 40x25 characters
@@ -13,10 +13,10 @@ let s = w / 40, strokeWidth = parseInt(w / 150);
 // text pointer
 let x = 0, y = 0, yt = 0
 // setup layers
-let back = SVG.rect(0,0,w,h,null,null,tenPrint);
+let back = tenPrint.rect(0, 0, w, h);
 back.setAttribute("fill", "#332698");
-let layer = SVG.group(null, null, tenPrint);
-let rows = [SVG.group(null, null, layer)]
+let layer = tenPrint.group();
+let rows = [layer.group()]
 // draw a slash
 function slash(forward){
 	let slash = forward
@@ -35,7 +35,7 @@ tenPrint.animate = function(){
 	if(x>w){
 		x=0;
 		y+=s;
-		rows.push(SVG.group(null, null, layer));
+		rows.push(layer.group());
 	}
 	// scroll page
 	if(y >= h+yt){ 

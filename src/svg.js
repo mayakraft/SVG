@@ -2,9 +2,9 @@
  *
  * @param: the order in the geometry functions follow a general guideline
  *  - the necessary parameters for the geometry, number of params varies
+ *  - the parent container to append this new element
  *  - className
  *  - id
- *  - the parent container to append this new element
  *
  * you can set all these later. some are more important than others.
  * if you don't use the parent parameter, you'll want to append
@@ -17,16 +17,94 @@ import vkbeautify from "../lib/vkbeautify";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
-const setClassIdParent = function(element, className, id, parent) {
-	if (className != null) {
-		element.setAttributeNS(null, "class", className);
-	}
-	if (id != null) {
-		element.setAttributeNS(null, "id", id);
-	}
-	if (parent != null) {
-		parent.appendChild(element);
-	}
+/**
+ * geometry primitives
+ */
+
+export const line = function(x1, y1, x2, y2) {
+	let shape = document.createElementNS(svgNS, "line");
+	shape.setAttributeNS(null, "x1", x1);
+	shape.setAttributeNS(null, "y1", y1);
+	shape.setAttributeNS(null, "x2", x2);
+	shape.setAttributeNS(null, "y2", y2);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const circle = function(x, y, radius) {
+	let shape = document.createElementNS(svgNS, "circle");
+	shape.setAttributeNS(null, "cx", x);
+	shape.setAttributeNS(null, "cy", y);
+	shape.setAttributeNS(null, "r", radius);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const ellipse = function(x, y, rx, ry) {
+	let shape = document.createElementNS(svgNS, "ellipse");
+	shape.setAttributeNS(null, "cx", x);
+	shape.setAttributeNS(null, "cy", y);
+	shape.setAttributeNS(null, "rx", rx);
+	shape.setAttributeNS(null, "ry", ry);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const rect = function(x, y, width, height) {
+	let shape = document.createElementNS(svgNS, "rect");
+	shape.setAttributeNS(null, "x", x);
+	shape.setAttributeNS(null, "y", y);
+	shape.setAttributeNS(null, "width", width);
+	shape.setAttributeNS(null, "height", height);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const polygon = function(pointsArray) {
+	let shape = document.createElementNS(svgNS, "polygon");
+	setPoints(shape, pointsArray);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const polyline = function(pointsArray) {
+	let shape = document.createElementNS(svgNS, "polyline");
+	setPoints(shape, pointsArray);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y,
+		toX, toY) {
+	let d = "M " + fromX + "," + fromY + " C " + c1X + "," + c1Y +
+			" " + c2X + "," + c2Y + " " + toX + "," + toY;
+	let shape = document.createElementNS(svgNS, "path");
+	shape.setAttributeNS(null, "d", d);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const text = function(textString, x, y) {
+	let shape = document.createElementNS(svgNS, "text");
+	shape.innerHTML = textString;
+	shape.setAttributeNS(null, "x", x);
+	shape.setAttributeNS(null, "y", y);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const wedge = function(x, y, radius, angleA, angleB) {
+	let shape = document.createElementNS(svgNS, "path");
+	setArc(shape, x, y, radius, angleA, angleB, true);
+	attachClassMethods(shape);
+	return shape;
+};
+
+export const arc = function(x, y, radius, angleA, angleB) {
+	let shape = document.createElementNS(svgNS, "path");
+	setArc(shape, x, y, radius, angleA, angleB, false);
+	attachClassMethods(shape);
+	return shape;
 };
 
 /**
@@ -67,102 +145,10 @@ export const setArc = function(shape, x, y, radius, startAngle, endAngle,
 };
 
 /**
- * geometry primitives
- */
-
-export const line = function(x1, y1, x2, y2, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "line");
-	shape.setAttributeNS(null, "x1", x1);
-	shape.setAttributeNS(null, "y1", y1);
-	shape.setAttributeNS(null, "x2", x2);
-	shape.setAttributeNS(null, "y2", y2);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const circle = function(x, y, radius, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "circle");
-	shape.setAttributeNS(null, "cx", x);
-	shape.setAttributeNS(null, "cy", y);
-	shape.setAttributeNS(null, "r", radius);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const ellipse = function(x, y, rx, ry, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "ellipse");
-	shape.setAttributeNS(null, "cx", x);
-	shape.setAttributeNS(null, "cy", y);
-	shape.setAttributeNS(null, "rx", rx);
-	shape.setAttributeNS(null, "ry", ry);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const rect = function(x, y, width, height, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "rect");
-	shape.setAttributeNS(null, "x", x);
-	shape.setAttributeNS(null, "y", y);
-	shape.setAttributeNS(null, "width", width);
-	shape.setAttributeNS(null, "height", height);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const polygon = function(pointsArray, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "polygon");
-	setPoints(shape, pointsArray);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const polyline = function(pointsArray, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "polyline");
-	setPoints(shape, pointsArray);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y,
-		toX, toY, className, id, parent) {
-	let d = "M " + fromX + "," + fromY + " C " + c1X + "," + c1Y +
-			" " + c2X + "," + c2Y + " " + toX + "," + toY;
-	let shape = document.createElementNS(svgNS, "path");
-	shape.setAttributeNS(null, "d", d);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const text = function(textString, x, y, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "text");
-	shape.innerHTML = textString;
-	shape.setAttributeNS(null, "x", x);
-	shape.setAttributeNS(null, "y", y);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const wedge = function(x, y, radius, angleA, angleB, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "path");
-	setArc(shape, x, y, radius, angleA, angleB, true);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-export const arc = function(x, y, radius, angleA, angleB, className, id, parent) {
-	let shape = document.createElementNS(svgNS, "path");
-	setArc(shape, x, y, radius, angleA, angleB, false);
-	setClassIdParent(shape, className, id, parent);
-	return shape;
-};
-
-// export const curve = function(fromX, fromY, midX, midY, toX, toY, className, id)
-
-/**
  * compound shapes
  */
 
-export const regularPolygon = function(cX, cY, radius, sides, className, id, parent) {
+export const regularPolygon = function(cX, cY, radius, sides, parent, className, id) {
 	let halfwedge = 2*Math.PI/sides * 0.5;
 	let r = Math.cos(halfwedge) * radius;
 	let points = Array.from(Array(sides)).map((el,i) => {
@@ -171,25 +157,26 @@ export const regularPolygon = function(cX, cY, radius, sides, className, id, par
 		let y = cY + r * Math.cos(a);
 		return [x, y];
 	});
-	return polygon(points, className, id, parent);
+	return polygon(points, parent, className, id);
 };
 
 /**
  * container types
  */
 
-export const group = function(className, id, parent) {
+export const group = function() {
 	let g = document.createElementNS(svgNS, "g");
-	setClassIdParent(g, className, id, parent);
+	attachClassMethods(g);
+	attachGeometryMethods(g);
 	return g;
 };
 
-export const svg = function(className, id, parent) {
+export const svg = function() {
 	let svgImage = document.createElementNS(svgNS, "svg");
 	svgImage.setAttribute("version", "1.1");
 	svgImage.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 	// svgImage.setAttributeNS(null, "viewBox", "0 0 1 1");
-	setClassIdParent(svgImage, className, id, parent);
+	attachClassMethods(svgImage);
 	return svgImage;
 };
 
@@ -197,46 +184,74 @@ export const svg = function(className, id, parent) {
  * element modifiers
  */
 
-export const addClass = function(xmlNode, newClass) {
-	if (xmlNode == undefined) {
+export const removeChildren = function(parent) {
+	while (parent.lastChild) {
+		parent.removeChild(parent.lastChild);
+	}
+};
+
+const getClassList = function(xmlNode) {
+	let currentClass = xmlNode.getAttribute("class");
+	return (currentClass == null
+		? []
+		: currentClass.split(" ").filter((s) => s !== ""));
+}
+
+const addClass = function(xmlNode, newClass) {
+	if (xmlNode == null) {
 		return;
 	}
-	let currentClass = xmlNode.getAttribute("class");
-	if (currentClass == undefined) {
-		currentClass = "";
-	}
-	let classes = currentClass.split(" ").filter((c) => c !== newClass);
+	let classes = getClassList(xmlNode)
+		.filter(c => c !== newClass);
 	classes.push(newClass);
 	xmlNode.setAttributeNS(null, "class", classes.join(" "));
 };
 
-export const removeClass = function(xmlNode, newClass) {
-	if (xmlNode == undefined) {
+const removeClass = function(xmlNode, removedClass) {
+	if (xmlNode == null) {
 		return;
 	}
-	let currentClass = xmlNode.getAttribute("class");
-	if (currentClass == undefined) {
-		currentClass = "";
-	}
-	let classes = currentClass.split(" ").filter((c) => c !== newClass);
+	let classes = getClassList(xmlNode)
+		.filter(c => c !== removedClass);
 	xmlNode.setAttributeNS(null, "class", classes.join(" "));
 };
 
-export const setId = function(xmlNode, newID) {
-	if (xmlNode == undefined) {
-		return;
-	}
-	xmlNode.setAttributeNS(null, "id", newID);
+const attachClassMethods = function(element) {
+	// Object.defineProperty(element, "removeChildren", { value: function(){
+	// 	removeChildren(element);
+	// }});
+	element["removeChildren"] = function() { removeChildren(element); }
+	element["addClass"] = function(newClass) { addClass(element, newClass); }
+	element["removeClass"] = function(newClass) { removeClass(element, newClass); }
 };
 
-export const removeChildren = function(group) {
-	while (group.lastChild) {
-		group.removeChild(group.lastChild);
-	}
+const geometryMethods = {
+	"line" : line,
+	"circle" : circle,
+	"ellipse" : ellipse,
+	"rect" : rect,
+	"polygon" : polygon,
+	"polyline" : polyline,
+	"bezier" : bezier,
+	"text" : text,
+	"wedge" : wedge,
+	"arc" : arc,
+	"regularPolygon" : regularPolygon,
+	"group" : group,
 };
+
+export const attachGeometryMethods = function(parent) {
+	Object.keys(geometryMethods).forEach(key => {
+		parent[key] = function() {
+			let g = geometryMethods[key](...arguments);
+			parent.appendChild(g);
+			return g;
+		}
+	});
+}
 
 /**
- * math, view
+ * viewBox modifiers
  */
 
 export const setViewBox = function(svg, x, y, width, height, padding = 0) {
@@ -266,7 +281,7 @@ export const getViewBox = function(svg) {
 		: vb.split(" ").map((n) => parseFloat(n)));
 };
 
-export const scale = function(svg, scale, origin_x = 0, origin_y = 0) {
+export const scaleViewBox = function(svg, scale, origin_x = 0, origin_y = 0) {
 	if (scale < 1e-8) { scale = 0.01; }
 	let matrix = svg.createSVGMatrix()
 		.translate(origin_x, origin_y)
@@ -292,7 +307,7 @@ export const scale = function(svg, scale, origin_x = 0, origin_y = 0) {
 	);
 };
 
-export const translate = function(svg, dx, dy) {
+export const translateViewBox = function(svg, dx, dy) {
 	let viewBox = getViewBox(svg);
 	if (viewBox == null) {
 		setDefaultViewBox(svg);

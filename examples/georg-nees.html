@@ -22,7 +22,7 @@ svg{
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
-let nees = SVG.Image(600, 1030);
+let nees = SVG.image(600, 1030);
 
 nees.draw = function(){
 	const countW = 12;
@@ -43,8 +43,11 @@ nees.draw = function(){
 				(Math.random()-0.5)*h * 2,
 				(Math.random()-0.5)*h * 2
 			];
-			let rect = SVG.rect(-0.5*unit, -0.5*unit, unit, unit, "box");
-			let translate = "translate(" + (origin[0] + trans[0]) + "," + (origin[1] + trans[1]) + ")";
+			let rect = SVG.rect(-0.5*unit, -0.5*unit, unit, unit);
+			rect.addClass("box");
+			let tx = origin[0] + trans[0];
+			let ty = origin[1] + trans[1];
+			let translate = "translate(" + tx + "," + ty + ")";
 			let rotate = "rotate(" + parseInt(angle) + ")";
 			rect.setAttribute("transform", translate + " " + rotate);
 			nees.appendChild(rect);

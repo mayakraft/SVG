@@ -1,4 +1,5 @@
-import minify from 'rollup-plugin-babel-minify';
+// import minify from 'rollup-plugin-babel-minify';
+import cleanup from "rollup-plugin-cleanup";
 
 module.exports = {
 	input: './src/index.js',
@@ -10,9 +11,13 @@ module.exports = {
 		banner: "/* SVG (c) Robby Kraft, MIT License */"
 	},
 	plugins: [
-		minify( {
-			bannerNewLine: true,
-			comments: false
-		} )
+		cleanup({
+			comments: "none",
+			maxEmptyLines: 0
+		}),
+		// minify( {
+		// 	bannerNewLine: true,
+		// 	comments: false
+		// } )
 	]
 };

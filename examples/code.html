@@ -148,7 +148,7 @@ const app = function(codeContainer, svgContainer, consoleContainer) {
 	};
 
 	const initDOM = function() {
-		prop.image = SVG.Image(svgContainer, 540, 540);
+		prop.image = SVG.image(svgContainer, 540, 540);
 		prop.svg = prop.image.svg;
 		CodeMirror(document.getElementById("code-container"), {
 			value: "",
@@ -189,7 +189,7 @@ const app = function(codeContainer, svgContainer, consoleContainer) {
 
 		window.image = function() {
 			if (prop.image === undefined) {
-				prop.image = SVG.Image(svgContainer, ...arguments);
+				prop.image = SVG.image(svgContainer, ...arguments);
 				window.svg = prop.image;
 				prop.svg = prop.image.svg;
 			} else {

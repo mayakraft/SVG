@@ -6,7 +6,7 @@
 
 import * as SVG from "./svg";
 
-export default function Image() {
+export default function() {
 	// get constructor parameters
 	let params = Array.from(arguments);
 
@@ -16,7 +16,7 @@ export default function Image() {
 	let _parent = undefined;  // parent node
 
 	// view properties
-	let _scale = 1.0;
+	// let _scale = 1.0;
 	let _padding = 0;
 
 	let _matrix = _svg.createSVGMatrix();
@@ -34,33 +34,19 @@ export default function Image() {
 	});
 
 	// exported
-	const zoom = function(scale, origin_x = 0, origin_y = 0) {
-		_scale = scale;
-		SVG.scale(_svg, scale, origin_x, origin_y);
-	}
-	const translate = function(dx, dy) {
-		SVG.translate(_svg, dx, dy);
-	}
+	// const zoom = function(scale, origin_x = 0, origin_y = 0) {
+	// 	_scale = scale;
+	// 	SVG.scaleViewBox(_svg, scale, origin_x, origin_y);
+	// }
+	// const translate = function(dx, dy) {
+	// 	SVG.translateViewBox(_svg, dx, dy);
+	// }
 	const setViewBox = function(x, y, width, height) {
 		SVG.setViewBox(_svg, x, y, width, height, _padding);
 	}
-	const getViewBox = function() {
-		return SVG.getViewBox(_svg);
-	}
-	const appendChild = function(element) {
-		_svg.appendChild(element);
-	}
-	const removeChildren = function(group) {
-		// serves 2 functions:
-		// removeChildren() will remove all children from this SVG.
-		// removeChildren(group) will remove children from *group*
-		if (group == null) {
-			group = _svg;
-		}
-		while (group.lastChild) {
-			group.removeChild(group.lastChild);
-		}
-	}
+	const getViewBox = function() { return SVG.getViewBox(_svg); }
+	const appendChild = function(element) { _svg.appendChild(element); }
+	const removeChildren = function() { SVG.removeChildren(_svg); }
 	const save = function(filename = "image.svg") {
 		return SVG.save(_svg, filename);
 	}
@@ -163,7 +149,7 @@ export default function Image() {
 	// deep copy mouse object
 	function getMouse() {
 		let m = _mouse.position.slice();
-		// all object properties are Arrays. we can .slice()
+		// if a property is an object it's an array. we can .slice()
 		Object.keys(_mouse)
 			.filter(key => typeof key === "object")
 			.forEach(key => m[key] = _mouse[key].slice());
@@ -199,27 +185,29 @@ export default function Image() {
 	function mouseDownHandler(event) {
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, event.clientX, event.clientY);
-		let mouse = getMouse();
 		if (_events.mousedown) {
+			let mouse = getMouse();
 			_events.mousedown.forEach(f => f(mouse));
 		}
 	}
 	function mouseUpHandler(event) {
 		_mouse.isPressed = false;
-		let mouse = getMouse();
 		if (_events.mouseup) {
+			let mouse = getMouse();
 			_events.mouseup.forEach(f => f(mouse));
 		}
 	}
 	function mouseLeaveHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
 		if (_events.mouseleave) {
+			let mouse = getMouse();
 			_events.mouseleave.forEach(f => f(mouse));
 		}
 	}
 	function mouseEnterHandler(event) {
 		updateMousePosition(event.clientX, event.clientY);
 		if (_events.mouseenter) {
+			let mouse = getMouse();
 			_events.mouseenter.forEach(f => f(mouse));
 		}
 	}
@@ -229,8 +217,8 @@ export default function Image() {
 		if (touch == null) { return; }
 		_mouse.isPressed = true;
 		_mouse.pressed = SVG.convertToViewBox(_svg, touch.clientX, touch.clientY);
-		let mouse = getMouse();
 		if (_events.mousedown) {
+			let mouse = getMouse();
 			_events.mousedown.forEach(f => f(mouse));
 		}
 	}
@@ -239,8 +227,8 @@ export default function Image() {
 		let touch = event.touches[0];
 		if (touch == null) { return; }
 		updateMousePosition(touch.clientX, touch.clientY);
-		if (_mouse.isPressed) { updateMouseDrag(); }
 		let mouse = getMouse();
+		if (_mouse.isPressed) { updateMouseDrag(); }
 		if (_events.mousemove) {
 			_events.mousemove.forEach(f => f(mouse));
 		}
@@ -267,7 +255,9 @@ export default function Image() {
 	// function touchCancelHandler(event) { }
 
 	const addEventListener = function(eventName, func) {
-		if (typeof func !== "function") { throw "must supply a function type to addEventListener"; }
+		if (typeof func !== "function") {
+			throw "must supply a function type to addEventListener";
+		}
 		if (_events[eventName] === undefined) {
 			_events[eventName] = [];
 		}
@@ -276,11 +266,12 @@ export default function Image() {
 
 	// return Object.freeze({
 	let _this = {
-		zoom, translate, appendChild, removeChildren,
+		// zoom, translate, 
+		appendChild, removeChildren,
 		load, save,
 		setViewBox, getViewBox, size,
 		get mouse() { return getMouse(); },
-		get scale() { return _scale; },
+		// get scale() { return _scale; },
 		get svg() { return _svg; },
 		get width() { return getWidth(); },
 		get height() { return getHeight(); },
@@ -293,8 +284,32 @@ export default function Image() {
 		set onMouseEnter(handler) { addEventListener("mouseenter", handler); },
 		set animate(handler) { updateAnimationHandler(handler); },
 		addEventListener
-		// set onResize(handler) {}
+		// set onResize(handler) {}		
 	};
+
+	const drawingMethods = {
+		"line" : SVG.line,
+		"circle" : SVG.circle,
+		"ellipse" : SVG.ellipse,
+		"rect" : SVG.rect,
+		"polygon" : SVG.polygon,
+		"polyline" : SVG.polyline,
+		"bezier" : SVG.bezier,
+		"text" : SVG.text,
+		"wedge" : SVG.wedge,
+		"arc" : SVG.arc,
+		"regularPolygon" : SVG.regularPolygon,
+		"group" : SVG.group
+	};
+
+	Object.keys(drawingMethods).forEach(key => {
+		_this[key] = function() {
+			let g = drawingMethods[key](...arguments);
+			_this.appendChild(g);
+			return g;
+		};
+	});
+
 	return _this;
 	// });
 }

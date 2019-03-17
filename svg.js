@@ -1,2 +1,904 @@
 /* SVG (c) Robby Kraft, MIT License */
-(function(a,b){"object"==typeof exports&&"undefined"!=typeof module?b(exports):"function"==typeof define&&define.amd?define(["exports"],b):b(a.SVG={})})(this,function(a){"use strict";var f=Math.sin,g=Math.cos;function b(a){var b="    ";isNaN(parseInt(a))?b=a:1===a?b=" ":2===a?b="  ":3===a?b="   ":4===a?b="    ":5===a?b="     ":6===a?b="      ":7===a?b="       ":8===a?b="        ":9===a?b="         ":10===a?b="          ":11===a?b="           ":12===a?b="            ":void 0;var c=["\n"];for(let d=0;100>d;d++)c.push(c[d]+b);return c}function c(){this.step="\t",this.shift=b(this.step)}function d(a,b){return b-(a.replace(/\(/g,"").length-a.replace(/\)/g,"").length)}function e(a,b){return a.replace(/\s{1,}/g," ").replace(/ AND /ig,"~::~"+b+b+"AND ").replace(/ BETWEEN /ig,"~::~"+b+"BETWEEN ").replace(/ CASE /ig,"~::~"+b+"CASE ").replace(/ ELSE /ig,"~::~"+b+"ELSE ").replace(/ END /ig,"~::~"+b+"END ").replace(/ FROM /ig,"~::~FROM ").replace(/ GROUP\s{1,}BY/ig,"~::~GROUP BY ").replace(/ HAVING /ig,"~::~HAVING ").replace(/ IN /ig," IN ").replace(/ JOIN /ig,"~::~JOIN ").replace(/ CROSS~::~{1,}JOIN /ig,"~::~CROSS JOIN ").replace(/ INNER~::~{1,}JOIN /ig,"~::~INNER JOIN ").replace(/ LEFT~::~{1,}JOIN /ig,"~::~LEFT JOIN ").replace(/ RIGHT~::~{1,}JOIN /ig,"~::~RIGHT JOIN ").replace(/ ON /ig,"~::~"+b+"ON ").replace(/ OR /ig,"~::~"+b+b+"OR ").replace(/ ORDER\s{1,}BY/ig,"~::~ORDER BY ").replace(/ OVER /ig,"~::~"+b+"OVER ").replace(/\(\s{0,}SELECT /ig,"~::~(SELECT ").replace(/\)\s{0,}SELECT /ig,")~::~SELECT ").replace(/ THEN /ig," THEN~::~"+b+"").replace(/ UNION /ig,"~::~UNION~::~").replace(/ USING /ig,"~::~USING ").replace(/ WHEN /ig,"~::~"+b+"WHEN ").replace(/ WHERE /ig,"~::~WHERE ").replace(/ WITH /ig,"~::~WITH ").replace(/ ALL /ig," ALL ").replace(/ AS /ig," AS ").replace(/ ASC /ig," ASC ").replace(/ DESC /ig," DESC ").replace(/ DISTINCT /ig," DISTINCT ").replace(/ EXISTS /ig," EXISTS ").replace(/ NOT /ig," NOT ").replace(/ NULL /ig," NULL ").replace(/ LIKE /ig," LIKE ").replace(/\s{0,}SELECT /ig,"SELECT ").replace(/\s{0,}UPDATE /ig,"UPDATE ").replace(/ SET /ig," SET ").replace(/~::~{1,}/g,"~::~").split("~::~")}c.prototype.xml=function(a,c){var d=a.replace(/>\s{0,}</g,"><").replace(/</g,"~::~<").replace(/\s*xmlns\:/g,"~::~xmlns:").replace(/\s*xmlns\=/g,"~::~xmlns=").split("~::~"),e=d.length,f=!1,g=0,h="",i=c?b(c):this.shift;for(let b=0;b<e;b++)-1<d[b].search(/<!/)?(h+=i[g]+d[b],f=!0,(-1<d[b].search(/-->/)||-1<d[b].search(/\]>/)||-1<d[b].search(/!DOCTYPE/))&&(f=!1)):-1<d[b].search(/-->/)||-1<d[b].search(/\]>/)?(h+=d[b],f=!1):/^<\w/.exec(d[b-1])&&/^<\/\w/.exec(d[b])&&/^<[\w:\-\.\,]+/.exec(d[b-1])==/^<\/[\w:\-\.\,]+/.exec(d[b])[0].replace("/","")?(h+=d[b],f||g--):-1<d[b].search(/<\w/)&&-1==d[b].search(/<\//)&&-1==d[b].search(/\/>/)?h=f?h+=d[b]:h+=i[g++]+d[b]:-1<d[b].search(/<\w/)&&-1<d[b].search(/<\//)?h=f?h+=d[b]:h+=i[g]+d[b]:-1<d[b].search(/<\//)?h=f?h+=d[b]:h+=i[--g]+d[b]:-1<d[b].search(/\/>/)?h=f?h+=d[b]:h+=i[g]+d[b]:h+=-1<d[b].search(/<\?/)?i[g]+d[b]:-1<d[b].search(/xmlns\:/)||-1<d[b].search(/xmlns\=/)?i[g]+d[b]:d[b];return"\n"==h[0]?h.slice(1):h},c.prototype.json=function(a,b){var b=b?b:this.step;return"undefined"==typeof JSON?a:"string"==typeof a?JSON.stringify(JSON.parse(a),null,b):"object"==typeof a?JSON.stringify(a,null,b):a},c.prototype.css=function(a,c){var d=a.replace(/\s{1,}/g," ").replace(/\{/g,"{~::~").replace(/\}/g,"~::~}~::~").replace(/\;/g,";~::~").replace(/\/\*/g,"~::~/*").replace(/\*\//g,"*/~::~").replace(/~::~\s{0,}~::~/g,"~::~").split("~::~"),e=d.length,f=0,g="",h=c?b(c):this.shift;for(let b=0;b<e;b++)g+=/\{/.exec(d[b])?h[f++]+d[b]:/\}/.exec(d[b])?h[--f]+d[b]:/\*\\/.exec(d[b])?h[f]+d[b]:h[f]+d[b];return g.replace(/^\n{1,}/,"")},c.prototype.sql=function(a,c){var f=a.replace(/\s{1,}/g," ").replace(/\'/ig,"~::~'").split("~::~"),g=f.length,h=[],i=0,j=this.step,k=0,l="",m=c?b(c):this.shift;for(let b=0;b<g;b++)h=b%2?h.concat(f[b]):h.concat(e(f[b],j));g=h.length;for(let b=0;b<g;b++)k=d(h[b],k),/\s{0,}\s{0,}SELECT\s{0,}/.exec(h[b])&&(h[b]=h[b].replace(/\,/g,",\n"+j+j+"")),/\s{0,}\s{0,}SET\s{0,}/.exec(h[b])&&(h[b]=h[b].replace(/\,/g,",\n"+j+j+"")),/\s{0,}\(\s{0,}SELECT\s{0,}/.exec(h[b])?(i++,l+=m[i]+h[b]):/\'/.exec(h[b])?(1>k&&i&&i--,l+=h[b]):(l+=m[i]+h[b],1>k&&i&&i--);return l=l.replace(/^\n{1,}/,"").replace(/\n{1,}/g,"\n"),l},c.prototype.xmlmin=function(a,b){var c=b?a:a.replace(/\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t]*)\>/g,"").replace(/[ \r\n\t]{1,}xmlns/g," xmlns");return c.replace(/>\s{0,}</g,"><")},c.prototype.jsonmin=function(a){return"undefined"==typeof JSON?a:JSON.stringify(JSON.parse(a),null,0)},c.prototype.cssmin=function(a,b){var c=b?a:a.replace(/\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\//g,"");return c.replace(/\s{1,}/g," ").replace(/\{\s{1,}/g,"{").replace(/\}\s{1,}/g,"}").replace(/\;\s{1,}/g,";").replace(/\/\*\s{1,}/g,"/*").replace(/\*\/\s{1,}/g,"*/")},c.prototype.sqlmin=function(a){return a.replace(/\s{1,}/g," ").replace(/\s{1,}\(/,"(").replace(/\s{1,}\)/,")")};var h=new c;const i="http://www.w3.org/2000/svg",j=function(a,b,c,d){null!=b&&a.setAttributeNS(null,"class",b),null!=c&&a.setAttributeNS(null,"id",c),null!=d&&d.appendChild(a)},k=function(a,b){if(null!=b&&b.constructor===Array){let c=b.map(a=>a.constructor===Array?a:[a.x,a.y]).reduce((a,b)=>a+b[0]+","+b[1]+" ","");a.setAttributeNS(null,"points",c)}},l=function(a,b,c,e,h,i,j=!1){let k=[b+g(h)*e,c+f(h)*e],l=[g(h)*e,f(h)*e],m=[g(i)*e,f(i)*e],n=[m[0]-l[0],m[1]-l[1]],o=l[0]*m[1]-l[1]*m[0],p=l[0]*m[0]+l[1]*m[1],q=0<Math.atan2(o,p)?0:1,r=j?"M "+b+","+c+" l "+l[0]+","+l[1]+" ":"M "+k[0]+","+k[1]+" ";r+=["a ",e,e,0,q,1,n[0],n[1]].join(" "),j&&(r+=" Z"),a.setAttributeNS(null,"d",r)},m=function(a,b,c,d,e,f){let g=document.createElementNS(i,"circle");return g.setAttributeNS(null,"cx",a),g.setAttributeNS(null,"cy",b),g.setAttributeNS(null,"r",c),j(g,d,e,f),g},n=function(a,b,c,d){let e=document.createElementNS(i,"polygon");return k(e,a),j(e,b,c,d),e},o=function(a,b,c){let d=document.createElementNS(i,"svg");return d.setAttribute("version","1.1"),d.setAttribute("xmlns","http://www.w3.org/2000/svg"),j(d,a,b,c),d},p=function(a,b,c,e,f,g=0){let h=e/1-e,d=[b-h-g,c-h-g,e+2*h+2*g,f+2*h+2*g].join(" ");a.setAttributeNS(null,"viewBox",d)},q=function(a){let b=a.getBoundingClientRect(),c=0==b.width?640:b.width,d=0==b.height?480:b.height;p(a,0,0,c,d)},r=function(a){let b=a.getAttribute("viewBox");return null==b?void 0:b.split(" ").map(a=>parseFloat(a))},s=function(a,b,c=0,d=0){1e-8>b&&(b=.01);let e=a.createSVGMatrix().translate(c,d).scale(1/b).translate(-c,-d),f=r(a);null==f&&q(a);let g=a.createSVGPoint(),h=a.createSVGPoint();g.x=f[0],g.y=f[1],h.x=f[0]+f[2],h.y=f[1]+f[3];let i=g.matrixTransform(e),j=h.matrixTransform(e);p(a,i.x,i.y,j.x-i.x,j.y-i.y)},t=function(a,b,c){let d=r(a);null==d&&q(a),d[0]+=b,d[1]+=c,a.setAttributeNS(null,"viewBox",d.join(" "))},u=function(a,b,c){let d=a.createSVGPoint();d.x=b,d.y=c;let e=d.matrixTransform(a.getScreenCTM().inverse()),f=[e.x,e.y];return f.x=e.x,f.y=e.y,f},v=function(b,c="image.svg"){let d=document.createElement("a"),a=new window.XMLSerializer().serializeToString(b),e=h.xml(a),f=new window.Blob([e],{type:"text/plain"});d.setAttribute("href",window.URL.createObjectURL(f)),d.setAttribute("download",c),document.body.appendChild(d),d.click(),d.remove()},w=new window.DOMParser().parseFromString("INVALID","text/xml").getElementsByTagName("parsererror")[0].namespaceURI,x=function(a,b){if("string"==typeof a||a instanceof String){let c=new window.DOMParser().parseFromString(a,"text/xml");if(0===c.getElementsByTagNameNS(w,"parsererror").length){let a=c.documentElement;return null!=b&&b(a),a}fetch(a).then(a=>a.text()).then(a=>new window.DOMParser().parseFromString(a,"text/xml")).then(a=>{let c=a.getElementsByTagName("svg");if(null==c||0===c.length)throw"error, valid XML found, but no SVG element";return null!=b&&b(c[0]),c[0]})}else if(a instanceof Document)return b(a),a},y=function(a,b){null==b&&(b={}),null==b.radius&&(b.radius=1),null==b.fill&&(b.fill="#000000"),null==b.position&&(b.position=[0,0]);let d=m(0,0,b.radius);d.setAttribute("fill",b.fill);let c=b.position.slice(),e=!1;null!=a&&a.appendChild(d);const f=function(a,b){c[0]=a,c[1]=b,d.setAttribute("cx",a),d.setAttribute("cy",b)},g=function(a){if(e){let b=h(a);f(b[0],b[1])}};let h=function(a){return a};return{circle:d,set position(a){null==a[0]?null!=a.x&&f(a.x,a.y):f(a[0],a[1])},get position(){return[...c]},onMouseUp:function(){e=!1},onMouseMove:g,distance:function(a){var b=Math.pow;return Math.sqrt(b(a[0]-c[0],2)+b(a[1]-c[1],2))},set positionDidUpdate(a){h=a},set selected(a){e=!0}}};a.Image=function(){function a(){q.addEventListener("mouseup",g,!1),q.addEventListener("mousedown",f,!1),q.addEventListener("mousemove",e,!1),q.addEventListener("mouseleave",h,!1),q.addEventListener("mouseenter",i,!1),q.addEventListener("touchend",g,!1),q.addEventListener("touchmove",k,!1),q.addEventListener("touchstart",j,!1),q.addEventListener("touchcancel",g,!1)}function b(){let a=C.position.slice();return Object.keys(C).filter(a=>"object"==typeof a).forEach(b=>a[b]=C[b].slice()),Object.keys(C).filter(a=>"object"!=typeof a).forEach(b=>a[b]=C[b]),Object.freeze(a)}function c(a,b){C.prev=C.position,C.position=u(q,a,b),C.x=C.position[0],C.y=C.position[1]}function d(){C.drag=[C.position[0]-C.pressed[0],C.position[1]-C.pressed[1]],C.drag.x=C.drag[0],C.drag.y=C.drag[1]}function e(a){c(a.clientX,a.clientY);let e=b();C.isPressed&&d(),B.mousemove&&B.mousemove.forEach(a=>a(e))}function f(a){C.isPressed=!0,C.pressed=u(q,a.clientX,a.clientY);let c=b();B.mousedown&&B.mousedown.forEach(a=>a(c))}function g(){C.isPressed=!1;let a=b();B.mouseup&&B.mouseup.forEach(b=>b(a))}function h(a){c(a.clientX,a.clientY),B.mouseleave&&B.mouseleave.forEach(a=>a(mouse))}function i(a){c(a.clientX,a.clientY),B.mouseenter&&B.mouseenter.forEach(a=>a(mouse))}function j(a){a.preventDefault();let c=a.touches[0];if(null==c)return;C.isPressed=!0,C.pressed=u(q,c.clientX,c.clientY);let d=b();B.mousedown&&B.mousedown.forEach(a=>a(d))}function k(a){a.preventDefault();let e=a.touches[0];if(null==e)return;c(e.clientX,e.clientY),C.isPressed&&d();let g=b();B.mousemove&&B.mousemove.forEach(a=>a(g))}function l(a){null!=P&&clearInterval(Q),P=a,null!=P&&(R=0,Q=setInterval(()=>{let a={time:q.getCurrentTime(),frame:R++};P(a)},1e3/60))}let m,n=Array.from(arguments),q=o(),w=1,z=0,A=q.createSVGMatrix(),B={},C=Object.create(null);Object.assign(C,{isPressed:!1,position:[0,0],pressed:[0,0],drag:[0,0],prev:[0,0],x:0,y:0});const D=function(a,b=0,c=0){w=a,s(q,a,b,c)},E=function(a,b){t(q,a,b)},F=function(a,b,c,d){p(q,a,b,c,d,z)},G=function(){return r(q)},H=function(a){q.appendChild(a)},I=function(a){for(null==a&&(a=q);a.lastChild;)a.removeChild(a.lastChild)},J=function(a="image.svg"){return v(q,a)},K=function(a,b){if(null!=a&&null!=b){let c=r(q);p(q,c[0],c[1],a,b,z),q.setAttributeNS(null,"width",a),q.setAttributeNS(null,"height",b)}},L=function(){let a=parseInt(q.getAttributeNS(null,"width"));return null==a||isNaN(a)?q.getBoundingClientRect().width:a},M=function(){let a=parseInt(q.getAttributeNS(null,"height"));return null==a||isNaN(a)?q.getBoundingClientRect().height:a},N=function(){let b=n.filter(a=>"function"==typeof a),c=n.filter(a=>!isNaN(a)),d=n.filter(a=>a instanceof HTMLElement).shift(),e=n.filter(b=>"string"==typeof b||b instanceof String).map(a=>document.getElementById(a)).shift();if(m=null==d?null==e?document.body:e:d,m.appendChild(q),2<=c.length)q.setAttributeNS(null,"width",c[0]),q.setAttributeNS(null,"height",c[1]),p(q,0,0,c[0],c[1]);else if(null==q.getAttribute("viewBox")){let a=q.getBoundingClientRect();p(q,0,0,a.width,a.height)}1<=b.length&&b[0](),a()};let O=n.filter(a=>!isNaN(a));2<=O.length&&(q.setAttributeNS(null,"width",O[0]),q.setAttributeNS(null,"height",O[1]),p(q,0,0,O[0],O[1])),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",N):N();let P,Q,R;const S=function(a,b){if("function"!=typeof b)throw"must supply a function type to addEventListener";B[a]===void 0&&(B[a]=[]),B[a].push(b)};let T={zoom:D,translate:E,appendChild:H,removeChildren:I,load:function(b,c){x(b,function(b,d){null!=b&&(null!=q&&q.remove(),q=b,m.appendChild(q),a()),null!=c&&c(b,d)})},save:J,setViewBox:F,getViewBox:G,size:K,get mouse(){return b()},get scale(){return w},get svg(){return q},get width(){return L()},get height(){return M()},set width(a){q.setAttributeNS(null,"width",a)},set height(a){q.setAttributeNS(null,"height",a)},set onMouseMove(a){S("mousemove",a)},set onMouseDown(a){S("mousedown",a)},set onMouseUp(a){S("mouseup",a)},set onMouseLeave(a){S("mouseleave",a)},set onMouseEnter(a){S("mouseenter",a)},set animate(a){l(a)},addEventListener:S};return T},a.controls=function(a,b=1,c){null==c&&(c={}),null==c.parent&&(c.parent=a),null==c.radius&&(c.radius=1),null==c.fill&&(c.fill="#000000");let d,e=Array.from(Array(b)).map(()=>y(c.parent,c));const f=function(a){0<e.length&&(d=e.map((b,c)=>({i:c,d:b.distance(a)})).sort((c,a)=>c.d-a.d).shift().i,e[d].selected=!0)};return a.addEventListener("mousedown",f),a.addEventListener("mouseup",function(a){e.forEach(b=>b.onMouseUp(a)),d=void 0}),a.addEventListener("mousemove",function(a){e.forEach(b=>b.onMouseMove(a))}),Object.defineProperty(e,"selectedIndex",{get:function(){return d}}),Object.defineProperty(e,"selected",{get:function(){return e[d]}}),Object.defineProperty(e,"removeAll",{value:function(){e.forEach(a=>a.remove())}}),e},a.setPoints=k,a.setArc=l,a.line=function(a,b,c,d,e,f,g){let h=document.createElementNS(i,"line");return h.setAttributeNS(null,"x1",a),h.setAttributeNS(null,"y1",b),h.setAttributeNS(null,"x2",c),h.setAttributeNS(null,"y2",d),j(h,e,f,g),h},a.circle=m,a.ellipse=function(a,b,c,d,e,f,g){let h=document.createElementNS(i,"ellipse");return h.setAttributeNS(null,"cx",a),h.setAttributeNS(null,"cy",b),h.setAttributeNS(null,"rx",c),h.setAttributeNS(null,"ry",d),j(h,e,f,g),h},a.rect=function(a,b,c,d,e,f,g){let h=document.createElementNS(i,"rect");return h.setAttributeNS(null,"x",a),h.setAttributeNS(null,"y",b),h.setAttributeNS(null,"width",c),h.setAttributeNS(null,"height",d),j(h,e,f,g),h},a.polygon=n,a.polyline=function(a,b,c,d){let e=document.createElementNS(i,"polyline");return k(e,a),j(e,b,c,d),e},a.bezier=function(a,b,c,d,e,f,g,h,k,l,m){let n=document.createElementNS(i,"path");return n.setAttributeNS(null,"d","M "+a+","+b+" C "+c+","+d+" "+e+","+f+" "+g+","+h),j(n,k,l,m),n},a.text=function(a,b,c,d,e,f){let g=document.createElementNS(i,"text");return g.innerHTML=a,g.setAttributeNS(null,"x",b),g.setAttributeNS(null,"y",c),j(g,d,e,f),g},a.wedge=function(a,b,c,d,e,f,g,h){let k=document.createElementNS(i,"path");return l(k,a,b,c,d,e,!0),j(k,f,g,h),k},a.arc=function(a,b,c,d,e,f,g,h){let k=document.createElementNS(i,"path");return l(k,a,b,c,d,e,!1),j(k,f,g,h),k},a.regularPolygon=function(b,c,a,d,e,h,i){var j=Math.PI;let k=.5*(2*j/d),l=g(k)*a,m=Array.from(Array(d)).map((e,h)=>{let i=-2*j*h/d+k,a=b+l*f(i),m=c+l*g(i);return[a,m]});return n(m,e,h,i)},a.group=function(a,b,c){let d=document.createElementNS(i,"g");return j(d,a,b,c),d},a.svg=o,a.addClass=function(a,b){if(null==a)return;let c=a.getAttribute("class");c==null&&(c="");let d=c.split(" ").filter(a=>a!==b);d.push(b),a.setAttributeNS(null,"class",d.join(" "))},a.removeClass=function(a,b){if(null==a)return;let c=a.getAttribute("class");c==null&&(c="");let d=c.split(" ").filter(a=>a!==b);a.setAttributeNS(null,"class",d.join(" "))},a.setId=function(a,b){null==a||a.setAttributeNS(null,"id",b)},a.removeChildren=function(a){for(;a.lastChild;)a.removeChild(a.lastChild)},a.setViewBox=p,a.setDefaultViewBox=q,a.getViewBox=r,a.scale=s,a.translate=t,a.convertToViewBox=u,a.save=v,a.load=x,Object.defineProperty(a,"__esModule",{value:!0})});
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.SVG = {})));
+}(this, (function (exports) { 'use strict';
+
+	function createShiftArr(step) {
+		var space = '    ';
+		if ( isNaN(parseInt(step)) ) {
+			space = step;
+		} else {
+			switch(step) {
+				case 1: space = ' '; break;
+				case 2: space = '  '; break;
+				case 3: space = '   '; break;
+				case 4: space = '    '; break;
+				case 5: space = '     '; break;
+				case 6: space = '      '; break;
+				case 7: space = '       '; break;
+				case 8: space = '        '; break;
+				case 9: space = '         '; break;
+				case 10: space = '          '; break;
+				case 11: space = '           '; break;
+				case 12: space = '            '; break;
+			}
+		}
+		var shift = ['\n'];
+		for(let ix=0;ix<100;ix++){
+			shift.push(shift[ix]+space);
+		}
+		return shift;
+	}
+	function vkbeautify(){
+		this.step = '\t';
+		this.shift = createShiftArr(this.step);
+	}vkbeautify.prototype.xml = function(text,step) {
+		var ar = text.replace(/>\s{0,}</g,"><")
+					 .replace(/</g,"~::~<")
+					 .replace(/\s*xmlns\:/g,"~::~xmlns:")
+					 .replace(/\s*xmlns\=/g,"~::~xmlns=")
+					 .split('~::~'),
+			len = ar.length,
+			inComment = false,
+			deep = 0,
+			str = '',
+			shift = step ? createShiftArr(step) : this.shift;
+			for(let ix=0;ix<len;ix++) {
+				if(ar[ix].search(/<!/) > -1) {
+					str += shift[deep]+ar[ix];
+					inComment = true;
+					if(ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1 || ar[ix].search(/!DOCTYPE/) > -1 ) {
+						inComment = false;
+					}
+				} else
+				if(ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1) {
+					str += ar[ix];
+					inComment = false;
+				} else
+				if( /^<\w/.exec(ar[ix-1]) && /^<\/\w/.exec(ar[ix]) &&
+					/^<[\w:\-\.\,]+/.exec(ar[ix-1]) == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace('/','')) {
+					str += ar[ix];
+					if(!inComment) deep--;
+				} else
+				if(ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) == -1 && ar[ix].search(/\/>/) == -1 ) {
+					str = !inComment ? str += shift[deep++]+ar[ix] : str += ar[ix];
+				} else
+				if(ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
+					str = !inComment ? str += shift[deep]+ar[ix] : str += ar[ix];
+				} else
+				if(ar[ix].search(/<\//) > -1) {
+					str = !inComment ? str += shift[--deep]+ar[ix] : str += ar[ix];
+				} else
+				if(ar[ix].search(/\/>/) > -1 ) {
+					str = !inComment ? str += shift[deep]+ar[ix] : str += ar[ix];
+				} else
+				if(ar[ix].search(/<\?/) > -1) {
+					str += shift[deep]+ar[ix];
+				} else
+				if( ar[ix].search(/xmlns\:/) > -1  || ar[ix].search(/xmlns\=/) > -1) {
+					str += shift[deep]+ar[ix];
+				}
+				else {
+					str += ar[ix];
+				}
+			}
+		return  (str[0] == '\n') ? str.slice(1) : str;
+	};
+	vkbeautify.prototype.json = function(text,step) {
+		var step = step ? step : this.step;
+		if (typeof JSON === 'undefined' ) return text;
+		if ( typeof text === "string" ) return JSON.stringify(JSON.parse(text), null, step);
+		if ( typeof text === "object" ) return JSON.stringify(text, null, step);
+		return text;
+	};
+	vkbeautify.prototype.css = function(text, step) {
+		var ar = text.replace(/\s{1,}/g,' ')
+					.replace(/\{/g,"{~::~")
+					.replace(/\}/g,"~::~}~::~")
+					.replace(/\;/g,";~::~")
+					.replace(/\/\*/g,"~::~/*")
+					.replace(/\*\//g,"*/~::~")
+					.replace(/~::~\s{0,}~::~/g,"~::~")
+					.split('~::~'),
+			len = ar.length,
+			deep = 0,
+			str = '',
+			shift = step ? createShiftArr(step) : this.shift;
+			for(let ix=0;ix<len;ix++) {
+				if( /\{/.exec(ar[ix]))  {
+					str += shift[deep++]+ar[ix];
+				} else
+				if( /\}/.exec(ar[ix]))  {
+					str += shift[--deep]+ar[ix];
+				} else
+				if( /\*\\/.exec(ar[ix]))  {
+					str += shift[deep]+ar[ix];
+				}
+				else {
+					str += shift[deep]+ar[ix];
+				}
+			}
+			return str.replace(/^\n{1,}/,'');
+	};
+	function isSubquery(str, parenthesisLevel) {
+		return  parenthesisLevel - (str.replace(/\(/g,'').length - str.replace(/\)/g,'').length )
+	}
+	function split_sql(str, tab) {
+		return str.replace(/\s{1,}/g," ")
+					.replace(/ AND /ig,"~::~"+tab+tab+"AND ")
+					.replace(/ BETWEEN /ig,"~::~"+tab+"BETWEEN ")
+					.replace(/ CASE /ig,"~::~"+tab+"CASE ")
+					.replace(/ ELSE /ig,"~::~"+tab+"ELSE ")
+					.replace(/ END /ig,"~::~"+tab+"END ")
+					.replace(/ FROM /ig,"~::~FROM ")
+					.replace(/ GROUP\s{1,}BY/ig,"~::~GROUP BY ")
+					.replace(/ HAVING /ig,"~::~HAVING ")
+					.replace(/ IN /ig," IN ")
+					.replace(/ JOIN /ig,"~::~JOIN ")
+					.replace(/ CROSS~::~{1,}JOIN /ig,"~::~CROSS JOIN ")
+					.replace(/ INNER~::~{1,}JOIN /ig,"~::~INNER JOIN ")
+					.replace(/ LEFT~::~{1,}JOIN /ig,"~::~LEFT JOIN ")
+					.replace(/ RIGHT~::~{1,}JOIN /ig,"~::~RIGHT JOIN ")
+					.replace(/ ON /ig,"~::~"+tab+"ON ")
+					.replace(/ OR /ig,"~::~"+tab+tab+"OR ")
+					.replace(/ ORDER\s{1,}BY/ig,"~::~ORDER BY ")
+					.replace(/ OVER /ig,"~::~"+tab+"OVER ")
+					.replace(/\(\s{0,}SELECT /ig,"~::~(SELECT ")
+					.replace(/\)\s{0,}SELECT /ig,")~::~SELECT ")
+					.replace(/ THEN /ig," THEN~::~"+tab+"")
+					.replace(/ UNION /ig,"~::~UNION~::~")
+					.replace(/ USING /ig,"~::~USING ")
+					.replace(/ WHEN /ig,"~::~"+tab+"WHEN ")
+					.replace(/ WHERE /ig,"~::~WHERE ")
+					.replace(/ WITH /ig,"~::~WITH ")
+					.replace(/ ALL /ig," ALL ")
+					.replace(/ AS /ig," AS ")
+					.replace(/ ASC /ig," ASC ")
+					.replace(/ DESC /ig," DESC ")
+					.replace(/ DISTINCT /ig," DISTINCT ")
+					.replace(/ EXISTS /ig," EXISTS ")
+					.replace(/ NOT /ig," NOT ")
+					.replace(/ NULL /ig," NULL ")
+					.replace(/ LIKE /ig," LIKE ")
+					.replace(/\s{0,}SELECT /ig,"SELECT ")
+					.replace(/\s{0,}UPDATE /ig,"UPDATE ")
+					.replace(/ SET /ig," SET ")
+					.replace(/~::~{1,}/g,"~::~")
+					.split('~::~');
+	}
+	vkbeautify.prototype.sql = function(text,step) {
+		var ar_by_quote = text.replace(/\s{1,}/g," ")
+								.replace(/\'/ig,"~::~\'")
+								.split('~::~'),
+			len = ar_by_quote.length,
+			ar = [],
+			deep = 0,
+			tab = this.step,
+			parenthesisLevel = 0,
+			str = '',
+			shift = step ? createShiftArr(step) : this.shift;		for(let ix=0;ix<len;ix++) {
+				if(ix%2) {
+					ar = ar.concat(ar_by_quote[ix]);
+				} else {
+					ar = ar.concat(split_sql(ar_by_quote[ix], tab) );
+				}
+			}
+			len = ar.length;
+			for(let ix=0;ix<len;ix++) {
+				parenthesisLevel = isSubquery(ar[ix], parenthesisLevel);
+				if( /\s{0,}\s{0,}SELECT\s{0,}/.exec(ar[ix]))  {
+					ar[ix] = ar[ix].replace(/\,/g,",\n"+tab+tab+"");
+				}
+				if( /\s{0,}\s{0,}SET\s{0,}/.exec(ar[ix]))  {
+					ar[ix] = ar[ix].replace(/\,/g,",\n"+tab+tab+"");
+				}
+				if( /\s{0,}\(\s{0,}SELECT\s{0,}/.exec(ar[ix]))  {
+					deep++;
+					str += shift[deep]+ar[ix];
+				} else
+				if( /\'/.exec(ar[ix]) )  {
+					if(parenthesisLevel<1 && deep) {
+						deep--;
+					}
+					str += ar[ix];
+				}
+				else  {
+					str += shift[deep]+ar[ix];
+					if(parenthesisLevel<1 && deep) {
+						deep--;
+					}
+				}
+			}
+			str = str.replace(/^\n{1,}/,'').replace(/\n{1,}/g,"\n");
+			return str;
+	};
+	vkbeautify.prototype.xmlmin = function(text, preserveComments) {
+		var str = preserveComments ? text
+								   : text.replace(/\<![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t]*)\>/g,"")
+										 .replace(/[ \r\n\t]{1,}xmlns/g, ' xmlns');
+		return  str.replace(/>\s{0,}</g,"><");
+	};
+	vkbeautify.prototype.jsonmin = function(text) {
+		if (typeof JSON === 'undefined' ) return text;
+		return JSON.stringify(JSON.parse(text), null, 0);
+	};
+	vkbeautify.prototype.cssmin = function(text, preserveComments) {
+		var str = preserveComments ? text
+								   : text.replace(/\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\//g,"") ;
+		return str.replace(/\s{1,}/g,' ')
+				  .replace(/\{\s{1,}/g,"{")
+				  .replace(/\}\s{1,}/g,"}")
+				  .replace(/\;\s{1,}/g,";")
+				  .replace(/\/\*\s{1,}/g,"/*")
+				  .replace(/\*\/\s{1,}/g,"*/");
+	};
+	vkbeautify.prototype.sqlmin = function(text) {
+		return text.replace(/\s{1,}/g," ").replace(/\s{1,}\(/,"(").replace(/\s{1,}\)/,")");
+	};
+	var vkbeautify$1 = (new vkbeautify());
+
+	const svgNS = "http://www.w3.org/2000/svg";
+	const line = function(x1, y1, x2, y2) {
+		let shape = document.createElementNS(svgNS, "line");
+		shape.setAttributeNS(null, "x1", x1);
+		shape.setAttributeNS(null, "y1", y1);
+		shape.setAttributeNS(null, "x2", x2);
+		shape.setAttributeNS(null, "y2", y2);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const circle = function(x, y, radius) {
+		let shape = document.createElementNS(svgNS, "circle");
+		shape.setAttributeNS(null, "cx", x);
+		shape.setAttributeNS(null, "cy", y);
+		shape.setAttributeNS(null, "r", radius);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const ellipse = function(x, y, rx, ry) {
+		let shape = document.createElementNS(svgNS, "ellipse");
+		shape.setAttributeNS(null, "cx", x);
+		shape.setAttributeNS(null, "cy", y);
+		shape.setAttributeNS(null, "rx", rx);
+		shape.setAttributeNS(null, "ry", ry);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const rect = function(x, y, width, height) {
+		let shape = document.createElementNS(svgNS, "rect");
+		shape.setAttributeNS(null, "x", x);
+		shape.setAttributeNS(null, "y", y);
+		shape.setAttributeNS(null, "width", width);
+		shape.setAttributeNS(null, "height", height);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const polygon = function(pointsArray) {
+		let shape = document.createElementNS(svgNS, "polygon");
+		setPoints(shape, pointsArray);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const polyline = function(pointsArray) {
+		let shape = document.createElementNS(svgNS, "polyline");
+		setPoints(shape, pointsArray);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y,
+			toX, toY) {
+		let d = "M " + fromX + "," + fromY + " C " + c1X + "," + c1Y +
+				" " + c2X + "," + c2Y + " " + toX + "," + toY;
+		let shape = document.createElementNS(svgNS, "path");
+		shape.setAttributeNS(null, "d", d);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const text = function(textString, x, y) {
+		let shape = document.createElementNS(svgNS, "text");
+		shape.innerHTML = textString;
+		shape.setAttributeNS(null, "x", x);
+		shape.setAttributeNS(null, "y", y);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const wedge = function(x, y, radius, angleA, angleB) {
+		let shape = document.createElementNS(svgNS, "path");
+		setArc(shape, x, y, radius, angleA, angleB, true);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const arc = function(x, y, radius, angleA, angleB) {
+		let shape = document.createElementNS(svgNS, "path");
+		setArc(shape, x, y, radius, angleA, angleB, false);
+		attachClassMethods(shape);
+		return shape;
+	};
+	const setPoints = function(polygon, pointsArray) {
+		if (pointsArray == null || pointsArray.constructor !== Array) {
+			return;
+		}
+		let pointsString = pointsArray.map((el) =>
+			(el.constructor === Array ? el : [el.x, el.y])
+		).reduce((prev, curr) => prev + curr[0] + "," + curr[1] + " ", "");
+		polygon.setAttributeNS(null, "points", pointsString);
+	};
+	const setArc = function(shape, x, y, radius, startAngle, endAngle,
+			includeCenter = false) {
+		let start = [
+			x + Math.cos(startAngle) * radius,
+			y + Math.sin(startAngle) * radius ];
+		let vecStart = [
+			Math.cos(startAngle) * radius,
+			Math.sin(startAngle) * radius ];
+		let vecEnd = [
+			Math.cos(endAngle) * radius,
+			Math.sin(endAngle) * radius ];
+		let arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
+		let py = vecStart[0]*vecEnd[1] - vecStart[1]*vecEnd[0];
+		let px = vecStart[0]*vecEnd[0] + vecStart[1]*vecEnd[1];
+		let arcdir = (Math.atan2(py, px) > 0 ? 0 : 1);
+		let d = (includeCenter
+			? "M " + x + "," + y + " l " + vecStart[0] + "," + vecStart[1] + " "
+			: "M " + start[0] + "," + start[1] + " ");
+		d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
+		if (includeCenter) { d += " Z"; }
+		shape.setAttributeNS(null, "d", d);
+	};
+	const regularPolygon = function(cX, cY, radius, sides, parent, className, id) {
+		let halfwedge = 2*Math.PI/sides * 0.5;
+		let r = Math.cos(halfwedge) * radius;
+		let points = Array.from(Array(sides)).map((el,i) => {
+			let a = -2 * Math.PI * i / sides + halfwedge;
+			let x = cX + r * Math.sin(a);
+			let y = cY + r * Math.cos(a);
+			return [x, y];
+		});
+		return polygon(points, parent, className, id);
+	};
+	const group = function() {
+		let g = document.createElementNS(svgNS, "g");
+		attachClassMethods(g);
+		attachGeometryMethods(g);
+		return g;
+	};
+	const svg = function() {
+		let svgImage = document.createElementNS(svgNS, "svg");
+		svgImage.setAttribute("version", "1.1");
+		svgImage.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+		attachClassMethods(svgImage);
+		return svgImage;
+	};
+	const removeChildren = function(parent) {
+		while (parent.lastChild) {
+			parent.removeChild(parent.lastChild);
+		}
+	};
+	const getClassList = function(xmlNode) {
+		let currentClass = xmlNode.getAttribute("class");
+		return (currentClass == null
+			? []
+			: currentClass.split(" ").filter((s) => s !== ""));
+	};
+	const addClass = function(xmlNode, newClass) {
+		if (xmlNode == null) {
+			return;
+		}
+		let classes = getClassList(xmlNode)
+			.filter(c => c !== newClass);
+		classes.push(newClass);
+		xmlNode.setAttributeNS(null, "class", classes.join(" "));
+	};
+	const removeClass = function(xmlNode, removedClass) {
+		if (xmlNode == null) {
+			return;
+		}
+		let classes = getClassList(xmlNode)
+			.filter(c => c !== removedClass);
+		xmlNode.setAttributeNS(null, "class", classes.join(" "));
+	};
+	const attachClassMethods = function(element) {
+		element["removeChildren"] = function() { removeChildren(element); };
+		element["addClass"] = function(newClass) { addClass(element, newClass); };
+		element["removeClass"] = function(newClass) { removeClass(element, newClass); };
+	};
+	const geometryMethods = {
+		"line" : line,
+		"circle" : circle,
+		"ellipse" : ellipse,
+		"rect" : rect,
+		"polygon" : polygon,
+		"polyline" : polyline,
+		"bezier" : bezier,
+		"text" : text,
+		"wedge" : wedge,
+		"arc" : arc,
+		"regularPolygon" : regularPolygon,
+		"group" : group,
+	};
+	const attachGeometryMethods = function(parent) {
+		Object.keys(geometryMethods).forEach(key => {
+			parent[key] = function() {
+				let g = geometryMethods[key](...arguments);
+				parent.appendChild(g);
+				return g;
+			};
+		});
+	};
+	const setViewBox = function(svg, x, y, width, height, padding = 0) {
+		let scale = 1.0;
+		let d = (width / scale) - width;
+		let X = (x - d) - padding;
+		let Y = (y - d) - padding;
+		let W = (width + d * 2) + padding * 2;
+		let H = (height + d * 2) + padding * 2;
+		let viewBoxString = [X, Y, W, H].join(" ");
+		svg.setAttributeNS(null, "viewBox", viewBoxString);
+	};
+	const setDefaultViewBox = function(svg) {
+		let size = svg.getBoundingClientRect();
+		let width = (size.width == 0 ? 640 : size.width);
+		let height = (size.height == 0 ? 480 : size.height);
+		setViewBox(svg, 0, 0, width, height);
+	};
+	const getViewBox = function(svg) {
+		let vb = svg.getAttribute("viewBox");
+		return (vb == null
+			? undefined
+			: vb.split(" ").map((n) => parseFloat(n)));
+	};
+	const scaleViewBox = function(svg, scale, origin_x = 0, origin_y = 0) {
+		if (scale < 1e-8) { scale = 0.01; }
+		let matrix = svg.createSVGMatrix()
+			.translate(origin_x, origin_y)
+			.scale(1/scale)
+			.translate(-origin_x, -origin_y);
+		let viewBox = getViewBox(svg);
+		if (viewBox == null) {
+			setDefaultViewBox(svg);
+		}
+		let top_left = svg.createSVGPoint();
+		let bot_right = svg.createSVGPoint();
+		top_left.x = viewBox[0];
+		top_left.y = viewBox[1];
+		bot_right.x = viewBox[0] + viewBox[2];
+		bot_right.y = viewBox[1] + viewBox[3];
+		let new_top_left = top_left.matrixTransform(matrix);
+		let new_bot_right = bot_right.matrixTransform(matrix);
+		setViewBox(svg,
+			new_top_left.x,
+			new_top_left.y,
+			new_bot_right.x - new_top_left.x,
+			new_bot_right.y - new_top_left.y
+		);
+	};
+	const translateViewBox = function(svg, dx, dy) {
+		let viewBox = getViewBox(svg);
+		if (viewBox == null) {
+			setDefaultViewBox(svg);
+		}
+		viewBox[0] += dx;
+		viewBox[1] += dy;
+		svg.setAttributeNS(null, "viewBox", viewBox.join(" "));
+	};
+	const convertToViewBox = function(svg, x, y) {
+		let pt = svg.createSVGPoint();
+		pt.x = x;
+		pt.y = y;
+		let svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+		let array = [svgPoint.x, svgPoint.y];
+		array.x = svgPoint.x;
+		array.y = svgPoint.y;
+		return array;
+	};
+	const save = function(svg, filename = "image.svg") {
+		let a = document.createElement("a");
+		let source = (new window.XMLSerializer()).serializeToString(svg);
+		let formatted = vkbeautify$1.xml(source);
+		let blob = new window.Blob([formatted], {type: "text/plain"});
+		a.setAttribute("href", window.URL.createObjectURL(blob));
+		a.setAttribute("download", filename);
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+	};
+	const pErr = (new window.DOMParser())
+		.parseFromString("INVALID", "text/xml")
+		.getElementsByTagName("parsererror")[0]
+		.namespaceURI;
+	const load = function(input, callback) {
+		if (typeof input === "string" || input instanceof String) {
+			let xml = (new window.DOMParser()).parseFromString(input, "text/xml");
+			if (xml.getElementsByTagNameNS(pErr, "parsererror").length === 0) {
+				let parsedSVG = xml.documentElement;
+				if (callback != null) {
+					callback(parsedSVG);
+				}
+				return parsedSVG;
+			}
+			fetch(input)
+				.then((response) => response.text())
+				.then((str) => (new window.DOMParser())
+					.parseFromString(str, "text/xml")
+				).then((svgData) => {
+					let allSVGs = svgData.getElementsByTagName("svg");
+					if (allSVGs == null || allSVGs.length === 0) {
+						throw "error, valid XML found, but no SVG element";
+					}
+					if (callback != null) {
+						callback(allSVGs[0]);
+					}
+					return allSVGs[0];
+				});
+		} else if (input instanceof Document) {
+			callback(input);
+			return input;
+		}
+	};
+
+	function image() {
+		let params = Array.from(arguments);
+		let _svg = svg();
+		let _parent = undefined;
+		let _padding = 0;
+		let _matrix = _svg.createSVGMatrix();
+		let _events = {};
+		let _mouse = Object.create(null);
+		Object.assign(_mouse, {
+			isPressed: false,
+			position: [0,0],
+			pressed: [0,0],
+			drag: [0,0],
+			prev: [0,0],
+			x: 0,
+			y: 0
+		});
+		const setViewBox$$1 = function(x, y, width, height) {
+			setViewBox(_svg, x, y, width, height, _padding);
+		};
+		const getViewBox$$1 = function() { return getViewBox(_svg); };
+		const appendChild = function(element) { _svg.appendChild(element); };
+		const removeChildren$$1 = function() { removeChildren(_svg); };
+		const save$$1 = function(filename = "image.svg") {
+			return save(_svg, filename);
+		};
+		const load$$1 = function(data, callback) {
+			load(data, function(newSVG, error) {
+				if (newSVG != null) {
+					if (_svg != null) { _svg.remove(); }
+					_svg = newSVG;
+					_parent.appendChild(_svg);
+					attachHandlers();
+				}
+				if (callback != null) { callback(newSVG, error); }
+			});
+		};
+		const size = function(w, h) {
+			if (w == null || h == null) { return; }
+			let vb = getViewBox(_svg);
+			setViewBox(_svg, vb[0], vb[1], w, h, _padding);
+			_svg.setAttributeNS(null, "width", w);
+			_svg.setAttributeNS(null, "height", h);
+		};
+		const getWidth = function() {
+			let w = parseInt(_svg.getAttributeNS(null, "width"));
+			return w != null && !isNaN(w) ? w : _svg.getBoundingClientRect().width;
+		};
+		const getHeight = function() {
+			let h = parseInt(_svg.getAttributeNS(null, "height"));
+			return h != null && !isNaN(h) ? h : _svg.getBoundingClientRect().height;
+		};
+		const attachToDOM = function() {
+			let functions = params.filter((arg) => typeof arg === "function");
+			let numbers = params.filter((arg) => !isNaN(arg));
+			let element = params.filter((arg) =>
+					arg instanceof HTMLElement)
+				.shift();
+			let idElement = params.filter((a) =>
+					typeof a === "string" || a instanceof String)
+				.map(str => document.getElementById(str))
+				.shift();
+			_parent = (element != null
+				? element
+				: (idElement != null
+					? idElement
+					: document.body));
+			_parent.appendChild(_svg);
+			if (numbers.length >= 2) {
+				_svg.setAttributeNS(null, "width", numbers[0]);
+				_svg.setAttributeNS(null, "height", numbers[1]);
+				setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
+			}
+			else if (_svg.getAttribute("viewBox") == null) {
+				let rect$$1 = _svg.getBoundingClientRect();
+				setViewBox(_svg, 0, 0, rect$$1.width, rect$$1.height);
+			}
+			if (functions.length >= 1) {
+				functions[0]();
+			}
+			attachHandlers();
+		};
+		let numbers = params.filter((arg) => !isNaN(arg));
+		if (numbers.length >= 2) {
+			_svg.setAttributeNS(null, "width", numbers[0]);
+			_svg.setAttributeNS(null, "height", numbers[1]);
+			setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
+		}
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', attachToDOM);
+		} else {
+			attachToDOM();
+		}
+		function attachHandlers() {
+			_svg.addEventListener("mouseup", mouseUpHandler, false);
+			_svg.addEventListener("mousedown", mouseDownHandler, false);
+			_svg.addEventListener("mousemove", mouseMoveHandler, false);
+			_svg.addEventListener("mouseleave", mouseLeaveHandler, false);
+			_svg.addEventListener("mouseenter", mouseEnterHandler, false);
+			_svg.addEventListener("touchend", mouseUpHandler, false);
+			_svg.addEventListener("touchmove", touchMoveHandler, false);
+			_svg.addEventListener("touchstart", touchStartHandler, false);
+			_svg.addEventListener("touchcancel", mouseUpHandler, false);
+		}
+		function getMouse() {
+			let m = _mouse.position.slice();
+			Object.keys(_mouse)
+				.filter(key => typeof key === "object")
+				.forEach(key => m[key] = _mouse[key].slice());
+			Object.keys(_mouse)
+				.filter(key => typeof key !== "object")
+				.forEach(key => m[key] = _mouse[key]);
+			return Object.freeze(m);
+		}
+		function updateMousePosition(clientX, clientY) {
+			_mouse.prev = _mouse.position;
+			_mouse.position = convertToViewBox(_svg, clientX, clientY);
+			_mouse.x = _mouse.position[0];
+			_mouse.y = _mouse.position[1];
+		}
+		function updateMouseDrag() {
+			_mouse.drag = [_mouse.position[0] - _mouse.pressed[0],
+			               _mouse.position[1] - _mouse.pressed[1]];
+			_mouse.drag.x = _mouse.drag[0];
+			_mouse.drag.y = _mouse.drag[1];
+		}
+		function mouseMoveHandler(event) {
+			updateMousePosition(event.clientX, event.clientY);
+			let mouse = getMouse();
+			if (_mouse.isPressed) { updateMouseDrag(); }
+			if (_events.mousemove) {
+				_events.mousemove.forEach(f => f(mouse));
+			}
+		}
+		function mouseDownHandler(event) {
+			_mouse.isPressed = true;
+			_mouse.pressed = convertToViewBox(_svg, event.clientX, event.clientY);
+			if (_events.mousedown) {
+				let mouse = getMouse();
+				_events.mousedown.forEach(f => f(mouse));
+			}
+		}
+		function mouseUpHandler(event) {
+			_mouse.isPressed = false;
+			if (_events.mouseup) {
+				let mouse = getMouse();
+				_events.mouseup.forEach(f => f(mouse));
+			}
+		}
+		function mouseLeaveHandler(event) {
+			updateMousePosition(event.clientX, event.clientY);
+			if (_events.mouseleave) {
+				let mouse = getMouse();
+				_events.mouseleave.forEach(f => f(mouse));
+			}
+		}
+		function mouseEnterHandler(event) {
+			updateMousePosition(event.clientX, event.clientY);
+			if (_events.mouseenter) {
+				let mouse = getMouse();
+				_events.mouseenter.forEach(f => f(mouse));
+			}
+		}
+		function touchStartHandler(event) {
+			event.preventDefault();
+			let touch = event.touches[0];
+			if (touch == null) { return; }
+			_mouse.isPressed = true;
+			_mouse.pressed = convertToViewBox(_svg, touch.clientX, touch.clientY);
+			if (_events.mousedown) {
+				let mouse = getMouse();
+				_events.mousedown.forEach(f => f(mouse));
+			}
+		}
+		function touchMoveHandler(event) {
+			event.preventDefault();
+			let touch = event.touches[0];
+			if (touch == null) { return; }
+			updateMousePosition(touch.clientX, touch.clientY);
+			let mouse = getMouse();
+			if (_mouse.isPressed) { updateMouseDrag(); }
+			if (_events.mousemove) {
+				_events.mousemove.forEach(f => f(mouse));
+			}
+		}
+		let _animate, _intervalID, _animationFrame;
+		function updateAnimationHandler(handler) {
+			if (_animate != null) {
+				clearInterval(_intervalID);
+			}
+			_animate = handler;
+			if (_animate != null) {
+				_animationFrame = 0;
+				_intervalID = setInterval(() => {
+					let animObj = {
+						"time": _svg.getCurrentTime(),
+						"frame": _animationFrame++
+					};
+					_animate(animObj);
+				}, 1000/60);
+			}
+		}
+		const addEventListener = function(eventName, func) {
+			if (typeof func !== "function") {
+				throw "must supply a function type to addEventListener";
+			}
+			if (_events[eventName] === undefined) {
+				_events[eventName] = [];
+			}
+			_events[eventName].push(func);
+		};
+		let _this = {
+			appendChild, removeChildren: removeChildren$$1,
+			load: load$$1, save: save$$1,
+			setViewBox: setViewBox$$1, getViewBox: getViewBox$$1, size,
+			get mouse() { return getMouse(); },
+			get svg() { return _svg; },
+			get width() { return getWidth(); },
+			get height() { return getHeight(); },
+			set width(w) { _svg.setAttributeNS(null, "width", w); },
+			set height(h) { _svg.setAttributeNS(null, "height", h); },
+			set onMouseMove(handler) { addEventListener("mousemove", handler); },
+			set onMouseDown(handler) { addEventListener("mousedown", handler); },
+			set onMouseUp(handler) { addEventListener("mouseup", handler); },
+			set onMouseLeave(handler) { addEventListener("mouseleave", handler); },
+			set onMouseEnter(handler) { addEventListener("mouseenter", handler); },
+			set animate(handler) { updateAnimationHandler(handler); },
+			addEventListener
+		};
+		const drawingMethods = {
+			"line" : line,
+			"circle" : circle,
+			"ellipse" : ellipse,
+			"rect" : rect,
+			"polygon" : polygon,
+			"polyline" : polyline,
+			"bezier" : bezier,
+			"text" : text,
+			"wedge" : wedge,
+			"arc" : arc,
+			"regularPolygon" : regularPolygon,
+			"group" : group
+		};
+		Object.keys(drawingMethods).forEach(key => {
+			_this[key] = function() {
+				let g = drawingMethods[key](...arguments);
+				_this.appendChild(g);
+				return g;
+			};
+		});
+		return _this;
+	}
+
+	const controlPoint = function(parent, options) {
+		if (options == null) { options = {}; }
+		if (options.radius == null) { options.radius = 1; }
+		if (options.fill == null) { options.fill = "#000000"; }
+		if (options.position == null) { options.position = [0,0]; }
+		let c = circle(0, 0, options.radius);
+		c.setAttribute("fill", options.fill);
+		let _position = options.position.slice();
+		let _selected = false;
+		if (parent != null) {
+			parent.appendChild(c);
+		}
+		const setPosition = function(x, y) {
+			_position[0] = x;
+			_position[1] = y;
+			c.setAttribute("cx", x);
+			c.setAttribute("cy", y);
+		};
+		const onMouseMove = function(mouse) {
+			if (_selected) {
+				let pos = _updatePosition(mouse);
+				setPosition(pos[0], pos[1]);
+			}
+		};
+		const onMouseUp = function(mouse) {
+			_selected = false;
+		};
+		const distance = function(mouse) {
+			return Math.sqrt(
+				Math.pow(mouse[0] - _position[0], 2) +
+				Math.pow(mouse[1] - _position[1], 2)
+			);
+		};
+		let _updatePosition = function(input){ return input; };
+		return {
+			circle: c,
+			set position(pos) {
+				if (pos[0] != null) { setPosition(pos[0], pos[1]); }
+				else if (pos.x != null) { setPosition(pos.x, pos.y); }
+			},
+			get position() { return [..._position]; },
+			onMouseUp,
+			onMouseMove,
+			distance,
+			set positionDidUpdate(method) { _updatePosition = method; },
+			set selected(value) { _selected = true; }
+		};
+	};
+	function controls(svgObject, number = 1, options) {
+		if (options == null) { options = {}; }
+		if (options.parent == null) { options.parent = svgObject; }
+		if (options.radius == null) { options.radius = 1; }
+		if (options.fill == null) { options.fill = "#000000"; }
+		let _points = Array.from(Array(number)).map(_ => controlPoint(options.parent, options));
+		let _selected = undefined;
+		const onMouseDown = function(mouse) {
+			if (!(_points.length > 0)) { return; }
+			_selected = _points
+				.map((p,i) => ({i:i, d:p.distance(mouse)}))
+				.sort((a,b) => a.d - b.d)
+				.shift()
+				.i;
+			_points[_selected].selected = true;
+		};
+		const onMouseMove = function(mouse) {
+			_points.forEach(p => p.onMouseMove(mouse));
+		};
+		const onMouseUp = function(mouse) {
+			_points.forEach(p => p.onMouseUp(mouse));
+			_selected = undefined;
+		};
+		svgObject.addEventListener("mousedown", onMouseDown);
+		svgObject.addEventListener("mouseup", onMouseUp);
+		svgObject.addEventListener("mousemove", onMouseMove);
+		Object.defineProperty(_points, "selectedIndex", {get: function() { return _selected; }});
+		Object.defineProperty(_points, "selected", {get: function() { return _points[_selected]; }});
+		Object.defineProperty(_points, "removeAll", {value: function() {
+			_points.forEach(tp => tp.remove());
+		}});
+		return _points;
+	}
+
+	exports.line = line;
+	exports.circle = circle;
+	exports.ellipse = ellipse;
+	exports.rect = rect;
+	exports.polygon = polygon;
+	exports.polyline = polyline;
+	exports.bezier = bezier;
+	exports.text = text;
+	exports.wedge = wedge;
+	exports.arc = arc;
+	exports.regularPolygon = regularPolygon;
+	exports.group = group;
+	exports.svg = svg;
+	exports.setPoints = setPoints;
+	exports.setArc = setArc;
+	exports.removeChildren = removeChildren;
+	exports.save = save;
+	exports.load = load;
+	exports.setViewBox = setViewBox;
+	exports.getViewBox = getViewBox;
+	exports.scaleViewBox = scaleViewBox;
+	exports.translateViewBox = translateViewBox;
+	exports.convertToViewBox = convertToViewBox;
+	exports.image = image;
+	exports.controls = controls;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
