@@ -85,7 +85,7 @@ sol.layout = function(all = false){
 	});
 }
 
-sol.mousemove = function(mouse){
+sol.onMouseMove = function(mouse){
 	let col = Math.floor((mouse.x - sol.pad) / sol.unit);
 	let row = Math.floor((mouse.y - sol.pad) / sol.unit);
 	if(col >= 0 && row >= 0 

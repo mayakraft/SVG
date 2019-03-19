@@ -27,7 +27,7 @@ poly.setAttribute("style", pStyle);
 
 // create a simple draw handler
 let points = [];
-sketch.mousemove = function(event){
+sketch.onMouseMove = function(event){
 	points.push(event.position);
 	SVG.setPoints(poly, points);
 }

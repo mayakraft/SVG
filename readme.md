@@ -12,7 +12,10 @@ Include svg.js in your project.
 
 # Introduction
 
-There are primitive methods which simply create an SVG element. `svg()` creates an `<svg>`, `line()` creates a `<line>`.
+At its simplest, this library can be used to create SVG elements. 
+
+* `svg()` creates an `<svg>` 
+* `line()` creates a `<line>`
 
 At a minimum, you can use these methods to create familiar DOM level 1 objects, saving you time:
 
@@ -20,7 +23,7 @@ At a minimum, you can use these methods to create familiar DOM level 1 objects, 
 SVG.rect(10, 10, 640, 480);
 ```
 
-replaces:
+takes the place of:
 
 ```
 let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -29,6 +32,8 @@ rect.setAttribute("y", 10);
 rect.setAttribute("width", 640);
 rect.setAttribute("height", 480);
 ```
+
+At its most complex, this library includes an `image()` object which incorporates svg with event handling, automatic binding to the page, and wrapping convenience methods onto objects.
 
 # Examples
 
@@ -119,7 +124,7 @@ scale(svg, scale, origin_x = 0, origin_y = 0)
 translate(svg, dx, dy)
 ```
 
-![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/vera.svg)
+![example](https://robbykraft.github.io/SVG/examples/vera.svg)
 
 everything is accessible under the `SVG` namespace. additionally, draw methods are attached to `<svg>` and `<g>` elements saving you the step of calling `appendChild`.
 
@@ -217,4 +222,36 @@ and the animate handler provides elapsed seconds (float) and frame number (integ
 };
 ```
 
-![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/dragon.svg)
+# Appendix
+
+the entire contents of SVG:
+
+```
+arc: ƒ (x, y, radius, angleA, angleB)
+bezier: ƒ (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY)
+circle: ƒ (x, y, radius)
+controls: ƒ controls(svgObject, number = 1, options)
+convertToViewBox: ƒ (svg, x, y)
+ellipse: ƒ (x, y, rx, ry)
+getViewBox: ƒ (svg)
+group: ƒ ()
+image: ƒ image()
+line: ƒ (x1, y1, x2, y2)
+load: ƒ (input, callback)
+polygon: ƒ (pointsArray)
+polyline: ƒ (pointsArray)
+rect: ƒ (x, y, width, height)
+regularPolygon: ƒ (cX, cY, radius, sides)
+removeChildren: ƒ (parent)
+save: ƒ (svg, filename = "image.svg")
+scaleViewBox: ƒ (svg, scale, origin_x = 0, origin_y = 0)
+setArc: ƒ (shape, x, y, radius, startAngle, endAngle, includeCenter = false)
+setPoints: ƒ (polygon, pointsArray)
+setViewBox: ƒ (svg, x, y, width, height, padding = 0)
+svg: ƒ ()
+text: ƒ (textString, x, y)
+translateViewBox: ƒ (svg, dx, dy)
+wedge: ƒ (x, y, radius, angleA, angleB)
+```
+
+![example](https://robbykraft.github.io/SVG/examples/dragon.svg)

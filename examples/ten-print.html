@@ -7,7 +7,7 @@ body{ margin:0; }
 <script>
 let tenPrint = SVG.image(window.innerWidth, window.innerHeight, "ten-print");
 // window
-let w = tenPrint.w, h = tenPrint.h;
+let w = tenPrint.getWidth(), h = tenPrint.h;
 // character size. commodore 64 window contains 40x25 characters
 let s = w / 40, strokeWidth = parseInt(w / 150);
 // text pointer

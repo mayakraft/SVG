@@ -23,7 +23,7 @@ let rect = SVG.rect(0, 0, sketch.w, sketch.h);
 rect.setAttribute("fill", "white");
 sketch.appendChild(rect);
 
-sketch.mousedown = function(mouse){
+sketch.onMouseDown = function(mouse){
 	sketch.save();
 }
 

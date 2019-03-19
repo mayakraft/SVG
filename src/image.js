@@ -16,15 +16,16 @@ export default function() {
 
 	// get constructor parameters
 	let params = Array.from(arguments);
+
+	// setup that can occur immediately
 	initSize(_svg, params);
+	attachSVGMethods(_svg);
+	_svg.events = Events(_svg);
 
 	const setup = function() {
-		// from parameters: set size, append to parent, run callback
-		// and attach event handlers
+		// setup that requires a loaded DOM. append to parent, run callback
 		initSize(_svg, params);
 		getElement(params).appendChild(_svg);
-		attachSVGMethods(_svg);
-		_svg.events = Events(_svg);
 		params.filter((arg) => typeof arg === "function")
 			.forEach((func) => func())
 	}

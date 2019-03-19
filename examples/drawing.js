@@ -5,7 +5,7 @@ function Drawing(){
 	sketch.drawingLayer = SVG.group();
 	sketch.appendChild(sketch.drawingLayer);
 
-	sketch.mouseenter = function(mouse){
+	sketch.onMouseEnter = function(mouse){
 		sketch.brushPoly = SVG.polygon();
 		sketch.brushPoly.setAttribute("style", "stroke:black; fill:" + sketch.color);
 		sketch.drawingLayer.appendChild(sketch.brushPoly);
@@ -13,7 +13,7 @@ function Drawing(){
 		sketch.prev = mouse;
 	}
 
-	sketch.mousemove = function(mouse){
+	sketch.onMouseMove = function(mouse){
 		let vector = [mouse.x - sketch.prev.x, mouse.y - sketch.prev.y];
 		let sideA = [mouse.x + -vector[1]*0.2, mouse.y + vector[0]*0.2];
 		let sideB = [mouse.x + vector[1]*0.2, mouse.y + -vector[0]*0.2];
