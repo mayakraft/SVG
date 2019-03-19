@@ -18,13 +18,6 @@ export default function() {
 	let params = Array.from(arguments);
 	initSize(_svg, params);
 
-	if (document.readyState === 'loading') {
-		// wait until after the <body> has rendered
-		document.addEventListener('DOMContentLoaded', setup);
-	} else {
-		setup();
-	}
-
 	const setup = function() {
 		// from parameters: set size, append to parent, run callback
 		// and attach event handlers
@@ -34,6 +27,13 @@ export default function() {
 		_svg.events = Events(_svg);
 		params.filter((arg) => typeof arg === "function")
 			.forEach((func) => func())
+	}
+
+	if (document.readyState === 'loading') {
+		// wait until after the <body> has rendered
+		document.addEventListener('DOMContentLoaded', setup);
+	} else {
+		setup();
 	}
 
 	return _svg;

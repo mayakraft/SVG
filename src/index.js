@@ -5,12 +5,10 @@ export {
 } from "./elements";
 
 export {
-	removeChildren, getWidth, getHeight, addClass, removeClass, save, load
-} from "./DOM";
-
-export {
 	setViewBox, getViewBox, scaleViewBox, translateViewBox, convertToViewBox
 } from "./viewBox";
+
+export { removeChildren, save, load } from "./DOM";
 
 export { default as image } from "./image";
 

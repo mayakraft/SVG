@@ -732,11 +732,6 @@
 		let _svg = svg();
 		let params = Array.from(arguments);
 		initSize(_svg, params);
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', setup);
-		} else {
-			setup();
-		}
 		const setup = function() {
 			initSize(_svg, params);
 			getElement(params).appendChild(_svg);
@@ -745,6 +740,11 @@
 			params.filter((arg) => typeof arg === "function")
 				.forEach((func) => func());
 		};
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', setup);
+		} else {
+			setup();
+		}
 		return _svg;
 	}const getElement = function(params) {
 		let element = params.filter((arg) =>
@@ -903,18 +903,14 @@
 	exports.regularPolygon = regularPolygon;
 	exports.setPoints = setPoints;
 	exports.setArc = setArc;
-	exports.removeChildren = removeChildren;
-	exports.getWidth = getWidth;
-	exports.getHeight = getHeight;
-	exports.addClass = addClass;
-	exports.removeClass = removeClass;
-	exports.save = save;
-	exports.load = load;
 	exports.setViewBox = setViewBox;
 	exports.getViewBox = getViewBox;
 	exports.scaleViewBox = scaleViewBox;
 	exports.translateViewBox = translateViewBox;
 	exports.convertToViewBox = convertToViewBox;
+	exports.removeChildren = removeChildren;
+	exports.save = save;
+	exports.load = load;
 	exports.image = image;
 	exports.controls = controls;
 

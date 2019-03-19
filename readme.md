@@ -10,6 +10,26 @@ Include svg.js in your project.
 <script src="svg.js"></script>
 ```
 
+# Introduction
+
+There are primitive methods which simply create an SVG element. `svg()` creates an `<svg>`, `line()` creates a `<line>`.
+
+At a minimum, you can use these methods to create familiar DOM level 1 objects, saving you time:
+
+```
+SVG.rect(10, 10, 640, 480);
+```
+
+replaces:
+
+```
+let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+rect.setAttribute("x", 10);
+rect.setAttribute("y", 10);
+rect.setAttribute("width", 640);
+rect.setAttribute("height", 480);
+```
+
 # Examples
 
 Read [this introduction blog post](https://blog.rabbitear.org/2018/12/29/svg/) and check out the `examples/` folder included in this project for more demos:
@@ -24,14 +44,11 @@ The following code draws the [Japanese flag](https://robbykraft.github.io/SVG/ex
 
 ```javascript
 let flag = SVG.image(600, 400);
-let rect = SVG.rect(0, 0, flag.w, flag.h);
-let circle = SVG.circle(flag.w/2, flag.h/2, flag.h*0.3);
+let rect = flag.rect(0, 0, flag.w, flag.h);
+let circle = flag.circle(flag.w/2, flag.h/2, flag.h*0.3);
 
 rect.setAttribute("fill", "white");
 circle.setAttribute("fill", "#BC002D");
-
-flag.appendChild(rect);
-flag.appendChild(circle);
 ```
 
 # Methods
@@ -103,6 +120,24 @@ translate(svg, dx, dy)
 ```
 
 ![example](https://cdn.rawgit.com/robbykraft/SVG/master/examples/vera.svg)
+
+everything is accessible under the `SVG` namespace. additionally, draw methods are attached to `<svg>` and `<g>` elements saving you the step of calling `appendChild`.
+
+1. create an svg or group
+2. draw *from* this element
+
+```javascript
+let g = SVG.group()
+g.line(1,2,3,4)
+```
+
+creates
+
+```html
+<g>
+    ​<line x1=​"1" y1=​"2" x2=​"3" y2=​"4">​</line>​
+</g>​
+```
 
 # the Image() object
 
