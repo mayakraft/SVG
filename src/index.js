@@ -1,14 +1,17 @@
-// geometry 
-export {
-	line, circle, ellipse, rect, polygon, polyline, bezier, 
-	text, wedge, arc, regularPolygon, group, svg
-} from "./svg";
 
-// useful modifiers and methods
 export {
-	setPoints, setArc, removeChildren, save, load,
+	svg, line, circle, ellipse, rect, polygon, polyline, bezier,
+	text, wedge, arc, group, regularPolygon, setPoints, setArc
+} from "./elements";
+
+export {
+	removeChildren, getWidth, getHeight, addClass, removeClass, save, load
+} from "./DOM";
+
+export {
 	setViewBox, getViewBox, scaleViewBox, translateViewBox, convertToViewBox
-} from "./svg";
+} from "./viewBox";
 
 export { default as image } from "./image";
+
 export { default as controls } from "./controls";

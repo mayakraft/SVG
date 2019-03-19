@@ -24,8 +24,8 @@ The following code draws the [Japanese flag](https://robbykraft.github.io/SVG/ex
 
 ```javascript
 let flag = SVG.image(600, 400);
-let rect = SVG.rect(0, 0, flag.width, flag.height);
-let circle = SVG.circle(flag.width/2, flag.height/2, flag.height*0.3);
+let rect = SVG.rect(0, 0, flag.w, flag.h);
+let circle = SVG.circle(flag.w/2, flag.h/2, flag.h*0.3);
 
 rect.setAttribute("fill", "white");
 circle.setAttribute("fill", "#BC002D");

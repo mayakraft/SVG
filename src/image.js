@@ -4,126 +4,100 @@
  * @param: a DOM object or "string" DOM id- a parent to attach to
  */
 
-import * as SVG from "./svg";
-import * as Events from "./events";
+import * as DOM from "./DOM";
+import * as ViewBox from "./viewBox";
+import { svg, setupSVG } from "./elements";
+import { default as Events } from "./events";
 
 export default function() {
-	
-	// get constructor parameters
-	let params = Array.from(arguments);
 
 	// create a new SVG
-	let _svg = SVG.svg();
+	let _svg = svg();
 
-	let properties = {
-		parent: undefined,   // parent node
-		padding: 0,
-	};
-
-	const setViewBox = function(x, y, width, height) {
-		SVG.setViewBox(_svg, x, y, width, height, properties.padding);
-	}
-	const getViewBox = function() { return SVG.getViewBox(_svg); }
-	const appendChild = function(element) { _svg.appendChild(element); }
-	const removeChildren = function() { SVG.removeChildren(_svg); }
-	const save = function(filename = "image.svg") {
-		return SVG.save(_svg, filename);
-	}
-	const load = function(data, callback) {
-		SVG.load(data, function(newSVG, error) {
-			if (newSVG != null) {
-				// todo: do we need to remove any existing handlers to properly free memory?
-				if (_svg != null) {
-					Events.deinit(_svg);
-					_svg.remove();
-				}
-				_svg = newSVG;
-				properties.parent.appendChild(_svg);
-				// re-attach handlers
-				Events.setup(_svg);
-			}
-			if (callback != null) { callback(newSVG, error); }
-		});
-	}
-	const size = function(w, h) {
-		if (w == null || h == null) { return; }
-		let vb = SVG.getViewBox(_svg);
-		SVG.setViewBox(_svg, vb[0], vb[1], w, h, properties.padding);
-		_svg.setAttributeNS(null, "width", w);
-		_svg.setAttributeNS(null, "height", h);
-	}
-
-	const getWidth = function() {
-		let w = parseInt(_svg.getAttributeNS(null, "width"));
-		return w != null && !isNaN(w) ? w : _svg.getBoundingClientRect().width;
-	}
-	const getHeight = function() {
-		let h = parseInt(_svg.getAttributeNS(null, "height"));
-		return h != null && !isNaN(h) ? h : _svg.getBoundingClientRect().height;
-	}
-
-	// after page load, find a parent element for the new SVG in the arguments
-	const attachToDOM = function() {
-		let functions = params.filter((arg) => typeof arg === "function");
-		let numbers = params.filter((arg) => !isNaN(arg));
-		let element = params.filter((arg) =>
-				arg instanceof HTMLElement)
-			.shift();
-		let idElement = params.filter((a) =>
-				typeof a === "string" || a instanceof String)
-			.map(str => document.getElementById(str))
-			.shift();
-		properties.parent = (element != null
-			? element
-			: (idElement != null
-				? idElement
-				: document.body));
-		properties.parent.appendChild(_svg);
-
-		if (numbers.length >= 2) {
-			_svg.setAttributeNS(null, "width", numbers[0]);
-			_svg.setAttributeNS(null, "height", numbers[1]);
-			SVG.setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
-		} 
-		else if (_svg.getAttribute("viewBox") == null) {
-			// set a viewBox if viewBox doesn't yet exist
-			let rect = _svg.getBoundingClientRect();
-			SVG.setViewBox(_svg, 0, 0, rect.width, rect.height);
-		}
-
-		if (functions.length >= 1) {
-			functions[0]();
-		}
-
-		Events.setup(_svg);
-	}
-	// boot begin:
-	// set numbers if they exist, before page has even loaded
-	// this way the svg has a width and height even before document has loaded
-	let numbers = params.filter((arg) => !isNaN(arg));
-	if (numbers.length >= 2) {
-		_svg.setAttributeNS(null, "width", numbers[0]);
-		_svg.setAttributeNS(null, "height", numbers[1]);
-		SVG.setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
-	} 
+	// get constructor parameters
+	let params = Array.from(arguments);
+	initSize(_svg, params);
 
 	if (document.readyState === 'loading') {
 		// wait until after the <body> has rendered
-		document.addEventListener('DOMContentLoaded', attachToDOM);
+		document.addEventListener('DOMContentLoaded', setup);
 	} else {
-		attachToDOM();
+		setup();
 	}
 
-	// Object.defineProperty(_svg, "appendChild", {value: appendChild});
-	Object.defineProperty(_svg, "removeChildren", {value: removeChildren});
-	Object.defineProperty(_svg, "load", {value: load});
-	Object.defineProperty(_svg, "save", {value: save});
-	Object.defineProperty(_svg, "setViewBox", {value: setViewBox});
-	Object.defineProperty(_svg, "getViewBox", {value: getViewBox});
-	Object.defineProperty(_svg, "size", {value: size});
-	// Object.defineProperty(_svg, "addEventListener", {value: addEventListener});
-
-	SVG.attachGeometryMethods(_svg);
+	const setup = function() {
+		// from parameters: set size, append to parent, run callback
+		// and attach event handlers
+		initSize(_svg, params);
+		getElement(params).appendChild(_svg);
+		attachSVGMethods(_svg);
+		_svg.events = Events(_svg);
+		params.filter((arg) => typeof arg === "function")
+			.forEach((func) => func())
+	}
 
 	return _svg;
+};
+
+const getElement = function(params) {
+	let element = params.filter((arg) =>
+			arg instanceof HTMLElement
+		).shift();
+	let idElement = params.filter((a) =>
+			typeof a === "string" || a instanceof String)
+		.map(str => document.getElementById(str))
+		.shift();
+	return (element != null
+		? element
+		: (idElement != null
+			? idElement
+			: document.body));
+}
+
+const initSize = function(svg, params) {
+	let numbers = params.filter((arg) => !isNaN(arg));
+	if (numbers.length >= 2) {
+		svg.setAttributeNS(null, "width", numbers[0]);
+		svg.setAttributeNS(null, "height", numbers[1]);
+		ViewBox.setViewBox(svg, 0, 0, numbers[0], numbers[1]);
+	} 
+	else if (svg.getAttribute("viewBox") == null) {
+		// set a viewBox if viewBox doesn't yet exist
+		let rect = svg.getBoundingClientRect();
+		ViewBox.setViewBox(svg, 0, 0, rect.width, rect.height);
+	}
+}
+
+const attachSVGMethods = function(element) {
+	Object.defineProperty(element, "w", {
+		get: function(){ return DOM.getWidth(element); },
+		set: function(w){ element.setAttributeNS(null, "width", w); }
+	});
+	Object.defineProperty(element, "h", {
+		get: function(){ return DOM.getHeight(element); },
+		set: function(h){ element.setAttributeNS(null, "height", h); }
+	});
+	element.getWidth = function() { return DOM.getWidth(element); }
+	element.getHeight = function() { return DOM.getHeight(element); }
+	element.setWidth = function(w) { element.setAttributeNS(null, "width", w); }
+	element.setHeight = function(h) { element.setAttributeNS(null, "height", h); }
+	element.save = function(filename = "image.svg") {
+		return DOM.save(element, filename);
+	}
+	element.load = function(data, callback) {
+		DOM.load(data, function(newSVG, error) {
+			let parent = element.parentNode;
+			if (newSVG != null) {
+				newSVG.events = element.events;
+				setupSVG(newSVG);
+				if (newSVG.events == null) { newSVG.events = Events(newSVG); }
+				else { newSVG.events.setup(newSVG); }
+				attachSVGMethods(newSVG);
+				element.remove();
+				element = newSVG;
+			}
+			if (parent != null) { parent.appendChild(element); }
+			if (callback != null) { callback(element, error); }
+		});
+	}
 }

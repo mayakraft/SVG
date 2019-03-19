@@ -1,4 +1,4 @@
-import * as SVG from "./svg";
+import { circle } from "./elements";
 
 const controlPoint = function(parent, options) {
 	if (options == null) { options = {}; }
@@ -6,7 +6,7 @@ const controlPoint = function(parent, options) {
 	if (options.fill == null) { options.fill = "#000000"; }
 	if (options.position == null) { options.position = [0,0]; }
 
-	let c = SVG.circle(0, 0, options.radius);
+	let c = circle(0, 0, options.radius);
 	c.setAttribute("fill", options.fill);
 	let _position = options.position.slice();
 	let _selected = false;

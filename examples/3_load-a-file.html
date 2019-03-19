@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <title>SVG example: load an SVG file</title>
 <body>
-	<input type="file" id="open-file">
+	<input type="file" id="open-file"><hr>
 </body>
 <script type="text/javascript" src="../svg.js"></script>
 <script type="text/javascript">
 
-let view = SVG.image();
+let sketch = SVG.image();
 var reader = new FileReader();
 
 document.getElementById("open-file").onchange = function(){
 	reader.readAsText(this.files[0]);
 }
 reader.onload = function(event){
-	view.load(event.target.result);
+	sketch.load(event.target.result);
 }
 
 </script>

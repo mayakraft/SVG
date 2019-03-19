@@ -19,11 +19,11 @@ svg{
 <script type="text/javascript">
 
 let sketch = SVG.image(window.innerWidth, window.innerWidth / 3);
-let rect = SVG.rect(0, 0, sketch.width, sketch.height);
+let rect = SVG.rect(0, 0, sketch.w, sketch.h);
 rect.setAttribute("fill", "white");
 sketch.appendChild(rect);
 
-sketch.onMouseDown = function(mouse){
+sketch.mousedown = function(mouse){
 	sketch.save();
 }
 
@@ -32,8 +32,8 @@ var ROWS = 1;
 var SPACING = window.innerWidth * 0.3;
 var SIDE = window.innerWidth * 0.22;
 var TL = {
-	x:(sketch.width*.5 - SIDE*0.5 - SPACING),
-	y:(sketch.height*.5-.5*SIDE)
+	x:(sketch.w*.5 - SIDE*0.5 - SPACING),
+	y:(sketch.h*.5-.5*SIDE)
 };
 var PERTURB = 6;
 var FREQUENCY = 7;

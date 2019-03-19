@@ -31,7 +31,7 @@ nees.draw = function(){
 
 	nees.removeChildren();
 
-	let rect = SVG.rect(0, 0, nees.width, nees.height);
+	let rect = SVG.rect(0, 0, nees.w, nees.h);
 	rect.setAttribute("fill", "white");
 	nees.appendChild(rect);
 
@@ -56,7 +56,7 @@ nees.draw = function(){
 }
 nees.draw();
 
-nees.onMouseDown = function(mouse){
+nees.mousedown = function(mouse){
 	nees.draw();
 }
 

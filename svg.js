@@ -239,7 +239,162 @@
 	};
 	var vkbeautify$1 = (new vkbeautify());
 
+	const removeChildren = function(parent) {
+		while (parent.lastChild) {
+			parent.removeChild(parent.lastChild);
+		}
+	};
+	const getWidth = function(svg) {
+		let w = parseInt(svg.getAttributeNS(null, "width"));
+		return w != null && !isNaN(w) ? w : svg.getBoundingClientRect().width;
+	};
+	const getHeight = function(svg) {
+		let h = parseInt(svg.getAttributeNS(null, "height"));
+		return h != null && !isNaN(h) ? h : svg.getBoundingClientRect().height;
+	};
+	const getClassList = function(xmlNode) {
+		let currentClass = xmlNode.getAttribute("class");
+		return (currentClass == null
+			? []
+			: currentClass.split(" ").filter((s) => s !== ""));
+	};
+	const addClass = function(xmlNode, newClass) {
+		if (xmlNode == null) {
+			return;
+		}
+		let classes = getClassList(xmlNode)
+			.filter(c => c !== newClass);
+		classes.push(newClass);
+		xmlNode.setAttributeNS(null, "class", classes.join(" "));
+	};
+	const removeClass = function(xmlNode, removedClass) {
+		if (xmlNode == null) {
+			return;
+		}
+		let classes = getClassList(xmlNode)
+			.filter(c => c !== removedClass);
+		xmlNode.setAttributeNS(null, "class", classes.join(" "));
+	};
+	const save = function(svg, filename = "image.svg") {
+		let a = document.createElement("a");
+		let source = (new window.XMLSerializer()).serializeToString(svg);
+		let formatted = vkbeautify$1.xml(source);
+		let blob = new window.Blob([formatted], {type: "text/plain"});
+		a.setAttribute("href", window.URL.createObjectURL(blob));
+		a.setAttribute("download", filename);
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+	};
+	const pErr = (new window.DOMParser())
+		.parseFromString("INVALID", "text/xml")
+		.getElementsByTagName("parsererror")[0]
+		.namespaceURI;
+	const load = function(input, callback) {
+		if (typeof input === "string" || input instanceof String) {
+			let xml = (new window.DOMParser()).parseFromString(input, "text/xml");
+			if (xml.getElementsByTagNameNS(pErr, "parsererror").length === 0) {
+				let parsedSVG = xml.documentElement;
+				if (callback != null) {
+					callback(parsedSVG);
+				}
+				return parsedSVG;
+			}
+			fetch(input)
+				.then((response) => response.text())
+				.then((str) => (new window.DOMParser())
+					.parseFromString(str, "text/xml")
+				).then((svgData) => {
+					let allSVGs = svgData.getElementsByTagName("svg");
+					if (allSVGs == null || allSVGs.length === 0) {
+						throw "error, valid XML found, but no SVG element";
+					}
+					if (callback != null) {
+						callback(allSVGs[0]);
+					}
+					return allSVGs[0];
+				});
+		} else if (input instanceof Document) {
+			callback(input);
+			return input;
+		}
+	};
+
+	const setViewBox = function(svg, x, y, width, height, padding = 0) {
+		let scale = 1.0;
+		let d = (width / scale) - width;
+		let X = (x - d) - padding;
+		let Y = (y - d) - padding;
+		let W = (width + d * 2) + padding * 2;
+		let H = (height + d * 2) + padding * 2;
+		let viewBoxString = [X, Y, W, H].join(" ");
+		svg.setAttributeNS(null, "viewBox", viewBoxString);
+	};
+	const getViewBox = function(svg) {
+		let vb = svg.getAttribute("viewBox");
+		return (vb == null
+			? undefined
+			: vb.split(" ").map((n) => parseFloat(n)));
+	};
+	const scaleViewBox = function(svg, scale, origin_x = 0, origin_y = 0) {
+		if (scale < 1e-8) { scale = 0.01; }
+		let matrix = svg.createSVGMatrix()
+			.translate(origin_x, origin_y)
+			.scale(1/scale)
+			.translate(-origin_x, -origin_y);
+		let viewBox = getViewBox(svg);
+		if (viewBox == null) {
+			setDefaultViewBox(svg);
+		}
+		let top_left = svg.createSVGPoint();
+		let bot_right = svg.createSVGPoint();
+		top_left.x = viewBox[0];
+		top_left.y = viewBox[1];
+		bot_right.x = viewBox[0] + viewBox[2];
+		bot_right.y = viewBox[1] + viewBox[3];
+		let new_top_left = top_left.matrixTransform(matrix);
+		let new_bot_right = bot_right.matrixTransform(matrix);
+		setViewBox(svg,
+			new_top_left.x,
+			new_top_left.y,
+			new_bot_right.x - new_top_left.x,
+			new_bot_right.y - new_top_left.y
+		);
+	};
+	const translateViewBox = function(svg, dx, dy) {
+		let viewBox = getViewBox(svg);
+		if (viewBox == null) {
+			setDefaultViewBox(svg);
+		}
+		viewBox[0] += dx;
+		viewBox[1] += dy;
+		svg.setAttributeNS(null, "viewBox", viewBox.join(" "));
+	};
+	const convertToViewBox = function(svg, x, y) {
+		let pt = svg.createSVGPoint();
+		pt.x = x;
+		pt.y = y;
+		let svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+		let array = [svgPoint.x, svgPoint.y];
+		array.x = svgPoint.x;
+		array.y = svgPoint.y;
+		return array;
+	};
+	const setDefaultViewBox = function(svg) {
+		let size = svg.getBoundingClientRect();
+		let width = (size.width == 0 ? 640 : size.width);
+		let height = (size.height == 0 ? 480 : size.height);
+		setViewBox(svg, 0, 0, width, height);
+	};
+
 	const svgNS = "http://www.w3.org/2000/svg";
+	const svg = function() {
+		let svgImage = document.createElementNS(svgNS, "svg");
+		svgImage.setAttribute("version", "1.1");
+		svgImage.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+		setupSVG(svgImage);
+		return svgImage;
+	};
 	const line = function(x1, y1, x2, y2) {
 		let shape = document.createElementNS(svgNS, "line");
 		shape.setAttributeNS(null, "x1", x1);
@@ -316,6 +471,23 @@
 		attachClassMethods(shape);
 		return shape;
 	};
+	const group = function() {
+		let g = document.createElementNS(svgNS, "g");
+		attachClassMethods(g);
+		attachGeometryMethods(g);
+		return g;
+	};
+	const regularPolygon = function(cX, cY, radius, sides) {
+		let halfwedge = 2*Math.PI/sides * 0.5;
+		let r = Math.cos(halfwedge) * radius;
+		let points = Array.from(Array(sides)).map((el,i) => {
+			let a = -2 * Math.PI * i / sides + halfwedge;
+			let x = cX + r * Math.sin(a);
+			let y = cY + r * Math.cos(a);
+			return [x, y];
+		});
+		return polygon(points);
+	};
 	const setPoints = function(polygon, pointsArray) {
 		if (pointsArray == null || pointsArray.constructor !== Array) {
 			return;
@@ -347,63 +519,6 @@
 		if (includeCenter) { d += " Z"; }
 		shape.setAttributeNS(null, "d", d);
 	};
-	const regularPolygon = function(cX, cY, radius, sides, parent, className, id) {
-		let halfwedge = 2*Math.PI/sides * 0.5;
-		let r = Math.cos(halfwedge) * radius;
-		let points = Array.from(Array(sides)).map((el,i) => {
-			let a = -2 * Math.PI * i / sides + halfwedge;
-			let x = cX + r * Math.sin(a);
-			let y = cY + r * Math.cos(a);
-			return [x, y];
-		});
-		return polygon(points, parent, className, id);
-	};
-	const group = function() {
-		let g = document.createElementNS(svgNS, "g");
-		attachClassMethods(g);
-		attachGeometryMethods(g);
-		return g;
-	};
-	const svg = function() {
-		let svgImage = document.createElementNS(svgNS, "svg");
-		svgImage.setAttribute("version", "1.1");
-		svgImage.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-		attachClassMethods(svgImage);
-		return svgImage;
-	};
-	const removeChildren = function(parent) {
-		while (parent.lastChild) {
-			parent.removeChild(parent.lastChild);
-		}
-	};
-	const getClassList = function(xmlNode) {
-		let currentClass = xmlNode.getAttribute("class");
-		return (currentClass == null
-			? []
-			: currentClass.split(" ").filter((s) => s !== ""));
-	};
-	const addClass = function(xmlNode, newClass) {
-		if (xmlNode == null) {
-			return;
-		}
-		let classes = getClassList(xmlNode)
-			.filter(c => c !== newClass);
-		classes.push(newClass);
-		xmlNode.setAttributeNS(null, "class", classes.join(" "));
-	};
-	const removeClass = function(xmlNode, removedClass) {
-		if (xmlNode == null) {
-			return;
-		}
-		let classes = getClassList(xmlNode)
-			.filter(c => c !== removedClass);
-		xmlNode.setAttributeNS(null, "class", classes.join(" "));
-	};
-	const attachClassMethods = function(element) {
-		element["removeChildren"] = function() { removeChildren(element); };
-		element["addClass"] = function(newClass) { addClass(element, newClass); };
-		element["removeClass"] = function(newClass) { removeClass(element, newClass); };
-	};
 	const geometryMethods = {
 		"line" : line,
 		"circle" : circle,
@@ -418,127 +533,35 @@
 		"regularPolygon" : regularPolygon,
 		"group" : group,
 	};
-	const attachGeometryMethods = function(parent) {
+	const attachGeometryMethods = function(element) {
 		Object.keys(geometryMethods).forEach(key => {
-			parent[key] = function() {
+			element[key] = function() {
 				let g = geometryMethods[key](...arguments);
-				parent.appendChild(g);
+				element.appendChild(g);
 				return g;
 			};
 		});
 	};
-	const setViewBox = function(svg, x, y, width, height, padding = 0) {
-		let scale = 1.0;
-		let d = (width / scale) - width;
-		let X = (x - d) - padding;
-		let Y = (y - d) - padding;
-		let W = (width + d * 2) + padding * 2;
-		let H = (height + d * 2) + padding * 2;
-		let viewBoxString = [X, Y, W, H].join(" ");
-		svg.setAttributeNS(null, "viewBox", viewBoxString);
+	const attachClassMethods = function(element) {
+		element.removeChildren = function() { removeChildren(element); };
+		element.addClass = function() { addClass(element, ...arguments); };
+		element.removeClass = function() { removeClass(element, ...arguments); };
 	};
-	const setDefaultViewBox = function(svg) {
-		let size = svg.getBoundingClientRect();
-		let width = (size.width == 0 ? 640 : size.width);
-		let height = (size.height == 0 ? 480 : size.height);
-		setViewBox(svg, 0, 0, width, height);
+	const attachViewBoxMethods = function(element) {
+		element.setViewBox = function() { setViewBox(element, ...arguments); };
+		element.getViewBox = function() { getViewBox(element, ...arguments); };
+		element.scaleViewBox = function() { scaleViewBox(element, ...arguments); };
+		element.translateViewBox = function() { translateViewBox(element, ...arguments); };
+		element.convertToViewBox = function() { convertToViewBox(element, ...arguments); };
 	};
-	const getViewBox = function(svg) {
-		let vb = svg.getAttribute("viewBox");
-		return (vb == null
-			? undefined
-			: vb.split(" ").map((n) => parseFloat(n)));
-	};
-	const scaleViewBox = function(svg, scale, origin_x = 0, origin_y = 0) {
-		if (scale < 1e-8) { scale = 0.01; }
-		let matrix = svg.createSVGMatrix()
-			.translate(origin_x, origin_y)
-			.scale(1/scale)
-			.translate(-origin_x, -origin_y);
-		let viewBox = getViewBox(svg);
-		if (viewBox == null) {
-			setDefaultViewBox(svg);
-		}
-		let top_left = svg.createSVGPoint();
-		let bot_right = svg.createSVGPoint();
-		top_left.x = viewBox[0];
-		top_left.y = viewBox[1];
-		bot_right.x = viewBox[0] + viewBox[2];
-		bot_right.y = viewBox[1] + viewBox[3];
-		let new_top_left = top_left.matrixTransform(matrix);
-		let new_bot_right = bot_right.matrixTransform(matrix);
-		setViewBox(svg,
-			new_top_left.x,
-			new_top_left.y,
-			new_bot_right.x - new_top_left.x,
-			new_bot_right.y - new_top_left.y
-		);
-	};
-	const translateViewBox = function(svg, dx, dy) {
-		let viewBox = getViewBox(svg);
-		if (viewBox == null) {
-			setDefaultViewBox(svg);
-		}
-		viewBox[0] += dx;
-		viewBox[1] += dy;
-		svg.setAttributeNS(null, "viewBox", viewBox.join(" "));
-	};
-	const convertToViewBox = function(svg, x, y) {
-		let pt = svg.createSVGPoint();
-		pt.x = x;
-		pt.y = y;
-		let svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
-		let array = [svgPoint.x, svgPoint.y];
-		array.x = svgPoint.x;
-		array.y = svgPoint.y;
-		return array;
-	};
-	const save = function(svg, filename = "image.svg") {
-		let a = document.createElement("a");
-		let source = (new window.XMLSerializer()).serializeToString(svg);
-		let formatted = vkbeautify$1.xml(source);
-		let blob = new window.Blob([formatted], {type: "text/plain"});
-		a.setAttribute("href", window.URL.createObjectURL(blob));
-		a.setAttribute("download", filename);
-		document.body.appendChild(a);
-		a.click();
-		a.remove();
-	};
-	const pErr = (new window.DOMParser())
-		.parseFromString("INVALID", "text/xml")
-		.getElementsByTagName("parsererror")[0]
-		.namespaceURI;
-	const load = function(input, callback) {
-		if (typeof input === "string" || input instanceof String) {
-			let xml = (new window.DOMParser()).parseFromString(input, "text/xml");
-			if (xml.getElementsByTagNameNS(pErr, "parsererror").length === 0) {
-				let parsedSVG = xml.documentElement;
-				if (callback != null) {
-					callback(parsedSVG);
-				}
-				return parsedSVG;
-			}
-			fetch(input)
-				.then((response) => response.text())
-				.then((str) => (new window.DOMParser())
-					.parseFromString(str, "text/xml")
-				).then((svgData) => {
-					let allSVGs = svgData.getElementsByTagName("svg");
-					if (allSVGs == null || allSVGs.length === 0) {
-						throw "error, valid XML found, but no SVG element";
-					}
-					if (callback != null) {
-						callback(allSVGs[0]);
-					}
-					return allSVGs[0];
-				});
-		} else if (input instanceof Document) {
-			callback(input);
-			return input;
-		}
+	const setupSVG = function(svgImage) {
+		attachClassMethods(svgImage);
+		attachGeometryMethods(svgImage);
+		attachViewBoxMethods(svgImage);
 	};
 
-	const setup = function(node) {
+	function Events(node) {
+		let _node;
 		let _mouse = Object.create(null);
 		let _events = {};
 		Object.assign(_mouse, {
@@ -562,7 +585,7 @@
 		};
 		const updateMousePosition = function(clientX, clientY) {
 			_mouse.prev = _mouse.position;
-			_mouse.position = convertToViewBox(node, clientX, clientY);
+			_mouse.position = convertToViewBox(_node, clientX, clientY);
 			_mouse.x = _mouse.position[0];
 			_mouse.y = _mouse.position[1];
 		};
@@ -582,7 +605,7 @@
 		};
 		const mouseDownHandler = function(event) {
 			_mouse.isPressed = true;
-			_mouse.pressed = convertToViewBox(node, event.clientX, event.clientY);
+			_mouse.pressed = convertToViewBox(_node, event.clientX, event.clientY);
 			if (_events.mousedown) {
 				let mouse = getMouse();
 				_events.mousedown.forEach(f => f(mouse));
@@ -614,7 +637,7 @@
 			let touch = event.touches[0];
 			if (touch == null) { return; }
 			_mouse.isPressed = true;
-			_mouse.pressed = convertToViewBox(node, touch.clientX, touch.clientY);
+			_mouse.pressed = convertToViewBox(_node, touch.clientX, touch.clientY);
 			if (_events.mousedown) {
 				let mouse = getMouse();
 				_events.mousedown.forEach(f => f(mouse));
@@ -641,7 +664,7 @@
 				_animationFrame = 0;
 				_intervalID = setInterval(() => {
 					let animObj = {
-						"time": node.getCurrentTime(),
+						"time": _node.getCurrentTime(),
 						"frame": _animationFrame++
 					};
 					_animate(animObj);
@@ -668,114 +691,120 @@
 			}
 			_events[eventName].push(func);
 		};
-		["mousemove", "mousedown", "mouseup", "mouseleave", "mouseenter"].forEach(key => {
-			Object.defineProperty(node, key, {
-				set: function(handler) { addEventListener(key, handler); }
-			});
-		});
-		Object.defineProperty(node, "animate", {
-			set: function(handler) { updateAnimationHandler(handler); }
-		});
-		Object.defineProperty(node, "mouse", {get: function(){ return getMouse(); }});
-		const attachHandlers = function(node) {
+		const attachHandlers = function(element) {
 			Object.keys(handlers).forEach(key =>
-				node.addEventListener(key, handlers[key], false)
+				element.addEventListener(key, handlers[key], false)
 			);
+			updateAnimationHandler(_animate);
 		};
-		attachHandlers(node);
-	};
-	const deinit = function(node) {
-		Object.keys(handlers).forEach(key =>
-			node.removeEventListener(key, handlers[key], false)
-		);
-	};
+		const removeHandlers = function(element) {
+			Object.keys(handlers).forEach(key =>
+				element.removeEventListener(key, handlers[key], false)
+			);
+			if (_animate != null) {
+				clearInterval(_intervalID);
+			}
+		};
+		const setup = function(node) {
+			if (_node != null) {
+				removeHandlers(_node);
+			}
+			_node = node;
+			["mousemove", "mousedown", "mouseup", "mouseleave", "mouseenter"].forEach(key => {
+				Object.defineProperty(_node, key, {
+					set: function(handler) { addEventListener(key, handler); }
+				});
+			});
+			Object.defineProperty(_node, "animate", {
+				set: function(handler) { updateAnimationHandler(handler); }
+			});
+			Object.defineProperty(_node, "mouse", {get: function(){ return getMouse(); }});
+			attachHandlers(_node);
+		};
+		setup(node);
+		return {
+			setup,
+			remove: function() { removeHandlers(_node); }
+		};
+	}
 
 	function image() {
-		let params = Array.from(arguments);
 		let _svg = svg();
-		let properties = {
-			parent: undefined,
-			padding: 0,
+		let params = Array.from(arguments);
+		initSize(_svg, params);
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', setup);
+		} else {
+			setup();
+		}
+		const setup = function() {
+			initSize(_svg, params);
+			getElement(params).appendChild(_svg);
+			attachSVGMethods(_svg);
+			_svg.events = Events(_svg);
+			params.filter((arg) => typeof arg === "function")
+				.forEach((func) => func());
 		};
-		const setViewBox$$1 = function(x, y, width, height) {
-			setViewBox(_svg, x, y, width, height, properties.padding);
-		};
-		const getViewBox$$1 = function() { return getViewBox(_svg); };
-		const removeChildren$$1 = function() { removeChildren(_svg); };
-		const save$$1 = function(filename = "image.svg") {
-			return save(_svg, filename);
-		};
-		const load$$1 = function(data, callback) {
-			load(data, function(newSVG, error) {
-				if (newSVG != null) {
-					if (_svg != null) {
-						deinit(_svg);
-						_svg.remove();
-					}
-					_svg = newSVG;
-					properties.parent.appendChild(_svg);
-					setup(_svg);
-				}
-				if (callback != null) { callback(newSVG, error); }
-			});
-		};
-		const size = function(w, h) {
-			if (w == null || h == null) { return; }
-			let vb = getViewBox(_svg);
-			setViewBox(_svg, vb[0], vb[1], w, h, properties.padding);
-			_svg.setAttributeNS(null, "width", w);
-			_svg.setAttributeNS(null, "height", h);
-		};
-		const attachToDOM = function() {
-			let functions = params.filter((arg) => typeof arg === "function");
-			let numbers = params.filter((arg) => !isNaN(arg));
-			let element = params.filter((arg) =>
-					arg instanceof HTMLElement)
-				.shift();
-			let idElement = params.filter((a) =>
-					typeof a === "string" || a instanceof String)
-				.map(str => document.getElementById(str))
-				.shift();
-			properties.parent = (element != null
-				? element
-				: (idElement != null
-					? idElement
-					: document.body));
-			properties.parent.appendChild(_svg);
-			if (numbers.length >= 2) {
-				_svg.setAttributeNS(null, "width", numbers[0]);
-				_svg.setAttributeNS(null, "height", numbers[1]);
-				setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
-			}
-			else if (_svg.getAttribute("viewBox") == null) {
-				let rect$$1 = _svg.getBoundingClientRect();
-				setViewBox(_svg, 0, 0, rect$$1.width, rect$$1.height);
-			}
-			if (functions.length >= 1) {
-				functions[0]();
-			}
-			setup(_svg);
-		};
+		return _svg;
+	}const getElement = function(params) {
+		let element = params.filter((arg) =>
+				arg instanceof HTMLElement
+			).shift();
+		let idElement = params.filter((a) =>
+				typeof a === "string" || a instanceof String)
+			.map(str => document.getElementById(str))
+			.shift();
+		return (element != null
+			? element
+			: (idElement != null
+				? idElement
+				: document.body));
+	};
+	const initSize = function(svg$$1, params) {
 		let numbers = params.filter((arg) => !isNaN(arg));
 		if (numbers.length >= 2) {
-			_svg.setAttributeNS(null, "width", numbers[0]);
-			_svg.setAttributeNS(null, "height", numbers[1]);
-			setViewBox(_svg, 0, 0, numbers[0], numbers[1]);
+			svg$$1.setAttributeNS(null, "width", numbers[0]);
+			svg$$1.setAttributeNS(null, "height", numbers[1]);
+			setViewBox(svg$$1, 0, 0, numbers[0], numbers[1]);
 		}
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', attachToDOM);
-		} else {
-			attachToDOM();
+		else if (svg$$1.getAttribute("viewBox") == null) {
+			let rect$$1 = svg$$1.getBoundingClientRect();
+			setViewBox(svg$$1, 0, 0, rect$$1.width, rect$$1.height);
 		}
-		Object.defineProperty(_svg, "removeChildren", {value: removeChildren$$1});
-		Object.defineProperty(_svg, "load", {value: load$$1});
-		Object.defineProperty(_svg, "save", {value: save$$1});
-		Object.defineProperty(_svg, "setViewBox", {value: setViewBox$$1});
-		Object.defineProperty(_svg, "getViewBox", {value: getViewBox$$1});
-		Object.defineProperty(_svg, "size", {value: size});
-		attachGeometryMethods(_svg);
-		return _svg;
-	}
+	};
+	const attachSVGMethods = function(element) {
+		Object.defineProperty(element, "w", {
+			get: function(){ return getWidth(element); },
+			set: function(w){ element.setAttributeNS(null, "width", w); }
+		});
+		Object.defineProperty(element, "h", {
+			get: function(){ return getHeight(element); },
+			set: function(h){ element.setAttributeNS(null, "height", h); }
+		});
+		element.getWidth = function() { return getWidth(element); };
+		element.getHeight = function() { return getHeight(element); };
+		element.setWidth = function(w) { element.setAttributeNS(null, "width", w); };
+		element.setHeight = function(h) { element.setAttributeNS(null, "height", h); };
+		element.save = function(filename = "image.svg") {
+			return save(element, filename);
+		};
+		element.load = function(data, callback) {
+			load(data, function(newSVG, error) {
+				let parent = element.parentNode;
+				if (newSVG != null) {
+					newSVG.events = element.events;
+					setupSVG(newSVG);
+					if (newSVG.events == null) { newSVG.events = Events(newSVG); }
+					else { newSVG.events.setup(newSVG); }
+					attachSVGMethods(newSVG);
+					element.remove();
+					element = newSVG;
+				}
+				if (parent != null) { parent.appendChild(element); }
+				if (callback != null) { callback(element, error); }
+			});
+		};
+	};
 
 	const controlPoint = function(parent, options) {
 		if (options == null) { options = {}; }
@@ -859,6 +888,7 @@
 		return _points;
 	}
 
+	exports.svg = svg;
 	exports.line = line;
 	exports.circle = circle;
 	exports.ellipse = ellipse;
@@ -869,12 +899,15 @@
 	exports.text = text;
 	exports.wedge = wedge;
 	exports.arc = arc;
-	exports.regularPolygon = regularPolygon;
 	exports.group = group;
-	exports.svg = svg;
+	exports.regularPolygon = regularPolygon;
 	exports.setPoints = setPoints;
 	exports.setArc = setArc;
 	exports.removeChildren = removeChildren;
+	exports.getWidth = getWidth;
+	exports.getHeight = getHeight;
+	exports.addClass = addClass;
+	exports.removeClass = removeClass;
 	exports.save = save;
 	exports.load = load;
 	exports.setViewBox = setViewBox;
