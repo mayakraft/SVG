@@ -1,4 +1,3 @@
-
 import vkbeautify from "../lib/vkbeautify";
 
 export const removeChildren = function(parent) {
@@ -11,6 +10,7 @@ export const getWidth = function(svg) {
 	let w = parseInt(svg.getAttributeNS(null, "width"));
 	return w != null && !isNaN(w) ? w : svg.getBoundingClientRect().width;
 }
+
 export const getHeight = function(svg) {
 	let h = parseInt(svg.getAttributeNS(null, "height"));
 	return h != null && !isNaN(h) ? h : svg.getBoundingClientRect().height;
@@ -31,6 +31,7 @@ export const addClass = function(xmlNode, newClass) {
 		.filter(c => c !== newClass);
 	classes.push(newClass);
 	xmlNode.setAttributeNS(null, "class", classes.join(" "));
+	return xmlNode;
 };
 
 export const removeClass = function(xmlNode, removedClass) {
@@ -40,7 +41,18 @@ export const removeClass = function(xmlNode, removedClass) {
 	let classes = getClassList(xmlNode)
 		.filter(c => c !== removedClass);
 	xmlNode.setAttributeNS(null, "class", classes.join(" "));
+	return xmlNode;
 };
+
+export const setClass = function(xmlNode, className) {
+	xmlNode.setAttributeNS(null, "class", className);
+	return xmlNode;
+}
+
+export const setID = function(xmlNode, idName) {
+	xmlNode.setAttributeNS(null, "id", idName);
+	return xmlNode;
+}
 
 /**
  * import, export

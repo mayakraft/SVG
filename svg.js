@@ -266,6 +266,7 @@
 			.filter(c => c !== newClass);
 		classes.push(newClass);
 		xmlNode.setAttributeNS(null, "class", classes.join(" "));
+		return xmlNode;
 	};
 	const removeClass = function(xmlNode, removedClass) {
 		if (xmlNode == null) {
@@ -274,6 +275,15 @@
 		let classes = getClassList(xmlNode)
 			.filter(c => c !== removedClass);
 		xmlNode.setAttributeNS(null, "class", classes.join(" "));
+		return xmlNode;
+	};
+	const setClass = function(xmlNode, className) {
+		xmlNode.setAttributeNS(null, "class", className);
+		return xmlNode;
+	};
+	const setID = function(xmlNode, idName) {
+		xmlNode.setAttributeNS(null, "id", idName);
+		return xmlNode;
 	};
 	const save = function(svg, filename = "image.svg") {
 		let a = document.createElement("a");
@@ -442,8 +452,7 @@
 		attachClassMethods(shape);
 		return shape;
 	};
-	const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y,
-			toX, toY) {
+	const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
 		let d = "M " + fromX + "," + fromY + " C " + c1X + "," + c1Y +
 				" " + c2X + "," + c2Y + " " + toX + "," + toY;
 		let shape = document.createElementNS(svgNS, "path");
@@ -543,16 +552,18 @@
 		});
 	};
 	const attachClassMethods = function(element) {
-		element.removeChildren = function() { removeChildren(element); };
-		element.addClass = function() { addClass(element, ...arguments); };
-		element.removeClass = function() { removeClass(element, ...arguments); };
+		element.removeChildren = function() { return removeChildren(element); };
+		element.addClass = function() { return addClass(element, ...arguments); };
+		element.removeClass = function() { return removeClass(element, ...arguments); };
+		element.setClass = function() { return setClass(element, ...arguments); };
+		element.setID = function() { return setID(element, ...arguments); };
 	};
 	const attachViewBoxMethods = function(element) {
-		element.setViewBox = function() { setViewBox(element, ...arguments); };
-		element.getViewBox = function() { getViewBox(element, ...arguments); };
-		element.scaleViewBox = function() { scaleViewBox(element, ...arguments); };
-		element.translateViewBox = function() { translateViewBox(element, ...arguments); };
-		element.convertToViewBox = function() { convertToViewBox(element, ...arguments); };
+		element.setViewBox = function() { return setViewBox(element, ...arguments); };
+		element.getViewBox = function() { return getViewBox(element, ...arguments); };
+		element.scaleViewBox = function() { return scaleViewBox(element, ...arguments); };
+		element.translateViewBox = function() { return translateViewBox(element, ...arguments); };
+		element.convertToViewBox = function() { return convertToViewBox(element, ...arguments); };
 	};
 	const setupSVG = function(svgImage) {
 		attachClassMethods(svgImage);
@@ -561,17 +572,16 @@
 	};
 
 	const Names = {
-		start: "onMouseDown",
+		begin: "onMouseDown",
 		enter: "onMouseEnter",
 		leave: "onMouseLeave",
 		move: "onMouseMove",
 		end: "onMouseUp",
 		scroll: "onScroll",
 	};
-	function Events(node) {
-		let _node;
+	const Pointer = function(node) {
+		let _node = node;
 		let _pointer = Object.create(null);
-		let _events = {};
 		Object.assign(_pointer, {
 			isPressed: false,
 			position: [0,0],
@@ -591,78 +601,94 @@
 				.forEach(key => m[key] = _pointer[key]);
 			return Object.freeze(m);
 		};
-		const updatePointerPosition = function(clientX, clientY) {
-			_pointer.prev = _pointer.position;
+		const setPosition = function(clientX, clientY) {
 			_pointer.position = convertToViewBox(_node, clientX, clientY);
 			_pointer.x = _pointer.position[0];
 			_pointer.y = _pointer.position[1];
 		};
-		const updateTouchDrag = function() {
+		const didRelease = function(clientX, clientY) {
+			_pointer.isPressed = false;
+			setPosition(event.clientX, event.clientY);
+		};
+		const didPress = function(clientX, clientY) {
+			_pointer.isPressed = true;
+			_pointer.pressed = convertToViewBox(_node, event.clientX, event.clientY);
+			setPosition(event.clientX, event.clientY);
+		};
+		const didMove = function(clientX, clientY) {
+			_pointer.prev = _pointer.position;
+			setPosition(clientX, clientY);
+			if (_pointer.isPressed) {
+				updateDrag();
+			}
+		};
+		const updateDrag = function() {
 			_pointer.drag = [_pointer.position[0] - _pointer.pressed[0],
 			               _pointer.position[1] - _pointer.pressed[1]];
 			_pointer.drag.x = _pointer.drag[0];
 			_pointer.drag.y = _pointer.drag[1];
 		};
-		const mouseMoveHandler = function(event) {
-			updatePointerPosition(event.clientX, event.clientY);
-			let mouse = getPointer();
-			if (_pointer.isPressed) { updateTouchDrag(); }
-			if (_events[Names.move]) {
-				_events[Names.move].forEach(f => f(mouse));
+		let _this = {};
+		Object.defineProperty(_this, "getPointer", {value: getPointer});
+		Object.defineProperty(_this, "didMove", {value: didMove});
+		Object.defineProperty(_this, "didPress", {value: didPress});
+		Object.defineProperty(_this, "didRelease", {value: didRelease});
+		Object.defineProperty(_this, "node", {set: function(n){ _node = n; }});
+		return _this;
+	};
+	function Events(node) {
+		let _node;
+		let _pointer = Pointer(node);
+		let _events = {};
+		const fireEvents = function(event, events) {
+			if (events == null) { return; }
+			if (events.length > 0) {
+				event.preventDefault();
 			}
+			let mouse = _pointer.getPointer();
+			events.forEach(f => f(mouse));
+		};
+		const mouseMoveHandler = function(event) {
+			let events = _events[Names.move];
+			_pointer.didMove(event.clientX, event.clientY);
+			fireEvents(event, events);
 		};
 		const mouseDownHandler = function(event) {
-			_pointer.isPressed = true;
-			_pointer.pressed = convertToViewBox(_node, event.clientX, event.clientY);
-			if (_events[Names.start]) {
-				let mouse = getPointer();
-				_events[Names.start].forEach(f => f(mouse));
-			}
+			let events = _events[Names.begin];
+			_pointer.didPress(event.clientX, event.clientY);
+			fireEvents(event, events);
 		};
 		const mouseUpHandler = function(event) {
-			_pointer.isPressed = false;
-			if (_events[Names.end]) {
-				let mouse = getPointer();
-				_events[Names.end].forEach(f => f(mouse));
-			}
+			let events = _events[Names.end];
+			_pointer.didRelease(event.clientX, event.clientY);
+			fireEvents(event, events);
 		};
 		const mouseLeaveHandler = function(event) {
-			updatePointerPosition(event.clientX, event.clientY);
-			if (_events[Names.leave]) {
-				let mouse = getPointer();
-				_events[Names.leave].forEach(f => f(mouse));
-			}
+			let events = _events[Names.leave];
+			_pointer.didMove(event.clientX, event.clientY);
+			fireEvents(event, events);
 		};
 		const mouseEnterHandler = function(event) {
-			updatePointerPosition(event.clientX, event.clientY);
-			if (_events[Names.enter]) {
-				let mouse = getPointer();
-				_events[Names.enter].forEach(f => f(mouse));
-			}
+			let events = _events[Names.enter];
+			_pointer.didMove(event.clientX, event.clientY);
+			fireEvents(event, events);
 		};
 		const touchStartHandler = function(event) {
-			event.preventDefault();
+			let events = _events[Names.begin];
 			let touch = event.touches[0];
 			if (touch == null) { return; }
-			_pointer.isPressed = true;
-			_pointer.pressed = convertToViewBox(_node, touch.clientX, touch.clientY);
-			if (_events.oMouseDown) {
-				let mouse = getPointer();
-				_events.oMouseDown.forEach(f => f(mouse));
-			}
+			_pointer.didPress(touch.clientX, touch.clientY);
+			fireEvents(event, events);
 		};
 		const touchMoveHandler = function(event) {
-			event.preventDefault();
+			let events = _events[Names.move];
 			let touch = event.touches[0];
 			if (touch == null) { return; }
-			updatePointerPosition(touch.clientX, touch.clientY);
-			let mouse = getPointer();
-			if (_pointer.isPressed) { updateTouchDrag(); }
-			if (_events[Names.move]) {
-				_events[Names.move].forEach(f => f(mouse));
-			}
+			_pointer.didMove(touch.clientX, touch.clientY);
+			fireEvents(event, events);
 		};
 		const scrollHandler = function(event) {
+			let events = _events[Names.scroll];
 			let e = {
 				deltaX: event.deltaX,
 				deltaY: event.deltaY,
@@ -671,10 +697,11 @@
 			e.position = convertToViewBox(_node, event.clientX, event.clientY);
 			e.x = e.position[0];
 			e.y = e.position[1];
-			event.preventDefault();
-			if (_events[Names.scroll]) {
-				_events[Names.scroll].forEach(f => f(e));
+			if (events == null) { return; }
+			if (events.length > 0) {
+				event.preventDefault();
 			}
+			events.forEach(f => f(e));
 		};
 		let _animate, _intervalID, _animationFrame;
 		const updateAnimationHandler = function(handler) {
@@ -733,6 +760,7 @@
 				removeHandlers(_node);
 			}
 			_node = node;
+			_pointer.node = _node;
 			Object.keys(Names).map(key => Names[key]).forEach(key => {
 				Object.defineProperty(_node, key, {
 					set: function(handler) { addEventListener(key, handler); }
@@ -741,8 +769,8 @@
 			Object.defineProperty(_node, "animate", {
 				set: function(handler) { updateAnimationHandler(handler); }
 			});
-			Object.defineProperty(_node, "mouse", {get: function(){ return getPointer(); }});
-			Object.defineProperty(_node, "pointer", {get: function(){ return getPointer(); }});
+			Object.defineProperty(_node, "mouse", {get: function(){ return _pointer.getPointer(); }});
+			Object.defineProperty(_node, "pointer", {get: function(){ return _pointer.getPointer(); }});
 			attachHandlers(_node);
 		};
 		setup(node);
@@ -885,7 +913,8 @@
 		if (options.fill == null) { options.fill = "#000000"; }
 		let _points = Array.from(Array(number)).map(_ => controlPoint(options.parent, options));
 		let _selected = undefined;
-		const onMouseDown = function(mouse) {
+		const mouseDownHandler = function(event) {
+			let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 			if (!(_points.length > 0)) { return; }
 			_selected = _points
 				.map((p,i) => ({i:i, d:p.distance(mouse)}))
@@ -894,16 +923,18 @@
 				.i;
 			_points[_selected].selected = true;
 		};
-		const onMouseMove = function(mouse) {
+		const mouseMoveHandler = function(event) {
+			let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 			_points.forEach(p => p.onMouseMove(mouse));
 		};
-		const onMouseUp = function(mouse) {
+		const mouseUpHandler = function(event) {
+			let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 			_points.forEach(p => p.onMouseUp(mouse));
 			_selected = undefined;
 		};
-		svgObject.addEventListener("mousedown", onMouseDown);
-		svgObject.addEventListener("mouseup", onMouseUp);
-		svgObject.addEventListener("mousemove", onMouseMove);
+		svgObject.addEventListener("mousedown", mouseDownHandler);
+		svgObject.addEventListener("mouseup", mouseUpHandler);
+		svgObject.addEventListener("mousemove", mouseMoveHandler);
 		Object.defineProperty(_points, "selectedIndex", {get: function() { return _selected; }});
 		Object.defineProperty(_points, "selected", {get: function() { return _points[_selected]; }});
 		Object.defineProperty(_points, "removeAll", {value: function() {

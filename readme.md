@@ -17,13 +17,13 @@ At its simplest, this library can be used to create SVG elements.
 * `svg()` creates an `<svg>` 
 * `line()` creates a `<line>`
 
-At a minimum, you can use these methods to create familiar DOM level 1 objects, saving you time:
+you can use these methods to create familiar DOM level 1 objects, saving you time:
 
 ```
 SVG.rect(10, 10, 640, 480);
 ```
 
-takes the place of:
+in place of:
 
 ```
 let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");

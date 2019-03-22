@@ -2,7 +2,7 @@ import { convertToViewBox } from "./viewBox";
 
 // these are the names under which the event handlers live
 const Names = {
-	start: "onMouseDown",
+	begin: "onMouseDown",
 	enter: "onMouseEnter",
 	leave: "onMouseLeave",
 	move: "onMouseMove",
@@ -10,13 +10,10 @@ const Names = {
 	scroll: "onScroll",
 };
 
-export default function(node) {
+const Pointer = function(node) {
 
-	let _node; // this gets set inside setup()
-	
-	// let _node;
+	let _node = node;
 	let _pointer = Object.create(null);
-	let _events = {};
 
 	Object.assign(_pointer, {
 		isPressed: false, // is the mouse button pressed (y/n)
@@ -42,14 +39,33 @@ export default function(node) {
 	};
 
 	// clientX and clientY are from the browser event data
-	const updatePointerPosition = function(clientX, clientY) {
-		_pointer.prev = _pointer.position;
+	const setPosition = function(clientX, clientY) {
 		_pointer.position = convertToViewBox(_node, clientX, clientY);
 		_pointer.x = _pointer.position[0];
 		_pointer.y = _pointer.position[1];
 	};
-	const updateTouchDrag = function() {
-		// counting on updatePointerPosition to have just been called
+
+	const didRelease = function(clientX, clientY) {
+		_pointer.isPressed = false;
+		setPosition(event.clientX, event.clientY);
+	};
+
+	const didPress = function(clientX, clientY) {
+		_pointer.isPressed = true;
+		_pointer.pressed = convertToViewBox(_node, event.clientX, event.clientY);
+		setPosition(event.clientX, event.clientY);
+	};
+
+	const didMove = function(clientX, clientY) {
+		_pointer.prev = _pointer.position;
+		setPosition(clientX, clientY);
+		if (_pointer.isPressed) {
+			updateDrag();
+		}
+	};
+
+	const updateDrag = function() {
+		// counting on didMove to have just been called
 		// using pointer.position instead of calling convertToViewBox again
 		_pointer.drag = [_pointer.position[0] - _pointer.pressed[0], 
 		               _pointer.position[1] - _pointer.pressed[1]];
@@ -57,68 +73,72 @@ export default function(node) {
 		_pointer.drag.y = _pointer.drag[1];
 	};
 
+	let _this = {};
+	Object.defineProperty(_this, "getPointer", {value: getPointer});
+	Object.defineProperty(_this, "didMove", {value: didMove});
+	Object.defineProperty(_this, "didPress", {value: didPress});
+	Object.defineProperty(_this, "didRelease", {value: didRelease});
+	Object.defineProperty(_this, "node", {set: function(n){ _node = n; }});
+	return _this;
+}
+
+export default function(node) {
+
+	let _node; // this gets set inside setup()
+	let _pointer = Pointer(node);
+	let _events = {};
+
+	const fireEvents = function(event, events) {
+		if (events == null) { return; }
+		if (events.length > 0) {
+			event.preventDefault();
+		}
+		let mouse = _pointer.getPointer();
+		events.forEach(f => f(mouse));
+	}
+
 	// these attach to incoming DOM events
 	const mouseMoveHandler = function(event) {
-		updatePointerPosition(event.clientX, event.clientY);
-		let mouse = getPointer();
-		if (_pointer.isPressed) { updateTouchDrag(); }
-		if (_events[Names.move]) {
-			_events[Names.move].forEach(f => f(mouse));
-		}
+		let events = _events[Names.move];
+		_pointer.didMove(event.clientX, event.clientY);
+		fireEvents(event, events);
 	};
 	const mouseDownHandler = function(event) {
-		_pointer.isPressed = true;
-		_pointer.pressed = convertToViewBox(_node, event.clientX, event.clientY);
-		if (_events[Names.start]) {
-			let mouse = getPointer();
-			_events[Names.start].forEach(f => f(mouse));
-		}
+		let events = _events[Names.begin];
+		_pointer.didPress(event.clientX, event.clientY);
+		fireEvents(event, events);
 	}
 	const mouseUpHandler = function(event) {
-		_pointer.isPressed = false;
-		if (_events[Names.end]) {
-			let mouse = getPointer();
-			_events[Names.end].forEach(f => f(mouse));
-		}
+		let events = _events[Names.end];
+		_pointer.didRelease(event.clientX, event.clientY);
+		fireEvents(event, events);
 	};
 	const mouseLeaveHandler = function(event) {
-		updatePointerPosition(event.clientX, event.clientY);
-		if (_events[Names.leave]) {
-			let mouse = getPointer();
-			_events[Names.leave].forEach(f => f(mouse));
-		}
+		let events = _events[Names.leave];
+		_pointer.didMove(event.clientX, event.clientY);
+		fireEvents(event, events);
 	};
 	const mouseEnterHandler = function(event) {
-		updatePointerPosition(event.clientX, event.clientY);
-		if (_events[Names.enter]) {
-			let mouse = getPointer();
-			_events[Names.enter].forEach(f => f(mouse));
-		}
+		let events = _events[Names.enter];
+		_pointer.didMove(event.clientX, event.clientY);
+		fireEvents(event, events);
 	};
 	const touchStartHandler = function(event) {
-		event.preventDefault();
+		let events = _events[Names.begin];
 		let touch = event.touches[0];
 		if (touch == null) { return; }
-		_pointer.isPressed = true;
-		_pointer.pressed = convertToViewBox(_node, touch.clientX, touch.clientY);
-		if (_events.oMouseDown) {
-			let mouse = getPointer();
-			_events.oMouseDown.forEach(f => f(mouse));
-		}
+		_pointer.didPress(touch.clientX, touch.clientY);
+		fireEvents(event, events);
 	};
 	const touchMoveHandler = function(event) {
-		event.preventDefault();
+		let events = _events[Names.move];
 		let touch = event.touches[0];
 		if (touch == null) { return; }
-		updatePointerPosition(touch.clientX, touch.clientY);
-		let mouse = getPointer();
-		if (_pointer.isPressed) { updateTouchDrag(); }
-		if (_events[Names.move]) {
-			_events[Names.move].forEach(f => f(mouse));
-		}
+		_pointer.didMove(touch.clientX, touch.clientY);
+		fireEvents(event, events);
 	};
 	const scrollHandler = function(event) {
-		// create scroll event object
+		let events = _events[Names.scroll];
 		let e = {
 			deltaX: event.deltaX,
 			deltaY: event.deltaY,
@@ -127,10 +147,11 @@ export default function(node) {
 		e.position = convertToViewBox(_node, event.clientX, event.clientY);
 		e.x = e.position[0];
 		e.y = e.position[1];
-		event.preventDefault();
-		if (_events[Names.scroll]) {
-			_events[Names.scroll].forEach(f => f(e));
+		if (events == null) { return; }
+		if (events.length > 0) {
+			event.preventDefault();
 		}
+		events.forEach(f => f(e));
 	};
 
 	let _animate, _intervalID, _animationFrame;
@@ -198,6 +219,7 @@ export default function(node) {
 			removeHandlers(_node);
 		}
 		_node = node;
+		_pointer.node = _node;
 
 		Object.keys(Names).map(key => Names[key]).forEach(key => {
 			Object.defineProperty(_node, key, {
@@ -207,8 +229,8 @@ export default function(node) {
 		Object.defineProperty(_node, "animate", {
 			set: function(handler) { updateAnimationHandler(handler); }
 		});
-		Object.defineProperty(_node, "mouse", {get: function(){ return getPointer(); }});
-		Object.defineProperty(_node, "pointer", {get: function(){ return getPointer(); }});
+		Object.defineProperty(_node, "mouse", {get: function(){ return _pointer.getPointer(); }});
+		Object.defineProperty(_node, "pointer", {get: function(){ return _pointer.getPointer(); }});
 
 		attachHandlers(_node);
 	};

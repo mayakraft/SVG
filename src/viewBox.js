@@ -1,4 +1,3 @@
-
 export const setViewBox = function(svg, x, y, width, height, padding = 0) {
 	let scale = 1.0;
 	let d = (width / scale) - width;
@@ -10,7 +9,6 @@ export const setViewBox = function(svg, x, y, width, height, padding = 0) {
 	svg.setAttributeNS(null, "viewBox", viewBoxString);
 };
 
-/** @returns {number} array of 4 numbers: x, y, width, height */
 export const getViewBox = function(svg) {
 	let vb = svg.getAttribute("viewBox");
 	return (vb == null

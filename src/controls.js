@@ -1,4 +1,5 @@
 import { circle } from "./elements";
+import { convertToViewBox } from "./viewBox";
 
 const controlPoint = function(parent, options) {
 	if (options == null) { options = {}; }
@@ -62,7 +63,8 @@ export default function(svgObject, number = 1, options) {
 	let _points = Array.from(Array(number)).map(_ => controlPoint(options.parent, options));
 	let _selected = undefined;
 
-	const onMouseDown = function(mouse) {
+	const mouseDownHandler = function(event) {
+		let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 		if (!(_points.length > 0)) { return; }
 		_selected = _points
 			.map((p,i) => ({i:i, d:p.distance(mouse)}))
@@ -71,17 +73,19 @@ export default function(svgObject, number = 1, options) {
 			.i;
 		_points[_selected].selected = true;
 	}
-	const onMouseMove = function(mouse) {
+	const mouseMoveHandler = function(event) {
+		let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 		_points.forEach(p => p.onMouseMove(mouse));
 	}
-	const onMouseUp = function(mouse) {
+	const mouseUpHandler = function(event) {
+		let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 		_points.forEach(p => p.onMouseUp(mouse));
 		_selected = undefined;
 	}
 
-	svgObject.addEventListener("mousedown", onMouseDown);
-	svgObject.addEventListener("mouseup", onMouseUp);
-	svgObject.addEventListener("mousemove", onMouseMove);
+	svgObject.addEventListener("mousedown", mouseDownHandler);
+	svgObject.addEventListener("mouseup", mouseUpHandler);
+	svgObject.addEventListener("mousemove", mouseMoveHandler);
 
 	Object.defineProperty(_points, "selectedIndex", {get: function() { return _selected; }});
 	Object.defineProperty(_points, "selected", {get: function() { return _points[_selected]; }});

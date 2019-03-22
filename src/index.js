@@ -1,3 +1,6 @@
+/**
+ * simple svg in javascript (c) Robby Kraft
+ */
 
 export {
 	svg, line, circle, ellipse, rect, polygon, polyline, bezier,

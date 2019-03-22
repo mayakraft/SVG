@@ -1,7 +1,8 @@
-/** interactive svg image
- * creates SVG, binds it to the DOM, supplies methods and handlers
+/** 
+ * responsive, interactive SVG image with methods and handlers
  * @param: (number, number) width, height
- * @param: a DOM object or "string" DOM id- a parent to attach to
+ * @param: a DOM object or string DOM id. a parent to attach to
+ * @param: a function that gets called after setup (callback)
  */
 
 import * as DOM from "./DOM";

@@ -1,5 +1,10 @@
 /**
- * simple svg in javascript (c) Robby Kraft
+ * this contains 4 types of functions. functions that
+ * 1. create SVG elements: line() creates <line>
+ * 2. create compound shapes like regularPolygon()
+ * 3. set the inner geometry, otherwise complex math, like setArc()
+ * 4. attach methods to these SVG elements, like removeChildren()
+ *    on a <group> element. or viewBox methods on an <svg>
  */
 
 import * as DOM from "./DOM";
@@ -72,8 +77,7 @@ export const polyline = function(pointsArray) {
 	return shape;
 };
 
-export const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y,
-		toX, toY) {
+export const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
 	let d = "M " + fromX + "," + fromY + " C " + c1X + "," + c1Y +
 			" " + c2X + "," + c2Y + " " + toX + "," + toY;
 	let shape = document.createElementNS(svgNS, "path");
@@ -195,17 +199,19 @@ const attachGeometryMethods = function(element) {
 };
 
 const attachClassMethods = function(element) {
-	element.removeChildren = function() { DOM.removeChildren(element); }
-	element.addClass = function() { DOM.addClass(element, ...arguments); }
-	element.removeClass = function() { DOM.removeClass(element, ...arguments); }
+	element.removeChildren = function() { return DOM.removeChildren(element); }
+	element.addClass = function() { return DOM.addClass(element, ...arguments); }
+	element.removeClass = function() { return DOM.removeClass(element, ...arguments); }
+	element.setClass = function() { return DOM.setClass(element, ...arguments); }
+	element.setID = function() { return DOM.setID(element, ...arguments); }
 };
 
 const attachViewBoxMethods = function(element) {
-	element.setViewBox = function() { ViewBox.setViewBox(element, ...arguments); }
-	element.getViewBox = function() { ViewBox.getViewBox(element, ...arguments); }
-	element.scaleViewBox = function() { ViewBox.scaleViewBox(element, ...arguments); }
-	element.translateViewBox = function() { ViewBox.translateViewBox(element, ...arguments); }
-	element.convertToViewBox = function() { ViewBox.convertToViewBox(element, ...arguments); }
+	element.setViewBox = function() { return ViewBox.setViewBox(element, ...arguments); }
+	element.getViewBox = function() { return ViewBox.getViewBox(element, ...arguments); }
+	element.scaleViewBox = function() { return ViewBox.scaleViewBox(element, ...arguments); }
+	element.translateViewBox = function() { return ViewBox.translateViewBox(element, ...arguments); }
+	element.convertToViewBox = function() { return ViewBox.convertToViewBox(element, ...arguments); }
 };
 
 export const setupSVG = function(svgImage) {
