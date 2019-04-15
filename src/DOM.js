@@ -58,8 +58,15 @@ export const setID = function(xmlNode, idName) {
  * import, export
  */
 
-export const save = function(svg, filename = "image.svg") {
+export const save = function(svg, filename = "image.svg", includeDOMCSS = false) {
 	let a = document.createElement("a");
+	if (includeDOMCSS) {
+		// include the CSS inside of <link> style sheets
+		let styleContainer = document.createElementNS("http://www.w3.org/2000/svg", "style");
+		styleContainer.setAttribute("type", "text/css");
+		styleContainer.innerHTML = getPageCSS();
+		svg.appendChild(styleContainer);
+	}
 	let source = (new window.XMLSerializer()).serializeToString(svg);
 	let formatted = vkbeautify.xml(source);
 	let blob = new window.Blob([formatted], {type: "text/plain"});
@@ -69,6 +76,27 @@ export const save = function(svg, filename = "image.svg") {
 	a.click();
 	a.remove();
 };
+
+export const getPageCSS = function() {
+	let css = [];
+	for (let s = 0; s < document.styleSheets.length; s++) {
+		let sheet = document.styleSheets[s];
+		try {
+			let rules = ('cssRules' in sheet) ? sheet.cssRules : sheet.rules;
+			for (let r = 0; r < rules.length; r++) {
+				let rule = rules[r];
+				if ('cssText' in rule){
+					css.push(rule.cssText);
+				}
+				else{
+					css.push(rule.selectorText+' {\n'+rule.style.cssText+'\n}\n');
+				}
+			}
+		} catch(error){ }
+	}
+	return css.join('\n');
+}
+
 
 const parseCSSText = function(styleContent) {
 	let styleElement = document.createElement("style");

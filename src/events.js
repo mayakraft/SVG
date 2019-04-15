@@ -45,15 +45,15 @@ const Pointer = function(node) {
 		_pointer.y = _pointer.position[1];
 	};
 
+	// touches don't deliver position on release. mouse does
 	const didRelease = function(clientX, clientY) {
 		_pointer.isPressed = false;
-		setPosition(event.clientX, event.clientY);
 	};
 
 	const didPress = function(clientX, clientY) {
 		_pointer.isPressed = true;
-		_pointer.pressed = convertToViewBox(_node, event.clientX, event.clientY);
-		setPosition(event.clientX, event.clientY);
+		_pointer.pressed = convertToViewBox(_node, clientX, clientY);
+		setPosition(clientX, clientY);
 	};
 
 	const didMove = function(clientX, clientY) {
@@ -88,6 +88,7 @@ export default function(node) {
 	let _pointer = Pointer(node);
 	let _events = {};
 
+
 	const fireEvents = function(event, events) {
 		if (events == null) { return; }
 		if (events.length > 0) {
@@ -109,6 +110,7 @@ export default function(node) {
 		fireEvents(event, events);
 	}
 	const mouseUpHandler = function(event) {
+		mouseMoveHandler(event);
 		let events = _events[Names.end];
 		_pointer.didRelease(event.clientX, event.clientY);
 		fireEvents(event, events);
@@ -128,6 +130,12 @@ export default function(node) {
 		let touch = event.touches[0];
 		if (touch == null) { return; }
 		_pointer.didPress(touch.clientX, touch.clientY);
+		fireEvents(event, events);
+	};
+	const touchEndHandler = function(event) {
+		// touchMoveHandler(event); // do we need this
+		let events = _events[Names.end];
+		_pointer.didRelease();
 		fireEvents(event, events);
 	};
 	const touchMoveHandler = function(event) {
@@ -180,10 +188,10 @@ export default function(node) {
 		mouseleave: mouseLeaveHandler,
 		mouseenter: mouseEnterHandler,
 		// touches
-		touchend: mouseUpHandler,
+		touchend: touchEndHandler,
 		touchmove: touchMoveHandler,
 		touchstart: touchStartHandler,
-		touchcancel: mouseUpHandler,
+		touchcancel: touchEndHandler,
 		// wheel
 		wheel: scrollHandler,
 	};
@@ -239,6 +247,7 @@ export default function(node) {
 
 	return {
 		setup,
+		addEventListener,
 		remove: function() { removeHandlers(_node); }
 	};
 };

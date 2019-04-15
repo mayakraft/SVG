@@ -95,10 +95,11 @@ const attachSVGMethods = function(element) {
 				if (newSVG.events == null) { newSVG.events = Events(newSVG); }
 				else { newSVG.events.setup(newSVG); }
 				attachSVGMethods(newSVG);
+				if (parent != null) { parent.insertBefore(newSVG, element); }
 				element.remove();
 				element = newSVG;
 			}
-			if (parent != null) { parent.appendChild(element); }
+			// if (parent != null) { parent.appendChild(element); }
 			if (callback != null) { callback(element, error); }
 		});
 	}

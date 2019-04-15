@@ -28,7 +28,7 @@ const controlPoint = function(parent, options) {
 			setPosition(pos[0], pos[1]);
 		}
 	}
-	const onMouseUp = function(mouse) {
+	const onMouseUp = function() {
 		_selected = false;
 	}
 	const distance = function(mouse) {
@@ -64,6 +64,7 @@ export default function(svgObject, number = 1, options) {
 	let _selected = undefined;
 
 	const mouseDownHandler = function(event) {
+		event.preventDefault();
 		let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 		if (!(_points.length > 0)) { return; }
 		_selected = _points
@@ -74,18 +75,47 @@ export default function(svgObject, number = 1, options) {
 		_points[_selected].selected = true;
 	}
 	const mouseMoveHandler = function(event) {
+		event.preventDefault();
 		let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
 		_points.forEach(p => p.onMouseMove(mouse));
 	}
 	const mouseUpHandler = function(event) {
-		let mouse = convertToViewBox(svgObject, event.clientX, event.clientY);
-		_points.forEach(p => p.onMouseUp(mouse));
+		event.preventDefault();
+		_points.forEach(p => p.onMouseUp());
 		_selected = undefined;
 	}
-
-	svgObject.addEventListener("mousedown", mouseDownHandler);
-	svgObject.addEventListener("mouseup", mouseUpHandler);
-	svgObject.addEventListener("mousemove", mouseMoveHandler);
+	const touchDownHandler = function(event) {
+		event.preventDefault();
+		let touch = event.touches[0];
+		if (touch == null) { return; }
+		let pointer = convertToViewBox(svgObject, touch.clientX, touch.clientY);
+		if (!(_points.length > 0)) { return; }
+		_selected = _points
+			.map((p,i) => ({i:i, d:p.distance(pointer)}))
+			.sort((a,b) => a.d - b.d)
+			.shift()
+			.i;
+		_points[_selected].selected = true;
+	}
+	const touchMoveHandler = function(event) {
+		event.preventDefault();
+		let touch = event.touches[0];
+		if (touch == null) { return; }
+		let pointer = convertToViewBox(svgObject, touch.clientX, touch.clientY);
+		_points.forEach(p => p.onMouseMove(pointer));
+	}
+	const touchUpHandler = function(event) {
+		event.preventDefault();
+		_points.forEach(p => p.onMouseUp());
+		_selected = undefined;
+	}
+	svgObject.addEventListener("touchstart", touchDownHandler, false);
+	svgObject.addEventListener("touchend", touchUpHandler, false);
+	svgObject.addEventListener("touchcancel", touchUpHandler, false);
+	svgObject.addEventListener("touchmove", touchMoveHandler, false);
+	svgObject.addEventListener("mousedown", mouseDownHandler, false);
+	svgObject.addEventListener("mouseup", mouseUpHandler, false);
+	svgObject.addEventListener("mousemove", mouseMoveHandler, false);
 
 	Object.defineProperty(_points, "selectedIndex", {get: function() { return _selected; }});
 	Object.defineProperty(_points, "selected", {get: function() { return _points[_selected]; }});

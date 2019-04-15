@@ -26,39 +26,39 @@ export const svg = function() {
 
 export const line = function(x1, y1, x2, y2) {
 	let shape = document.createElementNS(svgNS, "line");
-	shape.setAttributeNS(null, "x1", x1);
-	shape.setAttributeNS(null, "y1", y1);
-	shape.setAttributeNS(null, "x2", x2);
-	shape.setAttributeNS(null, "y2", y2);
+	if (x1) { shape.setAttributeNS(null, "x1", x1); }
+	if (y1) { shape.setAttributeNS(null, "y1", y1); }
+	if (x2) { shape.setAttributeNS(null, "x2", x2); }
+	if (y2) { shape.setAttributeNS(null, "y2", y2); }
 	attachClassMethods(shape);
 	return shape;
 };
 
 export const circle = function(x, y, radius) {
 	let shape = document.createElementNS(svgNS, "circle");
-	shape.setAttributeNS(null, "cx", x);
-	shape.setAttributeNS(null, "cy", y);
-	shape.setAttributeNS(null, "r", radius);
+	if (x) { shape.setAttributeNS(null, "cx", x); }
+	if (y) { shape.setAttributeNS(null, "cy", y); }
+	if (radius) { shape.setAttributeNS(null, "r", radius); }
 	attachClassMethods(shape);
 	return shape;
 };
 
 export const ellipse = function(x, y, rx, ry) {
 	let shape = document.createElementNS(svgNS, "ellipse");
-	shape.setAttributeNS(null, "cx", x);
-	shape.setAttributeNS(null, "cy", y);
-	shape.setAttributeNS(null, "rx", rx);
-	shape.setAttributeNS(null, "ry", ry);
+	if (x) { shape.setAttributeNS(null, "cx", x); }
+	if (y) { shape.setAttributeNS(null, "cy", y); }
+	if (rx) { shape.setAttributeNS(null, "rx", rx); }
+	if (ry) { shape.setAttributeNS(null, "ry", ry); }
 	attachClassMethods(shape);
 	return shape;
 };
 
 export const rect = function(x, y, width, height) {
 	let shape = document.createElementNS(svgNS, "rect");
-	shape.setAttributeNS(null, "x", x);
-	shape.setAttributeNS(null, "y", y);
-	shape.setAttributeNS(null, "width", width);
-	shape.setAttributeNS(null, "height", height);
+	if (x) { shape.setAttributeNS(null, "x", x); }
+	if (y) { shape.setAttributeNS(null, "y", y); }
+	if (width) { shape.setAttributeNS(null, "width", width); }
+	if (height) { shape.setAttributeNS(null, "height", height); }
 	attachClassMethods(shape);
 	return shape;
 };
