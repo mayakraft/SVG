@@ -1,18 +1,74 @@
 /**
- * simple svg in javascript (c) Robby Kraft
+ * SVG in Javascript (c) Robby Kraft
  */
 
-export {
-	svg, line, circle, ellipse, rect, polygon, polyline, bezier,
-	text, wedge, arc, group, regularPolygon, setPoints, setArc
-} from "./elements";
+import {
+	svg,
+	group
+} from "./elements/main";
 
-export {
-	setViewBox, getViewBox, scaleViewBox, translateViewBox, convertToViewBox
+import {
+	line,
+	circle,
+	ellipse,
+	rect,
+	polygon,
+	polyline,
+	bezier,
+	text,
+	wedge,
+	arc,
+	setPoints,
+	setArc
+} from "./elements/primitives";
+
+import {
+	regularPolygon,
+	arcArrow
+} from "./elements/compound";
+
+import {
+	setViewBox,
+	getViewBox,
+	scaleViewBox,
+	translateViewBox,
+	convertToViewBox
 } from "./viewBox";
 
-export { removeChildren, save, load } from "./DOM";
+import {
+	removeChildren,
+	save,
+	load
+} from "./DOM";
 
-export { default as image } from "./image";
+import { default as image } from "./image";
+import { default as controls } from "./controls";
 
-export { default as controls } from "./controls";
+export {
+	svg,
+	group,
+	line,
+	circle,
+	ellipse,
+	rect,
+	polygon,
+	polyline,
+	bezier,
+	text,
+	wedge,
+	arc,
+	setPoints,
+	setArc,
+	regularPolygon,
+	arcArrow,
+	setViewBox,
+	getViewBox,
+	scaleViewBox,
+	translateViewBox,
+	convertToViewBox,
+	removeChildren,
+	save,
+	load,
+	image,
+	controls
+};

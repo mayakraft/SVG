@@ -1,4 +1,8 @@
-import vkbeautify from "../lib/vkbeautify";
+/**
+ * SVG in Javascript (c) Robby Kraft
+ */
+
+import {default as vkXML} from "../include/vkbeautify-xml";
 
 export const removeChildren = function(parent) {
 	while (parent.lastChild) {
@@ -68,7 +72,7 @@ export const save = function(svg, filename = "image.svg", includeDOMCSS = false)
 		svg.appendChild(styleContainer);
 	}
 	let source = (new window.XMLSerializer()).serializeToString(svg);
-	let formatted = vkbeautify.xml(source);
+	let formatted = vkXML(source);
 	let blob = new window.Blob([formatted], {type: "text/plain"});
 	a.setAttribute("href", window.URL.createObjectURL(blob));
 	a.setAttribute("download", filename);

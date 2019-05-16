@@ -1,3 +1,7 @@
+/**
+ * SVG in Javascript (c) Robby Kraft
+ */
+
 export const setViewBox = function(svg, x, y, width, height, padding = 0) {
 	let scale = 1.0;
 	let d = (width / scale) - width;

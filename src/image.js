@@ -1,4 +1,6 @@
-/** 
+/**
+ * SVG in Javascript (c) Robby Kraft
+ *
  * responsive, interactive SVG image with methods and handlers
  * @param: (number, number) width, height
  * @param: a DOM object or string DOM id. a parent to attach to
@@ -7,7 +9,7 @@
 
 import * as DOM from "./DOM";
 import * as ViewBox from "./viewBox";
-import { svg, setupSVG } from "./elements";
+import { svg, setupSVG } from "./elements/main";
 import { default as Events } from "./events";
 
 export default function() {

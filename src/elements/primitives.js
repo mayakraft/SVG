@@ -1,28 +1,10 @@
 /**
- * this contains 4 types of functions. functions that
- * 1. create SVG elements: line() creates <line>
- * 2. create compound shapes like regularPolygon()
- * 3. set the inner geometry, otherwise complex math, like setArc()
- * 4. attach methods to these SVG elements, like removeChildren()
- *    on a <group> element. or viewBox methods on an <svg>
+ * SVG in Javascript (c) Robby Kraft
  */
 
-import * as DOM from "./DOM";
-import * as ViewBox from "./viewBox";
+import { attachClassMethods } from "./methods";
 
 const svgNS = "http://www.w3.org/2000/svg";
-
-export const svg = function() {
-	let svgImage = document.createElementNS(svgNS, "svg");
-	svgImage.setAttribute("version", "1.1");
-	svgImage.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-	setupSVG(svgImage);
-	return svgImage;
-};
-
-/**
- * geometry primitives
- */
 
 export const line = function(x1, y1, x2, y2) {
 	let shape = document.createElementNS(svgNS, "line");
@@ -110,34 +92,7 @@ export const arc = function(x, y, radius, angleA, angleB) {
 };
 
 /**
- * containers
- */
-
-export const group = function() {
-	let g = document.createElementNS(svgNS, "g");
-	attachClassMethods(g);
-	attachGeometryMethods(g);
-	return g;
-};
-
-/**
- * compound shapes
- */
-
-export const regularPolygon = function(cX, cY, radius, sides) {
-	let halfwedge = 2*Math.PI/sides * 0.5;
-	let r = Math.cos(halfwedge) * radius;
-	let points = Array.from(Array(sides)).map((el,i) => {
-		let a = -2 * Math.PI * i / sides + halfwedge;
-		let x = cX + r * Math.sin(a);
-		let y = cY + r * Math.cos(a);
-		return [x, y];
-	});
-	return polygon(points);
-};
-
-/**
- * geometry modifiers
+ *  modifiers
  */
 
 export const setPoints = function(polygon, pointsArray) {
@@ -172,50 +127,3 @@ export const setArc = function(shape, x, y, radius, startAngle, endAngle,
 	if (includeCenter) { d += " Z"; }
 	shape.setAttributeNS(null, "d", d);
 };
-
-const geometryMethods = {
-	"line" : line,
-	"circle" : circle,
-	"ellipse" : ellipse,
-	"rect" : rect,
-	"polygon" : polygon,
-	"polyline" : polyline,
-	"bezier" : bezier,
-	"text" : text,
-	"wedge" : wedge,
-	"arc" : arc,
-	"regularPolygon" : regularPolygon,
-	"group" : group,
-};
-
-const attachGeometryMethods = function(element) {
-	Object.keys(geometryMethods).forEach(key => {
-		element[key] = function() {
-			let g = geometryMethods[key](...arguments);
-			element.appendChild(g);
-			return g;
-		}
-	});
-};
-
-const attachClassMethods = function(element) {
-	element.removeChildren = function() { return DOM.removeChildren(element); }
-	element.addClass = function() { return DOM.addClass(element, ...arguments); }
-	element.removeClass = function() { return DOM.removeClass(element, ...arguments); }
-	element.setClass = function() { return DOM.setClass(element, ...arguments); }
-	element.setID = function() { return DOM.setID(element, ...arguments); }
-};
-
-const attachViewBoxMethods = function(element) {
-	element.setViewBox = function() { return ViewBox.setViewBox(element, ...arguments); }
-	element.getViewBox = function() { return ViewBox.getViewBox(element, ...arguments); }
-	element.scaleViewBox = function() { return ViewBox.scaleViewBox(element, ...arguments); }
-	element.translateViewBox = function() { return ViewBox.translateViewBox(element, ...arguments); }
-	element.convertToViewBox = function() { return ViewBox.convertToViewBox(element, ...arguments); }
-};
-
-export const setupSVG = function(svgImage) {
-	attachClassMethods(svgImage);
-	attachGeometryMethods(svgImage);
-	attachViewBoxMethods(svgImage);
-}

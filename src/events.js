@@ -1,3 +1,7 @@
+/**
+ * SVG in Javascript (c) Robby Kraft
+ */
+
 import { convertToViewBox } from "./viewBox";
 
 // these are the names under which the event handlers live
