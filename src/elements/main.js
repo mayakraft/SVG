@@ -16,9 +16,13 @@ import {
 } from "./primitives";
 
 import {
-	arcArrow,
 	regularPolygon
-} from "./compound";
+} from "./polygons";
+
+import {
+	straightArrow,
+	arcArrow
+} from "./arrows";
 
 import {
 	attachClassMethods,
@@ -61,6 +65,7 @@ const drawMethods = {
 	"wedge" : wedge,
 	"arc" : arc,
 	"group" : group,
+	"straightArrow": straightArrow,
 	"arcArrow": arcArrow,
 	"regularPolygon": regularPolygon
 };

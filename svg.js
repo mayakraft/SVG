@@ -400,7 +400,6 @@
 		shape.setAttributeNS(null, "d", d);
 	};
 
-	const svgNS$1 = "http://www.w3.org/2000/svg";
 	const regularPolygon = function(cX, cY, radius, sides) {
 		let halfwedge = 2*Math.PI/sides * 0.5;
 		let r = Math.cos(halfwedge) * radius;
@@ -412,31 +411,152 @@
 		});
 		return polygon(points);
 	};
-	const arcArrow = function(startPoint, endPoint, options) {
+
+	const svgNS$1 = "http://www.w3.org/2000/svg";
+	const straightArrow = function(start, end, options) {
 		let p = {
-			color: "#eb3",
-			strokeWidth: 0.01,
-			width: 0.025,
-			length: 0.075,
-			bend: 0.3,
-			pinch: 0.618,
-			padding: 0.5,
-			side: -1,
+			color: "#000",
+			strokeWidth: 0.5,
+			strokeStyle: "",
+			fillStyle: "",
+			highlight: undefined,
+			highlightStrokeStyle: "",
+			highlightFillStyle: "",
+			width: 0.5,
+			length: 2,
 			start: false,
-			end: true
+			end: true,
 		};
 		if (typeof options === "object" && options !== null) {
 			Object.assign(p, options);
 		}
-		let arrowFill = "stroke:none;fill:"+p.color+";";
-		let arrowStroke = "stroke:"+p.color+";fill:none;stroke-width:" +
-			strokeWidth+";";
+		let arrowFill = [
+			"stroke:none",
+			"fill:"+p.color,
+			p.fillStyle
+		].filter(a => a !== "").join(";");
+		let arrowStroke = [
+			"fill:none",
+			"stroke:" + p.color,
+			"stroke-width:" + p.strokeWidth,
+			p.strokeStyle
+		].filter(a => a !== "").join(";");
+		let thinStroke = Math.floor(p.strokeWidth * 3) / 10;
+		let thinSpace = Math.floor(p.strokeWidth * 6) / 10;
+		let highlightStroke = [
+			"fill:none",
+			"stroke:" + p.highlight,
+			"stroke-width:" + p.strokeWidth * 0.5,
+			"stroke-dasharray:" + thinStroke + " " + thinSpace,
+			"stroke-linecap:round",
+			p.strokeStyle
+		].filter(a => a !== "").join(";");
+		let highlightFill = [
+			"stroke:none",
+			"fill:"+p.highlight,
+			p.fillStyle
+		].filter(a => a !== "").join(";");
+		let vec = [end[0]-start[0], end[1]-start[1]];
+		let arrowLength = Math.sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
+		let arrowVector = [vec[0] / arrowLength, vec[1] / arrowLength];
+		let arrow90 = [arrowVector[1], -arrowVector[0]];
+		let endHead = [
+			[end[0] + arrow90[0]*p.width, end[1] + arrow90[1]*p.width],
+			[end[0] - arrow90[0]*p.width, end[1] - arrow90[1]*p.width],
+			[end[0] + arrowVector[0]*p.length, end[1] + arrowVector[1]*p.length]
+		];
+		let startHead = [
+			[start[0] - arrow90[0]*p.width, start[1] - arrow90[1]*p.width],
+			[start[0] + arrow90[0]*p.width, start[1] + arrow90[1]*p.width],
+			[start[0] - arrowVector[0]*p.length, start[1] - arrowVector[1]*p.length]
+		];
+		let arrow = document.createElementNS(svgNS$1, "g");
+		let l = line(start[0], start[1], end[0], end[1]);
+		l.setAttribute("style", arrowStroke);
+		arrow.appendChild(l);
+		if (p.end) {
+			let endArrowPoly = polygon(endHead);
+			endArrowPoly.setAttribute("style", arrowFill);
+			arrow.appendChild(endArrowPoly);
+		}
+		if (p.start) {
+			let startArrowPoly = polygon(startHead);
+			startArrowPoly.setAttribute("style", arrowFill);
+			arrow.appendChild(startArrowPoly);
+		}
+		if (p.highlight !== undefined) {
+			let hScale = 0.6;
+			let centering = [
+				arrowVector[0]*p.length*0.09,
+				arrowVector[1]*p.length*0.09
+			];
+			let endHeadHighlight = [
+				[centering[0] + end[0] + arrow90[0]*(p.width * hScale),
+				 centering[1] + end[1] + arrow90[1]*(p.width * hScale)],
+				[centering[0] + end[0] - arrow90[0]*(p.width * hScale),
+				 centering[1] + end[1] - arrow90[1]*(p.width * hScale)],
+				[centering[0] + end[0] + arrowVector[0]*(p.length * hScale),
+				 centering[1] + end[1] + arrowVector[1]*(p.length * hScale)]
+			];
+			let startHeadHighlight = [
+				[-centering[0] + start[0] - arrow90[0]*(p.width * hScale),
+				 -centering[1] + start[1] - arrow90[1]*(p.width * hScale)],
+				[-centering[0] + start[0] + arrow90[0]*(p.width * hScale),
+				 -centering[1] + start[1] + arrow90[1]*(p.width * hScale)],
+				[-centering[0] + start[0] - arrowVector[0]*(p.length * hScale),
+				 -centering[1] + start[1] - arrowVector[1]*(p.length * hScale)]
+			];
+			let highline = line(start[0], start[1], end[0], end[1]);
+			highline.setAttribute("style", highlightStroke);
+			arrow.appendChild(highline);
+			if (p.end) {
+				let endArrowHighlight = polygon(endHeadHighlight);
+				endArrowHighlight.setAttribute("style", highlightFill);
+				arrow.appendChild(endArrowHighlight);
+			}
+			if (p.start) {
+				let startArrowHighlight = polygon(startHeadHighlight);
+				startArrowHighlight.setAttribute("style", highlightFill);
+				arrow.appendChild(startArrowHighlight);
+			}
+		}
+		return arrow;
+	};
+	const arcArrow = function(startPoint, endPoint, options) {
+		let p = {
+			color: "#000",
+			strokeWidth: 0.5,
+			width: 0.5,
+			length: 2,
+			bend: 0.3,
+			pinch: 0.618,
+			padding: 0.5,
+			side: true,
+			start: false,
+			end: true,
+			strokeStyle: "",
+			fillStyle: "",
+		};
+		if (typeof options === "object" && options !== null) {
+			Object.assign(p, options);
+		}
+		let arrowFill = [
+			"stroke:none",
+			"fill:"+p.color,
+			p.fillStyle
+		].filter(a => a !== "").join(";");
+		let arrowStroke = [
+			"fill:none",
+			"stroke:" + p.color,
+			"stroke-width:" + p.strokeWidth,
+			p.strokeStyle
+		].filter(a => a !== "").join(";");
 		let vector = [endPoint[0]-startPoint[0], endPoint[1]-startPoint[1]];
 		let perpendicular = [vector[1], -vector[0]];
 		let midpoint = [startPoint[0] + vector[0]/2, startPoint[1] + vector[1]/2];
 		let bezPoint = [
-			midpoint[0] + perpendicular[0]*p.side * p.bend,
-			midpoint[1] + perpendicular[1]*p.side * p.bend
+			midpoint[0] + perpendicular[0]*(p.side?1:-1) * p.bend,
+			midpoint[1] + perpendicular[1]*(p.side?1:-1) * p.bend
 		];
 		let bezStart = [bezPoint[0] - startPoint[0], bezPoint[1] - startPoint[1]];
 		let bezEnd = [bezPoint[0] - endPoint[0], bezPoint[1] - endPoint[1]];
@@ -480,13 +600,14 @@
 			controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]
 		);
 		arrowArc.setAttribute("style", arrowStroke);
+		arrowGroup.appendChild(arrowArc);
 		if (p.start) {
-			let startHead = arrowGroup.polygon(startPoints);
+			let startHead = polygon(startPoints);
 			startHead.setAttribute("style", arrowFill);
 			arrowGroup.appendChild(startHead);
 		}
 		if (p.end) {
-			let endHead = arrowGroup.polygon(endPoints);
+			let endHead = polygon(endPoints);
 			endHead.setAttribute("style", arrowFill);
 			arrowGroup.appendChild(endHead);
 		}
@@ -524,6 +645,7 @@
 		"wedge" : wedge,
 		"arc" : arc,
 		"group" : group,
+		"straightArrow": straightArrow,
 		"arcArrow": arcArrow,
 		"regularPolygon": regularPolygon
 	};
@@ -970,6 +1092,7 @@
 	exports.setPoints = setPoints;
 	exports.setArc = setArc;
 	exports.regularPolygon = regularPolygon;
+	exports.straightArrow = straightArrow;
 	exports.arcArrow = arcArrow;
 	exports.setViewBox = setViewBox;
 	exports.getViewBox = getViewBox;

@@ -23,9 +23,13 @@ import {
 } from "./elements/primitives";
 
 import {
-	regularPolygon,
+	regularPolygon
+} from "./elements/polygons";
+
+import {
+	straightArrow,
 	arcArrow
-} from "./elements/compound";
+} from "./elements/arrows";
 
 import {
 	setViewBox,
@@ -60,6 +64,7 @@ export {
 	setPoints,
 	setArc,
 	regularPolygon,
+	straightArrow,
 	arcArrow,
 	setViewBox,
 	getViewBox,
