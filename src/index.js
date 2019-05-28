@@ -3,79 +3,79 @@
  */
 
 import {
-	svg,
-	group,
-	style
+  svg,
+  group,
+  style,
 } from "./elements/main";
 
 import {
-	line,
-	circle,
-	ellipse,
-	rect,
-	polygon,
-	polyline,
-	bezier,
-	text,
-	wedge,
-	arc,
-	setPoints,
-	setArc
+  line,
+  circle,
+  ellipse,
+  rect,
+  polygon,
+  polyline,
+  bezier,
+  text,
+  wedge,
+  arc,
+  setPoints,
+  setArc,
 } from "./elements/primitives";
 
 import {
-	regularPolygon
+  regularPolygon,
 } from "./elements/polygons";
 
 import {
-	straightArrow,
-	arcArrow
+  straightArrow,
+  arcArrow,
 } from "./elements/arrows";
 
 import {
-	setViewBox,
-	getViewBox,
-	scaleViewBox,
-	translateViewBox,
-	convertToViewBox
+  setViewBox,
+  getViewBox,
+  scaleViewBox,
+  translateViewBox,
+  convertToViewBox,
 } from "./viewBox";
 
 import {
-	removeChildren,
-	save,
-	load
+  removeChildren,
+  save,
+  load,
 } from "./DOM";
 
-import { default as image } from "./image";
-import { default as controls } from "./controls";
+import image from "./image";
+import controls from "./controls";
 
 export {
-	svg,
-	group,
-	style,
-	line,
-	circle,
-	ellipse,
-	rect,
-	polygon,
-	polyline,
-	bezier,
-	text,
-	wedge,
-	arc,
-	setPoints,
-	setArc,
-	regularPolygon,
-	straightArrow,
-	arcArrow,
-	setViewBox,
-	getViewBox,
-	scaleViewBox,
-	translateViewBox,
-	convertToViewBox,
-	removeChildren,
-	save,
-	load,
-	image,
-	controls
+  svg,
+  group,
+  style,
+  line,
+  circle,
+  ellipse,
+  rect,
+  polygon,
+  polyline,
+  bezier,
+  text,
+  wedge,
+  arc,
+  setPoints,
+  setArc,
+  regularPolygon,
+  straightArrow,
+  arcArrow,
+  setViewBox,
+  getViewBox,
+  scaleViewBox,
+  translateViewBox,
+  convertToViewBox,
+  removeChildren,
+  save,
+  load,
+  image,
+  controls,
 };

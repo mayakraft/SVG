@@ -3,79 +3,81 @@
  */
 
 import {
-	line,
-	circle,
-	ellipse,
-	rect,
-	polygon,
-	polyline,
-	bezier,
-	text,
-	wedge,
-	arc
+  line,
+  circle,
+  ellipse,
+  rect,
+  polygon,
+  polyline,
+  bezier,
+  text,
+  wedge,
+  arc,
 } from "./primitives";
 
 import {
-	regularPolygon
+  regularPolygon,
 } from "./polygons";
 
 import {
-	straightArrow,
-	arcArrow
+  straightArrow,
+  arcArrow,
 } from "./arrows";
 
 import {
-	attachClassMethods,
-	attachViewBoxMethods,
-	attachAppendableMethods
+  attachClassMethods,
+  attachViewBoxMethods,
+  attachAppendableMethods,
 } from "./methods";
 
 import {
-	document
+  document,
 } from "../window";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
-export const svg = function() {
-	let svgImage = document.createElementNS(svgNS, "svg");
-	svgImage.setAttribute("version", "1.1");
-	svgImage.setAttribute("xmlns", svgNS);
-	setupSVG(svgImage);
-	return svgImage;
-};
-
-export const group = function() {
-	let g = document.createElementNS(svgNS, "g");
-	attachClassMethods(g);
-	attachAppendableMethods(g, drawMethods);
-	return g;
-};
-
-export const style = function() {
-	let style = document.createElementNS(svgNS, "style");
-	style.setAttribute("type", "text/css");
-	return style;
-}
-
-export const setupSVG = function(svgImage) {
-	attachClassMethods(svgImage);
-	attachViewBoxMethods(svgImage);
-	attachAppendableMethods(svgImage, drawMethods);
-}
-
 const drawMethods = {
-	"line" : line,
-	"circle" : circle,
-	"ellipse" : ellipse,
-	"rect" : rect,
-	"polygon" : polygon,
-	"polyline" : polyline,
-	"bezier" : bezier,
-	"text" : text,
-	"wedge" : wedge,
-	"arc" : arc,
-	"group" : group,
-	"straightArrow": straightArrow,
-	"arcArrow": arcArrow,
-	"regularPolygon": regularPolygon
+  line,
+  circle,
+  ellipse,
+  rect,
+  polygon,
+  polyline,
+  bezier,
+  text,
+  wedge,
+  arc,
+  straightArrow,
+  arcArrow,
+  regularPolygon,
 };
+
+export const setupSVG = function (svgImage) {
+  attachClassMethods(svgImage);
+  attachViewBoxMethods(svgImage);
+  attachAppendableMethods(svgImage, drawMethods);
+};
+
+export const svg = function () {
+  const svgImage = document.createElementNS(svgNS, "svg");
+  svgImage.setAttribute("version", "1.1");
+  svgImage.setAttribute("xmlns", svgNS);
+  setupSVG(svgImage);
+  return svgImage;
+};
+
+export const group = function () {
+  const g = document.createElementNS(svgNS, "g");
+  attachClassMethods(g);
+  attachAppendableMethods(g, drawMethods);
+  return g;
+};
+
+export const style = function () {
+  const s = document.createElementNS(svgNS, "style");
+  s.setAttribute("type", "text/css");
+  return s;
+};
+
+// circular involvement, this is required after definition
+drawMethods.group = group;

@@ -5,48 +5,48 @@
 import * as DOM from "../DOM";
 import * as ViewBox from "../viewBox";
 
-export const attachClassMethods = function(element) {
-	element.removeChildren = function() {
-		return DOM.removeChildren(element);
-	}
-	element.addClass = function() {
-		return DOM.addClass(element, ...arguments);
-	}
-	element.removeClass = function() {
-		return DOM.removeClass(element, ...arguments);
-	}
-	element.setClass = function() {
-		return DOM.setClass(element, ...arguments);
-	}
-	element.setID = function() {
-		return DOM.setID(element, ...arguments);
-	}
+export const attachClassMethods = function (element) {
+  element.removeChildren = function () {
+    return DOM.removeChildren(element);
+  };
+  element.addClass = function (...args) {
+    return DOM.addClass(element, args);
+  };
+  element.removeClass = function (...args) {
+    return DOM.removeClass(element, args);
+  };
+  element.setClass = function (...args) {
+    return DOM.setClass(element, args);
+  };
+  element.setID = function (...args) {
+    return DOM.setID(element, args);
+  };
 };
 
-export const attachViewBoxMethods = function(element) {
-	element.setViewBox = function() {
-		return ViewBox.setViewBox(element, ...arguments);
-	}
-	element.getViewBox = function() {
-		return ViewBox.getViewBox(element, ...arguments);
-	}
-	element.scaleViewBox = function() {
-		return ViewBox.scaleViewBox(element, ...arguments);
-	}
-	element.translateViewBox = function() {
-		return ViewBox.translateViewBox(element, ...arguments);
-	}
-	element.convertToViewBox = function() {
-		return ViewBox.convertToViewBox(element, ...arguments);
-	}
+export const attachViewBoxMethods = function (element) {
+  element.setViewBox = function (...args) {
+    return ViewBox.setViewBox(element, args);
+  };
+  element.getViewBox = function (...args) {
+    return ViewBox.getViewBox(element, args);
+  };
+  element.scaleViewBox = function (...args) {
+    return ViewBox.scaleViewBox(element, args);
+  };
+  element.translateViewBox = function (...args) {
+    return ViewBox.translateViewBox(element, args);
+  };
+  element.convertToViewBox = function (...args) {
+    return ViewBox.convertToViewBox(element, args);
+  };
 };
 
-export const attachAppendableMethods = function(element, methods) {
-	Object.keys(methods).forEach(key => {
-		element[key] = function() {
-			let g = methods[key](...arguments);
-			element.appendChild(g);
-			return g;
-		}
-	});
+export const attachAppendableMethods = function (element, methods) {
+  Object.keys(methods).forEach((key) => {
+    element[key] = function (...args) {
+      const g = methods[key](args);
+      element.appendChild(g);
+      return g;
+    };
+  });
 };

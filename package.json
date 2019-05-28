@@ -4,7 +4,7 @@
   "description": "a Javascript library to make SVG interactive and accessible",
   "main": "svg.js",
   "directories": {
-    "example": "examples",
+    "example": "examples"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,10 @@
   "bugs": {
     "url": "https://github.com/robbykraft/SVG/issues"
   },
-  "homepage": "https://github.com/robbykraft/SVG#readme"
+  "homepage": "https://github.com/robbykraft/SVG#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3"
+  }
 }
