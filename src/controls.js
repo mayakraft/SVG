@@ -8,10 +8,12 @@ import { convertToViewBox } from "./viewBox";
 const controlPoint = function(parent, options) {
 	if (options == null) { options = {}; }
 	if (options.radius == null) { options.radius = 1; }
-	if (options.fill == null) { options.fill = "#000000"; }
+	if (options.fill == null) { options.fill = "#000"; }
+	if (options.stroke == null) { options.stroke = "none"; }
 
 	let c = circle(0, 0, options.radius);
-	c.setAttribute("fill", options.fill);
+	// c.setAttribute("fill", options.fill);
+	c.setAttribute("style", "fill:"+options.fill+";stroke:"+options.stroke);
 	// let _position = options.position.slice();
 	let _position = [0,0]; // do below
 	let _selected = false;
