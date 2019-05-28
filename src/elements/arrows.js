@@ -4,7 +4,16 @@
  * arrows!
  */
 
-import { line, bezier, polygon } from "./primitives";
+import {
+	line,
+	bezier,
+	polygon
+} from "./primitives";
+
+import {
+	DOMParser,
+	document
+} from "../window";
 
 const svgNS = "http://www.w3.org/2000/svg";
 

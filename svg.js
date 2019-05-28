@@ -111,22 +111,29 @@
 		xmlNode.setAttributeNS(null, "id", idName);
 		return xmlNode;
 	};
-	const save = function(svg, filename = "image.svg", includeDOMCSS = false) {
+	const downloadInBrowser = function(filename, contentsAsString) {
+		let blob = new window.Blob([contentsAsString], {type: "text/plain"});
 		let a = document.createElement("a");
+		a.setAttribute("href", window.URL.createObjectURL(blob));
+		a.setAttribute("download", filename);
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+	};
+	const save = function(svg, filename = "image.svg", includeDOMCSS = false) {
 		if (includeDOMCSS) {
 			let styleContainer = document.createElementNS("http://www.w3.org/2000/svg", "style");
 			styleContainer.setAttribute("type", "text/css");
 			styleContainer.innerHTML = getPageCSS();
 			svg.appendChild(styleContainer);
 		}
-		let source = (new window.XMLSerializer()).serializeToString(svg);
-		let formatted = vkXML(source);
-		let blob = new window.Blob([formatted], {type: "text/plain"});
-		a.setAttribute("href", window.URL.createObjectURL(blob));
-		a.setAttribute("download", filename);
-		document.body.appendChild(a);
-		a.click();
-		a.remove();
+		let source = (new XMLSerializer()).serializeToString(svg);
+		let formattedString = vkXML(source);
+		if (window != null) {
+			downloadInBrowser(formattedString);
+		} else {
+			throw "save() meant for in-browser use";
+		}
 	};
 	const getPageCSS = function() {
 		let css = [];
@@ -147,14 +154,11 @@
 		}
 		return css.join('\n');
 	};
-	const pErr = (new window.DOMParser())
-		.parseFromString("INVALID", "text/xml")
-		.getElementsByTagName("parsererror")[0]
-		.namespaceURI;
 	const load = function(input, callback) {
 		if (typeof input === "string" || input instanceof String) {
-			let xml = (new window.DOMParser()).parseFromString(input, "text/xml");
-			if (xml.getElementsByTagNameNS(pErr, "parsererror").length === 0) {
+			let xml = (new DOMParser()).parseFromString(input, "text/xml");
+			let parserErrors = xml.getElementsByTagName("parsererror");
+			if (parserErrors.length === 0) {
 				let parsedSVG = xml.documentElement;
 				if (callback != null) {
 					callback(parsedSVG);
@@ -163,7 +167,7 @@
 			}
 			fetch(input)
 				.then((response) => response.text())
-				.then((str) => (new window.DOMParser())
+				.then((str) => (new DOMParser())
 					.parseFromString(str, "text/xml")
 				).then((svgData) => {
 					let allSVGs = svgData.getElementsByTagName("svg");
@@ -292,9 +296,29 @@
 		});
 	};
 
+	let DOMParser$1 = (typeof window === "undefined" || window === null)
+		? undefined
+		: window.DOMParser;
+	if (typeof DOMParser$1 === "undefined" || DOMParser$1 === null) {
+		DOMParser$1 = require("xmldom").DOMParser;
+	}
+	let XMLSerializer$1 = (typeof window === "undefined" || window === null)
+		? undefined
+		: window.XMLSerializer;
+	if (typeof XMLSerializer$1 === "undefined" || XMLSerializer$1 === null) {
+		XMLSerializer$1 = require("xmldom").XMLSerializer;
+	}
+	let document$1 = (typeof window === "undefined" || window === null)
+		? undefined
+		: window.document;
+	if (typeof document$1 === "undefined" || document$1 === null) {
+		document$1 = new DOMParser$1()
+			.parseFromString("<!DOCTYPE html><title>a</title>", "text/html");
+	}
+
 	const svgNS = "http://www.w3.org/2000/svg";
 	const line = function(x1, y1, x2, y2) {
-		let shape = document.createElementNS(svgNS, "line");
+		let shape = document$1.createElementNS(svgNS, "line");
 		if (x1) { shape.setAttributeNS(null, "x1", x1); }
 		if (y1) { shape.setAttributeNS(null, "y1", y1); }
 		if (x2) { shape.setAttributeNS(null, "x2", x2); }
@@ -303,7 +327,7 @@
 		return shape;
 	};
 	const circle = function(x, y, radius) {
-		let shape = document.createElementNS(svgNS, "circle");
+		let shape = document$1.createElementNS(svgNS, "circle");
 		if (x) { shape.setAttributeNS(null, "cx", x); }
 		if (y) { shape.setAttributeNS(null, "cy", y); }
 		if (radius) { shape.setAttributeNS(null, "r", radius); }
@@ -311,7 +335,7 @@
 		return shape;
 	};
 	const ellipse = function(x, y, rx, ry) {
-		let shape = document.createElementNS(svgNS, "ellipse");
+		let shape = document$1.createElementNS(svgNS, "ellipse");
 		if (x) { shape.setAttributeNS(null, "cx", x); }
 		if (y) { shape.setAttributeNS(null, "cy", y); }
 		if (rx) { shape.setAttributeNS(null, "rx", rx); }
@@ -320,7 +344,7 @@
 		return shape;
 	};
 	const rect = function(x, y, width, height) {
-		let shape = document.createElementNS(svgNS, "rect");
+		let shape = document$1.createElementNS(svgNS, "rect");
 		if (x) { shape.setAttributeNS(null, "x", x); }
 		if (y) { shape.setAttributeNS(null, "y", y); }
 		if (width) { shape.setAttributeNS(null, "width", width); }
@@ -329,13 +353,13 @@
 		return shape;
 	};
 	const polygon = function(pointsArray) {
-		let shape = document.createElementNS(svgNS, "polygon");
+		let shape = document$1.createElementNS(svgNS, "polygon");
 		setPoints(shape, pointsArray);
 		attachClassMethods(shape);
 		return shape;
 	};
 	const polyline = function(pointsArray) {
-		let shape = document.createElementNS(svgNS, "polyline");
+		let shape = document$1.createElementNS(svgNS, "polyline");
 		setPoints(shape, pointsArray);
 		attachClassMethods(shape);
 		return shape;
@@ -343,13 +367,13 @@
 	const bezier = function(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
 		let d = "M " + fromX + "," + fromY + " C " + c1X + "," + c1Y +
 				" " + c2X + "," + c2Y + " " + toX + "," + toY;
-		let shape = document.createElementNS(svgNS, "path");
+		let shape = document$1.createElementNS(svgNS, "path");
 		shape.setAttributeNS(null, "d", d);
 		attachClassMethods(shape);
 		return shape;
 	};
 	const text = function(textString, x, y) {
-		let shape = document.createElementNS(svgNS, "text");
+		let shape = document$1.createElementNS(svgNS, "text");
 		shape.innerHTML = textString;
 		shape.setAttributeNS(null, "x", x);
 		shape.setAttributeNS(null, "y", y);
@@ -357,13 +381,13 @@
 		return shape;
 	};
 	const wedge = function(x, y, radius, angleA, angleB) {
-		let shape = document.createElementNS(svgNS, "path");
+		let shape = document$1.createElementNS(svgNS, "path");
 		setArc(shape, x, y, radius, angleA, angleB, true);
 		attachClassMethods(shape);
 		return shape;
 	};
 	const arc = function(x, y, radius, angleA, angleB) {
-		let shape = document.createElementNS(svgNS, "path");
+		let shape = document$1.createElementNS(svgNS, "path");
 		setArc(shape, x, y, radius, angleA, angleB, false);
 		attachClassMethods(shape);
 		return shape;
@@ -481,7 +505,7 @@
 			[start[0] + arrow90[0]*p.width, start[1] + arrow90[1]*p.width],
 			[start[0] - arrowVector[0]*p.length, start[1] - arrowVector[1]*p.length]
 		];
-		let arrow = document.createElementNS(svgNS$1, "g");
+		let arrow = document$1.createElementNS(svgNS$1, "g");
 		let l = line(start[0], start[1], end[0], end[1]);
 		l.setAttribute("style", arrowStroke);
 		arrow.appendChild(l);
@@ -623,7 +647,7 @@
 			[arcEnd[0]+endNormal[0]*p.width, arcEnd[1]+endNormal[1]*p.width],
 			[arcEnd[0]+endHeadVec[0]*p.length, arcEnd[1]+endHeadVec[1]*p.length]
 		];
-		let arrowGroup = document.createElementNS(svgNS$1, "g");
+		let arrowGroup = document$1.createElementNS(svgNS$1, "g");
 		let arrowArc = bezier(
 			arcStart[0], arcStart[1], controlStart[0], controlStart[1],
 			controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]
@@ -645,17 +669,22 @@
 
 	const svgNS$2 = "http://www.w3.org/2000/svg";
 	const svg = function() {
-		let svgImage = document.createElementNS(svgNS$2, "svg");
+		let svgImage = document$1.createElementNS(svgNS$2, "svg");
 		svgImage.setAttribute("version", "1.1");
 		svgImage.setAttribute("xmlns", svgNS$2);
 		setupSVG(svgImage);
 		return svgImage;
 	};
 	const group = function() {
-		let g = document.createElementNS(svgNS$2, "g");
+		let g = document$1.createElementNS(svgNS$2, "g");
 		attachClassMethods(g);
 		attachAppendableMethods(g, drawMethods);
 		return g;
+	};
+	const style = function() {
+		let style = document$1.createElementNS(svgNS$2, "style");
+		style.setAttribute("type", "text/css");
+		return style;
 	};
 	const setupSVG = function(svgImage) {
 		attachClassMethods(svgImage);
@@ -1109,6 +1138,7 @@
 
 	exports.svg = svg;
 	exports.group = group;
+	exports.style = style;
 	exports.line = line;
 	exports.circle = circle;
 	exports.ellipse = ellipse;

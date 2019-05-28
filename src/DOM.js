@@ -2,7 +2,7 @@
  * SVG in Javascript (c) Robby Kraft
  */
 
-import {default as vkXML} from "../include/vkbeautify-xml";
+import { default as vkXML } from "../include/vkbeautify-xml";
 
 export const removeChildren = function(parent) {
 	while (parent.lastChild) {
@@ -62,8 +62,17 @@ export const setID = function(xmlNode, idName) {
  * import, export
  */
 
-export const save = function(svg, filename = "image.svg", includeDOMCSS = false) {
+const downloadInBrowser = function(filename, contentsAsString) {
+	let blob = new window.Blob([contentsAsString], {type: "text/plain"});
 	let a = document.createElement("a");
+	a.setAttribute("href", window.URL.createObjectURL(blob));
+	a.setAttribute("download", filename);
+	document.body.appendChild(a);
+	a.click();
+	a.remove();
+}
+
+export const save = function(svg, filename = "image.svg", includeDOMCSS = false) {
 	if (includeDOMCSS) {
 		// include the CSS inside of <link> style sheets
 		let styleContainer = document.createElementNS("http://www.w3.org/2000/svg", "style");
@@ -71,14 +80,13 @@ export const save = function(svg, filename = "image.svg", includeDOMCSS = false)
 		styleContainer.innerHTML = getPageCSS();
 		svg.appendChild(styleContainer);
 	}
-	let source = (new window.XMLSerializer()).serializeToString(svg);
-	let formatted = vkXML(source);
-	let blob = new window.Blob([formatted], {type: "text/plain"});
-	a.setAttribute("href", window.URL.createObjectURL(blob));
-	a.setAttribute("download", filename);
-	document.body.appendChild(a);
-	a.click();
-	a.remove();
+	let source = (new XMLSerializer()).serializeToString(svg);
+	let formattedString = vkXML(source);
+	if (window != null) {
+		downloadInBrowser(formattedString);
+	} else {
+		throw "save() meant for in-browser use";
+	}
 };
 
 export const getPageCSS = function() {
@@ -112,10 +120,10 @@ const parseCSSText = function(styleContent) {
 };
 
 /** parser error to check against */
-const pErr = (new window.DOMParser())
-	.parseFromString("INVALID", "text/xml")
-	.getElementsByTagName("parsererror")[0]
-	.namespaceURI;
+// const pErr = (new DOMParser())
+// 	.parseFromString("INVALID", "text/xml")
+// 	.getElementsByTagName("parsererror")[0]
+// 	.namespaceURI;
 
 // the SVG is returned, or given as the argument in the callback(svg, error)
 export const load = function(input, callback) {
@@ -124,8 +132,9 @@ export const load = function(input, callback) {
 	//   (2) filename (3) already parsed DOM element
 	if (typeof input === "string" || input instanceof String) {
 		// (1) raw text encoding
-		let xml = (new window.DOMParser()).parseFromString(input, "text/xml");
-		if (xml.getElementsByTagNameNS(pErr, "parsererror").length === 0) {
+		let xml = (new DOMParser()).parseFromString(input, "text/xml");
+		let parserErrors = xml.getElementsByTagName("parsererror");
+		if (parserErrors.length === 0) {
 			let parsedSVG = xml.documentElement;
 			if (callback != null) {
 				callback(parsedSVG);
@@ -135,7 +144,7 @@ export const load = function(input, callback) {
 		// (2) filename
 		fetch(input)
 			.then((response) => response.text())
-			.then((str) => (new window.DOMParser())
+			.then((str) => (new DOMParser())
 				.parseFromString(str, "text/xml")
 			).then((svgData) => {
 				let allSVGs = svgData.getElementsByTagName("svg");

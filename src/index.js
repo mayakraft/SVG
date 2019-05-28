@@ -4,7 +4,8 @@
 
 import {
 	svg,
-	group
+	group,
+	style
 } from "./elements/main";
 
 import {
@@ -51,6 +52,7 @@ import { default as controls } from "./controls";
 export {
 	svg,
 	group,
+	style,
 	line,
 	circle,
 	ellipse,

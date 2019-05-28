@@ -30,6 +30,10 @@ import {
 	attachAppendableMethods
 } from "./methods";
 
+import {
+	document
+} from "../window";
+
 const svgNS = "http://www.w3.org/2000/svg";
 
 export const svg = function() {
@@ -46,6 +50,12 @@ export const group = function() {
 	attachAppendableMethods(g, drawMethods);
 	return g;
 };
+
+export const style = function() {
+	let style = document.createElementNS(svgNS, "style");
+	style.setAttribute("type", "text/css");
+	return style;
+}
 
 export const setupSVG = function(svgImage) {
 	attachClassMethods(svgImage);

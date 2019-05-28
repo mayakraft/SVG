@@ -1,0 +1,29 @@
+{
+  "name": "svg",
+  "version": "0.1.0",
+  "description": "a Javascript library to make SVG interactive and accessible",
+  "main": "svg.js",
+  "directories": {
+    "example": "examples",
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robbykraft/SVG.git"
+  },
+  "keywords": [
+    "svg",
+    "script",
+    "vector",
+    "creative",
+    "code",
+    "animation",
+    "graphics",
+    "scripting"
+  ],
+  "author": "Robby Kraft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/robbykraft/SVG/issues"
+  },
+  "homepage": "https://github.com/robbykraft/SVG#readme"
+}

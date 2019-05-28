@@ -3,6 +3,7 @@
  */
 
 import { attachClassMethods } from "./methods";
+import { document } from "../window";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
