@@ -87,56 +87,56 @@ export default function (parent, number, options) {
   if (options.radius == null) { options.radius = 1; }
   if (options.fill == null) { options.fill = "#000000"; }
 
-  let _points = Array.from(Array(number))
-    .map(_ => controlPoint(options.parent, options));
-  let _selected = undefined;
+  const points = Array.from(Array(number))
+    .map(() => controlPoint(options.parent, options));
+  let selected;
 
   const mouseDownHandler = function (event) {
     event.preventDefault();
-    let mouse = convertToViewBox(parent, event.clientX, event.clientY);
-    if (!(_points.length > 0)) { return; }
-    _selected = _points
-      .map((p,i) => ({i:i, d:p.distance(mouse)}))
-      .sort((a,b) => a.d - b.d)
+    const mouse = convertToViewBox(parent, event.clientX, event.clientY);
+    if (!(points.length > 0)) { return; }
+    selected = points
+      .map((p, i) => ({ i, d: p.distance(mouse) }))
+      .sort((a, b) => a.d - b.d)
       .shift()
       .i;
-    _points[_selected].selected = true;
-  }
+    points[selected].selected = true;
+  };
   const mouseMoveHandler = function (event) {
     event.preventDefault();
-    let mouse = convertToViewBox(parent, event.clientX, event.clientY);
-    _points.forEach(p => p.onMouseMove(mouse));
-  }
+    const mouse = convertToViewBox(parent, event.clientX, event.clientY);
+    points.forEach(p => p.onMouseMove(mouse));
+  };
   const mouseUpHandler = function (event) {
     event.preventDefault();
-    _points.forEach(p => p.onMouseUp());
-    _selected = undefined;
-  }
+    points.forEach(p => p.onMouseUp());
+    selected = undefined;
+  };
   const touchDownHandler = function (event) {
     event.preventDefault();
-    let touch = event.touches[0];
+    const touch = event.touches[0];
     if (touch == null) { return; }
-    let pointer = convertToViewBox(parent, touch.clientX, touch.clientY);
-    if (!(_points.length > 0)) { return; }
-    _selected = _points
-      .map((p,i) => ({i:i, d:p.distance(pointer)}))
-      .sort((a,b) => a.d - b.d)
+    const pointer = convertToViewBox(parent, touch.clientX, touch.clientY);
+    if (!(points.length > 0)) { return; }
+    selected = points
+      .map((p, i) => ({ i, d: p.distance(pointer) }))
+      .sort((a, b) => a.d - b.d)
       .shift()
       .i;
-    _points[_selected].selected = true;
-  }
+    points[selected].selected = true;
+  };
   const touchMoveHandler = function (event) {
     event.preventDefault();
-    let touch = event.touches[0];
+    const touch = event.touches[0];
     if (touch == null) { return; }
-    let pointer = convertToViewBox(parent, touch.clientX, touch.clientY);
-    _points.forEach(p => p.onMouseMove(pointer));
-  }
+    const pointer = convertToViewBox(parent, touch.clientX, touch.clientY);
+    points.forEach(p => p.onMouseMove(pointer));
+  };
   const touchUpHandler = function (event) {
     event.preventDefault();
-    _points.forEach(p => p.onMouseUp());
-    _selected = undefined;
-  }
+    points.forEach(p => p.onMouseUp());
+    selected = undefined;
+  };
   parent.addEventListener("touchstart", touchDownHandler, false);
   parent.addEventListener("touchend", touchUpHandler, false);
   parent.addEventListener("touchcancel", touchUpHandler, false);
@@ -145,22 +145,26 @@ export default function (parent, number, options) {
   parent.addEventListener("mouseup", mouseUpHandler, false);
   parent.addEventListener("mousemove", mouseMoveHandler, false);
 
-  Object.defineProperty(_points, "selectedIndex", {
-    get: function () { return _selected; }
+  Object.defineProperty(points, "selectedIndex", {
+    get: () => selected,
   });
-  Object.defineProperty(_points, "selected", {
-    get: function () { return _points[_selected]; }
+  Object.defineProperty(points, "selected", {
+    get: () => points[selected],
   });
-  Object.defineProperty(_points, "removeAll", {value: function () {
-    _points.forEach(tp => tp.remove());
-    _points.splice(0, _points.length);
-    _selected = undefined;
+  Object.defineProperty(points, "removeAll", {
+    value: () => {
+      points.forEach(tp => tp.remove());
+      points.splice(0, points.length);
+      selected = undefined;
     // todo: do we need to untie all event handlers?
-  }});
+    },
+  });
 
-  Object.defineProperty(_points, "add", {value: function (options) {
-    _points.push(controlPoint(parent, options));
-  }});
+  Object.defineProperty(points, "add", {
+    value: (opt) => {
+      points.push(controlPoint(parent, opt));
+    },
+  });
 
-  return _points;
+  return points;
 }
