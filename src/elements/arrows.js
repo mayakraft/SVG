@@ -39,6 +39,7 @@ export const straightArrow = function (startPoint, endPoint, options) {
     "stroke:none",
     `fill:${p.color}`,
     p.fillStyle,
+    "pointer-events:none",
   ].filter(a => a !== "").join(";");
 
   const arrowStroke = [
@@ -63,6 +64,7 @@ export const straightArrow = function (startPoint, endPoint, options) {
     "stroke:none",
     `fill:${p.highlight}`,
     p.fillStyle,
+    "pointer-events:none",
   ].filter(a => a !== "").join(";");
 
 

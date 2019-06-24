@@ -30,13 +30,13 @@
       } else if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1) {
         str += ar[ix];
         inComment = false;
-      } else if ( /^<\w/.exec(ar[ix-1]) && /^<\/\w/.exec(ar[ix])
-        && /^<[\w:\-\.\,]+/.exec(ar[ix-1])
+      } else if (/^<\w/.exec(ar[ix - 1]) && /^<\/\w/.exec(ar[ix])
+        && /^<[\w:\-\.\,]+/.exec(ar[ix - 1])
         == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace("/", "")) {
         str += ar[ix];
         if (!inComment) { deep -= 1; }
-      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) == -1
-        && ar[ix].search(/\/>/) == -1) {
+      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) === -1
+        && ar[ix].search(/\/>/) === -1) {
         str = !inComment ? str += shift[deep++] + ar[ix] : str += ar[ix];
       } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
         str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
@@ -246,39 +246,39 @@
       return removeChildren(element);
     };
     element.addClass = function (...args) {
-      return addClass(element, args);
+      return addClass(element, ...args);
     };
     element.removeClass = function (...args) {
-      return removeClass(element, args);
+      return removeClass(element, ...args);
     };
     element.setClass = function (...args) {
-      return setClass(element, args);
+      return setClass(element, ...args);
     };
     element.setID = function (...args) {
-      return setID(element, args);
+      return setID(element, ...args);
     };
   };
   const attachViewBoxMethods = function (element) {
     element.setViewBox = function (...args) {
-      return setViewBox(element, args);
+      return setViewBox(element, ...args);
     };
     element.getViewBox = function (...args) {
-      return getViewBox(element, args);
+      return getViewBox(element, ...args);
     };
     element.scaleViewBox = function (...args) {
-      return scaleViewBox(element, args);
+      return scaleViewBox(element, ...args);
     };
     element.translateViewBox = function (...args) {
-      return translateViewBox(element, args);
+      return translateViewBox(element, ...args);
     };
     element.convertToViewBox = function (...args) {
-      return convertToViewBox(element, args);
+      return convertToViewBox(element, ...args);
     };
   };
   const attachAppendableMethods = function (element, methods) {
     Object.keys(methods).forEach((key) => {
       element[key] = function (...args) {
-        const g = methods[key](args);
+        const g = methods[key](...args);
         element.appendChild(g);
         return g;
       };
@@ -450,6 +450,7 @@
       "stroke:none",
       `fill:${p.color}`,
       p.fillStyle,
+      "pointer-events:none",
     ].filter(a => a !== "").join(";");
     const arrowStroke = [
       "fill:none",
@@ -471,6 +472,7 @@
       "stroke:none",
       `fill:${p.highlight}`,
       p.fillStyle,
+      "pointer-events:none",
     ].filter(a => a !== "").join(";");
     let start = startPoint;
     let end = endPoint;

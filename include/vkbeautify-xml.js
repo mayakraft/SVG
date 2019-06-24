@@ -39,15 +39,15 @@ export default function (text, step) {
       // end comment  or <![CDATA[...]]> //
       str += ar[ix];
       inComment = false;
-    } else if ( /^<\w/.exec(ar[ix-1]) && /^<\/\w/.exec(ar[ix])
-      && /^<[\w:\-\.\,]+/.exec(ar[ix-1])
+    } else if (/^<\w/.exec(ar[ix - 1]) && /^<\/\w/.exec(ar[ix])
+      && /^<[\w:\-\.\,]+/.exec(ar[ix - 1])
       == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace("/", "")) {
       // <elm></elm> //
       str += ar[ix];
       if (!inComment) { deep -= 1; }
-    } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) == -1
+    } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) === -1
       // <elm> //
-      && ar[ix].search(/\/>/) == -1) {
+      && ar[ix].search(/\/>/) === -1) {
       str = !inComment ? str += shift[deep++] + ar[ix] : str += ar[ix];
     } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
       // <elm>...</elm> //
