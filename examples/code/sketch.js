@@ -32,11 +32,50 @@ const CodeSVGxSave = function (container) {
   container.appendChild(menuButton);
 
   const app = CodeSVG(container);
+
+  // no longer using these, replaced with lz-compression encoding
+  const btoa_url = function (string) {
+    return btoa(string).replace(/\//g, "_").replace(/\+/g, "-");
+  };
+
+  const atob_url = function (string) {
+    return atob(string.replace(/_/g, "/").replace(/-/g, "+"));
+  };
+
+  const readURLBar = function () {
+    let url = new URL(window.location.href);
+    let c = url.searchParams.get("code");
+    if (c !== null) {
+      let decoded = LZString.decompressFromEncodedURIComponent(c);
+      if (decoded === "" || decoded === null) {
+        decoded = atob_url(c);
+      }
+      injectCode(decoded);
+    }
+  };
+
+  const updateURLBar = function (encoded) {
+    if (encoded == null || encoded == "") {
+      window.history.replaceState(null, null, "/");
+    } else {
+      window.history.replaceState(null, null, "/?code="+encoded);
+    }
+  };
+
+  app.didUpdate = function () {
+    updateURLBar(LZString.compressToEncodedURIComponent(code));
+  };
+
+  readURLBar();
+
   document.querySelectorAll(".menu-button").onclick = function () {
     app.svg.save();
   };
   return app;
 };
+
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const app = CodeSVGxSave(document.querySelectorAll(".app")[0]);

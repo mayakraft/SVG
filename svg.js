@@ -456,15 +456,43 @@
   };
 
   var svgNS = "http://www.w3.org/2000/svg";
-  var setPoints = function setPoints(polygon, pointsArray) {
-    if (pointsArray == null || pointsArray.constructor !== Array) {
-      return;
+
+  var is_iterable = function is_iterable(obj) {
+    return obj != null && typeof obj[Symbol.iterator] === "function";
+  };
+
+  var flatten_input = function flatten_input() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
     }
 
-    var pointsString = pointsArray.map(function (el) {
-      return el.constructor === Array ? el : [el.x, el.y];
-    }).reduce(function (prev, curr) {
-      return "".concat(prev).concat(curr[0], ",").concat(curr[1], " ");
+    switch (args.length) {
+      case undefined:
+      case 0:
+        return args;
+
+      case 1:
+        return is_iterable(args[0]) && typeof args[0] !== "string" ? flatten_input.apply(void 0, _toConsumableArray(args[0])) : [args[0]];
+
+      default:
+        return Array.from(args).map(function (a) {
+          return is_iterable(a) ? _toConsumableArray(flatten_input(a)) : a;
+        }).reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+    }
+  };
+
+  var setPoints = function setPoints(polygon) {
+    for (var _len2 = arguments.length, pointsArray = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      pointsArray[_key2 - 1] = arguments[_key2];
+    }
+
+    var flat = flatten_input.apply(void 0, pointsArray);
+    var pointsString = _typeof(flat[0]) === "object" && flat[0].x != null ? flat.reduce(function (prev, curr) {
+      return "".concat(prev).concat(curr.x, ",").concat(curr.y, " ");
+    }, "") : Array.from(Array(flat.length / 2)).reduce(function (a, b, i) {
+      return "".concat(a).concat(flat[i * 2], ",").concat(flat[i * 2 + 1], " ");
     }, "");
     polygon.setAttributeNS(null, "points", pointsString);
   };
@@ -498,8 +526,8 @@
   var attachPointsMethods = function attachPointsMethods(shape) {
     Object.defineProperty(shape, "setPoints", {
       value: function value() {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
         }
 
         setPoints(shape, args);
@@ -510,8 +538,8 @@
   var attachArcMethods = function attachArcMethods(shape) {
     Object.defineProperty(shape, "setArc", {
       value: function value() {
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
         setArc.apply(void 0, [shape].concat(args));
@@ -522,8 +550,8 @@
   var attachBezierMethods = function attachBezierMethods(shape) {
     Object.defineProperty(shape, "setBezier", {
       value: function value() {
-        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
+        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
         }
 
         setBezier.apply(void 0, [shape].concat(args));
@@ -615,16 +643,26 @@
     attachClassMethods(shape);
     return shape;
   };
-  var polygon = function polygon(pointsArray) {
+  var polygon = function polygon() {
     var shape = win.document.createElementNS(svgNS, "polygon");
-    setPoints(shape, pointsArray);
+
+    for (var _len6 = arguments.length, pointsArray = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      pointsArray[_key6] = arguments[_key6];
+    }
+
+    setPoints.apply(void 0, [shape].concat(pointsArray));
     attachClassMethods(shape);
     attachPointsMethods(shape);
     return shape;
   };
-  var polyline = function polyline(pointsArray) {
+  var polyline = function polyline() {
     var shape = win.document.createElementNS(svgNS, "polyline");
-    setPoints(shape, pointsArray);
+
+    for (var _len7 = arguments.length, pointsArray = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+      pointsArray[_key7] = arguments[_key7];
+    }
+
+    setPoints.apply(void 0, [shape].concat(pointsArray));
     attachClassMethods(shape);
     attachPointsMethods(shape);
     return shape;
