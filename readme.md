@@ -1,6 +1,8 @@
 # SVG
 
-A simple creative coding Javascript library to make SVG interactive and a little bit more accessible
+[![Build Status](https://travis-ci.org/robbykraft/SVG.svg?branch=master)](https://travis-ci.org/robbykraft/SVG)
+
+make it a little easier to code and play with SVGs
 
 # Usage
 
@@ -12,18 +14,18 @@ Include svg.js in your project.
 
 # Introduction
 
-At its simplest, this library can be used to create SVG elements. 
+Primarily, this library can create SVG elements.
 
 * `svg()` creates an `<svg>` 
 * `line()` creates a `<line>`
 
-you can use these methods to create familiar DOM level 1 objects, saving you time:
+calling:
 
 ```
 SVG.rect(10, 10, 640, 480);
 ```
 
-in place of:
+is essentially a substitute for:
 
 ```
 let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -33,7 +35,7 @@ rect.setAttribute("width", 640);
 rect.setAttribute("height", 480);
 ```
 
-At its most complex, this library includes an `image()` object which incorporates svg with event handling, automatic binding to the page, and wrapping convenience methods onto objects.
+Each of these objects are DOM level 1 elements, with occasionally the additional helper method, and in the case of the SVG() image itself, event handling and automatic binding to the page (if it exists).
 
 # Examples
 
@@ -144,29 +146,28 @@ creates
 </g>​
 ```
 
-# the Image() object
+# the SVG() object
 
-One Image() instance gives you an SVG with a bunch of convenience methods and event handlers. Optional initializers are 
+Optional initializers:
 
 * 2 numbers: width *then* height
-* string ID name, or DOM pointer to the parent element to append this SVG. otherwise the SVG will be appended to the body.
+* string or DOM object, this will be the parent to attach the SVG (otherwise the SVG will be appended to the body)
 
 ```javascript
-let sketch = SVG(640, 480, "parent-element");
+let image = SVG(640, 480, "parent-element");
 ```
-
-many of the methods are copied from greater SVG namespace, but often with fewer arguments as its implied that operations are performed on *this* SVG.
 
 ```javascript
 load(data, callback)
 save(filename)
 ```
 
-get or set the visible dimensions. not the viewBox
+get or set the visible dimensions. or the viewBox
 
 ```javascript
-width
-height
+sketch.w = 200  // "width", and "height" are already used by DOM level 1
+sketch.h = 100
+sketch.setViewBox(0, 0, 200, 100)
 ```
 
 removeChildren can accept an optional *group* argument, otherwise it removes all children from this SVG.
@@ -176,16 +177,9 @@ appendChild(node)
 removeChildren()
 ```
 
-
 ```javascript
 setViewBox(x, y, width, height)
 getViewBox()
-```
-
-a pointer to the actual DOM level SVG object
-
-```javascript
-svg
 ```
 
 event handlers
@@ -199,7 +193,7 @@ myImage.onMouseEnter = function(mouse) { }
 myImage.animate = function(event) { }
 ```
 
-all the mouse handlers provide this object
+the mouse handlers supply this object as the argument
 
 ```javascript
 {
@@ -210,16 +204,16 @@ all the mouse handlers provide this object
   prev: [0,0],      // on mouseMoved, the previous location
   x: 0,             //
   y: 0              // -- x and y, these are the same as position
-};
+}
 ```
 
-and the animate handler provides elapsed seconds (float) and frame number (integer)
+the animate handler supplies:
 
 ```javascript
 {
-  time: 0.0
-  frame: 0
-};
+  time: 0.0 // in seconds
+  frame: 0  // integer
+}
 ```
 
 # Appendix
