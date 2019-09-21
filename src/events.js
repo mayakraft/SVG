@@ -87,11 +87,9 @@ const Pointer = function (node) {
 }
 
 export default function (node) {
-
   let _node; // this gets set inside setup()
   let _pointer = Pointer(node);
   let _events = {};
-
 
   const fireEvents = function (event, events) {
     if (events == null) { return; }
@@ -100,7 +98,7 @@ export default function (node) {
     }
     let mouse = _pointer.getPointer();
     events.forEach(f => f(mouse));
-  }
+  };
 
   // these attach to incoming DOM events
   const mouseMoveHandler = function (event) {
@@ -112,7 +110,7 @@ export default function (node) {
     let events = _events[Names.begin];
     _pointer.didPress(event.clientX, event.clientY);
     fireEvents(event, events);
-  }
+  };
   const mouseUpHandler = function (event) {
     mouseMoveHandler(event);
     let events = _events[Names.end];
@@ -155,7 +153,7 @@ export default function (node) {
       deltaX: event.deltaX,
       deltaY: event.deltaY,
       deltaZ: event.deltaZ,
-    }
+    };
     e.position = convertToViewBox(_node, event.clientX, event.clientY);
     e.x = e.position[0];
     e.y = e.position[1];
@@ -180,7 +178,7 @@ export default function (node) {
           "frame": _animationFrame++
         };
         _animate(animObj);
-      }, 1000/60);
+      }, 1000 / 60);
     }
   };
 
@@ -211,14 +209,14 @@ export default function (node) {
   };
 
   const attachHandlers = function (element) {
-    Object.keys(handlers).forEach(key => 
+    Object.keys(handlers).forEach(key =>
       element.addEventListener(key, handlers[key], false)
     );
     updateAnimationHandler(_animate);
   };
 
   const removeHandlers = function (element) {
-    Object.keys(handlers).forEach(key => 
+    Object.keys(handlers).forEach(key =>
       element.removeEventListener(key, handlers[key], false)
     );
     if (_animate != null) {
@@ -227,7 +225,7 @@ export default function (node) {
   };
 
   const setup = function (node) {
-    if (_node != null) {
+    if (_node != null && typeof node.removeEventListener === "function") {
       removeHandlers(_node);
     }
     _node = node;
@@ -244,7 +242,9 @@ export default function (node) {
     Object.defineProperty(_node, "mouse", {get: function (){ return _pointer.getPointer(); }});
     Object.defineProperty(_node, "pointer", {get: function (){ return _pointer.getPointer(); }});
 
-    attachHandlers(_node);
+    if (typeof _node.addEventListener === "function") {
+      attachHandlers(_node);
+    }
   };
 
   setup(node);

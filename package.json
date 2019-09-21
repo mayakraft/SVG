@@ -1,10 +1,13 @@
 {
-  "name": "svg",
+  "name": "rabbit-ear-svg",
   "version": "0.1.0",
-  "description": "a Javascript library to make SVG interactive and accessible",
+  "description": "a small library to create and manipulate SVGs with an emphasis on interactivity",
   "main": "svg.js",
   "directories": {
     "example": "examples"
+  },
+  "scripts": {
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -27,9 +30,21 @@
   },
   "homepage": "https://github.com/robbykraft/SVG#readme",
   "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "babel-preset-minify": "^0.5.0",
+    "core-js": "^2.6.9",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.3",
+    "jest": "^24.8.0",
+    "rollup": "^1.12.4",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-babel-minify": "^8.0.0",
     "rollup-plugin-cleanup": "^3.1.1"
+  },
+  "dependencies": {
+    "xmldom": "^0.1.27"
   }
 }

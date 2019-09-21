@@ -29,7 +29,7 @@ const getClassList = function (xmlNode) {
 
 export const addClass = function (xmlNode, newClass) {
   if (xmlNode == null) {
-    return;
+    return xmlNode;
   }
   const classes = getClassList(xmlNode)
     .filter(c => c !== newClass);
@@ -40,7 +40,7 @@ export const addClass = function (xmlNode, newClass) {
 
 export const removeClass = function (xmlNode, removedClass) {
   if (xmlNode == null) {
-    return;
+    return xmlNode;
   }
   const classes = getClassList(xmlNode)
     .filter(c => c !== removedClass);
@@ -63,7 +63,7 @@ export const setID = function (xmlNode, idName) {
  */
 
 const downloadInBrowser = function (filename, contentsAsString) {
-  const blob = new window.Blob([contentsAsString], {type: "text/plain"});
+  const blob = new window.Blob([contentsAsString], { type: "text/plain" });
   const a = document.createElement("a");
   a.setAttribute("href", window.URL.createObjectURL(blob));
   a.setAttribute("download", filename);

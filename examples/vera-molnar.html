@@ -18,7 +18,7 @@ svg{
 <script type="text/javascript" src="../svg.js"></script>
 <script type="text/javascript">
 
-let sketch = SVG.image(window.innerWidth, window.innerWidth / 3);
+let sketch = SVG(window.innerWidth, window.innerWidth / 3);
 let rect = SVG.rect(0, 0, sketch.w, sketch.h);
 rect.setAttribute("fill", "white");
 sketch.appendChild(rect);
