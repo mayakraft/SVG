@@ -487,7 +487,7 @@
     shape.setAttributeNS(null, "d", d);
   };
 
-  var setBezierPoints = function setBezierPoints(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
+  var setBezier = function setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
     var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
       return p.join(",");
     });
@@ -495,14 +495,38 @@
     shape.setAttributeNS(null, "d", d);
   };
 
-  var attachBezierMethods = function attachBezierMethods(shape) {
-    Object.defineProperty(shape, "setBezierPoints", {
+  var attachPointsMethods = function attachPointsMethods(shape) {
+    Object.defineProperty(shape, "setPoints", {
       value: function value() {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        setBezierPoints.apply(void 0, [shape].concat(args));
+        setPoints(shape, args);
+      }
+    });
+  };
+
+  var attachArcMethods = function attachArcMethods(shape) {
+    Object.defineProperty(shape, "setArc", {
+      value: function value() {
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        setArc.apply(void 0, [shape].concat(args));
+      }
+    });
+  };
+
+  var attachBezierMethods = function attachBezierMethods(shape) {
+    Object.defineProperty(shape, "setBezier", {
+      value: function value() {
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        setBezier.apply(void 0, [shape].concat(args));
       }
     });
   };
@@ -595,12 +619,14 @@
     var shape = win.document.createElementNS(svgNS, "polygon");
     setPoints(shape, pointsArray);
     attachClassMethods(shape);
+    attachPointsMethods(shape);
     return shape;
   };
   var polyline = function polyline(pointsArray) {
     var shape = win.document.createElementNS(svgNS, "polyline");
     setPoints(shape, pointsArray);
     attachClassMethods(shape);
+    attachPointsMethods(shape);
     return shape;
   };
   var bezier = function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
@@ -626,12 +652,14 @@
     var shape = win.document.createElementNS(svgNS, "path");
     setArc(shape, x, y, radius, angleA, angleB, true);
     attachClassMethods(shape);
+    attachArcMethods(shape);
     return shape;
   };
   var arc = function arc(x, y, radius, angleA, angleB) {
     var shape = win.document.createElementNS(svgNS, "path");
     setArc(shape, x, y, radius, angleA, angleB, false);
     attachClassMethods(shape);
+    attachArcMethods(shape);
     return shape;
   };
 
