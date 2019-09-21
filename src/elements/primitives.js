@@ -7,17 +7,34 @@ import { attachClassMethods } from "./methods";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
+const is_iterable = obj => obj != null
+  && typeof obj[Symbol.iterator] === "function";
+const flatten_input = function (...args) {
+  switch (args.length) {
+    case undefined:
+    case 0: return args;
+    // only if its an array (is iterable) and NOT a string
+    case 1: return is_iterable(args[0]) && typeof args[0] !== "string"
+      ? flatten_input(...args[0])
+      : [args[0]];
+    default:
+      return Array.from(args)
+        .map(a => (is_iterable(a)
+          ? [...flatten_input(a)]
+          : a))
+        .reduce((a, b) => a.concat(b), []);
+  }
+};
+
 /**
  *  modifiers
  */
-export const setPoints = function (polygon, pointsArray) {
-  if (pointsArray == null || pointsArray.constructor !== Array) {
-    return;
-  }
-  const pointsString = pointsArray.map(el => (el.constructor === Array
-    ? el
-    : [el.x, el.y]))
-    .reduce((prev, curr) => `${prev}${curr[0]},${curr[1]} `, "");
+export const setPoints = function (polygon, ...pointsArray) {
+  const flat = flatten_input(...pointsArray);
+  const pointsString = typeof flat[0] === "object" && flat[0].x != null
+    ? flat.reduce((prev, curr) => `${prev}${curr.x},${curr.y} `, "")
+    : Array.from(Array(flat.length / 2))
+      .reduce((a, b, i) => `${a}${flat[i * 2]},${flat[i * 2 + 1]} `, "");
   polygon.setAttributeNS(null, "points", pointsString);
 };
 
@@ -117,17 +134,17 @@ export const rect = function (x, y, width, height) {
   return shape;
 };
 
-export const polygon = function (pointsArray) {
+export const polygon = function (...pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polygon");
-  setPoints(shape, pointsArray);
+  setPoints(shape, ...pointsArray);
   attachClassMethods(shape);
   attachPointsMethods(shape);
   return shape;
 };
 
-export const polyline = function (pointsArray) {
+export const polyline = function (...pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polyline");
-  setPoints(shape, pointsArray);
+  setPoints(shape, ...pointsArray);
   attachClassMethods(shape);
   attachPointsMethods(shape);
   return shape;

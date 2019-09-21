@@ -16,7 +16,7 @@ Include svg.js in your project.
 
 Primarily, this library can create SVG elements.
 
-* `svg()` creates an `<svg>` 
+* `SVG()` creates an `<svg>` 
 * `line()` creates a `<line>`
 
 calling:
