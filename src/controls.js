@@ -5,8 +5,7 @@
 import { circle } from "./elements/primitives";
 import { convertToViewBox } from "./viewBox";
 
-const controlPoint = function (parent, options) {
-  if (options == null) { options = {}; }
+const controlPoint = function (parent, options = {}) {
   if (options.radius == null) { options.radius = 1; }
   if (options.fill == null) { options.fill = "#000"; }
   if (options.stroke == null) { options.stroke = "none"; }
@@ -80,7 +79,7 @@ const controlPoint = function (parent, options) {
   };
 };
 
-export default function (parent, number, options) {
+const controls = function (parent, number, options) {
   // constructor options
   if (options == null) { options = {}; }
   if (options.parent == null) { options.parent = parent; }
@@ -167,4 +166,9 @@ export default function (parent, number, options) {
   });
 
   return points;
-}
+};
+
+export {
+  controls,
+  controlPoint
+};

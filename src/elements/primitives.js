@@ -2,8 +2,8 @@
  * SVG in Javascript (c) Robby Kraft
  */
 
+import window from "../environment/window";
 import { attachClassMethods } from "./methods";
-import { document } from "../window";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
@@ -44,11 +44,26 @@ export const setArc = function (shape, x, y, radius,
   shape.setAttributeNS(null, "d", d);
 };
 
+const setBezierPoints = function (shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
+  const pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]]
+    .map(p => p.join(","));
+  const d = `M ${pts[0]} C ${pts[1]} ${pts[2]} ${pts[3]}`;
+  shape.setAttributeNS(null, "d", d);
+};
+
+const attachBezierMethods = function (shape) {
+  Object.defineProperty(shape, "setBezierPoints", {
+    value: (...args) => {
+      setBezierPoints(shape, ...args);
+    }
+  });
+};
+
 /**
  *  primitives
  */
 export const line = function (x1, y1, x2, y2) {
-  const shape = document.createElementNS(svgNS, "line");
+  const shape = window.document.createElementNS(svgNS, "line");
   if (x1) { shape.setAttributeNS(null, "x1", x1); }
   if (y1) { shape.setAttributeNS(null, "y1", y1); }
   if (x2) { shape.setAttributeNS(null, "x2", x2); }
@@ -58,7 +73,7 @@ export const line = function (x1, y1, x2, y2) {
 };
 
 export const circle = function (x, y, radius) {
-  const shape = document.createElementNS(svgNS, "circle");
+  const shape = window.document.createElementNS(svgNS, "circle");
   if (x) { shape.setAttributeNS(null, "cx", x); }
   if (y) { shape.setAttributeNS(null, "cy", y); }
   if (radius) { shape.setAttributeNS(null, "r", radius); }
@@ -67,7 +82,7 @@ export const circle = function (x, y, radius) {
 };
 
 export const ellipse = function (x, y, rx, ry) {
-  const shape = document.createElementNS(svgNS, "ellipse");
+  const shape = window.document.createElementNS(svgNS, "ellipse");
   if (x) { shape.setAttributeNS(null, "cx", x); }
   if (y) { shape.setAttributeNS(null, "cy", y); }
   if (rx) { shape.setAttributeNS(null, "rx", rx); }
@@ -77,7 +92,7 @@ export const ellipse = function (x, y, rx, ry) {
 };
 
 export const rect = function (x, y, width, height) {
-  const shape = document.createElementNS(svgNS, "rect");
+  const shape = window.document.createElementNS(svgNS, "rect");
   if (x) { shape.setAttributeNS(null, "x", x); }
   if (y) { shape.setAttributeNS(null, "y", y); }
   if (width) { shape.setAttributeNS(null, "width", width); }
@@ -87,14 +102,14 @@ export const rect = function (x, y, width, height) {
 };
 
 export const polygon = function (pointsArray) {
-  const shape = document.createElementNS(svgNS, "polygon");
+  const shape = window.document.createElementNS(svgNS, "polygon");
   setPoints(shape, pointsArray);
   attachClassMethods(shape);
   return shape;
 };
 
 export const polyline = function (pointsArray) {
-  const shape = document.createElementNS(svgNS, "polyline");
+  const shape = window.document.createElementNS(svgNS, "polyline");
   setPoints(shape, pointsArray);
   attachClassMethods(shape);
   return shape;
@@ -104,14 +119,15 @@ export const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
   const pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]]
     .map(p => p.join(","));
   const d = `M ${pts[0]} C ${pts[1]} ${pts[2]} ${pts[3]}`;
-  const shape = document.createElementNS(svgNS, "path");
+  const shape = window.document.createElementNS(svgNS, "path");
   shape.setAttributeNS(null, "d", d);
   attachClassMethods(shape);
+  attachBezierMethods(shape);
   return shape;
 };
 
 export const text = function (textString, x, y) {
-  const shape = document.createElementNS(svgNS, "text");
+  const shape = window.document.createElementNS(svgNS, "text");
   shape.innerHTML = textString;
   shape.setAttributeNS(null, "x", x);
   shape.setAttributeNS(null, "y", y);
@@ -120,14 +136,14 @@ export const text = function (textString, x, y) {
 };
 
 export const wedge = function (x, y, radius, angleA, angleB) {
-  const shape = document.createElementNS(svgNS, "path");
+  const shape = window.document.createElementNS(svgNS, "path");
   setArc(shape, x, y, radius, angleA, angleB, true);
   attachClassMethods(shape);
   return shape;
 };
 
 export const arc = function (x, y, radius, angleA, angleB) {
-  const shape = document.createElementNS(svgNS, "path");
+  const shape = window.document.createElementNS(svgNS, "path");
   setArc(shape, x, y, radius, angleA, angleB, false);
   attachClassMethods(shape);
   return shape;

@@ -11,82 +11,49 @@ import * as DOM from "./DOM";
 import * as ViewBox from "./viewBox";
 import { svg, setupSVG } from "./elements/main";
 import Events from "./events";
+import window from "./environment/window";
 
-export default function () {
-  // create a new SVG
-  let _svg = svg();
-
-  // get constructor parameters
-  let params = Array.from(arguments);
-
-  // setup that can occur immediately
-  initSize(_svg, params);
-  attachSVGMethods(_svg);
-  _svg.events = Events(_svg);
-
-  const setup = function () {
-    // setup that requires a loaded DOM. append to parent, run callback
-    initSize(_svg, params);
-    getElement(params).appendChild(_svg);
-    params.filter((arg) => typeof arg === "function")
-      .forEach((func) => func())
-  }
-
-  if (document.readyState === 'loading') {
-    // wait until after the <body> has rendered
-    document.addEventListener('DOMContentLoaded', setup);
-  } else {
-    setup();
-  }
-
-  return _svg;
+const getElement = function (...params) {
+  const element = params.filter(arg => arg instanceof HTMLElement).shift();
+  const idElement = params
+    .filter(a => typeof a === "string" || a instanceof String)
+    .map(str => window.document.getElementById(str))
+    .shift();
+  if (element != null) { return element; }
+  return (idElement != null
+    ? idElement
+    : window.document.body);
 };
 
-const getElement = function (params) {
-  let element = params.filter((arg) =>
-      arg instanceof HTMLElement
-    ).shift();
-  let idElement = params.filter((a) =>
-      typeof a === "string" || a instanceof String)
-    .map(str => document.getElementById(str))
-    .shift();
-  return (element != null
-    ? element
-    : (idElement != null
-      ? idElement
-      : document.body));
-}
-
-const initSize = function (svg, params) {
-  let numbers = params.filter((arg) => !isNaN(arg));
+const initSize = function (svgElement, params) {
+  const numbers = params.filter(arg => !isNaN(arg));
   if (numbers.length >= 2) {
-    svg.setAttributeNS(null, "width", numbers[0]);
-    svg.setAttributeNS(null, "height", numbers[1]);
-    ViewBox.setViewBox(svg, 0, 0, numbers[0], numbers[1]);
-  } 
-  else if (svg.getAttribute("viewBox") == null) {
+    svgElement.setAttributeNS(null, "width", numbers[0]);
+    svgElement.setAttributeNS(null, "height", numbers[1]);
+    ViewBox.setViewBox(svgElement, 0, 0, numbers[0], numbers[1]);
+  } else if (svgElement.getAttribute("viewBox") == null) {
     // set a viewBox if viewBox doesn't yet exist
-    let rect = svg.getBoundingClientRect();
-    ViewBox.setViewBox(svg, 0, 0, rect.width, rect.height);
+    const rect = svgElement.getBoundingClientRect();
+    ViewBox.setViewBox(svgElement, 0, 0, rect.width, rect.height);
   }
-}
+};
 
 const attachSVGMethods = function (element) {
   Object.defineProperty(element, "w", {
-    get: function (){ return DOM.getWidth(element); },
-    set: function (w){ element.setAttributeNS(null, "width", w); }
+    get: () => DOM.getWidth(element),
+    set: w => element.setAttributeNS(null, "width", w),
   });
   Object.defineProperty(element, "h", {
-    get: function (){ return DOM.getHeight(element); },
-    set: function (h){ element.setAttributeNS(null, "height", h); }
+    get: () => DOM.getHeight(element),
+    set: h => element.setAttributeNS(null, "height", h),
   });
-  element.getWidth = function () { return DOM.getWidth(element); }
-  element.getHeight = function () { return DOM.getHeight(element); }
-  element.setWidth = function (w) { element.setAttributeNS(null, "width", w); }
-  element.setHeight = function (h) { element.setAttributeNS(null, "height", h); }
+  element.getWidth = () => DOM.getWidth(element);
+  element.getHeight = () => DOM.getHeight(element);
+  element.setWidth = w => element.setAttributeNS(null, "width", w);
+  element.setHeight = h => element.setAttributeNS(null, "height", h);
   element.save = function (filename = "image.svg") {
     return DOM.save(element, filename);
-  }
+  };
   element.load = function (data, callback) {
     DOM.load(data, function (newSVG, error) {
       let parent = element.parentNode;
@@ -103,5 +70,35 @@ const attachSVGMethods = function (element) {
       // if (parent != null) { parent.appendChild(element); }
       if (callback != null) { callback(element, error); }
     });
+  };
+};
+
+const svgImage = function (...params) {
+  // create a new SVG
+  const image = svg();
+
+  // setup that can occur immediately
+  initSize(image, params);
+  attachSVGMethods(image);
+  image.events = Events(image);
+
+  const setup = function () {
+    // setup that requires a loaded DOM. append to parent, run callback
+    initSize(image, params);
+    const parent = getElement(...params);
+    if (parent != null) { parent.appendChild(image); }
+    params.filter(arg => typeof arg === "function")
+      .forEach(func => func());
+  };
+
+  if (window.document.readyState === "loading") {
+    // wait until after the <body> has rendered
+    window.document.addEventListener("DOMContentLoaded", setup);
+  } else {
+    setup();
   }
-}
+
+  return image;
+};
+
+export default svgImage;

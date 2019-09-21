@@ -48,7 +48,7 @@ Read [this introduction blog post](https://blog.rabbitear.org/2018/12/29/svg/) a
 The following code draws the [Japanese flag](https://robbykraft.github.io/SVG/examples/japanese-flag.html):
 
 ```javascript
-let flag = SVG.image(600, 400);
+let flag = SVG(600, 400);
 let rect = flag.rect(0, 0, flag.w, flag.h);
 let circle = flag.circle(flag.w/2, flag.h/2, flag.h*0.3);
 
@@ -152,7 +152,7 @@ One Image() instance gives you an SVG with a bunch of convenience methods and ev
 * string ID name, or DOM pointer to the parent element to append this SVG. otherwise the SVG will be appended to the body.
 
 ```javascript
-let sketch = SVG.image(640, 480, "parent-element");
+let sketch = SVG(640, 480, "parent-element");
 ```
 
 many of the methods are copied from greater SVG namespace, but often with fewer arguments as its implied that operations are performed on *this* SVG.

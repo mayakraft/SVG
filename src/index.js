@@ -46,36 +46,68 @@ import {
   load,
 } from "./DOM";
 
+import { controls, controlPoint } from "./controls";
 import image from "./image";
-import controls from "./controls";
 
-export {
-  svg,
-  group,
-  style,
-  line,
-  circle,
-  ellipse,
-  rect,
-  polygon,
-  polyline,
-  bezier,
-  text,
-  wedge,
-  arc,
-  setPoints,
-  setArc,
-  regularPolygon,
-  straightArrow,
-  arcArrow,
-  setViewBox,
-  getViewBox,
-  scaleViewBox,
-  translateViewBox,
-  convertToViewBox,
-  removeChildren,
-  save,
-  load,
-  image,
-  controls,
-};
+image.svg = svg;
+image.group = group;
+image.style = style;
+image.line = line;
+image.circle = circle;
+image.ellipse = ellipse;
+image.rect = rect;
+image.polygon = polygon;
+image.polyline = polyline;
+image.bezier = bezier;
+image.text = text;
+image.wedge = wedge;
+image.arc = arc;
+image.setPoints = setPoints;
+image.setArc = setArc;
+image.regularPolygon = regularPolygon;
+image.straightArrow = straightArrow;
+image.arcArrow = arcArrow;
+image.setViewBox = setViewBox;
+image.getViewBox = getViewBox;
+image.scaleViewBox = scaleViewBox;
+image.translateViewBox = translateViewBox;
+image.convertToViewBox = convertToViewBox;
+image.removeChildren = removeChildren;
+image.save = save;
+image.load = load;
+image.controls = controls;
+image.controlPoint = controlPoint;
+
+export default image;
+
+// export {
+//   svg,
+//   group,
+//   style,
+//   line,
+//   circle,
+//   ellipse,
+//   rect,
+//   polygon,
+//   polyline,
+//   bezier,
+//   text,
+//   wedge,
+//   arc,
+//   setPoints,
+//   setArc,
+//   regularPolygon,
+//   straightArrow,
+//   arcArrow,
+//   setViewBox,
+//   getViewBox,
+//   scaleViewBox,
+//   translateViewBox,
+//   convertToViewBox,
+//   removeChildren,
+//   save,
+//   load,
+//   image,
+//   controls,
+//   controlPoint,
+// };

@@ -1,7 +1,8 @@
-// import minify from 'rollup-plugin-babel-minify';
 import cleanup from "rollup-plugin-cleanup";
+import babel from "rollup-plugin-babel";
+import minify from "rollup-plugin-babel-minify";
 
-module.exports = {
+module.exports = [{
   input: "./src/index.js",
   output: {
     name: "SVG",
@@ -15,9 +16,28 @@ module.exports = {
       comments: "none",
       maxEmptyLines: 0,
     }),
-    // minify( {
-    //  bannerNewLine: true,
-    //  comments: false
-    // } )
+    babel({
+      babelrc: false,
+      presets: [["@babel/env", { modules: false }]],
+    }),
   ],
-};
+},
+{
+  input: "src/index.js",
+  output: {
+    name: "SVG",
+    file: "svg.min.js",
+    format: "umd",
+    // format: "es",
+    banner: "/* SVG (c) Robby Kraft, MIT License */",
+  },
+  plugins: [
+    cleanup({ comments: "none" }),
+    babel({
+      babelrc: false,
+      presets: [["@babel/env", { modules: false }]],
+    }),
+    minify({ mangle: { names: false } }),
+  ],
+},
+];

@@ -30,9 +30,7 @@ import {
   attachAppendableMethods,
 } from "./methods";
 
-import {
-  document,
-} from "../window";
+import window from "../environment/window";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
@@ -59,7 +57,7 @@ export const setupSVG = function (svgImage) {
 };
 
 export const svg = function () {
-  const svgImage = document.createElementNS(svgNS, "svg");
+  const svgImage = window.document.createElementNS(svgNS, "svg");
   svgImage.setAttribute("version", "1.1");
   svgImage.setAttribute("xmlns", svgNS);
   setupSVG(svgImage);
@@ -67,17 +65,17 @@ export const svg = function () {
 };
 
 export const group = function () {
-  const g = document.createElementNS(svgNS, "g");
+  const g = window.document.createElementNS(svgNS, "g");
   attachClassMethods(g);
   attachAppendableMethods(g, drawMethods);
   return g;
 };
 
 export const style = function () {
-  const s = document.createElementNS(svgNS, "style");
+  const s = window.document.createElementNS(svgNS, "style");
   s.setAttribute("type", "text/css");
   return s;
 };
 
-// circular involvement, this is required after definition
+// circular reference, this is required after definition
 drawMethods.group = group;
