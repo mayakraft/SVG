@@ -13,7 +13,7 @@ c.setAttribute("fill", "#158");
 `,
 // app.svg.animate = function(event) {
 //   let drift = 50*Math.sin(event.time);
-//   c.setBezierPoints(
+//   c.setBezier(
 //     0, 0,
 //     50 + drift, 50 - drift,
 //     50 - drift, 50 + drift,

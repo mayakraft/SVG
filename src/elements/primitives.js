@@ -44,17 +44,33 @@ export const setArc = function (shape, x, y, radius,
   shape.setAttributeNS(null, "d", d);
 };
 
-const setBezierPoints = function (shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
+const setBezier = function (shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
   const pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]]
     .map(p => p.join(","));
   const d = `M ${pts[0]} C ${pts[1]} ${pts[2]} ${pts[3]}`;
   shape.setAttributeNS(null, "d", d);
 };
 
-const attachBezierMethods = function (shape) {
-  Object.defineProperty(shape, "setBezierPoints", {
+const attachPointsMethods = function (shape) {
+  Object.defineProperty(shape, "setPoints", {
     value: (...args) => {
-      setBezierPoints(shape, ...args);
+      setPoints(shape, args);
+    }
+  });
+};
+
+const attachArcMethods = function (shape) {
+  Object.defineProperty(shape, "setArc", {
+    value: (...args) => {
+      setArc(shape, ...args);
+    }
+  });
+};
+
+const attachBezierMethods = function (shape) {
+  Object.defineProperty(shape, "setBezier", {
+    value: (...args) => {
+      setBezier(shape, ...args);
     }
   });
 };
@@ -105,6 +121,7 @@ export const polygon = function (pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polygon");
   setPoints(shape, pointsArray);
   attachClassMethods(shape);
+  attachPointsMethods(shape);
   return shape;
 };
 
@@ -112,6 +129,7 @@ export const polyline = function (pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polyline");
   setPoints(shape, pointsArray);
   attachClassMethods(shape);
+  attachPointsMethods(shape);
   return shape;
 };
 
@@ -139,6 +157,7 @@ export const wedge = function (x, y, radius, angleA, angleB) {
   const shape = window.document.createElementNS(svgNS, "path");
   setArc(shape, x, y, radius, angleA, angleB, true);
   attachClassMethods(shape);
+  attachArcMethods(shape);
   return shape;
 };
 
@@ -146,5 +165,6 @@ export const arc = function (x, y, radius, angleA, angleB) {
   const shape = window.document.createElementNS(svgNS, "path");
   setArc(shape, x, y, radius, angleA, angleB, false);
   attachClassMethods(shape);
+  attachArcMethods(shape);
   return shape;
 };
