@@ -166,17 +166,18 @@ body {
 	<h1>Notes</h1>
 	<h3>style</h3>
 		<pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)</code></pre>
-		<p>if you draw a line, you might notice that it doesn't show up. unfortunately, this is the SVG specification <i>working</i>.</p>
+		<p>note: many objects like <b>line</b> won't immediately be visible. a shape's default style is</p>
+		<ul><li><b>stroke: none</b></li><li><b>fill: black</b> <i>(a line has zero fill)</i></li></ul>
 		<pre><code><f>let</f> l <key>=</key> <f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>l.<f>setAttribute</f>(<str>"stroke"</str>, <str>"#F08"</str>)</code></pre>
-		<p>until you apply styles, shapes have no stroke but <i>do</i> have a black fill, making shapes like a rect or circle initially visible. to make a line visible, set a stroke, like above.</p><p>there are three ways to apply style:</p>
+		<p>there are three ways to apply style:</p>
 		<ul>
-			<li><b>setAttribute</b>, apply one style parameter and value</li>
-			<li><b>inline style</b>, use setAttribute to set "style" to a ";"-separated CSS string</li>
-			<li>define all style in a <b>CSS stylesheet</b></li>
+			<li><b>setAttribute</b>, one parameter at a time. setAttribute("stroke-width", 4)</li>
+			<li><b>inline style</b>, setAttribute("style", a semicolon-separated CSS property:value string)</li>
+			<li><b>CSS stylesheet</b>, to be referenced somewhere in the .html</li>
 		</ul>
 		<pre><code>l.<f>setAttribute</f>(<str>"class"</str>, <str>"pen-line"</str>)</code></pre>
 	<h3>DOM</h3>
-		<p>every geometry object is a <a href="https://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#ID-745549614">DOM node</a> and is receptive to all relevant DOM Level 1 methods. all styling is in CSS and operations are easily searchable; everything is possible including CSS animations and transforms.</p>
+		<p>every geometry object is a <a href="https://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#ID-745549614">DOM node</a> and is receptive to all relevant DOM Level 1 methods including animations and transforms.</p>
 	</div>
 
 </body>

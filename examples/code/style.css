@@ -58,10 +58,56 @@ svg {
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
-  font-size: 70%;
+  font-size: 100%;
 }
 .menu-button p {
   margin: 0;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   padding: 0;
+}
+.share-button {
+  position: absolute;
+  z-index: 9;
+  left: 50vw;
+  top: 0rem;
+  width: 3rem;
+  height: 1.5rem;
+  border-radius: 0rem 0 1.5rem 1.5rem;
+  margin-left: -1.5rem;
+  background-color: rgb(64,98,85); /*#158;*/
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  font-size: 100%;
+}
+.share-button p {
+  margin: 0;
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+.question-button {
+  position: absolute;
+  z-index: 10;
+  left: 2.5rem;
+  bottom: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 1rem;
+  margin-left: -2rem;
+  background-color: #ec3;
+  color: #333;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+.question-button p {
+  font-weight: 800;
+  font-family: monospace, sans-serif;
+  font-size: 150%;
 }
