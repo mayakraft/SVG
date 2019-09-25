@@ -14,20 +14,21 @@ Include svg.js in your project.
 
 # Introduction
 
-Primarily, this library can create SVG elements.
+`SVG` is the global namespace, the only one. Calling it as a function creates an SVG.
 
-* `SVG()` creates an `<svg>` 
-* `line()` creates a `<line>`
-
-calling:
-
+```javascript
+let mySVG = SVG();
 ```
+
+`SVG()` creates an `<svg>`. All other initializers are under the namespace. `SVG.rect()` creates a `<line>`
+
+```javascript
 SVG.rect(10, 10, 640, 480);
 ```
 
-is essentially a substitute for:
+Calling the line above is a substitution for below,
 
-```
+```javascript
 let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 rect.setAttribute("x", 10);
 rect.setAttribute("y", 10);
@@ -35,7 +36,31 @@ rect.setAttribute("width", 640);
 rect.setAttribute("height", 480);
 ```
 
-Each of these objects are DOM level 1 elements, with occasionally the additional helper method, and in the case of the SVG() image itself, event handling and automatic binding to the page (if it exists).
+Calling `mySVG.rect` instead of `SVG.rect` will bind the new rect as a child to mySVG.
+
+```javascript
+mySVG.rect(10, 10, 640, 480);
+```
+
+automatically calls `mySVG.appendChild(rect)`. It's useful use this with groups. Groups can create geometry too.
+
+```javascript
+let mySVG = SVG();
+let layer1 = mySVG.group();
+layer1.rect(10, 10, 620, 460);
+```
+
+creates
+
+```html
+<svg>
+  <g>
+    ​<rect x=​"1" y=​"2" width=​"620" height=​"460">​</line>​
+  </g>​
+</svg>
+```
+
+Each of these objects are DOM level 1 elements.
 
 # Examples
 
@@ -60,101 +85,75 @@ circle.setAttribute("fill", "#BC002D");
 
 # Methods
 
-create an SVG. create a group (a container, like *layers* in Photoshop)
+container types
 
 ```javascript
-svg(className, id, parent)
-group(className, id, parent)
+SVG()
+SVG.group()
 ```
 
 save or load an SVG
 
 ```javascript
-save(svg, filename = "image.svg")
-load(input, callback)
+SVG.save(svg, filename = "image.svg")
+SVG.load(input, callback)
 ```
 
 geometry primitives
 
 ```javascript
-line(x1, y1, x2, y2, className, id, parent)
-circle(x, y, radius, className, id, parent)
-rect(x, y, width, height, className, id, parent)
-polygon(pointsArray, className, id, parent)
-polyline(pointsArray, className, id, parent)
-bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY, className, id, parent)
-text(textString, x, y, className, id, parent)
-wedge(x, y, radius, startAngle, endAngle, className, id, parent)
-arc(x, y, radius, startAngle, endAngle, className, id, parent)
-curve(fromX, fromY, midX, midY, toX, toY, className, id)
-regularPolygon(cX, cY, radius, sides, className, id, parent)
+SVG.line(x1, y1, x2, y2, className, id, parent)
+SVG.circle(x, y, radius, className, id, parent)
+SVG.rect(x, y, width, height, className, id, parent)
+SVG.polygon(pointsArray, className, id, parent)
+SVG.polyline(pointsArray, className, id, parent)
+SVG.bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY, className, id, parent)
+SVG.text(textString, x, y, className, id, parent)
+SVG.wedge(x, y, radius, startAngle, endAngle, className, id, parent)
+SVG.arc(x, y, radius, startAngle, endAngle, className, id, parent)
+SVG.curve(fromX, fromY, midX, midY, toX, toY, className, id)
+SVG.regularPolygon(cX, cY, radius, sides, className, id, parent)
 ```
 
 update geometry for polygon/polyline or arc/wedge
 
 ```javascript
-setPoints(polygon, pointsArray)
-setArc(shape, x, y, radius, startAngle, endAngle, includeCenter = false)
-```
-
-class/id convenience methods
-
-```javascript
-addClass(xmlNode, newClass)
-removeClass(xmlNode, newClass)
-setId(xmlNode, newID)
+line.setPoints(polygon, pointsArray)
+bezier.setArc(shape, x, y, radius, startAngle, endAngle, includeCenter = false)
 ```
 
 clear the contents of an SVG or a group
 
 ```javascript
-removeChildren(group)
+group.removeChildren(group)
 ```
 
 setDefaultViewBox matches viewBox to visible dimensions. getViewBox returns an array of 4 numbers
 
 ```javascript
-setViewBox(svg, x, y, width, height, padding = 0)
-setDefaultViewBox(svg)
-getViewBox(svg)
+SVG.setViewBox(svg, x, y, width, height, padding = 0)
+SVG.setDefaultViewBox(svg)
+SVG.getViewBox(svg)
 ```
 
 these alter the viewBox. no CSS transforms here.
 
 ```javascript
-scale(svg, scale, origin_x = 0, origin_y = 0)
-translate(svg, dx, dy)
+SVG.scale(svg, scale, origin_x = 0, origin_y = 0)
+SVG.translate(svg, dx, dy)
 ```
 
 ![example](https://robbykraft.github.io/SVG/examples/vera.svg)
-
-everything is accessible under the `SVG` namespace. additionally, draw methods are attached to `<svg>` and `<g>` elements saving you the step of calling `appendChild`.
-
-1. create an svg or group
-2. draw *from* this element
-
-```javascript
-let g = SVG.group()
-g.line(1,2,3,4)
-```
-
-creates
-
-```html
-<g>
-    ​<line x1=​"1" y1=​"2" x2=​"3" y2=​"4">​</line>​
-</g>​
-```
 
 # the SVG() object
 
 Optional initializers:
 
 * 2 numbers: width *then* height
-* string or DOM object, this will be the parent to attach the SVG (otherwise the SVG will be appended to the body)
+* DOM object, this will be the parent to attach the SVG (otherwise the SVG will be appended to the body)
 
 ```javascript
-let image = SVG(640, 480, "parent-element");
+let image = SVG(640, 480, parent_element);
 ```
 
 ```javascript

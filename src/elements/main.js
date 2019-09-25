@@ -28,6 +28,7 @@ import {
   attachClassMethods,
   attachViewBoxMethods,
   attachAppendableMethods,
+  attachStyleMethods
 } from "./methods";
 
 import window from "../environment/window";
@@ -61,6 +62,7 @@ export const svg = function () {
   svgImage.setAttribute("version", "1.1");
   svgImage.setAttribute("xmlns", svgNS);
   setupSVG(svgImage);
+  // attachStyleMethods(svgImage);
   return svgImage;
 };
 
@@ -68,7 +70,15 @@ export const group = function () {
   const g = window.document.createElementNS(svgNS, "g");
   attachClassMethods(g);
   attachAppendableMethods(g, drawMethods);
+  attachStyleMethods(g);
   return g;
+};
+
+export const clipPath = function (id) {
+  const clip = window.document.createElementNS(svgNS, "clipPath");
+  if (id != null) { clip.setAttribute("id", "clip-path"); }
+  attachStyleMethods(clip);
+  return clip;
 };
 
 export const style = function () {
@@ -79,3 +89,5 @@ export const style = function () {
 
 // circular reference, this is required after definition
 drawMethods.group = group;
+drawMethods.clipPath = clipPath;
+drawMethods.style = style;
