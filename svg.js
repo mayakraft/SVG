@@ -454,6 +454,37 @@
       };
     });
   };
+  var attributes = ["accent-height", "accumulate", "additive", "alignment-baseline", "allowReorder", "alphabetic", "amplitude", "arabic-form", "ascent", "attributeName", "attributeType", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-path", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "dx", "dy", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "lengthAdjust", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mask", "maskContentUnits", "maskUnits", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "rotate", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "textLength", "to", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
+
+  var toCamel = function toCamel(s) {
+    return s.replace(/([-_][a-z])/ig, function ($1) {
+      return $1.toUpperCase().replace("-", "").replace("_", "");
+    });
+  };
+
+  var attachStyleMethods = function attachStyleMethods(element) {
+    var el = element;
+    attributes.forEach(function (key) {
+      el[toCamel(key)] = function () {
+        for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          args[_key6] = arguments[_key6];
+        }
+
+        element.setAttribute.apply(element, [key].concat(args));
+        return element;
+      };
+    });
+
+    el.appendTo = function (parent) {
+      element.remove();
+
+      if (parent != null) {
+        parent.appendChild(element);
+      }
+
+      return el;
+    };
+  };
 
   var svgNS = "http://www.w3.org/2000/svg";
 
@@ -579,6 +610,7 @@
     }
 
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     return shape;
   };
   var circle = function circle(x, y, radius) {
@@ -597,6 +629,7 @@
     }
 
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     return shape;
   };
   var ellipse = function ellipse(x, y, rx, ry) {
@@ -619,6 +652,7 @@
     }
 
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     return shape;
   };
   var rect = function rect(x, y, width, height) {
@@ -641,6 +675,7 @@
     }
 
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     return shape;
   };
   var polygon = function polygon() {
@@ -652,6 +687,7 @@
 
     setPoints.apply(void 0, [shape].concat(pointsArray));
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     attachPointsMethods(shape);
     return shape;
   };
@@ -664,6 +700,7 @@
 
     setPoints.apply(void 0, [shape].concat(pointsArray));
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     attachPointsMethods(shape);
     return shape;
   };
@@ -675,6 +712,7 @@
     var shape = win.document.createElementNS(svgNS, "path");
     shape.setAttributeNS(null, "d", d);
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     attachBezierMethods(shape);
     return shape;
   };
@@ -684,12 +722,14 @@
     shape.setAttributeNS(null, "x", x);
     shape.setAttributeNS(null, "y", y);
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     return shape;
   };
   var wedge = function wedge(x, y, radius, angleA, angleB) {
     var shape = win.document.createElementNS(svgNS, "path");
     setArc(shape, x, y, radius, angleA, angleB, true);
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     attachArcMethods(shape);
     return shape;
   };
@@ -697,6 +737,7 @@
     var shape = win.document.createElementNS(svgNS, "path");
     setArc(shape, x, y, radius, angleA, angleB, false);
     attachClassMethods(shape);
+    attachStyleMethods(shape);
     attachArcMethods(shape);
     return shape;
   };
@@ -913,7 +954,18 @@
     var g = win.document.createElementNS(svgNS$2, "g");
     attachClassMethods(g);
     attachAppendableMethods(g, drawMethods);
+    attachStyleMethods(g);
     return g;
+  };
+  var clipPath = function clipPath(id) {
+    var clip = win.document.createElementNS(svgNS$2, "clipPath");
+
+    if (id != null) {
+      clip.setAttribute("id", "clip-path");
+    }
+
+    attachStyleMethods(clip);
+    return clip;
   };
   var style = function style() {
     var s = win.document.createElementNS(svgNS$2, "style");
@@ -921,6 +973,8 @@
     return s;
   };
   drawMethods.group = group;
+  drawMethods.clipPath = clipPath;
+  drawMethods.style = style;
 
   var controlPoint = function controlPoint(parent) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -1624,6 +1678,7 @@
   svgImage.svg = svg;
   svgImage.group = group;
   svgImage.style = style;
+  svgImage.clipPath = clipPath;
   svgImage.line = line;
   svgImage.circle = circle;
   svgImage.ellipse = ellipse;

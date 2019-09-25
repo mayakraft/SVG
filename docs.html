@@ -3,6 +3,7 @@
 <style>
 html, body, h1, h2, h3, h4, h5, h6, pre, code, p, ul, li {
 	margin: 0;
+	background-color: #1d1e19;
 }
 body {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
@@ -14,32 +15,44 @@ h1, h2, h3, h4, h5, h6 {
 h1{
 	margin-top: 1rem;
 	margin-bottom: 0;
+	color: #444;
+	font-size: 4rem;
 }
 h3 {
 	margin: 2rem 0 0.5rem 0;
+	color: #bbb;
 }
 h3:first-of-type{
 	margin-top: 1rem;
 }
 p, ul {
-	background-color: #EEE;
+	background-color: #23251e;
 	padding: 0.5rem 1rem;
+	color: #ddd;
 }
-pre + p{
-	background-color: white;
+p{
 }
 pre {
-	background-color: black;
+	/*background-color: black;*/
 	color: white;
-	padding: 1rem 2rem;
+	padding: 1rem 1rem;
 	display: inline-block;
+	font-size: 170%;
+	margin-top: 1rem;
+}
+pre {
+	width: 80vw;
+	/*overflow: scroll;*/
+	overflow-x: scroll;
+	/*overflow: hidden;*/
 }
 ul{
 	list-style: none;
 	padding-left: 1em;
 }
 a, a:hover, a:visited, a:active {
-	color: #f92472;
+	color: #e53;
+	text-decoration: none;
 }
 div {
 	margin-top: 8rem;
@@ -48,22 +61,31 @@ div {
 	margin-right: -0.5rem;
 	padding-left: 0.75rem;
 	padding-right: 0.75rem;
-	border: 4px dashed #000;
+	border: 4px dashed #888;
 }
 div h1{
 	margin-top: 2rem;
-	margin-bottom: 2rem;
+	margin-bottom: 1rem;
 }
 div h3 {
 	margin: 2rem 0 0.5rem 0;
 }
-div p, div ul {
-	background-color: white;
+div p, div ul, div li {
+	background-color: #23251e;
 }
 div ul{
  	list-style: square;
  	padding-right: 3em;
 }
+pre.creates {
+	color: #888;
+	padding: 0.5rem 1rem;
+	margin: 0;
+	display: inline-block;
+	background-color: #23251e;
+	font-size: 130%;
+}
+
 f { /* function */
 	color: #66D9EF;
 }
@@ -82,6 +104,9 @@ str { /* string */
 p a{
 	font-weight: 800;
 }
+p + pre {
+	/*border-top: 3rem;*/
+}
 
 body {
 	margin: 1rem;
@@ -94,80 +119,79 @@ body {
 		padding-left: 2rem;
 		padding-right: 2rem;
 	}
-
+	pre { width: 60vw; }
 }
 @media (min-width: 1000px) {
 	body { margin: 4rem 300px 6rem 300px; }
+	pre { width: 40vw; }
 }
-
 </style>
 <body>
 
 	<h1>SVG Reference</h1>
 
-	<h3>line</h3>
+	<!-- <h3>line( )</h3> -->
 		<pre><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#LineElement">&lt;line&gt;</a> element</p>
-		<p>this is a 2D line segment, defined by its endpoints (x1,y1) and (x2,y2).</p>
-	<h3>circle</h3>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#LineElement">&lt;line&gt;</a> element</pre>
+		<p>this is a 2D line segment defined by a pair of endpoints.</p>
+	<!-- <h3>circle( )</h3> -->
 		<pre><code><f>circle</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#CircleElement">&lt;circle&gt;</a> element</p>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#CircleElement">&lt;circle&gt;</a> element</pre>
 		<p>a circle is defined by its center (x,y) and its radius.</p>
-	<h3>ellipse</h3>
+	<!-- <h3>ellipse( )</h3> -->
 		<pre><code><f>ellipse</f>(<arg>x</arg>, <arg>y</arg>, <arg>rx</arg>, <arg>ry</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#EllipseElement">&lt;ellipse&gt;</a> element</p>
-		<p>an ellipse is defined by its center (x,y) and its radius along two axes rx and ry. the axes of the ellipse are always aligned to the x,y axes, you have to apply a rotate transform to make it otherwise.</p>
-	<h3>rect</h3>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#EllipseElement">&lt;ellipse&gt;</a> element</pre>
+		<p>an ellipse is defined by its center (x,y) and its radius along two axes rx and ry. the axes of the radii are parallel to the x,y axes, you have to apply a rotate transform to make it otherwise.</p>
+	<!-- <h3>rect</h3> -->
 		<pre><code><f>rect</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#RectElement">&lt;rect&gt;</a> element</p>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#RectElement">&lt;rect&gt;</a> element</pre>
 		<p>the (x,y) point defines the top left corner of the rectangle.</p>
-	<h3>polygon</h3>
+	<!-- <h3>polygon</h3> -->
 		<pre><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</p>
-		<p>a polygon is a closed shape defined by a series of points that trace the outline of the polygon. the stroke will automatically connect the last point back to the first.</p>
-		<p>the SVG specification for a polygon's <b>points</b> attribute is one space-separated string of points, each in the form of x,y:</p>
-		<ul><li><code>"0.5,1.0 3.5,2.5 10,10"</code></li></ul>
-		<p>because points are rarely stored in that way, this function accepts an array of points (arrays or objects), and will process it into the necessary string:</p>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</pre>
+		<p>a polygon is a closed shape defined by a series of points that trace the outline of the polygon. the stroke will automatically connect the end back to the beginning.</p>
 		<ul>
 			<li><code>[[0.5, 1.0], [3.5, 2.5], [10, 10]]</code></li>
-			<li><code>[{x:0.5, y:1.0}, {x:3.5, y:2.5}, {x:10, y:10}]</code></li>
+			<li><code>{x:0.5, y:1.0}, {x:3.5, y:2.5}, {x:10, y:10}</code></li>
+			<li><code>0.5, 1.0, 3.5, 2.5, 10, 10</code></li>
 		</ul>
-	<h3>polyline</h3>
+		<p>this function accepts any nested level of array of points (including x,y objects), and will convert it into the proper space-separated x,y pairs string.</p>
+		<ul><li><code>"0.5,1.0 3.5,2.5 10,10"</code></li></ul>
+	<!-- <h3>polyline</h3> -->
 		<pre><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolylineElement">&lt;polyline&gt;</a> element</p>
-		<p>similar to a polygon, a polyline is defined by a sequence of points, but the stroked path will not connect the last point to the first.</p>
-		<p>see "polygon" entry for information on points.</p>
-	<h3>bezier</h3>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolylineElement">&lt;polyline&gt;</a> element</pre>
+		<p>just like the polygon but the beginning and end aren't connected by a stroke.</p>
+	<!-- <h3>bezier</h3> -->
 		<pre><code><f>bezier</f>(<arg>fromX</arg>, <arg>fromY</arg>, <arg>c1X</arg>, <arg>c1Y</arg>, <arg>c2X</arg>, <arg>c2Y</arg>, <arg>toX</arg>, <arg>toY</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</p>
-		<p>a bezier curve is defined between two points (fromX, fromY) and (toX, toY) with two control points (c1X, c1Y) and (c2X, c2Y). The curve is encoded as a path object.</p>
-	<h3>arc</h3>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</pre>
+		<p>a bezier curve is defined between two points (fromX, fromY) and (toX, toY) with two control points (c1X, c1Y) and (c2X, c2Y).</p>
+	<!-- <h3>arc</h3> -->
 		<pre><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</p>
-		<p>an arc is the curve along the boundary of a circle. the arc is encoded as a path object.</p>
-	<h3>wedge</h3>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</pre>
+		<p>an arc is the curve along the boundary of a circle.</p>
+	<!-- <h3>wedge</h3> -->
 		<pre><code><f>wedge</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</p>
-		<p>a wedge is a filled arc, like a slice of a pie that includes the center of the circle. the wedge is encoded as a path object.</p>
-	<h3>regularPolygon</h3>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</pre>
+		<p>a wedge is a filled arc, like a slice of a pie that includes the center of the circle.</p>
+	<!-- <h3>regularPolygon</h3> -->
 		<pre><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</p>
-		<p>this is a convenient function for creating regular polygons of n number of sides, centered at point (cX, cY), with a circumscribed radius.</p>
-	<h3>text</h3>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</pre>
+		<p>creates regular polygons of n number of sides (3 = eq. triangle), centered at point (cX, cY), with a circumscribed radius.</p>
+	<!-- <h3>text</h3> -->
 		<pre><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/text.html#TextElement">&lt;text&gt;</a> element</p>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/text.html#TextElement">&lt;text&gt;</a> element</pre>
 		<p>the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
-	<h3>group</h3>
+	<!-- <h3>group</h3> -->
 		<pre><code><f>group</f>()</code></pre>
-		<p>creates a <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</p>
+		<pre class="creates">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</pre>
 		<p>like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
 	
 	<div>
-	<h1>Notes</h1>
-	<h3>style</h3>
+	<h1>Notes: style</h1>
 		<pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)</code></pre>
-		<p>note: many objects like <b>line</b> won't immediately be visible. a shape's default style is</p>
-		<ul><li><b>stroke: none</b></li><li><b>fill: black</b> <i>(a line has zero fill)</i></li></ul>
+		<p>every shape's default style is:</p>
+		<ul><li><b>stroke: none</b></li><li><b>fill: black</b></li></ul>
+		<p>this causes certain shapes (like line) to be <em>invisible when you first draw them!</em></p>
 		<pre><code><f>let</f> l <key>=</key> <f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>l.<f>setAttribute</f>(<str>"stroke"</str>, <str>"#F08"</str>)</code></pre>
 		<p>there are three ways to apply style:</p>
 		<ul>

@@ -6,6 +6,7 @@ import {
   svg,
   group,
   style,
+  clipPath
 } from "./elements/main";
 
 import {
@@ -52,6 +53,7 @@ import image from "./image";
 image.svg = svg;
 image.group = group;
 image.style = style;
+image.clipPath = clipPath;
 image.line = line;
 image.circle = circle;
 image.ellipse = ellipse;

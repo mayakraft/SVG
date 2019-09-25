@@ -3,7 +3,7 @@
  */
 
 import window from "../environment/window";
-import { attachClassMethods } from "./methods";
+import { attachClassMethods, attachStyleMethods } from "./methods";
 
 const svgNS = "http://www.w3.org/2000/svg";
 
@@ -102,6 +102,7 @@ export const line = function (x1, y1, x2, y2) {
   if (x2) { shape.setAttributeNS(null, "x2", x2); }
   if (y2) { shape.setAttributeNS(null, "y2", y2); }
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   return shape;
 };
 
@@ -111,6 +112,7 @@ export const circle = function (x, y, radius) {
   if (y) { shape.setAttributeNS(null, "cy", y); }
   if (radius) { shape.setAttributeNS(null, "r", radius); }
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   return shape;
 };
 
@@ -121,6 +123,7 @@ export const ellipse = function (x, y, rx, ry) {
   if (rx) { shape.setAttributeNS(null, "rx", rx); }
   if (ry) { shape.setAttributeNS(null, "ry", ry); }
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   return shape;
 };
 
@@ -131,6 +134,7 @@ export const rect = function (x, y, width, height) {
   if (width) { shape.setAttributeNS(null, "width", width); }
   if (height) { shape.setAttributeNS(null, "height", height); }
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   return shape;
 };
 
@@ -138,6 +142,7 @@ export const polygon = function (...pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polygon");
   setPoints(shape, ...pointsArray);
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   attachPointsMethods(shape);
   return shape;
 };
@@ -146,6 +151,7 @@ export const polyline = function (...pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polyline");
   setPoints(shape, ...pointsArray);
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   attachPointsMethods(shape);
   return shape;
 };
@@ -157,6 +163,7 @@ export const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
   const shape = window.document.createElementNS(svgNS, "path");
   shape.setAttributeNS(null, "d", d);
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   attachBezierMethods(shape);
   return shape;
 };
@@ -167,6 +174,7 @@ export const text = function (textString, x, y) {
   shape.setAttributeNS(null, "x", x);
   shape.setAttributeNS(null, "y", y);
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   return shape;
 };
 
@@ -174,6 +182,7 @@ export const wedge = function (x, y, radius, angleA, angleB) {
   const shape = window.document.createElementNS(svgNS, "path");
   setArc(shape, x, y, radius, angleA, angleB, true);
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   attachArcMethods(shape);
   return shape;
 };
@@ -182,6 +191,7 @@ export const arc = function (x, y, radius, angleA, angleB) {
   const shape = window.document.createElementNS(svgNS, "path");
   setArc(shape, x, y, radius, angleA, angleB, false);
   attachClassMethods(shape);
+  attachStyleMethods(shape);
   attachArcMethods(shape);
   return shape;
 };

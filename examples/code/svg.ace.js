@@ -64,7 +64,8 @@ const CodeSVG = function (container) {
 
     // bind draw methods and insert an appendChild to our one svg
     ["text", "line", "circle", "ellipse", "rect", "polygon", "polyline",
-      "bezier", "wedge", "arc", "curve", "regularPolygon", "group"
+      "bezier", "wedge", "arc", "curve", "regularPolygon",
+      "group", "style", "clipPath"
     ].forEach((name) => {
       window[name] = function (...args) {
         const element = SVG[name](...args);
