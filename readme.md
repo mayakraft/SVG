@@ -20,13 +20,13 @@ Include svg.js in your project.
 let mySVG = SVG();
 ```
 
-`SVG()` creates an `<svg>`. All other initializers are under the namespace. `SVG.rect()` creates a `<line>`
+`SVG()` creates an `<svg>`. All other initializers are under the namespace. `SVG.rect()` creates a `<rect>`
 
 ```javascript
 SVG.rect(10, 10, 640, 480);
 ```
 
-Calling the line above is a substitution for below,
+Calling the one line above is synonymous with writing
 
 ```javascript
 let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -36,13 +36,17 @@ rect.setAttribute("width", 640);
 rect.setAttribute("height", 480);
 ```
 
-Calling `mySVG.rect` instead of `SVG.rect` will bind the new rect as a child to mySVG.
+By default an element isn't attached to any SVG, and will be invisible. Calling `mySVG.rect` instead of `SVG.rect` will append it to the svg.
 
 ```javascript
+let mySVG = SVG();
 mySVG.rect(10, 10, 640, 480);
+
+// instead of
+SVG.rect(10, 10, 640, 480);
 ```
 
-automatically calls `mySVG.appendChild(rect)`. It's useful use this with groups. Groups can create geometry too.
+It's useful to use this with groups. Groups can create geometry too.
 
 ```javascript
 let mySVG = SVG();
@@ -76,11 +80,8 @@ The following code draws the [Japanese flag](https://robbykraft.github.io/SVG/ex
 
 ```javascript
 let flag = SVG(600, 400);
-let rect = flag.rect(0, 0, flag.w, flag.h);
-let circle = flag.circle(flag.w/2, flag.h/2, flag.h*0.3);
-
-rect.setAttribute("fill", "white");
-circle.setAttribute("fill", "#BC002D");
+let rect = flag.rect(0, 0, flag.w, flag.h).fill("white");
+let circle = flag.circle(flag.w / 2, flag.h / 2, flag.h * 0.3).fill("#BC002D");
 ```
 
 # Methods
@@ -92,7 +93,7 @@ SVG()
 SVG.group()
 ```
 
-save or load an SVG
+save or load an SVG file
 
 ```javascript
 SVG.save(svg, filename = "image.svg")

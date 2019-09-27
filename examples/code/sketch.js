@@ -24,19 +24,19 @@ circle(50, 100, 70.7)
   .clipPath("url(#clip-path)");
 `, `size(1, 1);
 
-let pts300 = Array.from(Array(300)).map(() => [Math.random(), Math.random()]);
-let pts150 = Array.from(Array(150)).map(() => [Math.random(), Math.random()]);
+let ptsB = Array.from(Array(100)).map(() => [Math.random(), Math.random()]);
+let ptsA = Array.from(Array(20)).map(() => [Math.random(), Math.random()]);
 
 let clip = app.svg.clipPath("clip-path");
 
 rect(-1, -1, 3, 3).fill("black");
 circle(Math.random(), Math.random(), 0.5).fill("#158");
 
-polygon(pts300)
+polygon(ptsB)
   .fill("black")
   .fillRule("evenodd");
 
-polygon(pts150)
+polygon(ptsA)
   .fill("#158")
   .fillRule("evenodd")
   .appendTo(clip);
@@ -77,7 +77,18 @@ polyline(dragon(a, b, 1, 1))
 polyline(dragon(a, b, 1, 10))
   .fill("none").stroke("#158").opacity(1).strokeWidth(2);
 polyline(dragon(a, b, 1, 4))
-  .fill("none").stroke("#158").opacity(0.5).strokeWidth(60);
+  .fill("none").stroke("#158").opacity(0.5).strokeWidth(40);
+`, `size(1, 1);
+
+rect(-1, -1, 3, 3).fill("black");
+
+let stars = Array.from(Array(100))
+  .map(() => [Math.random(), Math.random()])
+  .map(p => circle(p[0], p[1], 0.001).fill("white"));
+
+app.svg.animate = function (time) {
+  stars.forEach(s => s.setAttribute("opacity", Math.random()));
+};
 `];
 
 const CodeSVGxMenu = function (container) {
