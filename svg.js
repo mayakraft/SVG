@@ -454,7 +454,7 @@
       };
     });
   };
-  var attributes = ["accent-height", "accumulate", "additive", "alignment-baseline", "allowReorder", "alphabetic", "amplitude", "arabic-form", "ascent", "attributeName", "attributeType", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-path", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "dx", "dy", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "lengthAdjust", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mask", "maskContentUnits", "maskUnits", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "rotate", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "textLength", "to", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
+  var attributes = ["accent-height", "accumulate", "additive", "alignment-baseline", "allowReorder", "alphabetic", "amplitude", "arabic-form", "ascent", "attributeName", "attributeType", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-path", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "dx", "dy", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "lengthAdjust", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mask", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "rotate", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "textLength", "to", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
 
   var toCamel = function toCamel(s) {
     return s.replace(/([-_][a-z])/ig, function ($1) {
@@ -522,7 +522,7 @@
     var flat = flatten_input.apply(void 0, pointsArray);
     var pointsString = _typeof(flat[0]) === "object" && flat[0].x != null ? flat.reduce(function (prev, curr) {
       return "".concat(prev).concat(curr.x, ",").concat(curr.y, " ");
-    }, "") : Array.from(Array(flat.length / 2)).reduce(function (a, b, i) {
+    }, "") : Array.from(Array(Math.floor(flat.length / 2))).reduce(function (a, b, i) {
       return "".concat(a).concat(flat[i * 2], ",").concat(flat[i * 2 + 1], " ");
     }, "");
     polygon.setAttributeNS(null, "points", pointsString);
@@ -961,11 +961,21 @@
     var clip = win.document.createElementNS(svgNS$2, "clipPath");
 
     if (id != null) {
-      clip.setAttribute("id", "clip-path");
+      clip.setAttribute("id", id);
     }
 
     attachStyleMethods(clip);
     return clip;
+  };
+  var mask = function mask(id) {
+    var msk = win.document.createElementNS(svgNS$2, "mask");
+
+    if (id != null) {
+      msk.setAttribute("id", id);
+    }
+
+    attachStyleMethods(msk);
+    return msk;
   };
   var style = function style() {
     var s = win.document.createElementNS(svgNS$2, "style");
@@ -974,6 +984,7 @@
   };
   drawMethods.group = group;
   drawMethods.clipPath = clipPath;
+  drawMethods.mask = mask;
   drawMethods.style = style;
 
   var controlPoint = function controlPoint(parent) {
@@ -1612,9 +1623,8 @@
 
     element.load = function (data, callback) {
       load(data, function (newSVG, error) {
-        var parent = element.parentNode;
-
         if (newSVG != null) {
+          var parent = element.parentNode;
           newSVG.events = element.events;
           setupSVG(newSVG);
 
@@ -1641,7 +1651,7 @@
     };
   };
 
-  var svgImage = function svgImage() {
+  var SVG = function SVG() {
     for (var _len2 = arguments.length, params = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       params[_key2] = arguments[_key2];
     }
@@ -1651,7 +1661,7 @@
     attachSVGMethods(image);
     image.events = Events(image);
 
-    var setup = function setup() {
+    var initialize = function initialize() {
       initSize(image, params);
       var parent = getElement.apply(void 0, params);
 
@@ -1667,44 +1677,46 @@
     };
 
     if (win.document.readyState === "loading") {
-      win.document.addEventListener("DOMContentLoaded", setup);
+      win.document.addEventListener("DOMContentLoaded", initialize);
     } else {
-      setup();
+      initialize();
     }
 
     return image;
   };
 
-  svgImage.svg = svg;
-  svgImage.group = group;
-  svgImage.style = style;
-  svgImage.clipPath = clipPath;
-  svgImage.line = line;
-  svgImage.circle = circle;
-  svgImage.ellipse = ellipse;
-  svgImage.rect = rect;
-  svgImage.polygon = polygon;
-  svgImage.polyline = polyline;
-  svgImage.bezier = bezier;
-  svgImage.text = text;
-  svgImage.wedge = wedge;
-  svgImage.arc = arc;
-  svgImage.setPoints = setPoints;
-  svgImage.setArc = setArc;
-  svgImage.regularPolygon = regularPolygon;
-  svgImage.straightArrow = straightArrow;
-  svgImage.arcArrow = arcArrow;
-  svgImage.setViewBox = setViewBox;
-  svgImage.getViewBox = getViewBox;
-  svgImage.scaleViewBox = scaleViewBox;
-  svgImage.translateViewBox = translateViewBox;
-  svgImage.convertToViewBox = convertToViewBox;
-  svgImage.removeChildren = removeChildren;
-  svgImage.save = save;
-  svgImage.load = load;
-  svgImage.controls = controls;
-  svgImage.controlPoint = controlPoint;
+  SVG.NS = "http://www.w3.org/2000/svg";
+  SVG.svg = svg;
+  SVG.group = group;
+  SVG.style = style;
+  SVG.clipPath = clipPath;
+  SVG.mask = mask;
+  SVG.line = line;
+  SVG.circle = circle;
+  SVG.ellipse = ellipse;
+  SVG.rect = rect;
+  SVG.polygon = polygon;
+  SVG.polyline = polyline;
+  SVG.bezier = bezier;
+  SVG.text = text;
+  SVG.wedge = wedge;
+  SVG.arc = arc;
+  SVG.setPoints = setPoints;
+  SVG.setArc = setArc;
+  SVG.regularPolygon = regularPolygon;
+  SVG.straightArrow = straightArrow;
+  SVG.arcArrow = arcArrow;
+  SVG.setViewBox = setViewBox;
+  SVG.getViewBox = getViewBox;
+  SVG.scaleViewBox = scaleViewBox;
+  SVG.translateViewBox = translateViewBox;
+  SVG.convertToViewBox = convertToViewBox;
+  SVG.removeChildren = removeChildren;
+  SVG.save = save;
+  SVG.load = load;
+  SVG.controls = controls;
+  SVG.controlPoint = controlPoint;
 
-  return svgImage;
+  return SVG;
 
 })));

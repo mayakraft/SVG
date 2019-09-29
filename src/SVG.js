@@ -55,9 +55,9 @@ const attachSVGMethods = function (element) {
     return DOM.save(element, filename);
   };
   element.load = function (data, callback) {
-    DOM.load(data, function (newSVG, error) {
-      let parent = element.parentNode;
+    DOM.load(data, (newSVG, error) => {
       if (newSVG != null) {
+        const parent = element.parentNode;
         newSVG.events = element.events;
         setupSVG(newSVG);
         if (newSVG.events == null) { newSVG.events = Events(newSVG); }
@@ -73,7 +73,7 @@ const attachSVGMethods = function (element) {
   };
 };
 
-const svgImage = function (...params) {
+const SVG = function (...params) {
   // create a new SVG
   const image = svg();
 
@@ -82,23 +82,26 @@ const svgImage = function (...params) {
   attachSVGMethods(image);
   image.events = Events(image);
 
-  const setup = function () {
-    // setup that requires a loaded DOM. append to parent, run callback
+  const initialize = function () {
+    // initialize that requires a loaded DOM. append to parent, run callback
+    // process user options
     initSize(image, params);
     const parent = getElement(...params);
     if (parent != null) { parent.appendChild(image); }
+    // any function inside the arguments will get fired. with zero parameters.
     params.filter(arg => typeof arg === "function")
       .forEach(func => func());
   };
 
+  // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
     // wait until after the <body> has rendered
-    window.document.addEventListener("DOMContentLoaded", setup);
+    window.document.addEventListener("DOMContentLoaded", initialize);
   } else {
-    setup();
+    initialize();
   }
 
   return image;
 };
 
-export default svgImage;
+export default SVG;

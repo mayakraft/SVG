@@ -76,9 +76,16 @@ export const group = function () {
 
 export const clipPath = function (id) {
   const clip = window.document.createElementNS(svgNS, "clipPath");
-  if (id != null) { clip.setAttribute("id", "clip-path"); }
+  if (id != null) { clip.setAttribute("id", id); }
   attachStyleMethods(clip);
   return clip;
+};
+
+export const mask = function (id) {
+  const msk = window.document.createElementNS(svgNS, "mask");
+  if (id != null) { msk.setAttribute("id", id); }
+  attachStyleMethods(msk);
+  return msk;
 };
 
 export const style = function () {
@@ -90,4 +97,5 @@ export const style = function () {
 // circular reference, this is required after definition
 drawMethods.group = group;
 drawMethods.clipPath = clipPath;
+drawMethods.mask = mask;
 drawMethods.style = style;

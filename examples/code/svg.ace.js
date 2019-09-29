@@ -55,6 +55,41 @@ const CodeSVG = function (container) {
       column: 0
     }, text);
   };
+  // additional window functions
+  const size = function (...args) {
+    if (app.svg !== undefined) {
+      if (args.length === 2) {
+        [app.svg.w, app.svg.h] = args;
+        app.svg.setViewBox(0, 0, args[0], args[1]);
+      }
+    }
+  };
+
+  const image = function (...args) {
+    if (app.svg !== undefined) {
+      const parent = app.svg.parentElement;
+      parent.removeChild(app.svg);
+      app.svg = SVG(parent, ...args);
+    } else {
+      app.svg = SVG(parent, ...args);
+    }
+    return app.svg;
+  };
+  const background = function (color) {
+    document.querySelectorAll(".image-container")[0]
+      .setAttribute("style", `background-color: ${color}`);
+    let backRect = app.svg.querySelector("#background-rectangle");
+    if (backRect != null) {
+      backRect.setAttribute("fill", color);
+    } else {
+      const viewBox = app.svg.viewBox.baseVal;
+      const rect = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+      backRect = SVG.rect(rect[0], rect[1], rect[2], rect[3])
+        .fill(color);
+      backRect.setAttribute("id", "background-rectangle");
+      app.svg.prepend(backRect);
+    }
+  };
   const bindToWindow = function () {
     // simple bind all methods to the window
     // Object.getOwnPropertyNames(SVG)
@@ -65,7 +100,9 @@ const CodeSVG = function (container) {
     // bind draw methods and insert an appendChild to our one svg
     ["text", "line", "circle", "ellipse", "rect", "polygon", "polyline",
       "bezier", "wedge", "arc", "curve", "regularPolygon",
-      "group", "style", "clipPath"
+      "group", "style", "clipPath", "mask",
+      // additional methods. defined above
+      "size", "image", "background"
     ].forEach((name) => {
       window[name] = function (...args) {
         const element = SVG[name](...args);
@@ -75,26 +112,6 @@ const CodeSVG = function (container) {
         return element;
       };
     });
-
-    window.size = function (...args) {
-      if (app.svg !== undefined) {
-        if (args.length === 2) {
-          [app.svg.w, app.svg.h] = args;
-          app.svg.setViewBox(0, 0, args[0], args[1]);
-        }
-      }
-    };
-
-    window.image = function (...args) {
-      if (app.svg !== undefined) {
-        const parent = app.svg.parentElement;
-        parent.removeChild(app.svg);
-        app.svg = SVG(parent, ...args);
-      } else {
-        app.svg = SVG(parent, ...args);
-      }
-      return app.svg;
-    };
   };
 
   // init app
@@ -115,6 +132,7 @@ const CodeSVG = function (container) {
   // allow these to be overwritten
   app.didUpdate = function () {};
   app.reset = function () {
+    document.querySelectorAll(".image-container")[0].removeAttribute("style");
     if (app.svg !== undefined) {
       while (app.svg.lastChild) {
         app.svg.removeChild(app.svg.lastChild);
