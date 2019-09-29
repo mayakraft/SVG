@@ -6,7 +6,8 @@ import {
   svg,
   group,
   style,
-  clipPath
+  clipPath,
+  mask
 } from "./elements/main";
 
 import {
@@ -48,68 +49,38 @@ import {
 } from "./DOM";
 
 import { controls, controlPoint } from "./controls";
-import image from "./image";
+import SVG from "./SVG";
 
-image.svg = svg;
-image.group = group;
-image.style = style;
-image.clipPath = clipPath;
-image.line = line;
-image.circle = circle;
-image.ellipse = ellipse;
-image.rect = rect;
-image.polygon = polygon;
-image.polyline = polyline;
-image.bezier = bezier;
-image.text = text;
-image.wedge = wedge;
-image.arc = arc;
-image.setPoints = setPoints;
-image.setArc = setArc;
-image.regularPolygon = regularPolygon;
-image.straightArrow = straightArrow;
-image.arcArrow = arcArrow;
-image.setViewBox = setViewBox;
-image.getViewBox = getViewBox;
-image.scaleViewBox = scaleViewBox;
-image.translateViewBox = translateViewBox;
-image.convertToViewBox = convertToViewBox;
-image.removeChildren = removeChildren;
-image.save = save;
-image.load = load;
-image.controls = controls;
-image.controlPoint = controlPoint;
+SVG.NS = "http://www.w3.org/2000/svg";
+SVG.svg = svg;
+SVG.group = group;
+SVG.style = style;
+SVG.clipPath = clipPath;
+SVG.mask = mask;
+SVG.line = line;
+SVG.circle = circle;
+SVG.ellipse = ellipse;
+SVG.rect = rect;
+SVG.polygon = polygon;
+SVG.polyline = polyline;
+SVG.bezier = bezier;
+SVG.text = text;
+SVG.wedge = wedge;
+SVG.arc = arc;
+SVG.setPoints = setPoints;
+SVG.setArc = setArc;
+SVG.regularPolygon = regularPolygon;
+SVG.straightArrow = straightArrow;
+SVG.arcArrow = arcArrow;
+SVG.setViewBox = setViewBox;
+SVG.getViewBox = getViewBox;
+SVG.scaleViewBox = scaleViewBox;
+SVG.translateViewBox = translateViewBox;
+SVG.convertToViewBox = convertToViewBox;
+SVG.removeChildren = removeChildren;
+SVG.save = save;
+SVG.load = load;
+SVG.controls = controls;
+SVG.controlPoint = controlPoint;
 
-export default image;
-
-// export {
-//   svg,
-//   group,
-//   style,
-//   line,
-//   circle,
-//   ellipse,
-//   rect,
-//   polygon,
-//   polyline,
-//   bezier,
-//   text,
-//   wedge,
-//   arc,
-//   setPoints,
-//   setArc,
-//   regularPolygon,
-//   straightArrow,
-//   arcArrow,
-//   setViewBox,
-//   getViewBox,
-//   scaleViewBox,
-//   translateViewBox,
-//   convertToViewBox,
-//   removeChildren,
-//   save,
-//   load,
-//   image,
-//   controls,
-//   controlPoint,
-// };
+export default SVG;

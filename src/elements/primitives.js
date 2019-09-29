@@ -33,7 +33,7 @@ export const setPoints = function (polygon, ...pointsArray) {
   const flat = flatten_input(...pointsArray);
   const pointsString = typeof flat[0] === "object" && flat[0].x != null
     ? flat.reduce((prev, curr) => `${prev}${curr.x},${curr.y} `, "")
-    : Array.from(Array(flat.length / 2))
+    : Array.from(Array(Math.floor(flat.length / 2)))
       .reduce((a, b, i) => `${a}${flat[i * 2]},${flat[i * 2 + 1]} `, "");
   polygon.setAttributeNS(null, "points", pointsString);
 };

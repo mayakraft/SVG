@@ -165,8 +165,8 @@ const attributes = [
   "markerUnits",
   "markerWidth",
   "mask",
-  "maskContentUnits",
-  "maskUnits",
+  // "maskContentUnits",
+  // "maskUnits",
   "mathematical",
   "max",
   "media",
@@ -327,6 +327,7 @@ const toCamel = function (s) {
 
 export const attachStyleMethods = function (element) {
   const el = element;
+  // attributes.filter(attr => attr !== element.tagName).forEach((key) => {
   attributes.forEach((key) => {
     el[toCamel(key)] = (...args) => {
       element.setAttribute(key, ...args);
