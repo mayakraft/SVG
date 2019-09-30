@@ -63,7 +63,7 @@ const attributes = [
   "class",
   "clip",
   // "clipPathUnits",
-  "clip-path",
+  // "clip-path",
   "clip-rule",
   "color",
   "color-interpolation",
@@ -85,8 +85,8 @@ const attributes = [
   "divisor",
   "dominant-baseline",
   "dur",
-  "dx",
-  "dy",
+  // "dx",
+  // "dy",
   "ESection",
   "edgeMode",
   "elevation",
@@ -152,7 +152,7 @@ const attributes = [
   "keyTimes",
   "LSection",
   "lang",
-  "lengthAdjust",
+  // "lengthAdjust",
   "letter-spacing",
   "lighting-color",
   "limitingConeAngle",
@@ -164,7 +164,7 @@ const attributes = [
   "markerHeight",
   "markerUnits",
   "markerWidth",
-  "mask",
+  // "mask",
   // "maskContentUnits",
   // "maskUnits",
   "mathematical",
@@ -218,7 +218,7 @@ const attributes = [
   "requiredFeatures",
   "restart",
   "result",
-  "rotate",
+  // "rotate",
   // "rx",
   // "ry",
   "SSection",
@@ -261,7 +261,7 @@ const attributes = [
   "text-anchor",
   "text-decoration",
   "text-rendering",
-  "textLength",
+  // "textLength",
   "to",
   // "transform",
   "type",
@@ -325,6 +325,18 @@ const toCamel = function (s) {
     .replace("_", ""));
 };
 
+// for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
+const findIdURL = function (arg) {
+  if (arg == null) { return undefined; }
+  if (typeof arg === "string") {
+    return arg.slice(0, 3) === "url"
+      ? arg
+      : `url(#${arg})`;
+  }
+  const idString = arg.getAttribute("id");
+  return `url(#${idString})`;
+};
+
 export const attachStyleMethods = function (element) {
   const el = element;
   // attributes.filter(attr => attr !== element.tagName).forEach((key) => {
@@ -341,5 +353,15 @@ export const attachStyleMethods = function (element) {
       parent.appendChild(element);
     }
     return el;
+  };
+  el.clipPath = function (parent) {
+    const value = findIdURL(parent);
+    if (value === undefined) { return; }
+    el.setAttribute("clip-path", value);
+  };
+  el.mask = function (parent) {
+    const value = findIdURL(parent);
+    if (value === undefined) { return; }
+    el.setAttribute("mask", value);
   };
 };

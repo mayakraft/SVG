@@ -51,6 +51,15 @@ const drawMethods = {
   regularPolygon,
 };
 
+const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const generateUUID = function (prefix) {
+  let suffix = "";
+  for (let i = 0; i < 10; i += 1) {
+    suffix += alpha[Math.floor(Math.random() * alpha.length)];
+  }
+  return `${prefix}${suffix}`;
+};
+
 export const setupSVG = function (svgImage) {
   attachClassMethods(svgImage);
   attachViewBoxMethods(svgImage);
@@ -77,6 +86,8 @@ export const group = function () {
 export const clipPath = function (id) {
   const clip = window.document.createElementNS(svgNS, "clipPath");
   if (id != null) { clip.setAttribute("id", id); }
+  else { clip.setAttribute("id", generateUUID("clip")); }
+  attachAppendableMethods(clip, drawMethods);
   attachStyleMethods(clip);
   return clip;
 };
@@ -84,6 +95,8 @@ export const clipPath = function (id) {
 export const mask = function (id) {
   const msk = window.document.createElementNS(svgNS, "mask");
   if (id != null) { msk.setAttribute("id", id); }
+  else { msk.setAttribute("id", generateUUID("mask")); }
+  attachAppendableMethods(msk, drawMethods);
   attachStyleMethods(msk);
   return msk;
 };
