@@ -1,6 +1,8 @@
 /**
- * SVG in Javascript (c) Robby Kraft
+ * SVG (c) Robby Kraft
  */
+
+import { getViewBox, setViewBox } from "./viewBox";
 
 export const removeChildren = function (parent) {
   while (parent.lastChild) {
@@ -8,13 +10,13 @@ export const removeChildren = function (parent) {
   }
 };
 
-export const getWidth = function (svg) {
-  const w = parseInt(svg.getAttributeNS(null, "width"), 10);
+export const getWidthClient = function (svg) {
+  const w = parseFloat(svg.getAttributeNS(null, "width"), 10);
   return w != null && !isNaN(w) ? w : svg.getBoundingClientRect().width;
 };
 
-export const getHeight = function (svg) {
-  const h = parseInt(svg.getAttributeNS(null, "height"), 10);
+export const getHeightClient = function (svg) {
+  const h = parseFloat(svg.getAttributeNS(null, "height"), 10);
   return h != null && !isNaN(h) ? h : svg.getBoundingClientRect().height;
 };
 

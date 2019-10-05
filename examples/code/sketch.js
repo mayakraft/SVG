@@ -6,6 +6,7 @@ const CodeSVGxMenu = function (container) {
   downloadButton.setAttribute("class", "menu-button");
   const downloadButtonP = document.createElement("p");
   downloadButtonP.innerHTML = "⤓"; // "▼";
+  downloadButton.setAttribute("title", "download image");
   downloadButton.appendChild(downloadButtonP);
   container.appendChild(downloadButton);
   downloadButton.onclick = function () {
@@ -22,17 +23,25 @@ const CodeSVGxMenu = function (container) {
     const win = window.open("https://robbykraft.github.io/SVG/docs.html", "_blank");
     win.focus();
   };
+  questionButton.setAttribute("title", "~ reserved keywords ~\narc\nbackground\nbezier\ncircle\nclipPath\nellipse\ngroup\nline\nmask\npolygon\npolyline\nrect\nregularPolygon\nsize\nstyle\nsvg\ntext\nwedge");
 
   const shareButton = document.createElement("div");
   shareButton.setAttribute("class", "share-button");
   const shareButtonP = document.createElement("p");
+  shareButton.setAttribute("title", "create shareable link");
   shareButtonP.innerHTML = "☛";
   shareButton.appendChild(shareButtonP);
   container.appendChild(shareButton);
 
   const loadAndRunExamples = function (callback) {
     const examples = [];
-    const exampleFilenames = ["dragon.js", "clipping.js", "bezier.js", "conics.js", "text.js"];
+    const exampleFilenames = [
+      "bezier.js",
+      "conics.js",
+      "clipping.js",
+      "dragon.js",
+      "text.js"
+    ];
     exampleFilenames.forEach((file) => {
       fetch(`samples/${file}`)
         .then(data => data.text())

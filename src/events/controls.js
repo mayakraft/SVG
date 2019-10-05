@@ -1,5 +1,5 @@
 /**
- * SVG in Javascript (c) Robby Kraft
+ * SVG (c) Robby Kraft
  */
 
 import { circle } from "../elements/primitives";

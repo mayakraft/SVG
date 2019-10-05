@@ -168,24 +168,33 @@ str { color: #E6DB74; } /* string */
 		<p class="description">the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
 
 	<h3>Layering</h3>
+
+		<pre class="title"><code><f>svg</f>()</code></pre>
+		<pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#SVGElement">&lt;svg&gt;</a> element</pre>
+		<p class="description">this will create a new svg.</p>
+
 		<pre class="title"><code><f>group</f>()</code></pre>
 		<pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</pre>
 		<p class="description">like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
 
-		<pre class="title"><code><f>svg</f>()</code></pre>
-		<pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;svg&gt;</a> element</pre>
-		<p class="description">this will create a new svg.</p>
+		<pre class="title"><code><f>clipPath</f>(<arg>id_name</arg>)</code></pre>
+		<pre class="returns">&gt; creates one <a href="https://drafts.fxtf.org/css-masking-1/#ClipPathElement">&lt;clip-path&gt;</a> element</pre>
+		<p class="description">A clip path sits in the header, like style. Append closed-geometry elements to it and they will become a clipping mask. Clip another element by styling its clip-path attribute:</p>
+		<ul class="description"><li><code><f>const</f> clip <key>=</key> <f>clipPath</f>();<br>shape.<f>clipPath</f>(clip);</code></li></ul>
+		<p class="description">which will automatically perform a call like this, matching the url id name parameter.</p>
+		<ul class="description"><li><code>shape.<f>setAttribute</f>(<str>"clip-path"</str>, <str>"url(#id_name)"</str>);</code></li></ul>
+		
+
+		<pre class="title"><code><f>mask</f>(<arg>id_name</arg>)</code></pre>
+		<pre class="returns">&gt; creates one <a href="https://drafts.fxtf.org/css-masking-1/#MaskElement">&lt;clip-path&gt;</a> element</pre>
+		<p class="description">A mask is similar to a clip path but instead of a path, a mask is a black and white image. Fill the mask layer with black adn white shapes (or gray for transparency). Clip another element by setting its mask attribute:</p>
+		<ul class="description"><li><code><f>const</f> m <key>=</key> <f>mask</f>();<br>shape.<f>mask</f>(m);</code></li></ul>
+		<p class="description">which will automatically match the url id, as in clip-path.</p>
 
 	<h3>Header</h3>
 		<pre class="title"><code><f>style</f>()</code></pre>
 		<pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;style&gt;</a> element</pre>
 		<p class="description">A style section contain CSS text (on property .innerHTML). CSS is helpful for selecting multiple objects and styling them with one definition.</p>
-
-		<pre class="title"><code><f>clipPath</f>(<arg>id_name</arg>)</code></pre>
-		<pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;clip-path&gt;</a> element</pre>
-		<p class="description">A clip path sits in the header, like style. Append closed-geometry elements to it and they will become a clipping mask. Clip another element by styling its clip-path attribute:</p>
-		<ul class="description"><li><code>shape.<f>setAttribute</f>(<str>"clip-path"</str>, <str>"url(#id_name)"</str>);</code></li></ul>
-		<p class="description">match the url parameter to the <arg>id_name</arg> constructor parameter.</p>
 
 	<div>
 	<h1>Notes: style</h1>

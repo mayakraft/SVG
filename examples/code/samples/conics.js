@@ -1,7 +1,7 @@
 size(100, 100);
 background("#edb");
 
-let clip = app.svg.clipPath();
+let clip = clipPath();
 clip.circle(50, 0, 70.7);
 
 circle(0, 50, 50).fill("#e53");

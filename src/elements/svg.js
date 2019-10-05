@@ -1,17 +1,16 @@
 /**
- * SVG in Javascript (c) Robby Kraft
- *
- * responsive, interactive SVG image with methods and handlers
- * @param: (number, number) width, height
- * @param: a DOM object or string DOM id. a parent to attach to
- * @param: a function that gets called after setup (callback)
+ * SVG (c) Robby Kraft
  */
 
-import * as ViewBox from "../attributes/viewBox";
-import { svg } from "./primitives";
-import Events from "../events/events";
 import window from "../environment/window";
-import { attachSVGMethods } from "../attributes/index";
+import * as File from "../environment/file";
+import Events from "../events/events";
+import { svg, rect } from "./primitives";
+import { removeChildren } from "../attributes/DOM";
+import {
+  getViewBox,
+  setViewBox
+} from "../attributes/viewBox";
 
 const findElementInParams = function (...params) {
   const element = params.filter(arg => arg instanceof HTMLElement).shift();
@@ -30,37 +29,136 @@ const initSize = function (svgElement, params) {
   if (numbers.length >= 2) {
     svgElement.setAttributeNS(null, "width", numbers[0]);
     svgElement.setAttributeNS(null, "height", numbers[1]);
-    ViewBox.setViewBox(svgElement, 0, 0, numbers[0], numbers[1]);
+    setViewBox(svgElement, 0, 0, numbers[0], numbers[1]);
   } else if (svgElement.getAttribute("viewBox") == null) {
     // set a viewBox if viewBox doesn't yet exist
-    const rect = svgElement.getBoundingClientRect();
-    ViewBox.setViewBox(svgElement, 0, 0, rect.width, rect.height);
+    const frame = svgElement.getBoundingClientRect();
+    setViewBox(svgElement, 0, 0, frame.width, frame.height);
   }
 };
 
-// const prepareSVG = function (svgImage) {
-//   attachClassMethods(svgImage);
-//   attachViewBoxMethods(svgImage);
-//   attachAppendableMethods(svgImage, drawMethods);
-// };
+const getWidth = function (element) {
+  const viewBox = getViewBox(element);
+  if (viewBox == null) { return undefined; }
+  return viewBox[2];
+};
 
+const getHeight = function (element) {
+  const viewBox = getViewBox(element);
+  if (viewBox == null) { return undefined; }
+  return viewBox[3];
+};
+
+const setWidth = function (element, w) {
+  const viewBox = getViewBox(element);
+  viewBox[2] = w;
+  return setViewBox(element, ...viewBox);
+};
+
+const setHeight = function (element, h) {
+  const viewBox = getViewBox(element);
+  viewBox[3] = h;
+  return setViewBox(element, ...viewBox);
+};
+
+const size = function (element, ...args) {
+// additional window functions
+  if (args.length === 2
+    && typeof args[0] === "number"
+    && typeof args[1] === "number"
+  ) {
+    setViewBox(element, 0, 0, args[0], args[1]);
+  } else if (args.length === 4
+    && typeof args.map(a => typeof a === "number")
+      .reduce((a, b) => a && b, true)
+  ) {
+    setViewBox(element, ...args);
+  } else {
+    // todo
+  }
+};
+
+const background = function (element, color) {
+  const parent = element.parentElement;
+  if (parent != null) {
+    parent.setAttribute("style", `background-color: ${color}`);
+  }
+  let backRect = element.querySelector("#svg-background-rectangle");
+  if (backRect != null) {
+    backRect.setAttribute("fill", color);
+  } else {
+    const viewBox = element.viewBox.baseVal;
+    const frame = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+    backRect = rect(frame[0], frame[1], frame[2], frame[3])
+      .fill(color);
+    backRect.setAttribute("id", "svg-background-rectangle");
+    element.prepend(backRect);
+  }
+};
+
+const replaceWithSVG = function (oldSVG, newSVG) {
+  // Part 1: reset old SVG
+  // #1 clear attributes
+  Array.from(oldSVG.attributes)
+    .forEach(attr => oldSVG.removeAttribute(attr.name));
+  // #2 clear contents
+  removeChildren(oldSVG);
+  // #3 add back important attributes, if they don't exist
+  // let blankSVG = svg();
+  // console.log(Array.from(blankSVG.attributes));
+
+  // Part 2: copy contents over
+  Array.from(newSVG.children).forEach((node) => {
+    node.remove();
+    oldSVG.appendChild(node);
+  });
+  Array.from(newSVG.attributes)
+    .forEach(attr => oldSVG.setAttribute(attr.name, attr.value));
+};
+
+/**
+ * the svg object
+ *
+ * @param: (number, number) width, height
+ * @param: a DOM object or string DOM id. a parent to attach to
+ * @param: a function that gets called after setup (callback)
+ * @returns: an svg
+ */
 const SVG = function (...params) {
   // create a new SVG
-  const image = svg();
+  const element = svg();
 
   // setup that can occur immediately
-  initSize(image, params);
-  attachSVGMethods(image);
-  image.events = Events(image);
+  initSize(element, params);
+  // element.getWidth = () => getWidthClient(element);
+  // element.getHeight = () => getHeighwClient(element);
+  // element.setWidth = w => element.setAttributeNS(null, "width", w);
+  // element.setHeight = h => element.setAttributeNS(null, "height", h);
+  element.getWidth = () => getWidth(element);
+  element.getHeight = () => getHeight(element);
+  element.setWidth = w => setWidth(element, w);
+  element.setHeight = h => setHeight(element, h);
+  element.background = color => background(element, color);
+  element.size = (...args) => size(element, ...args);
+  element.events = Events(element);
+  element.save = function (filename = "image.svg") {
+    return File.save(element, filename);
+  };
+  element.load = function (data, callback) {
+    File.load(data, (newSVG, error) => {
+      if (newSVG != null) { replaceWithSVG(element, newSVG); }
+      if (callback != null) { callback(element, error); }
+    });
+  };
 
+  // initialize requires a loaded DOM to append
   const initialize = function () {
-    // initialize that requires a loaded DOM. append to parent, run callback
-    // process user options
-    initSize(image, params);
+    initSize(element, params);
     const parent = findElementInParams(...params);
-    if (parent != null) { parent.appendChild(image); }
+    if (parent != null) { parent.appendChild(element); }
+    // maybe dangerous:
     // any function inside the arguments will get fired. with zero parameters.
-    // a way of sending a callback to an unknown parameter #
+    // a way of sending a callback to an unknown parameter list
     params.filter(arg => typeof arg === "function")
       .forEach(func => func());
   };
@@ -73,7 +171,7 @@ const SVG = function (...params) {
     initialize();
   }
 
-  return image;
+  return element;
 };
 
 export default SVG;
