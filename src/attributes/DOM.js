@@ -16,6 +16,18 @@ export const appendTo = function (element, parent) {
   return element;
 };
 
+const toKebab = string => string
+  .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+  .replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2")
+  .toLowerCase();
+
+export const setAttributes = function (element, attributes) {
+  Object.keys(attributes).forEach((key) => {
+    element.setAttribute(toKebab(key), attributes[key]);
+  });
+  return element;
+};
+
 const getClassList = function (xmlNode) {
   const currentClass = xmlNode.getAttribute("class");
   return (currentClass == null

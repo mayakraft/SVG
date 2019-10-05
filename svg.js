@@ -187,6 +187,17 @@
     return element;
   };
 
+  var toKebab = function toKebab(string) {
+    return string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
+  };
+
+  var setAttributes = function setAttributes(element, attributes) {
+    Object.keys(attributes).forEach(function (key) {
+      element.setAttribute(toKebab(key), attributes[key]);
+    });
+    return element;
+  };
+
   var getClassList = function getClassList(xmlNode) {
     var currentClass = xmlNode.getAttribute("class");
     return currentClass == null ? [] : currentClass.split(" ").filter(function (s) {
@@ -229,6 +240,7 @@
   var DOM = /*#__PURE__*/Object.freeze({
     removeChildren: removeChildren,
     appendTo: appendTo,
+    setAttributes: setAttributes,
     addClass: addClass,
     removeClass: removeClass,
     setClass: setClass,

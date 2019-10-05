@@ -18,11 +18,16 @@ function dragon(a, b, turn, level) {
 var a = {x: getWidth() * 0.225, y: getHeight() * 0.6 };
 var b = {x: getWidth() * 0.85, y: getHeight() * 0.6 };
 
-polyline(dragon(a, b, 1, 4))
-  .fill("none").stroke("#158").opacity(0.5).strokeWidth(40);
-polyline(dragon(a, b, 1, 7))
-  .fill("none").stroke("#e53").opacity(0.8).strokeWidth(13);
-polyline(dragon(a, b, 1, 1))
-  .fill("none").stroke("#ec3").opacity(0.5).strokeWidth(90);
-polyline(dragon(a, b, 1, 10))
-  .fill("none").stroke("#158").opacity(1).strokeWidth(2);
+var attrs = {
+  strokeLinecap: "square",
+  fill: "none"
+};
+
+polyline(dragon(a, b, 1, 4)).setAttributes(attrs)
+  .stroke("#158").strokeWidth(40).opacity(0.5);
+polyline(dragon(a, b, 1, 7)).setAttributes(attrs)
+  .stroke("#e53").strokeWidth(13).opacity(0.8);
+polyline(dragon(a, b, 1, 1)).setAttributes(attrs)
+  .stroke("#ec3").strokeWidth(90).opacity(0.5);
+polyline(dragon(a, b, 1, 10)).setAttributes(attrs)
+  .stroke("#158").strokeWidth(2).opacity(1);
