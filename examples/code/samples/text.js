@@ -1,10 +1,10 @@
 background("black");
 
-for (let j = 0; j < 7; j += 1) {
-  for (let i = 0; i < 8; i += 1) {
-    text("eat the rich",
-      256 + 8 - 4 * i,
-      -100 + j * 120 + 4 * i)
+for (var j = 0; j < 7; j += 1) {
+  for (var i = 0; i < 8; i += 1) {
+    text("los angeles",
+      256 + 8 - 3 * i,
+      -100 + j * 110 + 3 * i)
       .fontSize("90px")
       .fontFamily("avenir next, helvetica neue, arial")
       .fontWeight(400)

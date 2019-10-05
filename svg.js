@@ -173,6 +173,68 @@
 
   var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
 
+  var removeChildren = function removeChildren(parent) {
+    while (parent.lastChild) {
+      parent.removeChild(parent.lastChild);
+    }
+  };
+  var appendTo = function appendTo(element, parent) {
+    if (parent != null) {
+      element.remove();
+      parent.appendChild(element);
+    }
+
+    return element;
+  };
+
+  var getClassList = function getClassList(xmlNode) {
+    var currentClass = xmlNode.getAttribute("class");
+    return currentClass == null ? [] : currentClass.split(" ").filter(function (s) {
+      return s !== "";
+    });
+  };
+
+  var addClass = function addClass(xmlNode, newClass) {
+    if (xmlNode == null) {
+      return xmlNode;
+    }
+
+    var classes = getClassList(xmlNode).filter(function (c) {
+      return c !== newClass;
+    });
+    classes.push(newClass);
+    xmlNode.setAttributeNS(null, "class", classes.join(" "));
+    return xmlNode;
+  };
+  var removeClass = function removeClass(xmlNode, removedClass) {
+    if (xmlNode == null) {
+      return xmlNode;
+    }
+
+    var classes = getClassList(xmlNode).filter(function (c) {
+      return c !== removedClass;
+    });
+    xmlNode.setAttributeNS(null, "class", classes.join(" "));
+    return xmlNode;
+  };
+  var setClass = function setClass(xmlNode, className) {
+    xmlNode.setAttributeNS(null, "class", className);
+    return xmlNode;
+  };
+  var setID = function setID(xmlNode, idName) {
+    xmlNode.setAttributeNS(null, "id", idName);
+    return xmlNode;
+  };
+
+  var DOM = /*#__PURE__*/Object.freeze({
+    removeChildren: removeChildren,
+    appendTo: appendTo,
+    addClass: addClass,
+    removeClass: removeClass,
+    setClass: setClass,
+    setID: setID
+  });
+
   var getViewBox = function getViewBox(svg) {
     var vb = svg.getAttribute("viewBox");
     return vb == null ? undefined : vb.split(" ").map(function (n) {
@@ -256,68 +318,6 @@
     scaleViewBox: scaleViewBox
   });
 
-  var removeChildren = function removeChildren(parent) {
-    while (parent.lastChild) {
-      parent.removeChild(parent.lastChild);
-    }
-  };
-
-  var getClassList = function getClassList(xmlNode) {
-    var currentClass = xmlNode.getAttribute("class");
-    return currentClass == null ? [] : currentClass.split(" ").filter(function (s) {
-      return s !== "";
-    });
-  };
-
-  var addClass = function addClass(xmlNode, newClass) {
-    if (xmlNode == null) {
-      return xmlNode;
-    }
-
-    var classes = getClassList(xmlNode).filter(function (c) {
-      return c !== newClass;
-    });
-    classes.push(newClass);
-    xmlNode.setAttributeNS(null, "class", classes.join(" "));
-    return xmlNode;
-  };
-  var removeClass = function removeClass(xmlNode, removedClass) {
-    if (xmlNode == null) {
-      return xmlNode;
-    }
-
-    var classes = getClassList(xmlNode).filter(function (c) {
-      return c !== removedClass;
-    });
-    xmlNode.setAttributeNS(null, "class", classes.join(" "));
-    return xmlNode;
-  };
-  var setClass = function setClass(xmlNode, className) {
-    xmlNode.setAttributeNS(null, "class", className);
-    return xmlNode;
-  };
-  var setID = function setID(xmlNode, idName) {
-    xmlNode.setAttributeNS(null, "id", idName);
-    return xmlNode;
-  };
-
-  var findIdURL = function findIdURL(arg) {
-    if (arg == null) {
-      return undefined;
-    }
-
-    if (typeof arg === "string") {
-      return arg.slice(0, 3) === "url" ? arg : "url(#".concat(arg, ")");
-    }
-
-    if (arg.getAttribute != null) {
-      var idString = arg.getAttribute("id");
-      return "url(#".concat(idString, ")");
-    }
-
-    return "url(#)";
-  };
-
   var attachAppendableMethods = function attachAppendableMethods(element, methods) {
     var el = element;
     Object.keys(methods).forEach(function (key) {
@@ -328,28 +328,28 @@
       };
     });
   };
-  var attachClassMethods = function attachClassMethods(element) {
+  var attachDOMMethods = function attachDOMMethods(element) {
     var el = element;
-    [removeChildren, addClass, removeClass, setClass, setID].forEach(function (f) {
-      el.f = function () {
+    Object.keys(DOM).forEach(function (key) {
+      el[key] = function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        return f.apply(void 0, [element].concat(args));
+        return DOM[key].apply(DOM, [element].concat(args));
       };
     });
   };
-  var attachAppendTo = function attachAppendTo(element) {
-    Object.defineProperty(element, "appendTo", {
-      value: function value(parent) {
-        if (parent != null) {
-          element.remove();
-          parent.appendChild(element);
+  var attachViewBoxMethods = function attachViewBoxMethods(element) {
+    var el = element;
+    Object.keys(ViewBox).forEach(function (key) {
+      el[key] = function () {
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
         }
 
-        return element;
-      }
+        return ViewBox[key].apply(ViewBox, [element].concat(args));
+      };
     });
   };
 
@@ -363,8 +363,8 @@
     var el = element;
     attributes.forEach(function (key) {
       el[toCamel(key)] = function () {
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
         }
 
         el.setAttribute.apply(el, [key].concat(args));
@@ -387,6 +387,24 @@
       return m;
     };
   };
+
+  var findIdURL = function findIdURL(arg) {
+    if (arg == null) {
+      return undefined;
+    }
+
+    if (typeof arg === "string") {
+      return arg.slice(0, 3) === "url" ? arg : "url(#".concat(arg, ")");
+    }
+
+    if (arg.getAttribute != null) {
+      var idString = arg.getAttribute("id");
+      return "url(#".concat(idString, ")");
+    }
+
+    return "url(#)";
+  };
+
   var attachClipMaskAttributes = function attachClipMaskAttributes(element) {
     var el = element;
 
@@ -412,45 +430,31 @@
       return el;
     };
   };
-  var attachViewBoxMethods = function attachViewBoxMethods(element) {
-    var el = element;
-    [setViewBox, getViewBox, scaleViewBox, translateViewBox, convertToViewBox].forEach(function (func) {
-      el[func.name] = function () {
-        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
-        }
-
-        return func.apply(void 0, [el].concat(args));
-      };
-    });
-  };
 
   var preparePrimitive = function preparePrimitive(element) {
-    attachClassMethods(element);
+    attachDOMMethods(element);
     attachFunctionalSetters(element);
-    attachAppendTo(element);
     attachClipMaskAttributes(element);
   };
 
   var prepareSVG = function prepareSVG(element, primitives) {
-    attachClassMethods(element);
+    attachDOMMethods(element);
     attachAppendableMethods(element, primitives);
     attachViewBoxMethods(element);
     attachClipMaskMakers(element, primitives);
   };
 
   var prepareGroup = function prepareGroup(element, primitives) {
-    attachClassMethods(element);
+    attachDOMMethods(element);
     attachAppendableMethods(element, primitives);
     attachFunctionalSetters(element);
-    attachAppendTo(element);
     attachClipMaskAttributes(element);
   };
 
   var prepareMaskClipPath = function prepareMaskClipPath(element, primitives) {
+    attachDOMMethods(element);
     attachAppendableMethods(element, primitives);
     attachFunctionalSetters(element);
-    attachAppendTo(element);
     attachClipMaskAttributes(element);
   };
 

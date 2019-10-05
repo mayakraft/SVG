@@ -14,22 +14,24 @@ compare the two to see what is or isn't made easier.
 <script>
 
 // create a new SVG, it will automatically appends to the DOM
-var sketch = SVG(window.innerWidth, window.innerHeight);
+var sketch, poly, points;
+
+sketch = SVG(window.innerWidth, window.innerHeight);
 
 // create a rectangle on the svg, style it
-var rect = sketch.rect(0, 0, window.innerWidth, window.innerHeight);
-rect.setAttribute("fill", "black");
+sketch.background("black");
 
 // create, style, and append a polyline
-var poly = sketch.polyline();
-var pStyle = "stroke:white; stroke-width:5; stroke-dasharray:6 12; stroke-linecap:round";
-poly.setAttribute("style", pStyle);
+poly = sketch.polyline()
+  .stroke("white")
+  .strokeWidth(5)
+  .strokeDasharray("6 12")
+  .strokeLinecap("round");
 
-// create a simple draw handler
-var points = [];
-sketch.onMouseMove = function(event) {
+// draw event handler
+points = [];
+sketch.onMouseMove = function (event) {
   points.push(event.position);
-  SVG.setPoints(poly, points);
+  poly.setPoints(points);
 };
-
 </script>

@@ -4,19 +4,19 @@ function dragon(a, b, turn, level) {
   if (level < 0) {
     return [a, b];
   }
-  let vector = { x: b.x - a.x, y: b.y - a.y };
-  let midPt = {
+  var vector = { x: b.x - a.x, y: b.y - a.y };
+  var midPt = {
     x: a.x + vector.x * 0.5 + turn * vector.y * 0.5,
     y: a.y + vector.y * 0.5 + (-1 * turn) * vector.x * 0.5
   };
-  let first = dragon(a, midPt, 1, level - 1);
-  let second = dragon(midPt, b, -1, level - 1);
+  var first = dragon(a, midPt, 1, level - 1);
+  var second = dragon(midPt, b, -1, level - 1);
   if (first.length > 1) { first.pop(); }
   return first.concat(second);
 }
 
-let a = {x: getWidth() * 0.225, y: getHeight() * 0.6 };
-let b = {x: getWidth() * 0.85, y: getHeight() * 0.6 };
+var a = {x: getWidth() * 0.225, y: getHeight() * 0.6 };
+var b = {x: getWidth() * 0.85, y: getHeight() * 0.6 };
 
 polyline(dragon(a, b, 1, 4))
   .fill("none").stroke("#158").opacity(0.5).strokeWidth(40);

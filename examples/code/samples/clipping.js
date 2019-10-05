@@ -1,11 +1,11 @@
 size(1, 1);
 background("#edb");
 
-let points = Array.from(Array(100))
+var points = Array.from(Array(100))
   .map(() => [Math.random(), Math.random()]);
 
-let maskA = mask();
-let maskB = mask();
+var maskA = mask();
+var maskB = mask();
 
 maskA.polygon(points).fillRule("evenodd").fill("white");
 maskB.rect(0, 0, 1, 1).fill("white");
