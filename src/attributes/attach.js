@@ -3,35 +3,8 @@
  */
 
 import attributes from "./svgAttributes";
-import {
-  removeChildren,
-  addClass,
-  removeClass,
-  setClass,
-  setID
-} from "./DOM";
-import {
-  getViewBox,
-  setViewBox,
-  convertToViewBox,
-  translateViewBox,
-  scaleViewBox
-} from "./viewBox";
-
-// for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
-const findIdURL = function (arg) {
-  if (arg == null) { return undefined; }
-  if (typeof arg === "string") {
-    return arg.slice(0, 3) === "url"
-      ? arg
-      : `url(#${arg})`;
-  }
-  if (arg.getAttribute != null) {
-    const idString = arg.getAttribute("id");
-    return `url(#${idString})`;
-  }
-  return "url(#)";
-};
+import * as DOM from "./DOM";
+import * as ViewBox from "./viewBox";
 
 export const attachAppendableMethods = function (element, methods) {
   const el = element;
@@ -44,22 +17,17 @@ export const attachAppendableMethods = function (element, methods) {
   });
 };
 
-export const attachClassMethods = function (element) {
+export const attachDOMMethods = function (element) {
   const el = element;
-  [removeChildren, addClass, removeClass, setClass, setID].forEach((f) => {
-    el.f = (...args) => f(element, ...args);
+  Object.keys(DOM).forEach((key) => {
+    el[key] = (...args) => DOM[key](element, ...args);
   });
 };
 
-export const attachAppendTo = function (element) {
-  Object.defineProperty(element, "appendTo", {
-    value: (parent) => {
-      if (parent != null) {
-        element.remove();
-        parent.appendChild(element);
-      }
-      return element;
-    }
+export const attachViewBoxMethods = function (element) {
+  const el = element;
+  Object.keys(ViewBox).forEach((key) => {
+    el[key] = (...args) => ViewBox[key](element, ...args);
   });
 };
 
@@ -94,6 +62,21 @@ export const attachClipMaskMakers = function (element, primitives) {
   };
 };
 
+// for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
+const findIdURL = function (arg) {
+  if (arg == null) { return undefined; }
+  if (typeof arg === "string") {
+    return arg.slice(0, 3) === "url"
+      ? arg
+      : `url(#${arg})`;
+  }
+  if (arg.getAttribute != null) {
+    const idString = arg.getAttribute("id");
+    return `url(#${idString})`;
+  }
+  return "url(#)";
+};
+
 export const attachClipMaskAttributes = function (element) {
   const el = element;
   el.clipPath = function (parent) {
@@ -108,16 +91,4 @@ export const attachClipMaskAttributes = function (element) {
     el.setAttribute("mask", value);
     return el;
   };
-};
-
-// these methods technically could work on all elements, but really
-// only make sense for <svg> elements
-export const attachViewBoxMethods = function (element) {
-  const el = element;
-  [setViewBox,
-    getViewBox,
-    scaleViewBox,
-    translateViewBox,
-    convertToViewBox
-  ].forEach((func) => { el[func.name] = (...args) => func(el, ...args); });
 };

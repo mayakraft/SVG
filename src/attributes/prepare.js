@@ -4,8 +4,7 @@
 
 import {
   attachAppendableMethods,
-  attachClassMethods,
-  attachAppendTo,
+  attachDOMMethods,
   attachClipMaskMakers,
   attachClipMaskAttributes,
   attachViewBoxMethods,
@@ -13,14 +12,13 @@ import {
 } from "./attach";
 
 const preparePrimitive = function (element) {
-  attachClassMethods(element);
+  attachDOMMethods(element);
   attachFunctionalSetters(element);
-  attachAppendTo(element);
   attachClipMaskAttributes(element);
 };
 
 const prepareSVG = function (element, primitives) {
-  attachClassMethods(element);
+  attachDOMMethods(element);
   attachAppendableMethods(element, primitives);
   attachViewBoxMethods(element);
   // attachFunctionalSetters(element);
@@ -28,17 +26,16 @@ const prepareSVG = function (element, primitives) {
 };
 
 const prepareGroup = function (element, primitives) {
-  attachClassMethods(element);
+  attachDOMMethods(element);
   attachAppendableMethods(element, primitives);
   attachFunctionalSetters(element);
-  attachAppendTo(element);
   attachClipMaskAttributes(element);
 };
 
 const prepareMaskClipPath = function (element, primitives) {
+  attachDOMMethods(element);
   attachAppendableMethods(element, primitives);
   attachFunctionalSetters(element);
-  attachAppendTo(element);
   attachClipMaskAttributes(element);
 };
 

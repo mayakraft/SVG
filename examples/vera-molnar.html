@@ -19,7 +19,7 @@ svg{
 <script type="text/javascript">
 
 let sketch = SVG(window.innerWidth, window.innerWidth / 3);
-let rect = SVG.rect(0, 0, sketch.w, sketch.h);
+let rect = SVG.rect(0, 0, sketch.getWidth(), sketch.getHeight());
 rect.setAttribute("fill", "white");
 sketch.appendChild(rect);
 
@@ -32,8 +32,8 @@ var ROWS = 1;
 var SPACING = window.innerWidth * 0.3;
 var SIDE = window.innerWidth * 0.22;
 var TL = {
-	x:(sketch.w*.5 - SIDE*0.5 - SPACING),
-	y:(sketch.h*.5-.5*SIDE)
+	x:(sketch.getWidth() * 0.5 - SIDE*0.5 - SPACING),
+	y:(sketch.getHeight() * 0.5-0.5*SIDE)
 };
 var PERTURB = 6;
 var FREQUENCY = 7;

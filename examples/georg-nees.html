@@ -24,14 +24,14 @@ svg{
 
 let nees = SVG(600, 1030);
 
-nees.draw = function(){
+nees.draw = function () {
 	const countW = 12;
 	const countH = 22;
 	let unit = 600 / (countW + 2);
 
 	nees.removeChildren();
 
-	let rect = SVG.rect(0, 0, nees.w, nees.h);
+	let rect = SVG.rect(0, 0, nees.getWidth(), nees.getHeight());
 	rect.setAttribute("fill", "white");
 	nees.appendChild(rect);
 
@@ -53,7 +53,8 @@ nees.draw = function(){
 			nees.appendChild(rect);
 		}
 	}
-}
+};
+
 nees.draw();
 
 nees.onMouseDown = function(mouse){

@@ -43,11 +43,10 @@ const CodeSVG = function (container) {
       app.console.innerHTML = "";
     } catch (err) {
       app.console.innerHTML = `<p>${err}</p>`;
-      throw(err);
     }
   };
   const editorDidUpdate = function () {
-    compileAndRun();
+    let error = compileAndRun();
     if (typeof app.didUpdate === "function") { app.didUpdate(); }
   };
   const injectCode = function (text) {

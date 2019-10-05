@@ -61,6 +61,15 @@ const setHeight = function (element, h) {
   return setViewBox(element, ...viewBox);
 };
 
+// const getWidthClient = function (svg) {
+//   const w = parseFloat(svg.getAttributeNS(null, "width"), 10);
+//   return w != null && !isNaN(w) ? w : svg.getBoundingClientRect().width;
+// };
+// const getHeightClient = function (svg) {
+//   const h = parseFloat(svg.getAttributeNS(null, "height"), 10);
+//   return h != null && !isNaN(h) ? h : svg.getBoundingClientRect().height;
+// };
+
 const size = function (element, ...args) {
 // additional window functions
   if (args.length === 2

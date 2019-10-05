@@ -2,22 +2,18 @@
  * SVG (c) Robby Kraft
  */
 
-import { getViewBox, setViewBox } from "./viewBox";
-
 export const removeChildren = function (parent) {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);
   }
 };
 
-export const getWidthClient = function (svg) {
-  const w = parseFloat(svg.getAttributeNS(null, "width"), 10);
-  return w != null && !isNaN(w) ? w : svg.getBoundingClientRect().width;
-};
-
-export const getHeightClient = function (svg) {
-  const h = parseFloat(svg.getAttributeNS(null, "height"), 10);
-  return h != null && !isNaN(h) ? h : svg.getBoundingClientRect().height;
+export const appendTo = function (element, parent) {
+  if (parent != null) {
+    element.remove();
+    parent.appendChild(element);
+  }
+  return element;
 };
 
 const getClassList = function (xmlNode) {

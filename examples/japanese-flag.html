@@ -15,10 +15,10 @@ html, body{
 
 let flag = SVG(600, 400);
 
-let rect = flag.rect(0, 0, flag.w, flag.h);
+let rect = flag.rect(0, 0, flag.getWidth(), flag.getHeight());
 rect.setAttribute("fill", "white");
 
-let circle = flag.circle(flag.w/2, flag.h/2, flag.h*0.3);
+let circle = flag.circle(flag.getWidth()/2, flag.getHeight()/2, flag.getHeight()*0.3);
 circle.setAttribute("fill", "#BC002D");
 
 </script>
