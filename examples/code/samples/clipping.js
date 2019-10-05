@@ -1,12 +1,12 @@
 size(1, 1);
 background("#edb");
 
-let mask = app.svg.mask("mask");
+let mask = app.svg.mask();
 let points = Array.from(Array(100))
   .map(() => [Math.random(), Math.random()]);
 
 circle(Math.random(), Math.random(), 0.5)
-  .fill("#158");
+  .fill("#e53");
 
 polygon(points)
   .fill("#edb")
@@ -18,5 +18,5 @@ polygon(points)
   .appendTo(mask);
 
 circle(Math.random(), Math.random(), 0.5)
-  .fill("#e53")
-  .mask("url(#mask)");
+  .fill("#black")
+  .mask(mask);

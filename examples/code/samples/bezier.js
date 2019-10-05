@@ -10,4 +10,4 @@ rect(0, 0, 100, 100)
 bezier(0, 0, 5, 95, 95, 5, 100, 100)
   .fill("#158")
   .stroke("#e53")
-  .strokeWidth(2);
+  .strokeWidth(4);

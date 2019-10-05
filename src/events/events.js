@@ -2,7 +2,7 @@
  * SVG in Javascript (c) Robby Kraft
  */
 
-import { convertToViewBox } from "./viewBox";
+import { convertToViewBox } from "../attributes/viewBox";
 
 // these are the names under which the event handlers live
 const Names = {
@@ -21,10 +21,10 @@ const Pointer = function (node) {
 
   Object.assign(_pointer, {
     isPressed: false, // is the mouse button pressed (y/n)
-    position: [0,0],  // the current position of the mouse [x,y]
-    pressed: [0,0],   // the last location the mouse was pressed
-    drag: [0,0],      // vector, displacement from start to now
-    prev: [0,0],      // on mouseMoved, the previous location
+    position: [0, 0], // the current position of the mouse [x,y]
+    pressed: [0, 0],  // the last location the mouse was pressed
+    drag: [0, 0],     // vector, displacement from start to now
+    prev: [0, 0],     // on mouseMoved, the previous location
     x: 0,             //
     y: 0              // -- x and y, copy of position data
   });

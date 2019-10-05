@@ -64,17 +64,6 @@ const CodeSVG = function (container) {
       }
     }
   };
-
-  const image = function (...args) {
-    if (app.svg !== undefined) {
-      const parent = app.svg.parentElement;
-      parent.removeChild(app.svg);
-      app.svg = SVG(parent, ...args);
-    } else {
-      app.svg = SVG(parent, ...args);
-    }
-    return app.svg;
-  };
   const background = function (color) {
     document.querySelectorAll(".image-container")[0]
       .setAttribute("style", `background-color: ${color}`);
@@ -101,12 +90,10 @@ const CodeSVG = function (container) {
     ["text", "line", "circle", "ellipse", "rect", "polygon", "polyline",
       "bezier", "wedge", "arc", "curve", "regularPolygon",
       "group", "style", "clipPath", "mask",
-      // additional methods. defined above
-      "size", "image", "background"
     ].forEach((name) => {
       window[name] = function (...args) {
         const element = SVG[name](...args);
-        if (app.svg !== undefined) {
+        if (app.svg !== undefined && element != null) {
           app.svg.appendChild(element);
         }
         return element;

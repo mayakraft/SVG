@@ -2,6 +2,13 @@
  * SVG in Javascript (c) Robby Kraft
  */
 
+export const getViewBox = function (svg) {
+  const vb = svg.getAttribute("viewBox");
+  return (vb == null
+    ? undefined
+    : vb.split(" ").map(n => parseFloat(n)));
+};
+
 export const setViewBox = function (svg, x, y, width, height, padding = 0) {
   const scale = 1.0;
   const d = (width / scale) - width;
@@ -20,15 +27,29 @@ const setDefaultViewBox = function (svg) {
   setViewBox(svg, 0, 0, width, height);
 };
 
-export const getViewBox = function (svg) {
-  const vb = svg.getAttribute("viewBox");
-  return (vb == null
-    ? undefined
-    : vb.split(" ").map(n => parseFloat(n)));
+export const convertToViewBox = function (svg, x, y) {
+  const pt = svg.createSVGPoint();
+  pt.x = x;
+  pt.y = y;
+  const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+  const array = [svgPoint.x, svgPoint.y];
+  array.x = svgPoint.x;
+  array.y = svgPoint.y;
+  return array;
+};
+
+export const translateViewBox = function (svg, dx, dy) {
+  const viewBox = getViewBox(svg);
+  if (viewBox == null) {
+    setDefaultViewBox(svg);
+  }
+  viewBox[0] += dx;
+  viewBox[1] += dy;
+  svg.setAttributeNS(null, "viewBox", viewBox.join(" "));
 };
 
 export const scaleViewBox = function (svg, scale, origin_x = 0, origin_y = 0) {
-  if (scale < 1e-8) { scale = 0.01; }
+  if (Math.abs(scale) < 1e-8) { scale = 0.01; }
   const matrix = svg.createSVGMatrix()
     .translate(origin_x, origin_y)
     .scale(1 / scale)
@@ -49,25 +70,4 @@ export const scaleViewBox = function (svg, scale, origin_x = 0, origin_y = 0) {
     new_top_left.y,
     new_bot_right.x - new_top_left.x,
     new_bot_right.y - new_top_left.y);
-};
-
-export const translateViewBox = function (svg, dx, dy) {
-  const viewBox = getViewBox(svg);
-  if (viewBox == null) {
-    setDefaultViewBox(svg);
-  }
-  viewBox[0] += dx;
-  viewBox[1] += dy;
-  svg.setAttributeNS(null, "viewBox", viewBox.join(" "));
-};
-
-export const convertToViewBox = function (svg, x, y) {
-  const pt = svg.createSVGPoint();
-  pt.x = x;
-  pt.y = y;
-  const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
-  const array = [svgPoint.x, svgPoint.y];
-  array.x = svgPoint.x;
-  array.y = svgPoint.y;
-  return array;
 };

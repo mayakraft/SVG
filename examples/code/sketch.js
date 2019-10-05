@@ -32,7 +32,7 @@ const CodeSVGxMenu = function (container) {
 
   const loadAndRunExamples = function (callback) {
     const examples = [];
-    const exampleFilenames = ["dragon.js", "clipping.js", "bezier.js", "conics.js"];
+    const exampleFilenames = ["dragon.js", "clipping.js", "bezier.js", "conics.js", "text.js"];
     exampleFilenames.forEach((file) => {
       fetch(`samples/${file}`)
         .then(data => data.text())
@@ -66,4 +66,5 @@ const CodeSVGxMenu = function (container) {
 
 document.addEventListener("DOMContentLoaded", () => {
   window.app = CodeSVGxMenu(document.querySelectorAll(".app")[0]);
+  window.svg = window.app.svg;
 });

@@ -7,13 +7,13 @@
  * @param: a function that gets called after setup (callback)
  */
 
-import * as DOM from "./DOM";
-import * as ViewBox from "./viewBox";
-import { svg, setupSVG } from "./elements/main";
-import Events from "./events";
-import window from "./environment/window";
+import * as ViewBox from "../attributes/viewBox";
+import { svg } from "./primitives";
+import Events from "../events/events";
+import window from "../environment/window";
+import { attachSVGMethods } from "../attributes/index";
 
-const getElement = function (...params) {
+const findElementInParams = function (...params) {
   const element = params.filter(arg => arg instanceof HTMLElement).shift();
   const idElement = params
     .filter(a => typeof a === "string" || a instanceof String)
@@ -38,40 +38,11 @@ const initSize = function (svgElement, params) {
   }
 };
 
-const attachSVGMethods = function (element) {
-  Object.defineProperty(element, "w", {
-    get: () => DOM.getWidth(element),
-    set: w => element.setAttributeNS(null, "width", w),
-  });
-  Object.defineProperty(element, "h", {
-    get: () => DOM.getHeight(element),
-    set: h => element.setAttributeNS(null, "height", h),
-  });
-  element.getWidth = () => DOM.getWidth(element);
-  element.getHeight = () => DOM.getHeight(element);
-  element.setWidth = w => element.setAttributeNS(null, "width", w);
-  element.setHeight = h => element.setAttributeNS(null, "height", h);
-  element.save = function (filename = "image.svg") {
-    return DOM.save(element, filename);
-  };
-  element.load = function (data, callback) {
-    DOM.load(data, (newSVG, error) => {
-      if (newSVG != null) {
-        const parent = element.parentNode;
-        newSVG.events = element.events;
-        setupSVG(newSVG);
-        if (newSVG.events == null) { newSVG.events = Events(newSVG); }
-        else { newSVG.events.setup(newSVG); }
-        attachSVGMethods(newSVG);
-        if (parent != null) { parent.insertBefore(newSVG, element); }
-        element.remove();
-        element = newSVG;
-      }
-      // if (parent != null) { parent.appendChild(element); }
-      if (callback != null) { callback(element, error); }
-    });
-  };
-};
+// const prepareSVG = function (svgImage) {
+//   attachClassMethods(svgImage);
+//   attachViewBoxMethods(svgImage);
+//   attachAppendableMethods(svgImage, drawMethods);
+// };
 
 const SVG = function (...params) {
   // create a new SVG
@@ -86,9 +57,10 @@ const SVG = function (...params) {
     // initialize that requires a loaded DOM. append to parent, run callback
     // process user options
     initSize(image, params);
-    const parent = getElement(...params);
+    const parent = findElementInParams(...params);
     if (parent != null) { parent.appendChild(image); }
     // any function inside the arguments will get fired. with zero parameters.
+    // a way of sending a callback to an unknown parameter #
     params.filter(arg => typeof arg === "function")
       .forEach(func => func());
   };

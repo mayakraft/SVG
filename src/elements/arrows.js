@@ -4,6 +4,7 @@
  * arrows!
  */
 
+import svgNS from "../environment/namespace";
 import window from "../environment/window";
 import {
   line,
@@ -11,7 +12,6 @@ import {
   polygon,
 } from "./primitives";
 
-const svgNS = "http://www.w3.org/2000/svg";
 
 export const straightArrow = function (startPoint, endPoint, options) {
   const p = {
