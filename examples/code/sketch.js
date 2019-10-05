@@ -66,4 +66,5 @@ const CodeSVGxMenu = function (container) {
 
 document.addEventListener("DOMContentLoaded", () => {
   window.app = CodeSVGxMenu(document.querySelectorAll(".app")[0]);
+  window.svg = window.app.svg;
 });

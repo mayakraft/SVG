@@ -3,14 +3,6 @@
  */
 
 import {
-  svg,
-  group,
-  style,
-  clipPath,
-  mask
-} from "./elements/main";
-
-import {
   line,
   circle,
   ellipse,
@@ -21,8 +13,11 @@ import {
   text,
   wedge,
   arc,
-  setPoints,
-  setArc,
+  svg,
+  group,
+  style,
+  clipPath,
+  mask
 } from "./elements/primitives";
 
 import {
@@ -35,23 +30,33 @@ import {
 } from "./elements/arrows";
 
 import {
+  setPoints,
+  setArc,
+} from "./attributes/geometry";
+
+import namespace from "./environment/namespace";
+
+import {
   setViewBox,
   getViewBox,
   scaleViewBox,
   translateViewBox,
   convertToViewBox,
-} from "./viewBox";
+} from "./attributes/viewBox";
 
 import {
   removeChildren,
+} from "./attributes/DOM";
+
+import {
   save,
   load,
-} from "./DOM";
+} from "./environment/file";
 
-import { controls, controlPoint } from "./controls";
-import SVG from "./SVG";
+import { controls, controlPoint } from "./events/controls";
+import SVG from "./elements/svg";
 
-SVG.NS = "http://www.w3.org/2000/svg";
+SVG.NS = namespace;
 SVG.svg = svg;
 SVG.group = group;
 SVG.style = style;

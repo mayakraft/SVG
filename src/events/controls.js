@@ -2,8 +2,8 @@
  * SVG in Javascript (c) Robby Kraft
  */
 
-import { circle } from "./elements/primitives";
-import { convertToViewBox } from "./viewBox";
+import { circle } from "../elements/primitives";
+import { convertToViewBox } from "../attributes/viewBox";
 
 const controlPoint = function (parent, options = {}) {
   if (options.radius == null) { options.radius = 1; }
