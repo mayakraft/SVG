@@ -616,22 +616,6 @@
   };
   var attachSVGMethods = function attachSVGMethods(el) {
     var element = el;
-    Object.defineProperty(element, "w", {
-      get: function get() {
-        return getWidth(element);
-      },
-      set: function set(w) {
-        return element.setAttributeNS(null, "width", w);
-      }
-    });
-    Object.defineProperty(element, "h", {
-      get: function get() {
-        return getHeight(element);
-      },
-      set: function set(h) {
-        return element.setAttributeNS(null, "height", h);
-      }
-    });
 
     element.getWidth = function () {
       return getWidth(element);
@@ -654,7 +638,25 @@
       return save(element, filename);
     };
 
-    element.background = function (color) {};
+    element.background = function (color) {
+      var parent = element.parentElement;
+
+      if (parent != null) {
+        parent.setAttribute("style", "background-color: ".concat(color));
+      }
+
+      var backRect = element.querySelector("#svg-background-rectangle");
+
+      if (backRect != null) {
+        backRect.setAttribute("fill", color);
+      } else {
+        var viewBox = element.viewBox.baseVal;
+        var rect = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+        backRect = rect(rect[0], rect[1], rect[2], rect[3]).fill(color);
+        backRect.setAttribute("id", "background-rectangle");
+        element.prepend(backRect);
+      }
+    };
 
     element.size = function () {
       for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
