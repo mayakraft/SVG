@@ -564,7 +564,7 @@
       return el;
     };
   };
-  var preparePrimitive = function preparePrimitive(element, primitives) {
+  var preparePrimitive = function preparePrimitive(element) {
     attachClassMethods(element);
     prepareFunctionalSetters(element);
     attachAppendTo(element);
@@ -579,6 +579,7 @@
     attachClassMethods(element);
     attachAppendableMethods(element, primitives);
     prepareFunctionalSetters(element);
+    attachAppendTo(element);
     attachClipMaskAttributes(element);
   };
   var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -600,6 +601,7 @@
 
     attachAppendableMethods(element, primitives);
     prepareFunctionalSetters(element);
+    attachAppendTo(element);
     attachClipMaskAttributes(element);
   };
   var prepareMask = function prepareMask(element, primitives) {
@@ -609,6 +611,7 @@
 
     attachAppendableMethods(element, primitives);
     prepareFunctionalSetters(element);
+    attachAppendTo(element);
     attachClipMaskAttributes(element);
   };
   var attachSVGMethods = function attachSVGMethods(el) {

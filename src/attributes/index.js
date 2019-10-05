@@ -112,7 +112,7 @@ export const attachClipMaskAttributes = function (element) {
   };
 };
 
-export const preparePrimitive = function (element, primitives) {
+export const preparePrimitive = function (element) {
   attachClassMethods(element);
   prepareFunctionalSetters(element);
   attachAppendTo(element);
@@ -130,6 +130,7 @@ export const prepareGroup = function (element, primitives) {
   attachClassMethods(element);
   attachAppendableMethods(element, primitives);
   prepareFunctionalSetters(element);
+  attachAppendTo(element);
   attachClipMaskAttributes(element);
 };
 
@@ -146,6 +147,7 @@ export const prepareClipPath = function (element, primitives) {
   if (!element.id) { element.setAttribute("id", generateUUID("clip")); }
   attachAppendableMethods(element, primitives);
   prepareFunctionalSetters(element);
+  attachAppendTo(element);
   attachClipMaskAttributes(element);
 };
 
@@ -153,6 +155,7 @@ export const prepareMask = function (element, primitives) {
   if (!element.id) { element.setAttribute("id", generateUUID("mask")); }
   attachAppendableMethods(element, primitives);
   prepareFunctionalSetters(element);
+  attachAppendTo(element);
   attachClipMaskAttributes(element);
 };
 
@@ -171,14 +174,6 @@ export const attachViewBoxMethods = function (element) {
 
 export const attachSVGMethods = function (el) {
   const element = el;
-  Object.defineProperty(element, "w", {
-    get: () => getWidth(element),
-    set: w => element.setAttributeNS(null, "width", w),
-  });
-  Object.defineProperty(element, "h", {
-    get: () => getHeight(element),
-    set: h => element.setAttributeNS(null, "height", h),
-  });
   element.getWidth = () => getWidth(element);
   element.getHeight = () => getHeight(element);
   element.setWidth = w => element.setAttributeNS(null, "width", w);
@@ -187,21 +182,21 @@ export const attachSVGMethods = function (el) {
     return File.save(element, filename);
   };
   element.background = (color) => {
-    // const parent = element.parentElement;
-    // if (parent != null) {
-    //   parent.setAttribute("style", `background-color: ${color}`);
-    // }
-    // let backRect = element.querySelector("#svg-background-rectangle");
-    // if (backRect != null) {
-    //   backRect.setAttribute("fill", color);
-    // } else {
-    //   const viewBox = element.viewBox.baseVal;
-    //   const rect = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
-    //   backRect = rect(rect[0], rect[1], rect[2], rect[3])
-    //     .fill(color);
-    //   backRect.setAttribute("id", "background-rectangle");
-    //   element.prepend(backRect);
-    // }
+    const parent = element.parentElement;
+    if (parent != null) {
+      parent.setAttribute("style", `background-color: ${color}`);
+    }
+    let backRect = element.querySelector("#svg-background-rectangle");
+    if (backRect != null) {
+      backRect.setAttribute("fill", color);
+    } else {
+      const viewBox = element.viewBox.baseVal;
+      const rect = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+      backRect = rect(rect[0], rect[1], rect[2], rect[3])
+        .fill(color);
+      backRect.setAttribute("id", "background-rectangle");
+      element.prepend(backRect);
+    }
   };
   element.size = (...args) => {
   // additional window functions

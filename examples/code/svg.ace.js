@@ -56,25 +56,14 @@ const CodeSVG = function (container) {
     }, text);
   };
   // additional window functions
-  // const size = function (...args) {
-  //   if (app.svg !== undefined) {
-  //     if (args.length === 2) {
-  //       [app.svg.w, app.svg.h] = args;
-  //       app.svg.setViewBox(0, 0, args[0], args[1]);
-  //     }
-  //   }
-  // };
-
-  // const image = function (...args) {
-  //   if (app.svg !== undefined) {
-  //     const parent = app.svg.parentElement;
-  //     parent.removeChild(app.svg);
-  //     app.svg = SVG(parent, ...args);
-  //   } else {
-  //     app.svg = SVG(parent, ...args);
-  //   }
-  //   return app.svg;
-  // };
+  const size = function (...args) {
+    if (app.svg !== undefined) {
+      if (args.length === 2) {
+        [app.svg.w, app.svg.h] = args;
+        app.svg.setViewBox(0, 0, args[0], args[1]);
+      }
+    }
+  };
   const background = function (color) {
     document.querySelectorAll(".image-container")[0]
       .setAttribute("style", `background-color: ${color}`);
@@ -97,17 +86,14 @@ const CodeSVG = function (container) {
     //   .filter(name => name !== "svg") // prevent creating SVGs
     //   .forEach(name => window[name] = SVG[name].bind(SVG));
 
-// todo bring back
     // bind draw methods and insert an appendChild to our one svg
     ["text", "line", "circle", "ellipse", "rect", "polygon", "polyline",
       "bezier", "wedge", "arc", "curve", "regularPolygon",
       "group", "style", "clipPath", "mask",
-      // additional methods. defined above
-      "image", "background"
     ].forEach((name) => {
       window[name] = function (...args) {
         const element = SVG[name](...args);
-        if (app.svg !== undefined) {
+        if (app.svg !== undefined && element != null) {
           app.svg.appendChild(element);
         }
         return element;
