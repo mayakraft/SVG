@@ -1,3 +1,6 @@
+/**
+ * SVG (c) Robby Kraft
+ */
 
 /*
 const keys = {

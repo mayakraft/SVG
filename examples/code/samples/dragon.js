@@ -15,8 +15,8 @@ function dragon(a, b, turn, level) {
   return first.concat(second);
 }
 
-let a = {x: app.svg.w * 0.225, y: app.svg.h * 0.6 };
-let b = {x: app.svg.w * 0.85, y: app.svg.h * 0.6 };
+let a = {x: getWidth() * 0.225, y: getHeight() * 0.6 };
+let b = {x: getWidth() * 0.85, y: getHeight() * 0.6 };
 
 polyline(dragon(a, b, 1, 4))
   .fill("none").stroke("#158").opacity(0.5).strokeWidth(40);

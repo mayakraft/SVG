@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import vkXML from "../../include/vkbeautify-xml";
 import svgNS from "./namespace";
 

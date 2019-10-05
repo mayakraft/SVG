@@ -1,5 +1,8 @@
-// get DOMParser and XMLSerializer from the browser or from Node
+/**
+ * SVG (c) Robby Kraft
+ */
 
+// get DOMParser and XMLSerializer from the browser or from Node
 import {
   isBrowser,
   isNode,

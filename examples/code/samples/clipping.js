@@ -1,22 +1,15 @@
 size(1, 1);
 background("#edb");
 
-let mask = app.svg.mask();
 let points = Array.from(Array(100))
   .map(() => [Math.random(), Math.random()]);
 
-circle(Math.random(), Math.random(), 0.5)
-  .fill("#e53");
+let maskA = mask();
+let maskB = mask();
 
-polygon(points)
-  .fill("#edb")
-  .fillRule("evenodd");
+maskA.polygon(points).fillRule("evenodd").fill("white");
+maskB.rect(0, 0, 1, 1).fill("white");
+maskB.polygon(points).fillRule("evenodd").fill("black");
 
-polygon(points)
-  .fill("#fff")
-  .fillRule("evenodd")
-  .appendTo(mask);
-
-circle(Math.random(), Math.random(), 0.5)
-  .fill("#black")
-  .mask(mask);
+circle(Math.random(), Math.random(), 0.5).fill("black").mask(maskA);
+circle(Math.random(), Math.random(), 0.5).fill("#e53").mask(maskB);

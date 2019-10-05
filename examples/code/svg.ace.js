@@ -28,7 +28,7 @@ const CodeSVG = function (container) {
       consoleContainer
     ] = buildDOM(appContainer);
 
-    app.svg = SVG(svgContainer, 100, 100);
+    app.svg = SVG(svgContainer, 512, 512);
     app.console = consoleContainer;
     return [
       codeContainer,
@@ -55,50 +55,12 @@ const CodeSVG = function (container) {
       column: 0
     }, text);
   };
-  // additional window functions
-  const size = function (...args) {
-    if (app.svg !== undefined) {
-      if (args.length === 2) {
-        [app.svg.w, app.svg.h] = args;
-        app.svg.setViewBox(0, 0, args[0], args[1]);
-      }
-    }
-  };
-  const background = function (color) {
-    document.querySelectorAll(".image-container")[0]
-      .setAttribute("style", `background-color: ${color}`);
-    let backRect = app.svg.querySelector("#background-rectangle");
-    if (backRect != null) {
-      backRect.setAttribute("fill", color);
-    } else {
-      const viewBox = app.svg.viewBox.baseVal;
-      const rect = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
-      backRect = SVG.rect(rect[0], rect[1], rect[2], rect[3])
-        .fill(color);
-      backRect.setAttribute("id", "background-rectangle");
-      app.svg.prepend(backRect);
-    }
-  };
-  const bindToWindow = function () {
-    // simple bind all methods to the window
-    // Object.getOwnPropertyNames(SVG)
-    //   .filter(p => typeof SVG[p] === "function")
-    //   .filter(name => name !== "svg") // prevent creating SVGs
-    //   .forEach(name => window[name] = SVG[name].bind(SVG));
 
-    // bind draw methods and insert an appendChild to our one svg
-    ["text", "line", "circle", "ellipse", "rect", "polygon", "polyline",
-      "bezier", "wedge", "arc", "curve", "regularPolygon",
-      "group", "style", "clipPath", "mask",
-    ].forEach((name) => {
-      window[name] = function (...args) {
-        const element = SVG[name](...args);
-        if (app.svg !== undefined && element != null) {
-          app.svg.appendChild(element);
-        }
-        return element;
-      };
-    });
+  const bindToWindow = function () {
+    // bind all member methods of app.svg to the window
+    Object.getOwnPropertyNames(app.svg)
+      .filter(p => typeof app.svg[p] === "function")
+      .forEach((name) => { window[name] = app.svg[name].bind(app.svg); });
   };
 
   // init app

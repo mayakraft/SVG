@@ -1,11 +1,10 @@
 /**
- * SVG in Javascript (c) Robby Kraft
- *
- * arrows!
+ * SVG (c) Robby Kraft
  */
 
 import svgNS from "../environment/namespace";
 import window from "../environment/window";
+
 import {
   line,
   bezier,
