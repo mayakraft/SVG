@@ -46,7 +46,7 @@ const CodeSVG = function (container) {
     }
   };
   const editorDidUpdate = function () {
-    let error = compileAndRun();
+    compileAndRun();
     if (typeof app.didUpdate === "function") { app.didUpdate(); }
   };
   const injectCode = function (text) {

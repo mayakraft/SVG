@@ -690,15 +690,15 @@
   };
 
   var parabola = function parabola(x, y, width, height) {
-    var COUNT = 100;
-    var iter = Array.from(Array(COUNT)).map(function (_, i) {
-      return i - (COUNT - 1) / 2;
+    var COUNT = 128;
+    var iter = Array.from(Array(COUNT + 1)).map(function (_, i) {
+      return (i - COUNT) / COUNT * 2 + 1;
     });
     var ptsX = iter.map(function (i) {
-      return 300 + i;
+      return x + (1 + i) * width * 0.5;
     });
     var ptsY = iter.map(function (i) {
-      return 10 + 0.1 * Math.pow(i, 2);
+      return y + (1 - Math.pow(i, 2)) * height;
     });
     var points = iter.map(function (_, i) {
       return [ptsX[i], ptsY[i]];

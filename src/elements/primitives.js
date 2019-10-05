@@ -118,11 +118,11 @@ const arc = function (x, y, radius, angleA, angleB) {
 };
 
 const parabola = function (x, y, width, height) {
-  const COUNT = 100;
-  const iter = Array.from(Array(COUNT)).map((_, i) => i - ((COUNT - 1) / 2));
-  const ptsX = iter.map(i => 300 + i);
-  const ptsY = iter.map(i => 10 + 0.1 * (i ** 2));
-  // iter.pop(); // reduce by 1
+  const COUNT = 128;
+  const iter = Array.from(Array(COUNT + 1))
+    .map((_, i) => (i - (COUNT)) / COUNT * 2 + 1);
+  const ptsX = iter.map(i => x + (1 + i) * width * 0.5);
+  const ptsY = iter.map(i => y + (1 - (i ** 2)) * height);
   const points = iter.map((_, i) => [ptsX[i], ptsY[i]]);
   return polyline(points);
 };
