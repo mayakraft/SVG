@@ -320,9 +320,9 @@
 
   var attachAppendableMethods = function attachAppendableMethods(element, methods) {
     var el = element;
-    methods.forEach(function (func) {
-      el[func.name] = function () {
-        var g = func.apply(void 0, arguments);
+    Object.keys(methods).forEach(function (key) {
+      el[key] = function () {
+        var g = methods[key].apply(methods, arguments);
         element.appendChild(g);
         return g;
       };
@@ -375,23 +375,14 @@
   var attachClipMaskMakers = function attachClipMaskMakers(element, primitives) {
     var el = element;
 
-    var _map = ["clipPath", "mask"].map(function (key) {
-      return primitives.filter(function (p) {
-        return p.name === key;
-      }).shift();
-    }),
-        _map2 = _slicedToArray(_map, 2),
-        clip = _map2[0],
-        mask = _map2[1];
-
     el.clipPath = function () {
-      var c = clip.apply(void 0, arguments);
+      var c = primitives.clipPath.apply(primitives, arguments);
       element.appendChild(c);
       return c;
     };
 
     el.mask = function () {
-      var m = mask.apply(void 0, arguments);
+      var m = primitives.mask.apply(primitives, arguments);
       element.appendChild(m);
       return m;
     };
@@ -488,7 +479,7 @@
     }
   };
 
-  var primitives = [];
+  var primitives = {};
   var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   var generateUUID = function generateUUID() {
@@ -778,10 +769,10 @@
     mask: mask,
     style: style
   };
-  Object.values(elements).filter(function (f) {
-    return f.name !== "svg";
-  }).forEach(function (f) {
-    return primitives.push(f);
+  Object.keys(elements).filter(function (key) {
+    return key !== "svg";
+  }).forEach(function (key) {
+    primitives[key] = elements[key];
   });
 
   var primitives$1 = /*#__PURE__*/Object.freeze({

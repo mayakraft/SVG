@@ -35,9 +35,9 @@ const findIdURL = function (arg) {
 
 export const attachAppendableMethods = function (element, methods) {
   const el = element;
-  methods.forEach((func) => {
-    el[func.name] = function (...args) {
-      const g = func(...args);
+  Object.keys(methods).forEach((key) => {
+    el[key] = function (...args) {
+      const g = methods[key](...args);
       element.appendChild(g);
       return g;
     };
@@ -82,15 +82,13 @@ export const attachFunctionalSetters = function (element) {
 
 export const attachClipMaskMakers = function (element, primitives) {
   const el = element;
-  const [clip, mask] = ["clipPath", "mask"].map(key => primitives
-    .filter(p => p.name === key).shift());
   el.clipPath = (...args) => {
-    const c = clip(...args);
+    const c = primitives.clipPath(...args);
     element.appendChild(c);
     return c;
   };
   el.mask = (...args) => {
-    const m = mask(...args);
+    const m = primitives.mask(...args);
     element.appendChild(m);
     return m;
   };
