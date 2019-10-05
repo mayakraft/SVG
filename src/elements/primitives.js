@@ -13,7 +13,7 @@ import {
 
 import prepare from "../attributes/prepare";
 
-const primitives = [];
+const primitives = {};
 
 const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const generateUUID = function (count = 16, prefix = "") {
@@ -193,9 +193,9 @@ const elements = {
   style
 };
 
-Object.values(elements)
-  .filter(f => f.name !== "svg")
-  .forEach(f => primitives.push(f));
+Object.keys(elements)
+  .filter(key => key !== "svg")
+  .forEach((key) => { primitives[key] = elements[key]; });
 
 export {
   line,
