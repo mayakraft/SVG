@@ -1,6 +1,8 @@
 const CodeSVGxMenu = function (container) {
   const app = CodeSVG(container);
   const queryCode = QueryWatcher("code");
+  // attach as early as possible
+  window.svg = app.svg;
 
   const downloadButton = document.createElement("div");
   downloadButton.setAttribute("class", "menu-button");
@@ -37,9 +39,12 @@ const CodeSVGxMenu = function (container) {
     const examples = [];
     const exampleFilenames = [
       "bezier.js",
-      "conics.js",
       "clipping.js",
+      "conics.js",
       "dragon.js",
+      "draw.js",
+      "harmonic.js",
+      "parabola.js",
       "text.js"
     ];
     exampleFilenames.forEach((file) => {
@@ -75,5 +80,4 @@ const CodeSVGxMenu = function (container) {
 
 document.addEventListener("DOMContentLoaded", () => {
   window.app = CodeSVGxMenu(document.querySelectorAll(".app")[0]);
-  window.svg = window.app.svg;
 });

@@ -61,6 +61,16 @@ const CodeSVG = function (container) {
     Object.getOwnPropertyNames(app.svg)
       .filter(p => typeof app.svg[p] === "function")
       .forEach((name) => { window[name] = app.svg[name].bind(app.svg); });
+    // special case: interaction handlers
+    ["onMouseDown", "onMouseEnter", "onMouseLeave", "onMouseMove", "onMouseUp",
+      "onScroll"].forEach((key) => {
+      Object.defineProperty(window, key, {
+        set: function (f) {
+          app.svg[key] = f;
+        },
+        get: function () { return; }
+      });
+    });
   };
 
   // init app

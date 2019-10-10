@@ -8,7 +8,7 @@ import * as ViewBox from "./viewBox";
 
 export const attachAppendableMethods = function (element, methods) {
   const el = element;
-  Object.keys(methods).forEach((key) => {
+  Object.keys(methods).filter(key => el[key] === undefined).forEach((key) => {
     el[key] = function (...args) {
       const g = methods[key](...args);
       element.appendChild(g);
@@ -19,14 +19,14 @@ export const attachAppendableMethods = function (element, methods) {
 
 export const attachDOMMethods = function (element) {
   const el = element;
-  Object.keys(DOM).forEach((key) => {
+  Object.keys(DOM).filter(key => el[key] === undefined).forEach((key) => {
     el[key] = (...args) => DOM[key](element, ...args);
   });
 };
 
 export const attachViewBoxMethods = function (element) {
   const el = element;
-  Object.keys(ViewBox).forEach((key) => {
+  Object.keys(ViewBox).filter(key => el[key] === undefined).forEach((key) => {
     el[key] = (...args) => ViewBox[key](element, ...args);
   });
 };
@@ -40,7 +40,7 @@ const toCamel = s => s
 export const attachFunctionalSetters = function (element) {
   const el = element;
   // attributes.filter(attr => attr !== element.tagName).forEach((key) => {
-  attributes.forEach((key) => {
+  attributes.filter(key => el[toCamel(key)] === undefined).forEach((key) => {
     el[toCamel(key)] = (...args) => {
       el.setAttribute(key, ...args);
       return el;
@@ -50,16 +50,20 @@ export const attachFunctionalSetters = function (element) {
 
 export const attachClipMaskMakers = function (element, primitives) {
   const el = element;
-  el.clipPath = (...args) => {
-    const c = primitives.clipPath(...args);
-    element.appendChild(c);
-    return c;
-  };
-  el.mask = (...args) => {
-    const m = primitives.mask(...args);
-    element.appendChild(m);
-    return m;
-  };
+  if (el.clipPath === undefined) {
+    el.clipPath = (...args) => {
+      const c = primitives.clipPath(...args);
+      element.appendChild(c);
+      return c;
+    };
+  }
+  if (el.mask === undefined) {
+    el.mask = (...args) => {
+      const m = primitives.mask(...args);
+      element.appendChild(m);
+      return m;
+    };
+  }
 };
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
@@ -79,16 +83,20 @@ const findIdURL = function (arg) {
 
 export const attachClipMaskAttributes = function (element) {
   const el = element;
-  el.clipPath = function (parent) {
-    const value = findIdURL(parent);
-    if (value === undefined) { return el; }
-    el.setAttribute("clip-path", value);
-    return el;
-  };
-  el.mask = function (parent) {
-    const value = findIdURL(parent);
-    if (value === undefined) { return el; }
-    el.setAttribute("mask", value);
-    return el;
-  };
+  if (el.clipPath === undefined) {
+    el.clipPath = function (parent) {
+      const value = findIdURL(parent);
+      if (value === undefined) { return el; }
+      el.setAttribute("clip-path", value);
+      return el;
+    };
+  }
+  if (el.mask === undefined) {
+    el.mask = function (parent) {
+      const value = findIdURL(parent);
+      if (value === undefined) { return el; }
+      el.setAttribute("mask", value);
+      return el;
+    };
+  }
 };

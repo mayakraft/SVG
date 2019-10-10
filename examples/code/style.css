@@ -111,3 +111,13 @@ svg {
   font-family: monospace, sans-serif;
   font-size: 150%;
 }
+
+
+@media not all and (hover) {
+  html {
+    font-size: 250%;
+  }
+  .ace_editor {
+    font-size: 0.6rem;
+  }
+}

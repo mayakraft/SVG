@@ -149,7 +149,8 @@ const SVG = function (...params) {
   element.setHeight = h => setHeight(element, h);
   element.background = color => background(element, color);
   element.size = (...args) => size(element, ...args);
-  element.events = Events(element);
+  // element.events = Events(element);
+  Events(element);
   element.save = function (filename = "image.svg") {
     return File.save(element, filename);
   };
