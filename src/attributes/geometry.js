@@ -27,10 +27,19 @@ const flatten_input = function (...args) {
  */
 export const setPoints = function (shape, ...pointsArray) {
   const flat = flatten_input(...pointsArray);
-  const pointsString = typeof flat[0] === "object" && flat[0].x != null
-    ? flat.reduce((prev, curr) => `${prev}${curr.x},${curr.y} `, "")
-    : Array.from(Array(Math.floor(flat.length / 2)))
+  let pointsString = "";
+  if (typeof flat[0] === "number") {
+    pointsString = Array.from(Array(Math.floor(flat.length / 2)))
       .reduce((a, b, i) => `${a}${flat[i * 2]},${flat[i * 2 + 1]} `, "");
+  }
+  if (typeof flat[0] === "object") {
+    if (typeof flat[0].x === "number") {
+      pointsString = flat.reduce((prev, curr) => `${prev}${curr.x},${curr.y} `, "");
+    }
+    if (typeof flat[0][0] === "number") {
+      pointsString = flat.reduce((prev, curr) => `${prev}${curr[0]},${curr[1]} `, "");
+    }
+  }
   shape.setAttributeNS(null, "points", pointsString);
 };
 

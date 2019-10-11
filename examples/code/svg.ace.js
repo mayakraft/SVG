@@ -61,6 +61,16 @@ const CodeSVG = function (container) {
     Object.getOwnPropertyNames(app.svg)
       .filter(p => typeof app.svg[p] === "function")
       .forEach((name) => { window[name] = app.svg[name].bind(app.svg); });
+    // special case: interaction handlers
+    ["onMouseDown", "onMouseEnter", "onMouseLeave", "onMouseMove", "onMouseUp",
+      "onScroll"].forEach((key) => {
+      Object.defineProperty(window, key, {
+        set: function (f) {
+          app.svg[key] = f;
+        },
+        get: function () { return; }
+      });
+    });
   };
 
   // init app
@@ -86,6 +96,8 @@ const CodeSVG = function (container) {
       while (app.svg.lastChild) {
         app.svg.removeChild(app.svg.lastChild);
       }
+      // remove any Timer functions. handlers will get cleaned up automatically
+      app.svg.stopAnimations();
     }
   };
 

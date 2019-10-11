@@ -2,10 +2,10 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.SVG = factory());
-}(this, (function () { 'use strict';
+  (global = global || self, global.SVG = factory());
+}(this, function () { 'use strict';
 
-  var svgNS = "http://www.w3.org/2000/svg";
+  var namespace = "http://www.w3.org/2000/svg";
 
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -132,11 +132,28 @@
     }
 
     var flat = flatten_input.apply(void 0, pointsArray);
-    var pointsString = _typeof(flat[0]) === "object" && flat[0].x != null ? flat.reduce(function (prev, curr) {
-      return "".concat(prev).concat(curr.x, ",").concat(curr.y, " ");
-    }, "") : Array.from(Array(Math.floor(flat.length / 2))).reduce(function (a, b, i) {
-      return "".concat(a).concat(flat[i * 2], ",").concat(flat[i * 2 + 1], " ");
-    }, "");
+    var pointsString = "";
+
+    if (typeof flat[0] === "number") {
+      pointsString = Array.from(Array(Math.floor(flat.length / 2))).reduce(function (a, b, i) {
+        return "".concat(a).concat(flat[i * 2], ",").concat(flat[i * 2 + 1], " ");
+      }, "");
+    }
+
+    if (_typeof(flat[0]) === "object") {
+      if (typeof flat[0].x === "number") {
+        pointsString = flat.reduce(function (prev, curr) {
+          return "".concat(prev).concat(curr.x, ",").concat(curr.y, " ");
+        }, "");
+      }
+
+      if (typeof flat[0][0] === "number") {
+        pointsString = flat.reduce(function (prev, curr) {
+          return "".concat(prev).concat(curr[0], ",").concat(curr[1], " ");
+        }, "");
+      }
+    }
+
     shape.setAttributeNS(null, "points", pointsString);
   };
   var setArc = function setArc(shape, x, y, radius, startAngle, endAngle) {
@@ -166,6 +183,7 @@
   };
 
   var geometryMods = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     setPoints: setPoints,
     setArc: setArc,
     setBezier: setBezier
@@ -238,6 +256,7 @@
   };
 
   var DOM = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     removeChildren: removeChildren,
     appendTo: appendTo,
     setAttributes: setAttributes,
@@ -323,6 +342,7 @@
   };
 
   var ViewBox = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     getViewBox: getViewBox,
     setViewBox: setViewBox,
     convertToViewBox: convertToViewBox,
@@ -332,7 +352,9 @@
 
   var attachAppendableMethods = function attachAppendableMethods(element, methods) {
     var el = element;
-    Object.keys(methods).forEach(function (key) {
+    Object.keys(methods).filter(function (key) {
+      return el[key] === undefined;
+    }).forEach(function (key) {
       el[key] = function () {
         var g = methods[key].apply(methods, arguments);
         element.appendChild(g);
@@ -342,7 +364,9 @@
   };
   var attachDOMMethods = function attachDOMMethods(element) {
     var el = element;
-    Object.keys(DOM).forEach(function (key) {
+    Object.keys(DOM).filter(function (key) {
+      return el[key] === undefined;
+    }).forEach(function (key) {
       el[key] = function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
@@ -354,7 +378,9 @@
   };
   var attachViewBoxMethods = function attachViewBoxMethods(element) {
     var el = element;
-    Object.keys(ViewBox).forEach(function (key) {
+    Object.keys(ViewBox).filter(function (key) {
+      return el[key] === undefined;
+    }).forEach(function (key) {
       el[key] = function () {
         for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
@@ -373,7 +399,9 @@
 
   var attachFunctionalSetters = function attachFunctionalSetters(element) {
     var el = element;
-    attributes.forEach(function (key) {
+    attributes.filter(function (key) {
+      return el[toCamel(key)] === undefined;
+    }).forEach(function (key) {
       el[toCamel(key)] = function () {
         for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
           args[_key3] = arguments[_key3];
@@ -387,17 +415,21 @@
   var attachClipMaskMakers = function attachClipMaskMakers(element, primitives) {
     var el = element;
 
-    el.clipPath = function () {
-      var c = primitives.clipPath.apply(primitives, arguments);
-      element.appendChild(c);
-      return c;
-    };
+    if (el.clipPath === undefined) {
+      el.clipPath = function () {
+        var c = primitives.clipPath.apply(primitives, arguments);
+        element.appendChild(c);
+        return c;
+      };
+    }
 
-    el.mask = function () {
-      var m = primitives.mask.apply(primitives, arguments);
-      element.appendChild(m);
-      return m;
-    };
+    if (el.mask === undefined) {
+      el.mask = function () {
+        var m = primitives.mask.apply(primitives, arguments);
+        element.appendChild(m);
+        return m;
+      };
+    }
   };
 
   var findIdURL = function findIdURL(arg) {
@@ -420,27 +452,31 @@
   var attachClipMaskAttributes = function attachClipMaskAttributes(element) {
     var el = element;
 
-    el.clipPath = function (parent) {
-      var value = findIdURL(parent);
+    if (el.clipPath === undefined) {
+      el.clipPath = function (parent) {
+        var value = findIdURL(parent);
 
-      if (value === undefined) {
+        if (value === undefined) {
+          return el;
+        }
+
+        el.setAttribute("clip-path", value);
         return el;
-      }
+      };
+    }
 
-      el.setAttribute("clip-path", value);
-      return el;
-    };
+    if (el.mask === undefined) {
+      el.mask = function (parent) {
+        var value = findIdURL(parent);
 
-    el.mask = function (parent) {
-      var value = findIdURL(parent);
+        if (value === undefined) {
+          return el;
+        }
 
-      if (value === undefined) {
+        el.setAttribute("mask", value);
         return el;
-      }
-
-      el.setAttribute("mask", value);
-      return el;
-    };
+      };
+    }
   };
 
   var preparePrimitive = function preparePrimitive(element) {
@@ -477,7 +513,7 @@
         break;
 
       case "primitive":
-        preparePrimitive(element, primitiveList);
+        preparePrimitive(element);
         break;
 
       case "group":
@@ -511,7 +547,7 @@
   };
 
   var line = function line(x1, y1, x2, y2) {
-    var shape = win.document.createElementNS(svgNS, "line");
+    var shape = win.document.createElementNS(namespace, "line");
 
     if (x1) {
       shape.setAttributeNS(null, "x1", x1);
@@ -534,7 +570,7 @@
   };
 
   var circle = function circle(x, y, radius) {
-    var shape = win.document.createElementNS(svgNS, "circle");
+    var shape = win.document.createElementNS(namespace, "circle");
 
     if (x) {
       shape.setAttributeNS(null, "cx", x);
@@ -553,7 +589,7 @@
   };
 
   var ellipse = function ellipse(x, y, rx, ry) {
-    var shape = win.document.createElementNS(svgNS, "ellipse");
+    var shape = win.document.createElementNS(namespace, "ellipse");
 
     if (x) {
       shape.setAttributeNS(null, "cx", x);
@@ -576,7 +612,7 @@
   };
 
   var rect = function rect(x, y, width, height) {
-    var shape = win.document.createElementNS(svgNS, "rect");
+    var shape = win.document.createElementNS(namespace, "rect");
 
     if (x) {
       shape.setAttributeNS(null, "x", x);
@@ -599,7 +635,7 @@
   };
 
   var polygon = function polygon() {
-    var shape = win.document.createElementNS(svgNS, "polygon");
+    var shape = win.document.createElementNS(namespace, "polygon");
 
     for (var _len = arguments.length, pointsArray = new Array(_len), _key = 0; _key < _len; _key++) {
       pointsArray[_key] = arguments[_key];
@@ -620,7 +656,7 @@
   };
 
   var polyline = function polyline() {
-    var shape = win.document.createElementNS(svgNS, "polyline");
+    var shape = win.document.createElementNS(namespace, "polyline");
 
     for (var _len3 = arguments.length, pointsArray = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
       pointsArray[_key3] = arguments[_key3];
@@ -645,7 +681,7 @@
       return p.join(",");
     });
     var d = "M ".concat(pts[0], " C ").concat(pts[1], " ").concat(pts[2], " ").concat(pts[3]);
-    var shape = win.document.createElementNS(svgNS, "path");
+    var shape = win.document.createElementNS(namespace, "path");
     shape.setAttributeNS(null, "d", d);
     prepare("primitive", shape, primitives);
 
@@ -661,7 +697,7 @@
   };
 
   var text = function text(textString, x, y) {
-    var shape = win.document.createElementNS(svgNS, "text");
+    var shape = win.document.createElementNS(namespace, "text");
     shape.innerHTML = textString;
     shape.setAttributeNS(null, "x", x);
     shape.setAttributeNS(null, "y", y);
@@ -670,7 +706,7 @@
   };
 
   var wedge = function wedge(x, y, radius, angleA, angleB) {
-    var shape = win.document.createElementNS(svgNS, "path");
+    var shape = win.document.createElementNS(namespace, "path");
     setArc(shape, x, y, radius, angleA, angleB, true);
     prepare("primitive", shape, primitives);
 
@@ -686,7 +722,7 @@
   };
 
   var arc = function arc(x, y, radius, angleA, angleB) {
-    var shape = win.document.createElementNS(svgNS, "path");
+    var shape = win.document.createElementNS(namespace, "path");
     setArc(shape, x, y, radius, angleA, angleB, false);
     prepare("primitive", shape, primitives);
 
@@ -731,28 +767,28 @@
   };
 
   var svg = function svg() {
-    var svgImage = win.document.createElementNS(svgNS, "svg");
+    var svgImage = win.document.createElementNS(namespace, "svg");
     svgImage.setAttribute("version", "1.1");
-    svgImage.setAttribute("xmlns", svgNS);
+    svgImage.setAttribute("xmlns", namespace);
     prepare("svg", svgImage, primitives);
     return svgImage;
   };
 
   var group = function group() {
-    var g = win.document.createElementNS(svgNS, "g");
+    var g = win.document.createElementNS(namespace, "g");
     prepare("group", g, primitives);
     return g;
   };
 
   var style = function style() {
-    var s = win.document.createElementNS(svgNS, "style");
+    var s = win.document.createElementNS(namespace, "style");
     s.setAttribute("type", "text/css");
     return s;
   };
 
   var clipPath = function clipPath() {
     var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "clip-");
-    var clip = win.document.createElementNS(svgNS, "clipPath");
+    var clip = win.document.createElementNS(namespace, "clipPath");
     clip.setAttribute("id", id);
     prepare("clipPath", clip, primitives);
     return clip;
@@ -760,7 +796,7 @@
 
   var mask = function mask() {
     var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "mask-");
-    var msk = win.document.createElementNS(svgNS, "mask");
+    var msk = win.document.createElementNS(namespace, "mask");
     msk.setAttribute("id", id);
     prepare("mask", msk, primitives);
     return msk;
@@ -792,6 +828,7 @@
   });
 
   var primitives$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     line: line,
     circle: circle,
     ellipse: ellipse,
@@ -855,7 +892,7 @@
     end = [endPoint[0] - arrowVector[0] * (p.end ? 1 : 0) * p.padding, endPoint[1] - arrowVector[1] * (p.end ? 1 : 0) * p.padding];
     var endHead = [[end[0] + arrow90[0] * p.width, end[1] + arrow90[1] * p.width], [end[0] - arrow90[0] * p.width, end[1] - arrow90[1] * p.width], [end[0] + arrowVector[0] * p.length, end[1] + arrowVector[1] * p.length]];
     var startHead = [[start[0] - arrow90[0] * p.width, start[1] - arrow90[1] * p.width], [start[0] + arrow90[0] * p.width, start[1] + arrow90[1] * p.width], [start[0] - arrowVector[0] * p.length, start[1] - arrowVector[1] * p.length]];
-    var arrow = win.document.createElementNS(svgNS, "g");
+    var arrow = win.document.createElementNS(namespace, "g");
     var l = line(start[0], start[1], end[0], end[1]);
     l.setAttribute("style", arrowStroke);
     arrow.appendChild(l);
@@ -958,7 +995,7 @@
     var controlEnd = [arcEnd[0] + (bezPoint[0] - arcEnd[0]) * p.pinch, arcEnd[1] + (bezPoint[1] - arcEnd[1]) * p.pinch];
     var startHeadPoints = [[arcStart[0] + startNormal[0] * -p.width, arcStart[1] + startNormal[1] * -p.width], [arcStart[0] + startNormal[0] * p.width, arcStart[1] + startNormal[1] * p.width], [arcStart[0] + startHeadVec[0] * p.length, arcStart[1] + startHeadVec[1] * p.length]];
     var endHeadPoints = [[arcEnd[0] + endNormal[0] * -p.width, arcEnd[1] + endNormal[1] * -p.width], [arcEnd[0] + endNormal[0] * p.width, arcEnd[1] + endNormal[1] * p.width], [arcEnd[0] + endHeadVec[0] * p.length, arcEnd[1] + endHeadVec[1] * p.length]];
-    var arrowGroup = win.document.createElementNS(svgNS, "g");
+    var arrowGroup = win.document.createElementNS(namespace, "g");
     var arrowArc = bezier(arcStart[0], arcStart[1], controlStart[0], controlStart[1], controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]);
     arrowArc.setAttribute("style", arrowStroke);
     arrowGroup.appendChild(arrowArc);
@@ -979,6 +1016,7 @@
   };
 
   var arrows = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     straightArrow: straightArrow,
     arcArrow: arcArrow
   });
@@ -1075,7 +1113,7 @@
     var includeDOMCSS = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
     if (includeDOMCSS) {
-      var styleContainer = document.createElementNS(svgNS, "style");
+      var styleContainer = document.createElementNS(namespace, "style");
       styleContainer.setAttribute("type", "text/css");
       styleContainer.innerHTML = getPageCSS();
       svg.appendChild(styleContainer);
@@ -1129,21 +1167,9 @@
     }
   };
 
-  var Names = {
-    begin: "onMouseDown",
-    enter: "onMouseEnter",
-    leave: "onMouseLeave",
-    move: "onMouseMove",
-    end: "onMouseUp",
-    scroll: "onScroll"
-  };
-
   var Pointer = function Pointer(node) {
-    var _node = node;
-
-    var _pointer = Object.create(null);
-
-    Object.assign(_pointer, {
+    var pointer = Object.create(null);
+    Object.assign(pointer, {
       isPressed: false,
       position: [0, 0],
       pressed: [0, 0],
@@ -1153,306 +1179,297 @@
       y: 0
     });
 
-    var getPointer = function getPointer() {
-      var m = _pointer.position.slice();
-
-      Object.keys(_pointer).filter(function (key) {
+    var copyPointer = function copyPointer() {
+      var m = pointer.position.slice();
+      Object.keys(pointer).filter(function (key) {
         return _typeof(key) === "object";
       }).forEach(function (key) {
-        return m[key] = _pointer[key].slice();
+        m[key] = pointer[key].slice();
       });
-      Object.keys(_pointer).filter(function (key) {
+      Object.keys(pointer).filter(function (key) {
         return _typeof(key) !== "object";
       }).forEach(function (key) {
-        return m[key] = _pointer[key];
+        m[key] = pointer[key];
       });
       return Object.freeze(m);
     };
 
     var setPosition = function setPosition(clientX, clientY) {
-      _pointer.position = convertToViewBox(_node, clientX, clientY);
-      _pointer.x = _pointer.position[0];
-      _pointer.y = _pointer.position[1];
-    };
+      pointer.position = convertToViewBox(node, clientX, clientY);
 
-    var didRelease = function didRelease(clientX, clientY) {
-      _pointer.isPressed = false;
-    };
+      var _pointer$position = _slicedToArray(pointer.position, 2);
 
-    var didPress = function didPress(clientX, clientY) {
-      _pointer.isPressed = true;
-      _pointer.pressed = convertToViewBox(_node, clientX, clientY);
-      setPosition(clientX, clientY);
-    };
-
-    var didMove = function didMove(clientX, clientY) {
-      _pointer.prev = _pointer.position;
-      setPosition(clientX, clientY);
-
-      if (_pointer.isPressed) {
-        updateDrag();
-      }
+      pointer.x = _pointer$position[0];
+      pointer.y = _pointer$position[1];
     };
 
     var updateDrag = function updateDrag() {
-      _pointer.drag = [_pointer.position[0] - _pointer.pressed[0], _pointer.position[1] - _pointer.pressed[1]];
-      _pointer.drag.x = _pointer.drag[0];
-      _pointer.drag.y = _pointer.drag[1];
+      pointer.drag = [pointer.position[0] - pointer.pressed[0], pointer.position[1] - pointer.pressed[1]];
+
+      var _pointer$drag = _slicedToArray(pointer.drag, 2);
+
+      pointer.drag.x = _pointer$drag[0];
+      pointer.drag.y = _pointer$drag[1];
     };
 
-    var _this = {};
-    Object.defineProperty(_this, "getPointer", {
-      value: getPointer
-    });
-    Object.defineProperty(_this, "didMove", {
-      value: didMove
-    });
-    Object.defineProperty(_this, "didPress", {
-      value: didPress
-    });
-    Object.defineProperty(_this, "didRelease", {
-      value: didRelease
-    });
-    Object.defineProperty(_this, "node", {
-      set: function set(n) {
-        _node = n;
+    var thisPointer = {};
+
+    var move = function move(clientX, clientY) {
+      pointer.prev = pointer.position;
+      setPosition(clientX, clientY);
+
+      if (pointer.isPressed) {
+        updateDrag();
       }
+
+      return thisPointer;
+    };
+
+    var down = function down(clientX, clientY) {
+      pointer.isPressed = true;
+      pointer.pressed = convertToViewBox(node, clientX, clientY);
+      setPosition(clientX, clientY);
+      return thisPointer;
+    };
+
+    var up = function up() {
+      pointer.isPressed = false;
+      return thisPointer;
+    };
+
+    var pressed = function pressed(isPressed) {
+      pointer.isPressed = isPressed;
+      return thisPointer;
+    };
+
+    Object.defineProperty(thisPointer, "up", {
+      value: up
     });
-    return _this;
+    Object.defineProperty(thisPointer, "pressed", {
+      value: pressed
+    });
+    Object.defineProperty(thisPointer, "move", {
+      value: move
+    });
+    Object.defineProperty(thisPointer, "down", {
+      value: down
+    });
+    Object.defineProperty(thisPointer, "get", {
+      value: copyPointer
+    });
+    return thisPointer;
   };
 
-  function Events (node) {
-    var _node;
+  var Touches = function Touches(node) {
+    var pointer = Pointer(node);
 
-    var _pointer = Pointer(node);
-
-    var _events = {};
-
-    var fireEvents = function fireEvents(event, events) {
-      if (events == null) {
-        return;
-      }
-
-      if (events.length > 0) {
-        event.preventDefault();
-      }
-
-      var mouse = _pointer.getPointer();
-
-      events.forEach(function (f) {
-        return f(mouse);
-      });
+    var clear = function clear() {
+      node.onmousemove = null;
+      node.ontouchmove = null;
+      node.onmousedown = null;
+      node.ontouchstart = null;
+      node.onmouseup = null;
+      node.ontouchend = null;
+      node.onscroll = null;
     };
 
-    var mouseMoveHandler = function mouseMoveHandler(event) {
-      var events = _events[Names.move];
-
-      _pointer.didMove(event.clientX, event.clientY);
-
-      fireEvents(event, events);
+    var onMouseMove = function onMouseMove(handler, event) {
+      event.preventDefault();
+      var e = pointer.move(event.clientX, event.clientY).pressed(event.buttons > 0).get();
+      handler(e);
+      return e;
     };
 
-    var mouseDownHandler = function mouseDownHandler(event) {
-      var events = _events[Names.begin];
-
-      _pointer.didPress(event.clientX, event.clientY);
-
-      fireEvents(event, events);
+    var onTouchMove = function onTouchMove(handler, event) {
+      event.preventDefault();
+      var e = pointer.move(event.touches[0].clientX, event.touches[0].clientY).pressed(true).get();
+      handler(e);
+      return e;
     };
 
-    var mouseUpHandler = function mouseUpHandler(event) {
-      mouseMoveHandler(event);
-      var events = _events[Names.end];
-
-      _pointer.didRelease(event.clientX, event.clientY);
-
-      fireEvents(event, events);
+    var onMouseDown = function onMouseDown(handler, event) {
+      event.preventDefault();
+      var e = pointer.down(event.clientX, event.clientY).get();
+      handler(e);
+      return e;
     };
 
-    var mouseLeaveHandler = function mouseLeaveHandler(event) {
-      var events = _events[Names.leave];
-
-      _pointer.didMove(event.clientX, event.clientY);
-
-      fireEvents(event, events);
+    var onTouchStart = function onTouchStart(handler, event) {
+      event.preventDefault();
+      var e = pointer.down(event.touches[0].clientX, event.touches[0].clientY).get();
+      handler(e);
+      return e;
     };
 
-    var mouseEnterHandler = function mouseEnterHandler(event) {
-      var events = _events[Names.enter];
-
-      _pointer.didMove(event.clientX, event.clientY);
-
-      fireEvents(event, events);
+    var onEnd = function onEnd(handler, event) {
+      event.preventDefault();
+      var e = pointer.pressed(false).get();
+      handler(e);
+      return e;
     };
 
-    var touchStartHandler = function touchStartHandler(event) {
-      var events = _events[Names.begin];
-      var touch = event.touches[0];
-
-      if (touch == null) {
-        return;
-      }
-
-      _pointer.didPress(touch.clientX, touch.clientY);
-
-      fireEvents(event, events);
-    };
-
-    var touchEndHandler = function touchEndHandler(event) {
-      var events = _events[Names.end];
-
-      _pointer.didRelease();
-
-      fireEvents(event, events);
-    };
-
-    var touchMoveHandler = function touchMoveHandler(event) {
-      var events = _events[Names.move];
-      var touch = event.touches[0];
-
-      if (touch == null) {
-        return;
-      }
-
-      _pointer.didMove(touch.clientX, touch.clientY);
-
-      fireEvents(event, events);
-    };
-
-    var scrollHandler = function scrollHandler(event) {
-      var events = _events[Names.scroll];
+    var onScroll = function onScroll(handler, event) {
       var e = {
         deltaX: event.deltaX,
         deltaY: event.deltaY,
         deltaZ: event.deltaZ
       };
-      e.position = convertToViewBox(_node, event.clientX, event.clientY);
-      e.x = e.position[0];
-      e.y = e.position[1];
+      e.position = convertToViewBox(node, event.clientX, event.clientY);
 
-      if (events == null) {
-        return;
-      }
+      var _e$position = _slicedToArray(e.position, 2);
 
-      if (events.length > 0) {
-        event.preventDefault();
-      }
-
-      events.forEach(function (f) {
-        return f(e);
-      });
+      e.x = _e$position[0];
+      e.y = _e$position[1];
+      event.preventDefault();
+      handler(e);
+      return e;
     };
 
-    var _animate, _intervalID, _animationFrame;
+    Object.defineProperty(node, "mouse", {
+      get: function get() {
+        return pointer.get();
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "mouseMoved", {
+      set: function set(handler) {
+        node.onmousemove = function (event) {
+          return onMouseMove(handler, event);
+        };
 
-    var updateAnimationHandler = function updateAnimationHandler(handler) {
-      if (_animate != null) {
-        clearInterval(_intervalID);
-      }
+        node.ontouchmove = function (event) {
+          return onTouchMove(handler, event);
+        };
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "mousePressed", {
+      set: function set(handler) {
+        node.onmousedown = function (event) {
+          return onMouseDown(handler, event);
+        };
 
-      _animate = handler;
+        node.ontouchstart = function (event) {
+          return onTouchStart(handler, event);
+        };
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "mouseReleased", {
+      set: function set(handler) {
+        node.onmouseup = function (event) {
+          return onEnd(handler, event);
+        };
 
-      if (_animate != null) {
-        _animationFrame = 0;
-        _intervalID = setInterval(function () {
-          var animObj = {
-            "time": _node.getCurrentTime(),
-            "frame": _animationFrame++
-          };
-
-          _animate(animObj);
-        }, 1000 / 60);
-      }
-    };
-
-    var handlers = {
-      mouseup: mouseUpHandler,
-      mousedown: mouseDownHandler,
-      mousemove: mouseMoveHandler,
-      mouseleave: mouseLeaveHandler,
-      mouseenter: mouseEnterHandler,
-      touchend: touchEndHandler,
-      touchmove: touchMoveHandler,
-      touchstart: touchStartHandler,
-      touchcancel: touchEndHandler,
-      wheel: scrollHandler
-    };
-
-    var addEventListener = function addEventListener(eventName, func) {
-      if (typeof func !== "function") {
-        throw "must supply a function type to addEventListener";
-      }
-
-      if (_events[eventName] === undefined) {
-        _events[eventName] = [];
-      }
-
-      _events[eventName].push(func);
-    };
-
-    var attachHandlers = function attachHandlers(element) {
-      Object.keys(handlers).forEach(function (key) {
-        return element.addEventListener(key, handlers[key], false);
-      });
-      updateAnimationHandler(_animate);
-    };
-
-    var removeHandlers = function removeHandlers(element) {
-      Object.keys(handlers).forEach(function (key) {
-        return element.removeEventListener(key, handlers[key], false);
-      });
-
-      if (_animate != null) {
-        clearInterval(_intervalID);
-      }
-    };
-
-    var setup = function setup(node) {
-      if (_node != null && typeof node.removeEventListener === "function") {
-        removeHandlers(_node);
-      }
-
-      _node = node;
-      _pointer.node = _node;
-      Object.keys(Names).map(function (key) {
-        return Names[key];
-      }).forEach(function (key) {
-        Object.defineProperty(_node, key, {
-          set: function set(handler) {
-            addEventListener(key, handler);
-          }
-        });
-      });
-      Object.defineProperty(_node, "animate", {
-        set: function set(handler) {
-          updateAnimationHandler(handler);
-        }
-      });
-      Object.defineProperty(_node, "mouse", {
-        get: function get() {
-          return _pointer.getPointer();
-        }
-      });
-      Object.defineProperty(_node, "pointer", {
-        get: function get() {
-          return _pointer.getPointer();
-        }
-      });
-
-      if (typeof _node.addEventListener === "function") {
-        attachHandlers(_node);
-      }
-    };
-
-    setup(node);
+        node.ontouchend = function (event) {
+          return onEnd(handler, event);
+        };
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "onscroll", {
+      set: function set(handler) {
+        node.onscroll = function (event) {
+          return onScroll(handler, event);
+        };
+      },
+      enumerable: true
+    });
     return {
-      setup: setup,
-      addEventListener: addEventListener,
-      remove: function remove() {
-        removeHandlers(_node);
+      clear: clear,
+      pointer: pointer
+    };
+  };
+
+  var DEFAULT_DELAY = 1000 / 60;
+
+  var Animate = function Animate(node) {
+    var timers = [];
+    var frameNumber;
+    var delay = DEFAULT_DELAY;
+    var func;
+
+    var clear = function clear() {
+      while (timers.length > 0) {
+        clearInterval(timers.shift());
       }
     };
-  }
+
+    var start = function start() {
+      timers.push(setInterval(function () {
+        func({
+          time: node.getCurrentTime(),
+          frame: frameNumber += 1
+        });
+      }, delay));
+    };
+
+    var setLoop = function setLoop(handler) {
+      clear();
+      func = handler;
+
+      if (typeof func === "function") {
+        frameNumber = 0;
+        start();
+      }
+    };
+
+    var validateMillis = function validateMillis(m) {
+      var parsed = parseFloat(m);
+
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        return parsed;
+      }
+
+      return DEFAULT_DELAY;
+    };
+
+    var setFPS = function setFPS(fps) {
+      clear();
+      delay = validateMillis(1000 / fps);
+      start();
+    };
+
+    Object.defineProperty(node, "animate", {
+      set: function set(handler) {
+        return setLoop(handler);
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "clear", {
+      value: function value() {
+        return clear();
+      },
+      enumerable: true
+    });
+    return {
+      clear: clear,
+      setLoop: setLoop,
+      setFPS: setFPS
+    };
+  };
+
+  var Events = function Events(node) {
+    var animate = Animate(node);
+    var touches = Touches(node);
+    Object.defineProperty(node, "stopAnimations", {
+      value: animate.clear,
+      enumerated: true
+    });
+    Object.defineProperty(node, "freeze", {
+      value: function value() {
+        touches.clear();
+        animate.clear();
+      },
+      enumerated: true
+    });
+    Object.defineProperty(node, "fps", {
+      set: function set(fps) {
+        return animate.setFPS(fps);
+      },
+      enumerated: true
+    });
+  };
 
   var findElementInParams = function findElementInParams() {
     for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -1579,6 +1596,7 @@
 
     var element = svg();
     initSize(element, params);
+    Events(element);
 
     element.getWidth = function () {
       return getWidth(element);
@@ -1607,8 +1625,6 @@
 
       return size.apply(void 0, [element].concat(args));
     };
-
-    element.events = Events(element);
 
     element.save = function () {
       var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "image.svg";
@@ -1660,7 +1676,7 @@
   });
   elements$1.svg = SVG;
 
-  SVG.NS = svgNS;
+  SVG.NS = namespace;
   Object.keys(elements$1).forEach(function (key) {
     SVG[key] = elements$1[key];
   });
@@ -1673,4 +1689,4 @@
 
   return SVG;
 
-})));
+}));
