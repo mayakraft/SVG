@@ -96,6 +96,8 @@ const CodeSVG = function (container) {
       while (app.svg.lastChild) {
         app.svg.removeChild(app.svg.lastChild);
       }
+      // remove any Timer functions. handlers will get cleaned up automatically
+      app.svg.stopAnimations();
     }
   };
 

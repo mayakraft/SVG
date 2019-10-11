@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import { convertToViewBox } from "../attributes/viewBox";
 
 const Pointer = function (node) {
@@ -27,7 +31,7 @@ const Pointer = function (node) {
   };
 
   /**
-   * modify the pointer
+   * private methods that modify
   */
 
   // clientX and clientY are from the browser event data
@@ -46,7 +50,7 @@ const Pointer = function (node) {
   };
 
   /**
-   * event handlers
+   * public modifiers
   */
   const thisPointer = {};
 
@@ -68,7 +72,6 @@ const Pointer = function (node) {
     pointer.isPressed = false;
     return thisPointer;
   };
-
   const pressed = function (isPressed) {
     pointer.isPressed = isPressed;
     return thisPointer;

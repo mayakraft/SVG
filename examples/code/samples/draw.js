@@ -11,7 +11,7 @@ var p = polygon()
 
 svg.mouseMoved = function (mouse) {
   points.push(mouse);
-  if (points.length > 160) { points.shift(); }
+  if (points.length > 100) { points.shift(); }
   p.setPoints(points);
 };
 

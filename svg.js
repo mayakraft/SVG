@@ -1260,8 +1260,18 @@
     return thisPointer;
   };
 
-  var Events = function Events(node) {
+  var Touches = function Touches(node) {
     var pointer = Pointer(node);
+
+    var clear = function clear() {
+      node.onmousemove = null;
+      node.ontouchmove = null;
+      node.onmousedown = null;
+      node.ontouchstart = null;
+      node.onmouseup = null;
+      node.ontouchend = null;
+      node.onscroll = null;
+    };
 
     var onMouseMove = function onMouseMove(handler, event) {
       event.preventDefault();
@@ -1272,25 +1282,55 @@
 
     var onTouchMove = function onTouchMove(handler, event) {
       event.preventDefault();
-      var e = pointer.move();
+      var e = pointer.move(event.touches[0].clientX, event.touches[0].clientY).pressed(true).get();
       handler(e);
       return e;
     };
 
-    var pressedFunc = function pressedFunc(handler, event) {
+    var onMouseDown = function onMouseDown(handler, event) {
       event.preventDefault();
-      var e = pointer.down(event);
+      var e = pointer.down(event.clientX, event.clientY).get();
       handler(e);
       return e;
     };
 
-    var releasedFunc = function releasedFunc(handler, event) {
+    var onTouchStart = function onTouchStart(handler, event) {
       event.preventDefault();
-      var e = pointer.up(event);
+      var e = pointer.down(event.touches[0].clientX, event.touches[0].clientY).get();
       handler(e);
       return e;
     };
 
+    var onEnd = function onEnd(handler, event) {
+      event.preventDefault();
+      var e = pointer.pressed(false).get();
+      handler(e);
+      return e;
+    };
+
+    var onScroll = function onScroll(handler, event) {
+      var e = {
+        deltaX: event.deltaX,
+        deltaY: event.deltaY,
+        deltaZ: event.deltaZ
+      };
+      e.position = convertToViewBox(node, event.clientX, event.clientY);
+
+      var _e$position = _slicedToArray(e.position, 2);
+
+      e.x = _e$position[0];
+      e.y = _e$position[1];
+      event.preventDefault();
+      handler(e);
+      return e;
+    };
+
+    Object.defineProperty(node, "mouse", {
+      get: function get() {
+        return pointer.get();
+      },
+      enumerable: true
+    });
     Object.defineProperty(node, "mouseMoved", {
       set: function set(handler) {
         node.onmousemove = function (event) {
@@ -1300,50 +1340,135 @@
         node.ontouchmove = function (event) {
           return onTouchMove(handler, event);
         };
-      }
+      },
+      enumerable: true
     });
     Object.defineProperty(node, "mousePressed", {
       set: function set(handler) {
         node.onmousedown = function (event) {
-          return pressedFunc(handler, event);
+          return onMouseDown(handler, event);
         };
 
         node.ontouchstart = function (event) {
-          return pressedFunc(handler, event);
+          return onTouchStart(handler, event);
         };
-      }
+      },
+      enumerable: true
     });
     Object.defineProperty(node, "mouseReleased", {
       set: function set(handler) {
         node.onmouseup = function (event) {
-          return releasedFunc(handler, event);
+          return onEnd(handler, event);
         };
 
         node.ontouchend = function (event) {
-          return releasedFunc(handler, event);
+          return onEnd(handler, event);
         };
-      }
+      },
+      enumerable: true
     });
-    Object.defineProperty(node, "mouse", {
-      get: function get() {
-        return pointer.get();
-      }
-    });
-    Object.defineProperty(node, "pointer", {
-      get: function get() {
-        return pointer.get();
-      }
+    Object.defineProperty(node, "onscroll", {
+      set: function set(handler) {
+        node.onscroll = function (event) {
+          return onScroll(handler, event);
+        };
+      },
+      enumerable: true
     });
     return {
-      remove: function remove() {
-        node.onmousemove = null;
-        node.ontouchmove = null;
-        node.onmousedown = null;
-        node.ontouchstart = null;
-        node.onmouseup = null;
-        node.ontouchend = null;
+      clear: clear,
+      pointer: pointer
+    };
+  };
+
+  var DEFAULT_DELAY = 1000 / 60;
+
+  var Animate = function Animate(node) {
+    var timers = [];
+    var frameNumber;
+    var delay = DEFAULT_DELAY;
+    var func;
+
+    var clear = function clear() {
+      while (timers.length > 0) {
+        clearInterval(timers.shift());
       }
     };
+
+    var start = function start() {
+      timers.push(setInterval(function () {
+        func({
+          time: node.getCurrentTime(),
+          frame: frameNumber += 1
+        });
+      }, delay));
+    };
+
+    var setLoop = function setLoop(handler) {
+      clear();
+      func = handler;
+
+      if (typeof func === "function") {
+        frameNumber = 0;
+        start();
+      }
+    };
+
+    var validateMillis = function validateMillis(m) {
+      var parsed = parseFloat(m);
+
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        return parsed;
+      }
+
+      return DEFAULT_DELAY;
+    };
+
+    var setFPS = function setFPS(fps) {
+      clear();
+      delay = validateMillis(1000 / fps);
+      start();
+    };
+
+    Object.defineProperty(node, "animate", {
+      set: function set(handler) {
+        return setLoop(handler);
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "clear", {
+      value: function value() {
+        return clear();
+      },
+      enumerable: true
+    });
+    return {
+      clear: clear,
+      setLoop: setLoop,
+      setFPS: setFPS
+    };
+  };
+
+  var Events = function Events(node) {
+    var animate = Animate(node);
+    var touches = Touches(node);
+    Object.defineProperty(node, "stopAnimations", {
+      value: animate.clear,
+      enumerated: true
+    });
+    Object.defineProperty(node, "freeze", {
+      value: function value() {
+        touches.clear();
+        animate.clear();
+      },
+      enumerated: true
+    });
+    Object.defineProperty(node, "fps", {
+      set: function set(fps) {
+        return animate.setFPS(fps);
+      },
+      enumerated: true
+    });
   };
 
   var findElementInParams = function findElementInParams() {
@@ -1471,6 +1596,7 @@
 
     var element = svg();
     initSize(element, params);
+    Events(element);
 
     element.getWidth = function () {
       return getWidth(element);
@@ -1499,8 +1625,6 @@
 
       return size.apply(void 0, [element].concat(args));
     };
-
-    Events(element);
 
     element.save = function () {
       var filename = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "image.svg";
