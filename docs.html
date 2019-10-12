@@ -22,7 +22,7 @@ h1{
 h2 {
   color: #ddd;
   margin: 1rem 0;
-  font-size: 2.5rem;
+  font-size: 2.25rem;
 }
 h3 {
   margin: 2rem 0 0.5rem 0;
@@ -55,7 +55,7 @@ p a{
 }
 
 div {
-  margin-top: 8rem;
+  margin-top: 5rem;
   margin-left: -0.5rem;
   margin-right: -0.5rem;
   padding: 0.75rem;
@@ -159,8 +159,8 @@ circle { fill: #12130A; }
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#SVGElement">&lt;svg&gt;</a> element</pre>
     <p class="description">(optional) parameters include:</p>
     <ul class="description">
-      <li>two numbers, to be the width and height</li>
-      <li>a dom element, the parent element to append to</li>
+      <li>- two numbers, width and height</li>
+      <li>- a dom element, a parent element to append</li>
     </ul>
   <h3>Drawing</h3>
 
@@ -213,28 +213,11 @@ circle { fill: #12130A; }
 
     <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolylineElement">&lt;polyline&gt;</a> element</pre>
-    <p class="description">This creates a curve based on the y=x² function centered on the y-axis. The parameters define the rectangle space that fits the curve.</p>
+    <p class="description">This creates a polyline approximation of the curve y=x², centered on the y-axis. The parameters define the rectangle that encloses the curve.</p>
 
     <pre class="title"><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/text.html#TextElement">&lt;text&gt;</a> element</pre>
     <p class="description">the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
-
-
-  <div>
-  <h2>Style</h2>
-
-    <pre><code><f>stroke</f>: <f>none</f><br><f>fill</f>: <f>black</f></code></pre>
-
-    <p>This is an SVG shape's default style, causing some shapes (line) to be <em><b>initially invisible</b></em>! Typically, there are three ways to change this:</p>
-
-    <pre><code>1. line.<f>setAttribute</f>(<str>"stroke"</str>, <str>"black"</str>)</code></pre>
-    <pre><code>2. line.<f>setAttribute</f>(<str>"style"</str>, <str>"stroke: black;"</str>)</code></pre>
-    <pre><code>3. &lt;<key>style</key>&gt;<br>  <key>line</key> { <f>stroke</f>: <f>black</f>; }<br>&lt;/<key>style</key>&gt;</code></pre>
-
-    <p>This library introduces a fourth: chaining methods, which ultimately call <b>setAttribute</b>. The name of the function is the name of the style attribute (kebab-case is converted to camel-case).</p>
-    
-    <pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>   .<f>stroke</f>(<str>"#F08"</str>)<br>   .<f>strokeWidth</f>(<n>3</n>);</code></pre>
-  </div>
 
   <h3>Header</h3>
     <pre class="title"><code><f>defs</f>()</code></pre>
@@ -267,22 +250,31 @@ circle { fill: #12130A; }
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</pre>
     <p class="description">like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
 
+
+  <div>
+  <h2>Style</h2>
+
+    <pre><code><f>stroke</f>: <f>none</f><br><f>fill</f>: <f>black</f></code></pre>
+
+    <p>This is an SVG shape's default style, causing some shapes like <code>&lt;line&gt;</code> to be <em><b>initially invisible</b></em>! Typically, there are three ways to change this:</p>
+
+    <pre><code>1. line.<f>setAttribute</f>(<str>"stroke"</str>, <str>"black"</str>)</code></pre>
+    <pre><code>2. line.<f>setAttribute</f>(<str>"style"</str>, <str>"stroke: black;"</str>)</code></pre>
+    <pre><code>3. &lt;<key>style</key>&gt;<br>  <key>line</key> { <f>stroke</f>: <f>black</f>; }<br>&lt;/<key>style</key>&gt;</code></pre>
+
+    <p>This library introduces a fourth: chaining methods, which ultimately call <b>setAttribute</b>. The name of the function is the name of the style attribute (kebab-case is converted to camel-case).</p>
+    
+    <pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>   .<f>stroke</f>(<str>"#F08"</str>)<br>   .<f>strokeWidth</f>(<n>3</n>);</code></pre>
+  </div>
+
   <div>
   <h2><a href="https://svg.rabbitear.org">✨ svg . rabbitear . org ✨</a></h2>
-
-    <p>Try out the library, where your life has been made easier in one crucial way: the editor assumes only 1 SVG will exist. Thereby <b>automatically appended all primitives</b>. In the editor you can type:</p>
-
+    <p>This web-editor allows you to write:</p>
     <pre><code>line(<n>0</n>,<n>1</n>,<n>2</n>,<n>3</n>);</code></pre>
-
-    <p>The line above is really calling.</p>
-
+    <p>instead of:</p>
     <pre><code>svg.line(<n>0</n>,<n>1</n>,<n>2</n>,<n>3</n>);</code></pre>
-
-    <p>The implication is that <b>svg</b> has already been initialized.</p>
-
-    <pre><code><f>var</f> svg = <f>SVG</f>();<br>svg.line(<n>0</n>,<n>1</n>,<n>2</n>,<n>3</n>);</code></pre>
-
-    <p>When using this library in your own projects, keep in mind these method calls won't be in the global space.</p>
+    <p>This is possible because it assumes <b>only one svg</b>, and thereby automatically appending children to it.</p>
+    <p>When using this library outside of this editor, keep in mind the syntax will be slightly more verbose.</p>
   </div>
 
 <script type="text/javascript" src="https://svg.rabbitear.org/svg.min.js"></script>
@@ -291,21 +283,23 @@ circle { fill: #12130A; }
 <script>
 window.onload = function () {
   var title = SVG(document.getElementsByClassName("header")[0]);
+  var titleString = "SVG Playground";
   title.setViewBox(0, 0, 560, 80);
   title.setClass("header");
-  var text = title.text("SVG Reference", 0, 64)
+  var text = title.text(titleString, 0, 64)
     .fontFamily("Futura, 'Helvetica Neue', Helvetica, sans-serif")
     .fontWeight("bold")
-    .fontSize(64)
+    .fontSize(60)
     .fill("#333");
   var clip = title.clipPath();
-  var clone = text.cloneNode(false);
-  clone.innerHTML = "SVG Reference";
-  clip.appendChild(clone);
+  // var clone = text.cloneNode(false);
+  // clone.innerHTML = titleString;
+  // clip.appendChild(clone);
+  clip.appendChild(text);
   var walker = title.polyline()
     .fill("none")
     .stroke("#ec3")
-    .strokeWidth(4)
+    .strokeWidth(8)
     .clipPath(clip);
   var width = title.getWidth();
   var height = title.getHeight();
@@ -333,8 +327,7 @@ window.onload = function () {
     walkerPoints = [];
     title.animate = animationFunction;
   };
-
-
+/*
   // make the stars. but do it later after page load
   setTimeout(function () {
     var sky = SVG(window.innerWidth, document.body.clientHeight);
@@ -347,7 +340,8 @@ window.onload = function () {
       ).setClass("twinkle-" + (i % 5));
     }
   }, 3000);
-
+*/
+/*
   var spinner = SVG(window.innerWidth, document.body.clientHeight);
   spinner.setClass("spinner");
   var poly = spinner.polyline().fillRule("evenodd").fill("#23251e");
@@ -371,7 +365,7 @@ window.onload = function () {
       return Math.cos(i / (2 + event.frame / 1000 / 4));
     });
   };
-
+*/
 };
 </script>
 
