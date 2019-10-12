@@ -5,7 +5,8 @@
 import window from "../environment/window";
 import * as File from "../environment/file";
 import Events from "../events/index";
-import { svg, rect } from "./primitives";
+import { rect } from "./primitives";
+import { svg } from "./root";
 import { removeChildren } from "../attributes/DOM";
 import {
   getViewBox,

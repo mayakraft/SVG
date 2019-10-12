@@ -3,22 +3,11 @@ background("#222");
 
 var poly = polyline().fillRule("evenodd").fill("#aaa");
 
-function draw(ampfunc) {
+svg.animate = function (event) {
   var points = [];
-  for (var i = 0; i < 62; i += 1) {
-    var freq = 1.0;
-    var phase = 0.0;
-    var amp = ampfunc(i);
-    points.push([
-      amp * Math.cos(i * freq + phase),
-      amp * Math.sin(i * freq + phase)
-    ]);
+  for (var i = 0; i < Math.PI*20; i += 1) {
+    var amp = Math.cos(i / (2 + event.frame / 1000))
+    points.push([amp * Math.cos(i), amp * Math.sin(i)]);
   }
   poly.setPoints(points);
-}
-
-svg.animate = function (event) {
-  draw(function (i) {
-    return Math.cos(i / (2 + event.frame / 1000));
-  });
 };

@@ -44,6 +44,7 @@ const prepare = function (type, element, primitiveList) {
   switch (type) {
     case "svg": prepareSVG(element, primitiveList); break;
     case "primitive": preparePrimitive(element, primitiveList); break;
+    case "defs":
     case "group": prepareGroup(element, primitiveList); break;
     case "clipPath":
     case "mask": prepareMaskClipPath(element, primitiveList); break;
