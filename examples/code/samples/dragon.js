@@ -23,13 +23,18 @@ var attrs = {
   fill: "none"
 };
 
-polyline(dragon(a, b, 1, 1)).setAttributes(attrs)
+var i1 = Math.floor(Math.random() * 3); 
+var i2 = Math.floor(Math.random() * 3) + 3;
+var i3 = Math.floor(Math.random() * 3) + 6;
+var i4 = Math.floor(Math.random() * 3) + 8;
+
+polyline(dragon(a, b, 1, i1)).setAttributes(attrs)
   .stroke("#ec3").strokeWidth(90).opacity(0.5);
-polyline(dragon(a, b, 1, 4)).setAttributes(attrs)
+polyline(dragon(a, b, 1, i2)).setAttributes(attrs)
   .stroke("#158").strokeWidth(40).opacity(0.5);
-polyline(dragon(a, b, 1, 1)).setAttributes(attrs)
-  .stroke("#ec3").strokeWidth(6);
-polyline(dragon(a, b, 1, 7)).setAttributes(attrs)
+polyline(dragon(a, b, 1, i3)).setAttributes(attrs)
   .stroke("#e53").strokeWidth(13).opacity(0.8);
-polyline(dragon(a, b, 1, 10)).setAttributes(attrs)
+polyline(dragon(a, b, 1, i1)).setAttributes(attrs)
+  .stroke("#ec3").strokeWidth(6);
+polyline(dragon(a, b, 1, i4)).setAttributes(attrs)
   .stroke("#158").strokeWidth(2);

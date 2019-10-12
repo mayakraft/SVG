@@ -100,95 +100,6 @@
     win.document = window.document;
   }
 
-  var is_iterable = function is_iterable(obj) {
-    return obj != null && typeof obj[Symbol.iterator] === "function";
-  };
-
-  var flatten_input = function flatten_input() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    switch (args.length) {
-      case undefined:
-      case 0:
-        return args;
-
-      case 1:
-        return is_iterable(args[0]) && typeof args[0] !== "string" ? flatten_input.apply(void 0, _toConsumableArray(args[0])) : [args[0]];
-
-      default:
-        return Array.from(args).map(function (a) {
-          return is_iterable(a) ? _toConsumableArray(flatten_input(a)) : a;
-        }).reduce(function (a, b) {
-          return a.concat(b);
-        }, []);
-    }
-  };
-
-  var setPoints = function setPoints(shape) {
-    for (var _len2 = arguments.length, pointsArray = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      pointsArray[_key2 - 1] = arguments[_key2];
-    }
-
-    var flat = flatten_input.apply(void 0, pointsArray);
-    var pointsString = "";
-
-    if (typeof flat[0] === "number") {
-      pointsString = Array.from(Array(Math.floor(flat.length / 2))).reduce(function (a, b, i) {
-        return "".concat(a).concat(flat[i * 2], ",").concat(flat[i * 2 + 1], " ");
-      }, "");
-    }
-
-    if (_typeof(flat[0]) === "object") {
-      if (typeof flat[0].x === "number") {
-        pointsString = flat.reduce(function (prev, curr) {
-          return "".concat(prev).concat(curr.x, ",").concat(curr.y, " ");
-        }, "");
-      }
-
-      if (typeof flat[0][0] === "number") {
-        pointsString = flat.reduce(function (prev, curr) {
-          return "".concat(prev).concat(curr[0], ",").concat(curr[1], " ");
-        }, "");
-      }
-    }
-
-    shape.setAttributeNS(null, "points", pointsString);
-  };
-  var setArc = function setArc(shape, x, y, radius, startAngle, endAngle) {
-    var includeCenter = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
-    var start = [x + Math.cos(startAngle) * radius, y + Math.sin(startAngle) * radius];
-    var vecStart = [Math.cos(startAngle) * radius, Math.sin(startAngle) * radius];
-    var vecEnd = [Math.cos(endAngle) * radius, Math.sin(endAngle) * radius];
-    var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
-    var py = vecStart[0] * vecEnd[1] - vecStart[1] * vecEnd[0];
-    var px = vecStart[0] * vecEnd[0] + vecStart[1] * vecEnd[1];
-    var arcdir = Math.atan2(py, px) > 0 ? 0 : 1;
-    var d = includeCenter ? "M ".concat(x, ",").concat(y, " l ").concat(vecStart[0], ",").concat(vecStart[1], " ") : "M ".concat(start[0], ",").concat(start[1], " ");
-    d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
-
-    if (includeCenter) {
-      d += " Z";
-    }
-
-    shape.setAttributeNS(null, "d", d);
-  };
-  var setBezier = function setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
-    var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
-      return p.join(",");
-    });
-    var d = "M ".concat(pts[0], " C ").concat(pts[1], " ").concat(pts[2], " ").concat(pts[3]);
-    shape.setAttributeNS(null, "d", d);
-  };
-
-  var geometryMods = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    setPoints: setPoints,
-    setArc: setArc,
-    setBezier: setBezier
-  });
-
   var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
 
   var removeChildren = function removeChildren(parent) {
@@ -516,6 +427,7 @@
         preparePrimitive(element);
         break;
 
+      case "defs":
       case "group":
         prepareGroup(element, primitiveList);
         break;
@@ -531,7 +443,6 @@
     }
   };
 
-  var primitives = {};
   var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   var generateUUID = function generateUUID() {
@@ -545,6 +456,172 @@
       return "".concat(a).concat(b);
     }, prefix);
   };
+
+  var constructorsSVG = {};
+  var constructorsGroup = {};
+
+  var svg = function svg() {
+    var svgImage = win.document.createElementNS(namespace, "svg");
+    svgImage.setAttribute("version", "1.1");
+    svgImage.setAttribute("xmlns", namespace);
+    prepare("svg", svgImage, constructorsSVG);
+    return svgImage;
+  };
+
+  var group = function group() {
+    var g = win.document.createElementNS(namespace, "g");
+    prepare("group", g, constructorsGroup);
+    return g;
+  };
+
+  var defs = function defs() {
+    var d = win.document.createElementNS(namespace, "defs");
+    prepare("defs", d, constructorsGroup);
+    return d;
+  };
+
+  var style = function style() {
+    var s = win.document.createElementNS(namespace, "style");
+    s.setAttribute("type", "text/css");
+    return s;
+  };
+
+  var clipPath = function clipPath() {
+    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "clip-");
+    var clip = win.document.createElementNS(namespace, "clipPath");
+    clip.setAttribute("id", id);
+    prepare("clipPath", clip, constructorsGroup);
+    return clip;
+  };
+
+  var mask = function mask() {
+    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "mask-");
+    var msk = win.document.createElementNS(namespace, "mask");
+    msk.setAttribute("id", id);
+    prepare("mask", msk, constructorsGroup);
+    return msk;
+  };
+
+  var setConstructors = function setConstructors(elements) {
+    Object.keys(elements).filter(function (key) {
+      return key !== "svg";
+    }).forEach(function (key) {
+      constructorsSVG[key] = elements[key];
+    });
+    Object.keys(elements).filter(function (key) {
+      return key !== "svg";
+    }).filter(function (key) {
+      return key !== "defs";
+    }).filter(function (key) {
+      return key !== "style";
+    }).filter(function (key) {
+      return key !== "clipPath";
+    }).filter(function (key) {
+      return key !== "mask";
+    }).forEach(function (key) {
+      constructorsGroup[key] = elements[key];
+    });
+  };
+
+  var root = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    setConstructors: setConstructors,
+    svg: svg,
+    group: group,
+    defs: defs,
+    clipPath: clipPath,
+    mask: mask,
+    style: style
+  });
+
+  var is_iterable = function is_iterable(obj) {
+    return obj != null && typeof obj[Symbol.iterator] === "function";
+  };
+
+  var flatten_input = function flatten_input() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    switch (args.length) {
+      case undefined:
+      case 0:
+        return args;
+
+      case 1:
+        return is_iterable(args[0]) && typeof args[0] !== "string" ? flatten_input.apply(void 0, _toConsumableArray(args[0])) : [args[0]];
+
+      default:
+        return Array.from(args).map(function (a) {
+          return is_iterable(a) ? _toConsumableArray(flatten_input(a)) : a;
+        }).reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+    }
+  };
+
+  var setPoints = function setPoints(shape) {
+    for (var _len2 = arguments.length, pointsArray = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      pointsArray[_key2 - 1] = arguments[_key2];
+    }
+
+    var flat = flatten_input.apply(void 0, pointsArray);
+    var pointsString = "";
+
+    if (typeof flat[0] === "number") {
+      pointsString = Array.from(Array(Math.floor(flat.length / 2))).reduce(function (a, b, i) {
+        return "".concat(a).concat(flat[i * 2], ",").concat(flat[i * 2 + 1], " ");
+      }, "");
+    }
+
+    if (_typeof(flat[0]) === "object") {
+      if (typeof flat[0].x === "number") {
+        pointsString = flat.reduce(function (prev, curr) {
+          return "".concat(prev).concat(curr.x, ",").concat(curr.y, " ");
+        }, "");
+      }
+
+      if (typeof flat[0][0] === "number") {
+        pointsString = flat.reduce(function (prev, curr) {
+          return "".concat(prev).concat(curr[0], ",").concat(curr[1], " ");
+        }, "");
+      }
+    }
+
+    shape.setAttributeNS(null, "points", pointsString);
+  };
+  var setArc = function setArc(shape, x, y, radius, startAngle, endAngle) {
+    var includeCenter = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
+    var start = [x + Math.cos(startAngle) * radius, y + Math.sin(startAngle) * radius];
+    var vecStart = [Math.cos(startAngle) * radius, Math.sin(startAngle) * radius];
+    var vecEnd = [Math.cos(endAngle) * radius, Math.sin(endAngle) * radius];
+    var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
+    var py = vecStart[0] * vecEnd[1] - vecStart[1] * vecEnd[0];
+    var px = vecStart[0] * vecEnd[0] + vecStart[1] * vecEnd[1];
+    var arcdir = Math.atan2(py, px) > 0 ? 0 : 1;
+    var d = includeCenter ? "M ".concat(x, ",").concat(y, " l ").concat(vecStart[0], ",").concat(vecStart[1], " ") : "M ".concat(start[0], ",").concat(start[1], " ");
+    d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
+
+    if (includeCenter) {
+      d += " Z";
+    }
+
+    shape.setAttributeNS(null, "d", d);
+  };
+  var setBezier = function setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
+    var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
+      return p.join(",");
+    });
+    var d = "M ".concat(pts[0], " C ").concat(pts[1], " ").concat(pts[2], " ").concat(pts[3]);
+    shape.setAttributeNS(null, "d", d);
+  };
+
+  var geometryMods = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    setPoints: setPoints,
+    setArc: setArc,
+    setBezier: setBezier
+  });
 
   var line = function line(x1, y1, x2, y2) {
     var shape = win.document.createElementNS(namespace, "line");
@@ -565,7 +642,7 @@
       shape.setAttributeNS(null, "y2", y2);
     }
 
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
     return shape;
   };
 
@@ -584,7 +661,7 @@
       shape.setAttributeNS(null, "r", radius);
     }
 
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
     return shape;
   };
 
@@ -607,7 +684,7 @@
       shape.setAttributeNS(null, "ry", ry);
     }
 
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
     return shape;
   };
 
@@ -630,7 +707,7 @@
       shape.setAttributeNS(null, "height", height);
     }
 
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
     return shape;
   };
 
@@ -642,7 +719,7 @@
     }
 
     setPoints.apply(void 0, [shape].concat(pointsArray));
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
 
     shape.setPoints = function () {
       for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
@@ -663,7 +740,7 @@
     }
 
     setPoints.apply(void 0, [shape].concat(pointsArray));
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
 
     shape.setPoints = function () {
       for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
@@ -683,7 +760,7 @@
     var d = "M ".concat(pts[0], " C ").concat(pts[1], " ").concat(pts[2], " ").concat(pts[3]);
     var shape = win.document.createElementNS(namespace, "path");
     shape.setAttributeNS(null, "d", d);
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
 
     shape.setBezier = function () {
       for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
@@ -701,14 +778,14 @@
     shape.innerHTML = textString;
     shape.setAttributeNS(null, "x", x);
     shape.setAttributeNS(null, "y", y);
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
     return shape;
   };
 
   var wedge = function wedge(x, y, radius, angleA, angleB) {
     var shape = win.document.createElementNS(namespace, "path");
     setArc(shape, x, y, radius, angleA, angleB, true);
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
 
     shape.setArc = function () {
       for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
@@ -724,7 +801,7 @@
   var arc = function arc(x, y, radius, angleA, angleB) {
     var shape = win.document.createElementNS(namespace, "path");
     setArc(shape, x, y, radius, angleA, angleB, false);
-    prepare("primitive", shape, primitives);
+    prepare("primitive", shape);
 
     shape.setArc = function () {
       for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
@@ -766,68 +843,7 @@
     return polygon(points);
   };
 
-  var svg = function svg() {
-    var svgImage = win.document.createElementNS(namespace, "svg");
-    svgImage.setAttribute("version", "1.1");
-    svgImage.setAttribute("xmlns", namespace);
-    prepare("svg", svgImage, primitives);
-    return svgImage;
-  };
-
-  var group = function group() {
-    var g = win.document.createElementNS(namespace, "g");
-    prepare("group", g, primitives);
-    return g;
-  };
-
-  var style = function style() {
-    var s = win.document.createElementNS(namespace, "style");
-    s.setAttribute("type", "text/css");
-    return s;
-  };
-
-  var clipPath = function clipPath() {
-    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "clip-");
-    var clip = win.document.createElementNS(namespace, "clipPath");
-    clip.setAttribute("id", id);
-    prepare("clipPath", clip, primitives);
-    return clip;
-  };
-
-  var mask = function mask() {
-    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "mask-");
-    var msk = win.document.createElementNS(namespace, "mask");
-    msk.setAttribute("id", id);
-    prepare("mask", msk, primitives);
-    return msk;
-  };
-
-  var elements = {
-    line: line,
-    circle: circle,
-    ellipse: ellipse,
-    rect: rect,
-    polygon: polygon,
-    polyline: polyline,
-    bezier: bezier,
-    text: text,
-    wedge: wedge,
-    arc: arc,
-    parabola: parabola,
-    regularPolygon: regularPolygon,
-    svg: svg,
-    group: group,
-    clipPath: clipPath,
-    mask: mask,
-    style: style
-  };
-  Object.keys(elements).filter(function (key) {
-    return key !== "svg";
-  }).forEach(function (key) {
-    primitives[key] = elements[key];
-  });
-
-  var primitives$1 = /*#__PURE__*/Object.freeze({
+  var primitives = /*#__PURE__*/Object.freeze({
     __proto__: null,
     line: line,
     circle: circle,
@@ -840,12 +856,7 @@
     wedge: wedge,
     arc: arc,
     parabola: parabola,
-    regularPolygon: regularPolygon,
-    svg: svg,
-    group: group,
-    clipPath: clipPath,
-    mask: mask,
-    style: style
+    regularPolygon: regularPolygon
   });
 
   var straightArrow = function straightArrow(startPoint, endPoint, options) {
@@ -1667,18 +1678,27 @@
     return element;
   };
 
-  var elements$1 = {};
+  var constructors = {};
+  Object.assign(constructors, root, arrows, primitives);
+  delete constructors.setConstructors;
+  setConstructors(constructors);
+  var elements = {};
   Object.keys(arrows).forEach(function (key) {
-    elements$1[key] = arrows[key];
+    elements[key] = arrows[key];
   });
-  Object.keys(primitives$1).forEach(function (key) {
-    elements$1[key] = primitives$1[key];
+  Object.keys(primitives).forEach(function (key) {
+    elements[key] = primitives[key];
   });
-  elements$1.svg = SVG;
+  Object.keys(root).filter(function (key) {
+    return key !== "setConstructors";
+  }).forEach(function (key) {
+    elements[key] = root[key];
+  });
+  elements.svg = SVG;
 
   SVG.NS = namespace;
-  Object.keys(elements$1).forEach(function (key) {
-    SVG[key] = elements$1[key];
+  Object.keys(elements).forEach(function (key) {
+    SVG[key] = elements[key];
   });
   Object.keys(geometryMods).forEach(function (key) {
     SVG[key] = geometryMods[key];
