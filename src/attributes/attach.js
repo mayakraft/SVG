@@ -5,6 +5,7 @@
 import attributes from "./svgAttributes";
 import * as DOM from "./DOM";
 import * as ViewBox from "./viewBox";
+import * as Transform from "./transform";
 
 export const attachAppendableMethods = function (element, methods) {
   const el = element;
@@ -21,6 +22,13 @@ export const attachDOMMethods = function (element) {
   const el = element;
   Object.keys(DOM).filter(key => el[key] === undefined).forEach((key) => {
     el[key] = (...args) => DOM[key](element, ...args);
+  });
+};
+
+export const attachTransformMethods = function (element) {
+  const el = element;
+  Object.keys(Transform).forEach((key) => {
+    el[key] = (...args) => Transform[key](element, ...args);
   });
 };
 

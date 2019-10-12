@@ -88,7 +88,7 @@ const text = function (textString, x, y) {
   shape.innerHTML = textString;
   shape.setAttributeNS(null, "x", x);
   shape.setAttributeNS(null, "y", y);
-  prepare("primitive", shape);
+  prepare("text", shape);
   return shape;
 };
 
@@ -112,8 +112,8 @@ const parabola = function (x, y, width, height) {
   const COUNT = 128;
   const iter = Array.from(Array(COUNT + 1))
     .map((_, i) => (i - (COUNT)) / COUNT * 2 + 1);
-  const ptsX = iter.map(i => x + (1 + i) * width * 0.5);
-  const ptsY = iter.map(i => y + (1 - (i ** 2)) * height);
+  const ptsX = iter.map(i => x + (i + 1) * width * 0.5);
+  const ptsY = iter.map(i => y + (i ** 2) * height);
   const points = iter.map((_, i) => [ptsX[i], ptsY[i]]);
   return polyline(points);
 };

@@ -261,6 +261,45 @@
     scaleViewBox: scaleViewBox
   });
 
+  var setTransform = function setTransform(element, transform) {
+    if (_typeof(transform) === "object") {
+      element.setAttribute("transform", transform.join(" "));
+    } else if (typeof transform === "string") {
+      element.setAttribute("transform", transform);
+    }
+  };
+
+  var getTransform = function getTransform(element) {
+    var trans = element.getAttribute("transform");
+    return trans == null ? undefined : trans.split(" ");
+  };
+
+  var translate = function translate(element, tx, ty) {
+    var trans = getTransform(element) || [];
+    trans.push("translate(".concat(tx, ", ").concat(ty, ")"));
+    setTransform(element, trans);
+    return element;
+  };
+  var rotate = function rotate(element, angle) {
+    var trans = getTransform(element) || [];
+    trans.push("rotate(".concat(angle, ")"));
+    setTransform(element, trans);
+    return element;
+  };
+  var scale = function scale(element, sx, sy) {
+    var trans = getTransform(element) || [];
+    trans.push("scale(".concat(sx, ", ").concat(sy, ")"));
+    setTransform(element, trans);
+    return element;
+  };
+
+  var Transform = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    translate: translate,
+    rotate: rotate,
+    scale: scale
+  });
+
   var attachAppendableMethods = function attachAppendableMethods(element, methods) {
     var el = element;
     Object.keys(methods).filter(function (key) {
@@ -287,14 +326,26 @@
       };
     });
   };
+  var attachTransformMethods = function attachTransformMethods(element) {
+    var el = element;
+    Object.keys(Transform).forEach(function (key) {
+      el[key] = function () {
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        return Transform[key].apply(Transform, [element].concat(args));
+      };
+    });
+  };
   var attachViewBoxMethods = function attachViewBoxMethods(element) {
     var el = element;
     Object.keys(ViewBox).filter(function (key) {
       return el[key] === undefined;
     }).forEach(function (key) {
       el[key] = function () {
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
         }
 
         return ViewBox[key].apply(ViewBox, [element].concat(args));
@@ -314,8 +365,8 @@
       return el[toCamel(key)] === undefined;
     }).forEach(function (key) {
       el[toCamel(key)] = function () {
-        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
         el.setAttribute.apply(el, [key].concat(args));
@@ -392,12 +443,20 @@
 
   var preparePrimitive = function preparePrimitive(element) {
     attachDOMMethods(element);
+    attachTransformMethods(element);
+    attachFunctionalSetters(element);
+    attachClipMaskAttributes(element);
+  };
+
+  var prepareText = function prepareText(element) {
+    attachDOMMethods(element);
     attachFunctionalSetters(element);
     attachClipMaskAttributes(element);
   };
 
   var prepareSVG = function prepareSVG(element, primitives) {
     attachDOMMethods(element);
+    attachTransformMethods(element);
     attachAppendableMethods(element, primitives);
     attachViewBoxMethods(element);
     attachClipMaskMakers(element, primitives);
@@ -405,6 +464,7 @@
 
   var prepareGroup = function prepareGroup(element, primitives) {
     attachDOMMethods(element);
+    attachTransformMethods(element);
     attachAppendableMethods(element, primitives);
     attachFunctionalSetters(element);
     attachClipMaskAttributes(element);
@@ -412,6 +472,7 @@
 
   var prepareMaskClipPath = function prepareMaskClipPath(element, primitives) {
     attachDOMMethods(element);
+    attachTransformMethods(element);
     attachAppendableMethods(element, primitives);
     attachFunctionalSetters(element);
     attachClipMaskAttributes(element);
@@ -430,6 +491,10 @@
       case "defs":
       case "group":
         prepareGroup(element, primitiveList);
+        break;
+
+      case "text":
+        prepareText(element);
         break;
 
       case "clipPath":
@@ -778,7 +843,7 @@
     shape.innerHTML = textString;
     shape.setAttributeNS(null, "x", x);
     shape.setAttributeNS(null, "y", y);
-    prepare("primitive", shape);
+    prepare("text", shape);
     return shape;
   };
 
@@ -820,10 +885,10 @@
       return (i - COUNT) / COUNT * 2 + 1;
     });
     var ptsX = iter.map(function (i) {
-      return x + (1 + i) * width * 0.5;
+      return x + (i + 1) * width * 0.5;
     });
     var ptsY = iter.map(function (i) {
-      return y + (1 - Math.pow(i, 2)) * height;
+      return y + Math.pow(i, 2) * height;
     });
     var points = iter.map(function (_, i) {
       return [ptsX[i], ptsY[i]];
