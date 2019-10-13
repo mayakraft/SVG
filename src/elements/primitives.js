@@ -8,6 +8,7 @@ import window from "../environment/window";
 import {
   setPoints,
   setArc,
+  setEllipticalArc,
   setBezier
 } from "../attributes/geometry";
 
@@ -16,7 +17,7 @@ import prepare from "../attributes/prepare";
 /**
  *  primitives
  */
-const line = function (x1, y1, x2, y2) {
+export const line = function (x1, y1, x2, y2) {
   const shape = window.document.createElementNS(svgNS, "line");
   if (x1) { shape.setAttributeNS(null, "x1", x1); }
   if (y1) { shape.setAttributeNS(null, "y1", y1); }
@@ -26,7 +27,7 @@ const line = function (x1, y1, x2, y2) {
   return shape;
 };
 
-const circle = function (x, y, radius) {
+export const circle = function (x, y, radius) {
   const shape = window.document.createElementNS(svgNS, "circle");
   if (x) { shape.setAttributeNS(null, "cx", x); }
   if (y) { shape.setAttributeNS(null, "cy", y); }
@@ -35,7 +36,7 @@ const circle = function (x, y, radius) {
   return shape;
 };
 
-const ellipse = function (x, y, rx, ry) {
+export const ellipse = function (x, y, rx, ry) {
   const shape = window.document.createElementNS(svgNS, "ellipse");
   if (x) { shape.setAttributeNS(null, "cx", x); }
   if (y) { shape.setAttributeNS(null, "cy", y); }
@@ -45,7 +46,7 @@ const ellipse = function (x, y, rx, ry) {
   return shape;
 };
 
-const rect = function (x, y, width, height) {
+export const rect = function (x, y, width, height) {
   const shape = window.document.createElementNS(svgNS, "rect");
   if (x) { shape.setAttributeNS(null, "x", x); }
   if (y) { shape.setAttributeNS(null, "y", y); }
@@ -55,7 +56,7 @@ const rect = function (x, y, width, height) {
   return shape;
 };
 
-const polygon = function (...pointsArray) {
+export const polygon = function (...pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polygon");
   setPoints(shape, ...pointsArray);
   prepare("primitive", shape);
@@ -63,7 +64,7 @@ const polygon = function (...pointsArray) {
   return shape;
 };
 
-const polyline = function (...pointsArray) {
+export const polyline = function (...pointsArray) {
   const shape = window.document.createElementNS(svgNS, "polyline");
   setPoints(shape, ...pointsArray);
   prepare("primitive", shape);
@@ -71,7 +72,7 @@ const polyline = function (...pointsArray) {
   return shape;
 };
 
-const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
+export const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
   const pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]]
     .map(p => p.join(","));
   const d = `M ${pts[0]} C ${pts[1]} ${pts[2]} ${pts[3]}`;
@@ -83,7 +84,7 @@ const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
   return shape;
 };
 
-const text = function (textString, x, y) {
+export const text = function (textString, x, y) {
   const shape = window.document.createElementNS(svgNS, "text");
   shape.innerHTML = textString;
   shape.setAttributeNS(null, "x", x);
@@ -92,15 +93,7 @@ const text = function (textString, x, y) {
   return shape;
 };
 
-const wedge = function (x, y, radius, angleA, angleB) {
-  const shape = window.document.createElementNS(svgNS, "path");
-  setArc(shape, x, y, radius, angleA, angleB, true);
-  prepare("primitive", shape);
-  shape.setArc = (...args) => setArc(shape, ...args);
-  return shape;
-};
-
-const arc = function (x, y, radius, angleA, angleB) {
+export const arc = function (x, y, radius, angleA, angleB) {
   const shape = window.document.createElementNS(svgNS, "path");
   setArc(shape, x, y, radius, angleA, angleB, false);
   prepare("primitive", shape);
@@ -108,7 +101,31 @@ const arc = function (x, y, radius, angleA, angleB) {
   return shape;
 };
 
-const parabola = function (x, y, width, height) {
+export const wedge = function (x, y, radius, angleA, angleB) {
+  const shape = window.document.createElementNS(svgNS, "path");
+  setArc(shape, x, y, radius, angleA, angleB, true);
+  prepare("primitive", shape);
+  shape.setArc = (...args) => setArc(shape, ...args);
+  return shape;
+};
+
+export const arcEllipse = function (x, y, rx, ry, angleA, angleB) {
+  const shape = window.document.createElementNS(svgNS, "path");
+  setEllipticalArc(shape, x, y, rx, ry, angleA, angleB, false);
+  prepare("primitive", shape);
+  shape.setArc = (...args) => setEllipticalArc(shape, ...args);
+  return shape;
+};
+
+export const wedgeEllipse = function (x, y, rx, ry, angleA, angleB) {
+  const shape = window.document.createElementNS(svgNS, "path");
+  setEllipticalArc(shape, x, y, rx, ry, angleA, angleB, true);
+  prepare("primitive", shape);
+  shape.setArc = (...args) => setEllipticalArc(shape, ...args);
+  return shape;
+};
+
+export const parabola = function (x, y, width, height) {
   const COUNT = 128;
   const iter = Array.from(Array(COUNT + 1))
     .map((_, i) => (i - (COUNT)) / COUNT * 2 + 1);
@@ -118,7 +135,7 @@ const parabola = function (x, y, width, height) {
   return polyline(points);
 };
 
-const regularPolygon = function (cX, cY, radius, sides) {
+export const regularPolygon = function (cX, cY, radius, sides) {
   const halfwedge = 2 * Math.PI / sides * 0.5;
   const r = Math.cos(halfwedge) * radius;
   const points = Array.from(Array(sides)).map((el, i) => {
@@ -128,19 +145,4 @@ const regularPolygon = function (cX, cY, radius, sides) {
     return [x, y];
   });
   return polygon(points);
-};
-
-export {
-  line,
-  circle,
-  ellipse,
-  rect,
-  polygon,
-  polyline,
-  bezier,
-  text,
-  wedge,
-  arc,
-  parabola,
-  regularPolygon,
 };

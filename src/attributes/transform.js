@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 const setTransform = function (element, transform) {
   if (typeof transform === "object") {
     element.setAttribute("transform", transform.join(" "));

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 html, body, h1, h2, h3, h4, h5, h6, pre, code, p, ul, li {
   margin: 0;
+  font-size: 1rem;
 }
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
@@ -27,6 +29,7 @@ h2 {
 h3 {
   margin: 2rem 0 0.5rem 0;
   color: #ddd;
+  font-size: 1.75rem;
 }
 p, ul {
   background-color: #23251e;
@@ -39,7 +42,7 @@ pre {
   color: white;
   padding: 1rem 1rem;
   display: block;
-  font-size: 170%;
+  font-size: 1.7rem;
   overflow-x: scroll;
 }
 ul {
@@ -78,7 +81,7 @@ pre.returns {
   padding: 0.5rem 1rem;
   margin: 0;
   background-color: #23251e;
-  font-size: 130%;
+  font-size: 1.3rem;
 }
 pre.title {
   margin-top: 2rem;
@@ -93,7 +96,7 @@ h3 {
   margin-top: 1rem;
 }*/
 pre.returns, .description {
-  margin-left: 3rem;
+  margin-left: 0rem;
 }
 svg.sky {
   position: absolute;
@@ -130,8 +133,19 @@ h1, h2, h3, h4, h5, h6, pre, code, p, ul, li, div {
   /*pointer-events: none;*/
 }
 
+pre.title code { font-size: 1.25rem; }
+pre { padding: 1rem 0; }
+pre.title { margin-top: 0; }
+h3:first-of-type { margin: 1rem 0 0.5rem 0; }
+
 @media (min-width: 720px) {
   body { margin: 2rem 100px 4rem 100px; }
+
+  /* non-mobile styling for all sizes */
+  pre { padding: 1rem 1rem; }
+  pre.title { margin-top: 1rem; }
+  h3:first-of-type { margin: 5rem 0 0.5rem 0;}
+  pre.returns, .description { margin-left: 3rem; }
   /*svg.header { width: calc(100% - 200px); }*/
   /*div.header { background-color: red; }*/
 }
@@ -155,13 +169,6 @@ circle { fill: #12130A; }
   <!-- <h1>SVG Reference</h1> -->
   <div class="header"></div>
 
-    <pre class="title"><code><f>svg</f>()</code></pre>
-    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#SVGElement">&lt;svg&gt;</a> element</pre>
-    <p class="description">(optional) parameters include:</p>
-    <ul class="description">
-      <li>- two numbers, width and height</li>
-      <li>- a dom element, a parent element to append</li>
-    </ul>
   <h3>Drawing</h3>
 
     <pre class="title"><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
@@ -220,6 +227,7 @@ circle { fill: #12130A; }
     <p class="description">the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
 
   <h3>Header</h3>
+
     <pre class="title"><code><f>defs</f>()</code></pre>
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#DefsElement">&lt;defs&gt;</a> element</pre>
     <p class="description">Defs is the SVG's header element. It's recommend that style, clip paths, and masks all go in the defs section, though they still work elsewhere. Any drawing primitives appended to the defs <b>will not be drawn</b>.</p>
@@ -243,32 +251,33 @@ circle { fill: #12130A; }
     <p class="description">which will automatically perform a call like this, matching the url id name parameter.</p>
     <ul class="description"><li><code>shape.<f>setAttribute</f>(<str>"mask"</str>, <str>"url(#id_name)"</str>);</code></li></ul>
 
-
   <h3>Layering</h3>
 
     <pre class="title"><code><f>group</f>()</code></pre>
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#Groups">&lt;group&gt;</a> element</pre>
     <p class="description">like a layer in Photoshop, a group is a container. it's useful for z-ordering. it doesn't show up visually, but if you style it, the style will apply to all its children.</p>
 
+    <pre class="title"><code><f>SVG</f>()</code></pre>
+    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#SVGElement">&lt;svg&gt;</a> element</pre>
+    <p class="description">(optional) parameters include:</p>
+    <ul class="description">
+      <li>- two numbers, width and height</li>
+      <li>- a dom element, a parent element to append</li>
+    </ul>
 
   <div>
-  <h2>Style</h2>
-
+    <h2>Style</h2>
     <pre><code><f>stroke</f>: <f>none</f><br><f>fill</f>: <f>black</f></code></pre>
-
     <p>This is an SVG shape's default style, causing some shapes like <code>&lt;line&gt;</code> to be <em><b>initially invisible</b></em>! Typically, there are three ways to change this:</p>
-
     <pre><code>1. line.<f>setAttribute</f>(<str>"stroke"</str>, <str>"black"</str>)</code></pre>
     <pre><code>2. line.<f>setAttribute</f>(<str>"style"</str>, <str>"stroke: black;"</str>)</code></pre>
     <pre><code>3. &lt;<key>style</key>&gt;<br>  <key>line</key> { <f>stroke</f>: <f>black</f>; }<br>&lt;/<key>style</key>&gt;</code></pre>
-
     <p>This library introduces a fourth: chaining methods, which ultimately call <b>setAttribute</b>. The name of the function is the name of the style attribute (kebab-case is converted to camel-case).</p>
-    
     <pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>   .<f>stroke</f>(<str>"#F08"</str>)<br>   .<f>strokeWidth</f>(<n>3</n>);</code></pre>
   </div>
 
   <div>
-  <h2><a href="https://svg.rabbitear.org">✨ svg . rabbitear . org ✨</a></h2>
+    <h2><a href="https://svg.rabbitear.org">✨ svg . rabbitear . org ✨</a></h2>
     <p>This web-editor allows you to write:</p>
     <pre><code>line(<n>0</n>,<n>1</n>,<n>2</n>,<n>3</n>);</code></pre>
     <p>instead of:</p>
@@ -278,7 +287,6 @@ circle { fill: #12130A; }
   </div>
 
 <script type="text/javascript" src="https://svg.rabbitear.org/svg.min.js"></script>
-<!-- <script type="text/javascript" src="svg.min.js"></script> -->
 
 <script>
 window.onload = function () {
@@ -286,16 +294,12 @@ window.onload = function () {
   var titleString = "SVG Playground";
   title.setViewBox(0, 0, 560, 80);
   title.setClass("header");
-  var text = title.text(titleString, 0, 64)
+  var clip = title.clipPath();
+  clip.text(titleString, 0, 64)
     .fontFamily("Futura, 'Helvetica Neue', Helvetica, sans-serif")
     .fontWeight("bold")
     .fontSize(60)
     .fill("#333");
-  var clip = title.clipPath();
-  // var clone = text.cloneNode(false);
-  // clone.innerHTML = titleString;
-  // clip.appendChild(clone);
-  clip.appendChild(text);
   var walker = title.polyline()
     .fill("none")
     .stroke("#ec3")
@@ -327,7 +331,7 @@ window.onload = function () {
     walkerPoints = [];
     title.animate = animationFunction;
   };
-/*
+  /*
   // make the stars. but do it later after page load
   setTimeout(function () {
     var sky = SVG(window.innerWidth, document.body.clientHeight);
