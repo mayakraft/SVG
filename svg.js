@@ -100,7 +100,7 @@
     win.document = window.document;
   }
 
-  var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
+  var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
 
   var removeChildren = function removeChildren(parent) {
     while (parent.lastChild) {
@@ -673,6 +673,24 @@
 
     shape.setAttributeNS(null, "d", d);
   };
+  var setEllipticalArc = function setEllipticalArc(shape, x, y, rX, rY, startAngle, endAngle) {
+    var includeCenter = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
+    var start = [x + Math.cos(startAngle) * rX, y + Math.sin(startAngle) * rY];
+    var vecStart = [Math.cos(startAngle) * rX, Math.sin(startAngle) * rY];
+    var vecEnd = [Math.cos(endAngle) * rX, Math.sin(endAngle) * rY];
+    var arcVec = [vecEnd[0] - vecStart[0], vecEnd[1] - vecStart[1]];
+    var py = vecStart[0] * vecEnd[1] - vecStart[1] * vecEnd[0];
+    var px = vecStart[0] * vecEnd[0] + vecStart[1] * vecEnd[1];
+    var arcdir = Math.atan2(py, px) > 0 ? 0 : 1;
+    var d = includeCenter ? "M ".concat(x, ",").concat(y, " l ").concat(vecStart[0], ",").concat(vecStart[1], " ") : "M ".concat(start[0], ",").concat(start[1], " ");
+    d += ["a ", rX, rY, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
+
+    if (includeCenter) {
+      d += " Z";
+    }
+
+    shape.setAttributeNS(null, "d", d);
+  };
   var setBezier = function setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
     var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
       return p.join(",");
@@ -685,6 +703,7 @@
     __proto__: null,
     setPoints: setPoints,
     setArc: setArc,
+    setEllipticalArc: setEllipticalArc,
     setBezier: setBezier
   });
 
@@ -710,7 +729,6 @@
     prepare("primitive", shape);
     return shape;
   };
-
   var circle = function circle(x, y, radius) {
     var shape = win.document.createElementNS(namespace, "circle");
 
@@ -729,7 +747,6 @@
     prepare("primitive", shape);
     return shape;
   };
-
   var ellipse = function ellipse(x, y, rx, ry) {
     var shape = win.document.createElementNS(namespace, "ellipse");
 
@@ -752,7 +769,6 @@
     prepare("primitive", shape);
     return shape;
   };
-
   var rect = function rect(x, y, width, height) {
     var shape = win.document.createElementNS(namespace, "rect");
 
@@ -775,7 +791,6 @@
     prepare("primitive", shape);
     return shape;
   };
-
   var polygon = function polygon() {
     var shape = win.document.createElementNS(namespace, "polygon");
 
@@ -796,7 +811,6 @@
 
     return shape;
   };
-
   var polyline = function polyline() {
     var shape = win.document.createElementNS(namespace, "polyline");
 
@@ -817,7 +831,6 @@
 
     return shape;
   };
-
   var bezier = function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
     var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
       return p.join(",");
@@ -837,7 +850,6 @@
 
     return shape;
   };
-
   var text = function text(textString, x, y) {
     var shape = win.document.createElementNS(namespace, "text");
     shape.innerHTML = textString;
@@ -846,10 +858,9 @@
     prepare("text", shape);
     return shape;
   };
-
-  var wedge = function wedge(x, y, radius, angleA, angleB) {
+  var arc = function arc(x, y, radius, angleA, angleB) {
     var shape = win.document.createElementNS(namespace, "path");
-    setArc(shape, x, y, radius, angleA, angleB, true);
+    setArc(shape, x, y, radius, angleA, angleB, false);
     prepare("primitive", shape);
 
     shape.setArc = function () {
@@ -862,10 +873,9 @@
 
     return shape;
   };
-
-  var arc = function arc(x, y, radius, angleA, angleB) {
+  var wedge = function wedge(x, y, radius, angleA, angleB) {
     var shape = win.document.createElementNS(namespace, "path");
-    setArc(shape, x, y, radius, angleA, angleB, false);
+    setArc(shape, x, y, radius, angleA, angleB, true);
     prepare("primitive", shape);
 
     shape.setArc = function () {
@@ -878,7 +888,36 @@
 
     return shape;
   };
+  var arcEllipse = function arcEllipse(x, y, rx, ry, angleA, angleB) {
+    var shape = win.document.createElementNS(namespace, "path");
+    setEllipticalArc(shape, x, y, rx, ry, angleA, angleB, false);
+    prepare("primitive", shape);
 
+    shape.setArc = function () {
+      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+        args[_key8] = arguments[_key8];
+      }
+
+      return setEllipticalArc.apply(void 0, [shape].concat(args));
+    };
+
+    return shape;
+  };
+  var wedgeEllipse = function wedgeEllipse(x, y, rx, ry, angleA, angleB) {
+    var shape = win.document.createElementNS(namespace, "path");
+    setEllipticalArc(shape, x, y, rx, ry, angleA, angleB, true);
+    prepare("primitive", shape);
+
+    shape.setArc = function () {
+      for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+        args[_key9] = arguments[_key9];
+      }
+
+      return setEllipticalArc.apply(void 0, [shape].concat(args));
+    };
+
+    return shape;
+  };
   var parabola = function parabola(x, y, width, height) {
     var COUNT = 128;
     var iter = Array.from(Array(COUNT + 1)).map(function (_, i) {
@@ -895,7 +934,6 @@
     });
     return polyline(points);
   };
-
   var regularPolygon = function regularPolygon(cX, cY, radius, sides) {
     var halfwedge = 2 * Math.PI / sides * 0.5;
     var r = Math.cos(halfwedge) * radius;
@@ -918,8 +956,10 @@
     polyline: polyline,
     bezier: bezier,
     text: text,
-    wedge: wedge,
     arc: arc,
+    wedge: wedge,
+    arcEllipse: arcEllipse,
+    wedgeEllipse: wedgeEllipse,
     parabola: parabola,
     regularPolygon: regularPolygon
   });

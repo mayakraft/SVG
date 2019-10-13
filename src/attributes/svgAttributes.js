@@ -518,6 +518,7 @@ export default [
   // "textLength",
   "to",
   // "transform",
+  "transform-origin", // i added this -Robby
   "type",
   "USection",
   "u1",
