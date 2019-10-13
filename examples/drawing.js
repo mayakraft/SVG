@@ -1,7 +1,6 @@
-function Drawing(...args) {
-  const { SVG } = window;
+var Drawing = function (...args) {
 
-  const sketch = SVG(...args);
+  var sketch = SVG(...args);
   sketch.color = "#000000";
 
   sketch.drawingLayer = SVG.group();
@@ -16,9 +15,9 @@ function Drawing(...args) {
   };
 
   sketch.onMouseMove = function (mouse) {
-    const vector = [mouse.x - sketch.prev.x, mouse.y - sketch.prev.y];
-    const sideA = [mouse.x + -vector[1] * 0.2, mouse.y + vector[0] * 0.2];
-    const sideB = [mouse.x + vector[1] * 0.2, mouse.y + -vector[0] * 0.2];
+    var vector = [mouse.x - sketch.prev.x, mouse.y - sketch.prev.y];
+    var sideA = [mouse.x + -vector[1] * 0.2, mouse.y + vector[0] * 0.2];
+    var sideB = [mouse.x + vector[1] * 0.2, mouse.y + -vector[0] * 0.2];
 
     sketch.points.unshift(sideA);
     sketch.points.push(sideB);
@@ -26,6 +25,5 @@ function Drawing(...args) {
 
     sketch.prev = mouse;
   };
-
   return sketch;
-}
+};

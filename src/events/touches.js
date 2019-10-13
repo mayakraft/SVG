@@ -98,7 +98,7 @@ const Touches = function (node) {
     },
     enumerable: true
   });
-  Object.defineProperty(node, "onscroll", {
+  Object.defineProperty(node, "onScroll", {
     set: (handler) => {
       node.onscroll = event => onScroll(handler, event);
     },

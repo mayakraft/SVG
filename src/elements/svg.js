@@ -27,12 +27,16 @@ const findElementInParams = function (...params) {
 
 const initSize = function (svgElement, params) {
   const numbers = params.filter(arg => !isNaN(arg));
+  const viewBox = svgElement.getAttribute("viewBox");
   if (numbers.length >= 2) {
     svgElement.setAttributeNS(null, "width", numbers[0]);
     svgElement.setAttributeNS(null, "height", numbers[1]);
     setViewBox(svgElement, 0, 0, numbers[0], numbers[1]);
-  } else if (svgElement.getAttribute("viewBox") == null) {
+  } else if (viewBox == null) {
     // set a viewBox if viewBox doesn't yet exist
+    const frame = svgElement.getBoundingClientRect();
+    setViewBox(svgElement, 0, 0, frame.width, frame.height);
+  } else if (viewBox.split(" ").filter(n => n === "0" || n === 0).length === 4) {
     const frame = svgElement.getBoundingClientRect();
     setViewBox(svgElement, 0, 0, frame.width, frame.height);
   }
@@ -88,21 +92,35 @@ const size = function (element, ...args) {
   }
 };
 
-const background = function (element, color) {
-  const parent = element.parentElement;
-  if (parent != null) {
-    parent.setAttribute("style", `background-color: ${color}`);
+const getFrame = function (element) {
+  let frame = [0, 0, 0, 0];
+  if (element.viewBox != null) {
+    const viewBox = element.viewBox.baseVal;
+    frame = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+  } else if (typeof element.getBoundingClientRect === "function") {
+    const rr = element.getBoundingClientRect();
+    frame = [rr.x, rr.y, rr.width, rr.height];
   }
-  let backRect = element.querySelector("#svg-background-rectangle");
+  return frame;
+};
+
+const background = function (element, color, setParent = true) {
+  if (setParent) {
+    const parent = element.parentElement;
+    if (parent != null) {
+      parent.setAttribute("style", `background-color: ${color}`);
+    }
+  }
+  let backRect = Array.from(element.childNodes)
+    .filter(child => child.getAttribute("class") === "svg-background-rectangle")
+    .shift();
   if (backRect != null) {
     backRect.setAttribute("fill", color);
   } else {
-    const viewBox = element.viewBox.baseVal;
-    const frame = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
-    backRect = rect(frame[0], frame[1], frame[2], frame[3])
-      .fill(color);
-    backRect.setAttribute("id", "svg-background-rectangle");
-    element.prepend(backRect);
+    backRect = rect(...getFrame(element))
+      .fill(color)
+      .setClass("svg-background-rectangle");
+    element.insertBefore(backRect, element.firstChild);
   }
 };
 
@@ -139,13 +157,12 @@ const SVG = function (...params) {
   const element = svg();
 
   // setup that can occur immediately
-  initSize(element, params);
   Events(element);
   element.getWidth = () => getWidth(element);
   element.getHeight = () => getHeight(element);
-  element.setWidth = w => setWidth(element, w);
-  element.setHeight = h => setHeight(element, h);
-  element.background = color => background(element, color);
+  element.setWidth = (...args) => setWidth(element, ...args);
+  element.setHeight = (...args) => setHeight(element, ...args);
+  element.background = (...args) => background(element, ...args);
   element.size = (...args) => size(element, ...args);
   // element.events = Events(element);
   element.save = function (filename = "image.svg") {
@@ -160,9 +177,9 @@ const SVG = function (...params) {
 
   // initialize requires a loaded DOM to append
   const initialize = function () {
-    initSize(element, params);
     const parent = findElementInParams(...params);
     if (parent != null) { parent.appendChild(element); }
+    initSize(element, params);
     // maybe dangerous:
     // any function inside the arguments will get fired. with zero parameters.
     // a way of sending a callback to an unknown parameter list

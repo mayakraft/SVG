@@ -1,4 +1,5 @@
 size(600, 600);
+background("#edb");
 
 function dragon(x1, y1, x2, y2, turn, i) {
   if (i < 0) { return [[x1, y1], [x2, y2]]; }
@@ -21,12 +22,10 @@ var i3 = Math.floor(Math.random() * 3) + 6;
 var i4 = Math.floor(Math.random() * 3) + 8;
 
 polyline(dragon(x1, y1, x2, y2, 1, i1))
-  .setAttributes(attrs).stroke("#ec38").strokeWidth(90);
+  .setAttributes(attrs).stroke("#ec3").strokeWidth(81);
 polyline(dragon(x1, y1, x2, y2, 1, i2))
-  .setAttributes(attrs).stroke("#1588").strokeWidth(40);
+  .setAttributes(attrs).stroke("#158a").strokeWidth(27);
 polyline(dragon(x1, y1, x2, y2, 1, i3))
-  .setAttributes(attrs).stroke("#e53a").strokeWidth(13);
-polyline(dragon(x1, y1, x2, y2, 1, i1))
-  .setAttributes(attrs).stroke("#ec3").strokeWidth(6);
+  .setAttributes(attrs).stroke("#e53").strokeWidth(9);
 polyline(dragon(x1, y1, x2, y2, 1, i4))
-  .setAttributes(attrs).stroke("#158").strokeWidth(2);
+  .setAttributes(attrs).stroke("#158").strokeWidth(3);

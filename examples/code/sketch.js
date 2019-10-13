@@ -45,7 +45,9 @@ const CodeSVGxMenu = function (container) {
       "harmonic.js",
       "mask.js",
       "parabola.js",
-      "text.js"
+      "text.js",
+      "ten-print.js",
+      "walker.js"
     ];
     exampleFilenames.forEach((file) => {
       fetch(`samples/${file}`)

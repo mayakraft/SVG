@@ -292,12 +292,17 @@
     setTransform(element, trans);
     return element;
   };
+  var clearTransforms = function clearTransforms(element) {
+    element.setAttribute("transform", "");
+    return element;
+  };
 
   var Transform = /*#__PURE__*/Object.freeze({
     __proto__: null,
     translate: translate,
     rotate: rotate,
-    scale: scale
+    scale: scale,
+    clearTransforms: clearTransforms
   });
 
   var attachAppendableMethods = function attachAppendableMethods(element, methods) {
@@ -1488,7 +1493,7 @@
       },
       enumerable: true
     });
-    Object.defineProperty(node, "onscroll", {
+    Object.defineProperty(node, "onScroll", {
       set: function set(handler) {
         node.onscroll = function (event) {
           return onScroll(handler, event);
@@ -1617,14 +1622,21 @@
     var numbers = params.filter(function (arg) {
       return !isNaN(arg);
     });
+    var viewBox = svgElement.getAttribute("viewBox");
 
     if (numbers.length >= 2) {
       svgElement.setAttributeNS(null, "width", numbers[0]);
       svgElement.setAttributeNS(null, "height", numbers[1]);
       setViewBox(svgElement, 0, 0, numbers[0], numbers[1]);
-    } else if (svgElement.getAttribute("viewBox") == null) {
+    } else if (viewBox == null) {
       var frame = svgElement.getBoundingClientRect();
       setViewBox(svgElement, 0, 0, frame.width, frame.height);
+    } else if (viewBox.split(" ").filter(function (n) {
+      return n === "0" || n === 0;
+    }).length === 4) {
+      var _frame = svgElement.getBoundingClientRect();
+
+      setViewBox(svgElement, 0, 0, _frame.width, _frame.height);
     }
   };
 
@@ -1676,23 +1688,40 @@
     }
   };
 
-  var background = function background(element, color) {
-    var parent = element.parentElement;
+  var getFrame = function getFrame(element) {
+    var frame = [0, 0, 0, 0];
 
-    if (parent != null) {
-      parent.setAttribute("style", "background-color: ".concat(color));
+    if (element.viewBox != null) {
+      var viewBox = element.viewBox.baseVal;
+      frame = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+    } else if (typeof element.getBoundingClientRect === "function") {
+      var rr = element.getBoundingClientRect();
+      frame = [rr.x, rr.y, rr.width, rr.height];
     }
 
-    var backRect = element.querySelector("#svg-background-rectangle");
+    return frame;
+  };
+
+  var background = function background(element, color) {
+    var setParent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    if (setParent) {
+      var parent = element.parentElement;
+
+      if (parent != null) {
+        parent.setAttribute("style", "background-color: ".concat(color));
+      }
+    }
+
+    var backRect = Array.from(element.childNodes).filter(function (child) {
+      return child.getAttribute("class") === "svg-background-rectangle";
+    }).shift();
 
     if (backRect != null) {
       backRect.setAttribute("fill", color);
     } else {
-      var viewBox = element.viewBox.baseVal;
-      var frame = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
-      backRect = rect(frame[0], frame[1], frame[2], frame[3]).fill(color);
-      backRect.setAttribute("id", "svg-background-rectangle");
-      element.prepend(backRect);
+      backRect = rect.apply(void 0, _toConsumableArray(getFrame(element))).fill(color).setClass("svg-background-rectangle");
+      element.insertBefore(backRect, element.firstChild);
     }
   };
 
@@ -1716,7 +1745,6 @@
     }
 
     var element = svg();
-    initSize(element, params);
     Events(element);
 
     element.getWidth = function () {
@@ -1727,21 +1755,33 @@
       return getHeight(element);
     };
 
-    element.setWidth = function (w) {
-      return setWidth(element, w);
+    element.setWidth = function () {
+      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        args[_key4] = arguments[_key4];
+      }
+
+      return setWidth.apply(void 0, [element].concat(args));
     };
 
-    element.setHeight = function (h) {
-      return setHeight(element, h);
+    element.setHeight = function () {
+      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
+      }
+
+      return setHeight.apply(void 0, [element].concat(args));
     };
 
-    element.background = function (color) {
-      return background(element, color);
+    element.background = function () {
+      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+        args[_key6] = arguments[_key6];
+      }
+
+      return background.apply(void 0, [element].concat(args));
     };
 
     element.size = function () {
-      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
+      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+        args[_key7] = arguments[_key7];
       }
 
       return size.apply(void 0, [element].concat(args));
@@ -1765,13 +1805,13 @@
     };
 
     var initialize = function initialize() {
-      initSize(element, params);
       var parent = findElementInParams.apply(void 0, params);
 
       if (parent != null) {
         parent.appendChild(element);
       }
 
+      initSize(element, params);
       params.filter(function (arg) {
         return typeof arg === "function";
       }).forEach(function (func) {

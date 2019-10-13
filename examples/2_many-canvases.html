@@ -7,10 +7,9 @@ body{ margin:0; }
 <script type="text/javascript" src="drawing.js"></script>
 <script>
 
-["#fff", "#aaa", "#333"].forEach((c,i) => {
-	let d = Drawing(window.innerWidth, window.innerHeight / 3, "canvas-"+i);
-	d.color = c;
-	return d;
+["#fff", "#aaa", "#333"].forEach(function(c, i) {
+  var d = Drawing(window.innerWidth, window.innerHeight / 3, "canvas-" + i);
+  d.color = c;
+  return d;
 });
-
 </script>
