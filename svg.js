@@ -567,6 +567,10 @@
     return msk;
   };
 
+  var create = function create(tagName) {
+    return win.document.createElementNS(namespace, tagName);
+  };
+
   var setConstructors = function setConstructors(elements) {
     Object.keys(elements).filter(function (key) {
       return key !== "svg";
@@ -596,7 +600,8 @@
     defs: defs,
     clipPath: clipPath,
     mask: mask,
-    style: style
+    style: style,
+    create: create
   });
 
   var is_iterable = function is_iterable(obj) {

@@ -39,11 +39,11 @@ const CodeSVGxMenu = function (container) {
     const examples = [];
     const exampleFilenames = [
       "bezier.js",
-      "clipping.js",
       "conics.js",
       "dragon.js",
       "draw.js",
       "harmonic.js",
+      "mask.js",
       "parabola.js",
       "text.js"
     ];

@@ -22,7 +22,7 @@ const preparePrimitive = function (element) {
 const prepareText = function (element) {
   attachDOMMethods(element);
   // text element has a problem with "rotate"
-  // attachTransformMethods(element); 
+  // attachTransformMethods(element);
   attachFunctionalSetters(element);
   attachClipMaskAttributes(element);
 };

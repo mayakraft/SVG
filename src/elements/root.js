@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import svgNS from "../environment/namespace";
 import window from "../environment/window";
 import prepare from "../attributes/prepare";
@@ -52,6 +56,11 @@ const mask = function (id = generateUUID(8, "mask-")) {
   return msk;
 };
 
+// the placeholder constructor. create any element type in the SVG namespace
+const create = function (tagName) {
+  return window.document.createElementNS(svgNS, tagName);
+};
+
 const setConstructors = function (elements) {
   Object.keys(elements)
     .filter(key => key !== "svg")
@@ -73,5 +82,6 @@ export {
   defs,
   clipPath,
   mask,
-  style
+  style,
+  create
 };
