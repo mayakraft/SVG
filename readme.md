@@ -14,186 +14,174 @@ Include svg.js in your project.
 
 # Introduction
 
-`SVG` is the global namespace, the only one. Calling it as a function creates an SVG.
+`SVG` is the global namespace. It's also a constructor.
 
 ```javascript
-let mySVG = SVG();
+const mySVG = SVG();
 ```
 
-`SVG()` creates an `<svg>`. All other initializers are under the namespace. `SVG.rect()` creates a `<rect>`
+All other constructors exist in two places:
+
+* global level: `SVG.rect()` creates a `<rect>`.
+* object level: `mySVG.rect()` creates a `<rect>` and appends it to mySVG.
+
+*you probably want to use the 2nd approach.*
 
 ```javascript
-SVG.rect(10, 10, 640, 480);
+mySVG.rect(10, 10, 280, 130);
 ```
 
 Calling the one line above is synonymous with writing
 
 ```javascript
-let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 rect.setAttribute("x", 10);
 rect.setAttribute("y", 10);
-rect.setAttribute("width", 640);
-rect.setAttribute("height", 480);
+rect.setAttribute("width", 280);
+rect.setAttribute("height", 130);
+mySVG.appendChild(rect);
 ```
 
-By default an element isn't attached to any SVG, and will be invisible. Calling `mySVG.rect` instead of `SVG.rect` will append it to the svg.
+Groups are an SVG's *layers*. Groups can create geometry too.
 
 ```javascript
-let mySVG = SVG();
-mySVG.rect(10, 10, 640, 480);
-
-// instead of
-SVG.rect(10, 10, 640, 480);
+const mySVG = SVG();
+const group1 = mySVG.group();
+group1.rect(10, 10, 280, 130);
 ```
 
-It's useful to use this with groups. Groups can create geometry too.
-
-```javascript
-let mySVG = SVG();
-let layer1 = mySVG.group();
-layer1.rect(10, 10, 620, 460);
-```
-
-creates
+The code above will create:
 
 ```html
-<svg>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150">
   <g>
-    ​<rect x=​"1" y=​"2" width=​"620" height=​"460">​</line>​
+    ​<rect x=​"10" y=​"10" width=​"620" height=​"460">​</line>​
   </g>​
 </svg>
 ```
 
-Each of these objects are DOM level 1 elements.
-
 # Examples
+
+Refresh this page for a new example: [svg.rabbitear.org](https://svg.rabbitear.org)
 
 Read [this introduction blog post](https://blog.rabbitear.org/2018/12/29/svg/) and check out the `examples/` folder included in this project for more demos:
 
-* [random walker](https://robbykraft.github.io/SVG/examples/random-walker.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/random-walker.html))
-* [Georg Nees](https://robbykraft.github.io/SVG/examples/georg-nees.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/georg-nees.html))
-* [Sol Lewitt](https://robbykraft.github.io/SVG/examples/sol-lewitt.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/sol-lewitt.html))
-* [Vera Molnar](https://robbykraft.github.io/SVG/examples/vera-molnar.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/vera-molnar.html))
-* [10-print](https://robbykraft.github.io/SVG/examples/ten-print.html) ([source](https://github.com/robbykraft/SVG/blob/master/examples/ten-print.html))
+![example](https://robbykraft.github.io/SVG/examples/vera.svg)
 
-The following code draws the [Japanese flag](https://robbykraft.github.io/SVG/examples/japanese-flag.html):
+# Methods: style
 
-```javascript
-let flag = SVG(600, 400);
-let rect = flag.rect(0, 0, flag.w, flag.h).fill("white");
-let circle = flag.circle(flag.w / 2, flag.h / 2, flag.h * 0.3).fill("#BC002D");
+```
+stroke: none
+fill: black
 ```
 
-# Methods
+This is an SVG shape's default style, causing some shapes like <line> to be initially invisible! Typically, there are three ways to change this:
 
-container types
+1. `line.setAttribute("stroke", "black")`
+2. `line.setAttribute("style", "stroke: black;")`
+3. `<style> line { stroke: black; } </style>`
+
+This library introduces a fourth: chaining methods (which ultimately call setAttribute). The name of the function is the name of the style attribute (kebab-case is converted to camel-case).
 
 ```javascript
-SVG()
-SVG.group()
+line(0, 0, 300, 300)
+  .stroke("#F08")
+  .strokeWidth(3);
 ```
 
-save or load an SVG file
+# Methods: constructors
+
+container and header types
 
 ```javascript
-SVG.save(svg, filename = "image.svg")
-SVG.load(input, callback)
+group()
+defs()
+clipPath()
+mask()
+create(tagName) // create any element under the svg namespace
 ```
 
 geometry primitives
 
 ```javascript
-SVG.line(x1, y1, x2, y2, className, id, parent)
-SVG.circle(x, y, radius, className, id, parent)
-SVG.rect(x, y, width, height, className, id, parent)
-SVG.polygon(pointsArray, className, id, parent)
-SVG.polyline(pointsArray, className, id, parent)
-SVG.bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY, className, id, parent)
-SVG.text(textString, x, y, className, id, parent)
-SVG.wedge(x, y, radius, startAngle, endAngle, className, id, parent)
-SVG.arc(x, y, radius, startAngle, endAngle, className, id, parent)
-SVG.curve(fromX, fromY, midX, midY, toX, toY, className, id)
-SVG.regularPolygon(cX, cY, radius, sides, className, id, parent)
+line(x1, y1, x2, y2)
+circle(x, y, radius)
+ellipse(x, y, radiusX, radiusY)
+rect(x, y, width, height)
+polygon(pointsArray)
+polyline(pointsArray)
+bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY)
+text(textString, x, y)
+arc(x, y, radius, startAngle, endAngle)
+wedge(x, y, radius, startAngle, endAngle)
+arcEllipse(x, y, radiusX, radiusY, startAngle, endAngle)
+wedgeEllipse(x, y, radiusX, radiusY, startAngle, endAngle)
+parabola(x, y, width, height)
+regularPolygon(cX, cY, radius, sides)
+straightArrow(start, end, options)
+arcArrow(start, end, options)
 ```
 
-update geometry for polygon/polyline or arc/wedge
-
-```javascript
-line.setPoints(polygon, pointsArray)
-bezier.setArc(shape, x, y, radius, startAngle, endAngle, includeCenter = false)
-```
-
-clear the contents of an SVG or a group
-
-```javascript
-group.removeChildren(group)
-```
-
-setDefaultViewBox matches viewBox to visible dimensions. getViewBox returns an array of 4 numbers
-
-```javascript
-SVG.setViewBox(svg, x, y, width, height, padding = 0)
-SVG.setDefaultViewBox(svg)
-SVG.getViewBox(svg)
-```
-
-these alter the viewBox. no CSS transforms here.
-
-```javascript
-SVG.scale(svg, scale, origin_x = 0, origin_y = 0)
-SVG.translate(svg, dx, dy)
-```
-
-![example](https://robbykraft.github.io/SVG/examples/vera.svg)
-
-# the SVG() object
-
-Optional initializers:
+svg: optional initializers
 
 * 2 numbers: width *then* height
-* DOM object, this will be the parent to attach the SVG (otherwise the SVG will be appended to the body)
+* DOM object, this will be the parent to attach the SVG
 
 ```javascript
-let image = SVG(640, 480, parent_element);
+let mySVG = SVG(640, 480, parent_element);
 ```
 
-```javascript
-load(data, callback)
-save(filename)
-```
-
-get or set the visible dimensions. or the viewBox
+# Methods: object functions
 
 ```javascript
-sketch.w = 200  // "width", and "height" are already used by DOM level 1
-sketch.h = 100
-sketch.setViewBox(0, 0, 200, 100)
-```
+save(svg, filename = "image.svg")
+load(filename, callback)
 
-removeChildren can accept an optional *group* argument, otherwise it removes all children from this SVG.
-
-```javascript
-appendChild(node)
 removeChildren()
-```
+appendTo(parent)
+setAttributes(attributeObject)
+addClass(className)
+removeClass(className)
+setClass(className)
+setID(idName)
 
-```javascript
-setViewBox(x, y, width, height)
+translate(tx, ty)
+rotate(degrees)
+scale(sx, sy)
+
 getViewBox()
+setViewBox(x, y, w, h)
+convertToViewBox(x, y)
+translateViewBox(dx, dy)
+scaleViewBox(scale, origin_x = 0, origin_y = 0)
+
+getWidth()
+getHeight()
+setWidth(w)
+setHeight(h)
+background(color)
+size(width, height)
+size(x, y, width, height)
 ```
 
-event handlers
+# Methods: interaction
 
 ```javascript
-myImage.onMouseMove = function(mouse) { }
-myImage.onMouseDown = function(mouse) { }
-myImage.onMouseUp = function(mouse) { }
-myImage.onMouseLeave = function(mouse) { }
-myImage.onMouseEnter = function(mouse) { }
-myImage.animate = function(event) { }
+// a property of an SVG (not a method), the current location of the pointer
+mouse
+
+// event handlers
+mouseMoved = function (event) { }
+mousePressed = function (event) { }
+mouseReleased = function (event) { }
+onScroll = function (event) { }
+animate = function (event) { }
+
+// clear all event handlers
+clear()
 ```
 
-the mouse handlers supply this object as the argument
+the mouse event is
 
 ```javascript
 {
@@ -207,45 +195,33 @@ the mouse handlers supply this object as the argument
 }
 ```
 
-the animate handler supplies:
+the animate event is
 
 ```javascript
 {
-  time: 0.0 // in seconds
+  time: 0.0, // in seconds
   frame: 0  // integer
 }
 ```
 
-# Appendix
+# Methods: on geometry primitives
 
-the entire contents of SVG:
+```javascript
+poly.setPoints(pointsArray)
+arc.setArc(x, y, radius, startAngle, endAngle, includeCenter = false)
+ellipseArc.setEllipticalArc(x, y, rX, rY, startAngle, endAngle, includeCenter = false)
+bezier.setBezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY)
 
+shape.mask(m) // the mask "m" will be 
 ```
-arc: ƒ (x, y, radius, angleA, angleB)
-bezier: ƒ (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY)
-circle: ƒ (x, y, radius)
-controls: ƒ controls(svgObject, number = 1, options)
-convertToViewBox: ƒ (svg, x, y)
-ellipse: ƒ (x, y, rx, ry)
-getViewBox: ƒ (svg)
-group: ƒ ()
-image: ƒ image()
-line: ƒ (x1, y1, x2, y2)
-load: ƒ (input, callback)
-polygon: ƒ (pointsArray)
-polyline: ƒ (pointsArray)
-rect: ƒ (x, y, width, height)
-regularPolygon: ƒ (cX, cY, radius, sides)
-removeChildren: ƒ (parent)
-save: ƒ (svg, filename = "image.svg")
-scaleViewBox: ƒ (svg, scale, origin_x = 0, origin_y = 0)
-setArc: ƒ (shape, x, y, radius, startAngle, endAngle, includeCenter = false)
-setPoints: ƒ (polygon, pointsArray)
-setViewBox: ƒ (svg, x, y, width, height, padding = 0)
-svg: ƒ ()
-text: ƒ (textString, x, y)
-translateViewBox: ƒ (svg, dx, dy)
-wedge: ƒ (x, y, radius, angleA, angleB)
+
+# Methods: masking and clipping
+
+```javascript
+const c = clipPath(); // create a clip path
+c.rect(20, 20, 80, 80) // define the clip path
+
+line(0, 0, 100, 100).clipPath(c) // make a shape follow the clip path
 ```
 
 ![example](https://robbykraft.github.io/SVG/examples/dragon.svg)

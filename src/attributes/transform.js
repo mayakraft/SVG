@@ -37,3 +37,8 @@ export const scale = function (element, sx, sy) {
   setTransform(element, trans);
   return element;
 };
+
+export const clearTransforms = function (element) {
+  element.setAttribute("transform", "");
+  return element;
+};

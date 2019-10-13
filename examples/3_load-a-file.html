@@ -6,14 +6,13 @@
 <script type="text/javascript" src="../svg.js"></script>
 <script type="text/javascript">
 
-let sketch = SVG();
+var sketch = SVG();
 var reader = new FileReader();
 
-document.getElementById("open-file").onchange = function(){
-	reader.readAsText(this.files[0]);
-}
+document.getElementById("open-file").onchange = function () {
+  reader.readAsText(this.files[0]);
+};
 reader.onload = function(event){
-	sketch.load(event.target.result);
-}
-
+  sketch.load(event.target.result);
+};
 </script>

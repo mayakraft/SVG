@@ -14,13 +14,13 @@ compare the two to see what is or isn't made easier.
 <script>
 
 // create a new SVG, append it to the DOM
-let sketch = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+var sketch = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 sketch.setAttribute("width", window.innerWidth);
 sketch.setAttribute("height", window.innerHeight);
 document.body.appendChild(sketch);
 
 // fill the canvas with a rectangle
-let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 rect.setAttribute("x", 0);
 rect.setAttribute("y", 0);
 rect.setAttribute("width", window.innerWidth);
@@ -31,7 +31,7 @@ rect.setAttribute("fill", "black");
 sketch.appendChild(rect);
 
 // create, style, and append a polyline
-let poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+var poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
 poly.setAttribute("stroke", "white");
 poly.setAttribute("stroke-width", 5);
 poly.setAttribute("stroke-dasharray", "6 12");
@@ -39,16 +39,15 @@ poly.setAttribute("stroke-linecap", "round");
 sketch.appendChild(poly);
 
 // create a simple draw handler
-let points = [];
-sketch.onmousemove = function(event){
-	let pt = sketch.createSVGPoint();
-	pt.x = event.clientX;
-	pt.y = event.clientY;
-	let svgPoint = pt.matrixTransform(sketch.getScreenCTM().inverse());
-	points.push(svgPoint);
-	let pointsString = points
-		.reduce((prev, curr) => prev + curr.x + "," + curr.y + " ", "");
-	poly.setAttribute("points", pointsString);
-}
-
+var points = [];
+sketch.onmousemove = function (event) {
+  var pt = sketch.createSVGPoint();
+  pt.x = event.clientX;
+  pt.y = event.clientY;
+  var svgPoint = pt.matrixTransform(sketch.getScreenCTM().inverse());
+  points.push(svgPoint);
+  var pointsString = points
+    .reduce((prev, curr) => prev + curr.x + "," + curr.y + " ", "");
+  poly.setAttribute("points", pointsString);
+};
 </script>

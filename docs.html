@@ -237,14 +237,14 @@ circle { fill: #12130A; }
     <p class="description">A style section contain CSS text (on property .innerHTML). CSS is helpful for selecting multiple objects and styling them with one definition.</p>
     <p class="description">But be careful! Style sections affect the global space. Multiple SVG images on the same HTML document all inherit each other's style sections.</p>
 
-    <pre class="title"><code><f>clipPath</f>(<arg>id_name</arg>)</code></pre>
+    <pre class="title"><code><f>clipPath</f>()</code></pre>
     <pre class="returns">&gt; creates one <a href="https://drafts.fxtf.org/css-masking-1/#ClipPathElement">&lt;clip-path&gt;</a> element</pre>
     <p class="description">A clip path sits in the header, like style. Append closed-geometry elements to it and they will become a clipping mask. Clip another element by styling its clip-path attribute:</p>
     <ul class="description"><li><code><f>const</f> clip <key>=</key> <f>clipPath</f>();<br>shape.<f>clipPath</f>(clip);</code></li></ul>
     <p class="description">which will automatically perform a call like this, matching the url id name parameter.</p>
     <ul class="description"><li><code>shape.<f>setAttribute</f>(<str>"clip-path"</str>, <str>"url(#id_name)"</str>);</code></li></ul>
     
-    <pre class="title"><code><f>mask</f>(<arg>id_name</arg>)</code></pre>
+    <pre class="title"><code><f>mask</f>()</code></pre>
     <pre class="returns">&gt; creates one <a href="https://drafts.fxtf.org/css-masking-1/#MaskElement">&lt;mask&gt;</a> element</pre>
     <p class="description">A mask is similar to a clip path but instead of a path, a mask is a black and white image. Fill the mask layer with black and white shapes (or gray for transparency). Clip another element by setting its mask attribute:</p>
     <ul class="description"><li><code><f>const</f> m <key>=</key> <f>mask</f>();<br>shape.<f>mask</f>(m);</code></li></ul>
@@ -272,18 +272,8 @@ circle { fill: #12130A; }
     <pre><code>1. line.<f>setAttribute</f>(<str>"stroke"</str>, <str>"black"</str>)</code></pre>
     <pre><code>2. line.<f>setAttribute</f>(<str>"style"</str>, <str>"stroke: black;"</str>)</code></pre>
     <pre><code>3. &lt;<key>style</key>&gt;<br>  <key>line</key> { <f>stroke</f>: <f>black</f>; }<br>&lt;/<key>style</key>&gt;</code></pre>
-    <p>This library introduces a fourth: chaining methods, which ultimately call <b>setAttribute</b>. The name of the function is the name of the style attribute (kebab-case is converted to camel-case).</p>
+    <p>This library provides a fourth: <b>method chaining</b>. The function names match the attribute, except that kebab-case is converted to camel-case.</p>
     <pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>   .<f>stroke</f>(<str>"#F08"</str>)<br>   .<f>strokeWidth</f>(<n>3</n>);</code></pre>
-  </div>
-
-  <div>
-    <h2><a href="https://svg.rabbitear.org">✨ svg . rabbitear . org ✨</a></h2>
-    <p>This web-editor allows you to write:</p>
-    <pre><code>line(<n>0</n>,<n>1</n>,<n>2</n>,<n>3</n>);</code></pre>
-    <p>instead of:</p>
-    <pre><code>svg.line(<n>0</n>,<n>1</n>,<n>2</n>,<n>3</n>);</code></pre>
-    <p>This is possible because it assumes <b>only one svg</b>, and thereby automatically appending children to it.</p>
-    <p>When using this library outside of this editor, keep in mind the syntax will be slightly more verbose.</p>
   </div>
 
 <script type="text/javascript" src="https://svg.rabbitear.org/svg.min.js"></script>
