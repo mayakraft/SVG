@@ -38,15 +38,19 @@ const CodeSVGxMenu = function (container) {
   const loadAndRunExamples = function (callback) {
     const examples = [];
     const exampleFilenames = [
+      "astroid.js",
       "bezier.js",
+      "bugs.js",
+      "clock.js",
       "conics.js",
       "dragon.js",
       "draw.js",
       "harmonic.js",
       "mask.js",
+      "mystify.js",
       "parabola.js",
-      "text.js",
       "ten-print.js",
+      "text.js",
       "walker.js"
     ];
     exampleFilenames.forEach((file) => {

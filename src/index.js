@@ -16,6 +16,8 @@ import * as ViewBox from "./attributes/viewBox";
 // import { controls, controlPoint } from "./events/controls";
 import SVG from "./elements/svg";
 
+import * as math from "./math/index";
+
 SVG.NS = namespace;
 Object.keys(elements).forEach((key) => { SVG[key] = elements[key]; });
 Object.keys(geometryMods).forEach((key) => { SVG[key] = geometryMods[key]; });
@@ -25,5 +27,6 @@ Object.keys(ViewBox).forEach((key) => { SVG[key] = ViewBox[key]; });
 // SVG.load = load;
 // SVG.controls = controls;
 // SVG.controlPoint = controlPoint;
+Object.keys(math).forEach((key) => { SVG[key] = math[key]; });
 
 export default SVG;

@@ -1,4 +1,4 @@
-size(400, 400);
+size(256, 256);
 background("#158", false);
 svg.fps = 12;
 
@@ -10,9 +10,9 @@ var penY = getHeight() / 2;
 var points = [];
 
 svg.animate = function (event) {
-  var step = Math.sin(event.time) * getWidth();
-  penX += (Math.random() - 0.5) * step;
-  penY += (Math.random() - 0.5) * step;
+  var step = Math.sin(event.time) * getWidth() / 5;
+  penX += random(-step, step);
+  penY += random(-step, step);
 
   if (penX < 0) { penX = -penX; }
   if (penY < 0) { penY = -penY; }
