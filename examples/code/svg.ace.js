@@ -71,6 +71,12 @@ const CodeSVG = function (container) {
         get: function () { return; }
       });
     });
+    // special case: SVG top level
+    const forbidden = ["svg", "style", "setPoints", "setArc", "setEllipticalArc", "setBezier"];
+    Object.keys(SVG)
+      .filter(key => window[key] === undefined)
+      .filter(key => forbidden.indexOf(key) === -1)
+      .forEach((key) => { window[key] = SVG[key]; });
   };
 
   // init app
@@ -97,7 +103,7 @@ const CodeSVG = function (container) {
         app.svg.removeChild(app.svg.lastChild);
       }
       // remove any Timer functions. handlers will get cleaned up automatically
-      app.svg.stopAnimations();
+      app.svg.freeze();
       app.svg.clearTransforms();
     }
   };

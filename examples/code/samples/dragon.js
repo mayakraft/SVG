@@ -16,10 +16,10 @@ var x1 = getWidth() * 0.225;
 var y1 = getHeight() * 0.6;
 var x2 = getWidth() * 0.85;
 var y2 = getHeight() * 0.6;
-var i1 = Math.floor(Math.random() * 3); 
-var i2 = Math.floor(Math.random() * 3) + 3;
-var i3 = Math.floor(Math.random() * 3) + 6;
-var i4 = Math.floor(Math.random() * 3) + 8;
+var i1 = random(3); 
+var i2 = random(3, 6);
+var i3 = random(6, 9);
+var i4 = random(8, 11);
 
 polyline(dragon(x1, y1, x2, y2, 1, i1))
   .setAttributes(attrs).stroke("#ec3").strokeWidth(81);

@@ -14,6 +14,7 @@ const Animate = function (node) {
     while (timers.length > 0) {
       clearInterval(timers.shift());
     }
+    func = undefined;
   };
 
   const start = () => {
