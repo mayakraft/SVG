@@ -12,6 +12,18 @@ const CodeSVGxMenu = function (container) {
   downloadButton.appendChild(downloadButtonP);
   container.appendChild(downloadButton);
   downloadButton.onclick = function () {
+    // inject the code into a new section in the header
+    let defs = app.svg.getElementsByTagName("defs");
+    const code = document.createElementNS(SVG.NS, "code");
+    const cdata = (new window.DOMParser())
+      .parseFromString("<root></root>", "text/xml")
+      .createCDATASection(`\n${app.getCode()}\n`);
+    code.appendChild(cdata);
+    if (defs.length === 0) {
+      defs = [document.createElementNS(SVG.NS, "defs")];
+      app.svg.prepend(defs[0]);
+    }
+    defs[0].prepend(code);
     app.svg.save();
   };
 

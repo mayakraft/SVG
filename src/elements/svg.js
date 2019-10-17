@@ -4,6 +4,7 @@
 
 import window from "../environment/window";
 import * as File from "../environment/file";
+import Globalize from "../environment/globalize";
 import Events from "../events/index";
 import Controls from "../events/controls";
 import { rect } from "./primitives";
@@ -13,6 +14,14 @@ import {
   getViewBox,
   setViewBox
 } from "../attributes/viewBox";
+
+
+const findWindowBooleanParam = function (...params) {
+  const objects = params
+    .filter(arg => typeof arg === "object")
+    .filter(o => typeof o.window === "boolean");
+  return objects.reduce((a, b) => a.window || b.window, false);
+};
 
 const findElementInParams = function (...params) {
   const element = params.filter(arg => arg instanceof HTMLElement).shift();
@@ -181,6 +190,10 @@ const SVG = function (...params) {
     const parent = findElementInParams(...params);
     if (parent != null) { parent.appendChild(element); }
     initSize(element, params);
+    // accessibility modes
+    if (findWindowBooleanParam(...params)) { // look for options { window: true }
+      Globalize(element);
+    }
     // maybe dangerous:
     // any function inside the arguments will get fired. with zero parameters.
     // a way of sending a callback to an unknown parameter list

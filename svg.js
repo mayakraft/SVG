@@ -82,21 +82,24 @@
   var isWebWorker = (typeof self === "undefined" ? "undefined" : _typeof(self)) === "object" && self.constructor && self.constructor.name === "DedicatedWorkerGlobalScope";
 
   var htmlString = "<!DOCTYPE html><title> </title>";
-  var win = {};
 
-  if (isNode) {
-    var _require = require("xmldom"),
-        DOMParser$1 = _require.DOMParser,
-        XMLSerializer$1 = _require.XMLSerializer;
+  var win = function () {
+    var w = {};
 
-    win.DOMParser = DOMParser$1;
-    win.XMLSerializer = XMLSerializer$1;
-    win.document = new DOMParser$1().parseFromString(htmlString, "text/html");
-  } else if (isBrowser) {
-    win.DOMParser = window.DOMParser;
-    win.XMLSerializer = window.XMLSerializer;
-    win.document = window.document;
-  }
+    if (isNode) {
+      var _require = require("xmldom"),
+          DOMParser = _require.DOMParser,
+          XMLSerializer = _require.XMLSerializer;
+
+      w.DOMParser = DOMParser;
+      w.XMLSerializer = XMLSerializer;
+      w.document = new DOMParser().parseFromString(htmlString, "text/html");
+    } else if (isBrowser) {
+      w = window;
+    }
+
+    return w;
+  }();
 
   function vkXML (text, step) {
     var ar = text.replace(/>\s{0,}</g, "><").replace(/</g, "~::~<").replace(/\s*xmlns\:/g, "~::~xmlns:").split("~::~");
@@ -251,6 +254,37 @@
     save: save,
     load: load
   });
+
+  var bindSVGMethodsTo = function bindSVGMethodsTo(svg, environment) {
+    Object.getOwnPropertyNames(svg).filter(function (p) {
+      return typeof svg[p] === "function";
+    }).forEach(function (name) {
+      environment[name] = svg[name].bind(svg);
+    });
+    var forbidden = ["svg", "style", "setPoints", "setArc", "setEllipticalArc", "setBezier"];
+    Object.keys(win.SVG).filter(function (key) {
+      return environment[key] === undefined;
+    }).filter(function (key) {
+      return forbidden.indexOf(key) === -1;
+    }).forEach(function (key) {
+      environment[key] = win.SVG[key];
+    });
+  };
+
+  var globalize = function globalize(svg) {
+    var element = svg;
+
+    if (element == null) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      element = win.SVG.apply(win, args);
+    }
+
+    bindSVGMethodsTo(element, win);
+    return element;
+  };
 
   var getViewBox = function getViewBox(svg) {
     var vb = svg.getAttribute("viewBox");
@@ -1659,9 +1693,24 @@
     createElement: createElement
   });
 
-  var findElementInParams = function findElementInParams() {
+  var findWindowBooleanParam = function findWindowBooleanParam() {
     for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
       params[_key] = arguments[_key];
+    }
+
+    var objects = params.filter(function (arg) {
+      return _typeof(arg) === "object";
+    }).filter(function (o) {
+      return typeof o.window === "boolean";
+    });
+    return objects.reduce(function (a, b) {
+      return a.window || b.window;
+    }, false);
+  };
+
+  var findElementInParams = function findElementInParams() {
+    for (var _len2 = arguments.length, params = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      params[_key2] = arguments[_key2];
     }
 
     var element = params.filter(function (arg) {
@@ -1735,8 +1784,8 @@
   };
 
   var size = function size(element) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
+    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      args[_key3 - 1] = arguments[_key3];
     }
 
     if (args.length === 2 && typeof args[0] === "number" && typeof args[1] === "number") {
@@ -1802,16 +1851,16 @@
   };
 
   var SVG = function SVG() {
-    for (var _len3 = arguments.length, params = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      params[_key3] = arguments[_key3];
+    for (var _len4 = arguments.length, params = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      params[_key4] = arguments[_key4];
     }
 
     var element = svg();
     Events(element);
 
     element.controls = function () {
-      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
+      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
       }
 
       return controls.apply(void 0, [element].concat(args));
@@ -1826,32 +1875,32 @@
     };
 
     element.setWidth = function () {
-      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
+      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+        args[_key6] = arguments[_key6];
       }
 
       return setWidth.apply(void 0, [element].concat(args));
     };
 
     element.setHeight = function () {
-      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-        args[_key6] = arguments[_key6];
+      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+        args[_key7] = arguments[_key7];
       }
 
       return setHeight.apply(void 0, [element].concat(args));
     };
 
     element.background = function () {
-      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-        args[_key7] = arguments[_key7];
+      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+        args[_key8] = arguments[_key8];
       }
 
       return background.apply(void 0, [element].concat(args));
     };
 
     element.size = function () {
-      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-        args[_key8] = arguments[_key8];
+      for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+        args[_key9] = arguments[_key9];
       }
 
       return size.apply(void 0, [element].concat(args));
@@ -1882,6 +1931,11 @@
       }
 
       initSize(element, params);
+
+      if (findWindowBooleanParam.apply(void 0, params)) {
+        globalize(element);
+      }
+
       params.filter(function (arg) {
         return typeof arg === "function";
       }).forEach(function (func) {
@@ -2101,6 +2155,7 @@
   Object.keys(File).forEach(function (key) {
     SVG[key] = File[key];
   });
+  SVG.svg = SVG;
   SVG.NS = NS;
 
   return SVG;

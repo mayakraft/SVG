@@ -28,7 +28,7 @@ const CodeSVG = function (container) {
       consoleContainer
     ] = buildDOM(appContainer);
 
-    app.svg = SVG(svgContainer, 512, 512);
+    app.svg = SVG(svgContainer, 512, 512, { window: true });
     app.console = consoleContainer;
     return [
       codeContainer,
@@ -55,33 +55,13 @@ const CodeSVG = function (container) {
       column: 0
     }, text);
   };
-
-  const bindToWindow = function () {
-    // bind all member methods of app.svg to the window
-    Object.getOwnPropertyNames(app.svg)
-      .filter(p => typeof app.svg[p] === "function")
-      .forEach((name) => { window[name] = app.svg[name].bind(app.svg); });
-    // special case: interaction handlers
-    ["onMouseDown", "onMouseEnter", "onMouseLeave", "onMouseMove", "onMouseUp",
-      "onScroll"].forEach((key) => {
-      Object.defineProperty(window, key, {
-        set: function (f) {
-          app.svg[key] = f;
-        },
-        get: function () { return; }
-      });
-    });
-    // special case: SVG top level
-    const forbidden = ["svg", "style", "setPoints", "setArc", "setEllipticalArc", "setBezier"];
-    Object.keys(SVG)
-      .filter(key => window[key] === undefined)
-      .filter(key => forbidden.indexOf(key) === -1)
-      .forEach((key) => { window[key] = SVG[key]; });
+  const getCode = function () {
+    return app.editor.getValue();
   };
 
   // init app
   const [codeContainer] = initDOM(container);
-  bindToWindow();
+
   try {
     app.editor = ace.edit(codeContainer);
   } catch (err) {
@@ -93,6 +73,7 @@ const CodeSVG = function (container) {
   app.editor.session.setMode("ace/mode/javascript");
   app.editor.session.on("change", editorDidUpdate);
 
+  Object.defineProperty(app, "getCode", { value: getCode });
   Object.defineProperty(app, "injectCode", { value: injectCode });
   // allow these to be overwritten
   app.didUpdate = function () {};
