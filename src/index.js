@@ -13,6 +13,7 @@ Object.keys(elements).forEach((key) => { SVG[key] = elements[key]; });
 Object.keys(geometryMods).forEach((key) => { SVG[key] = geometryMods[key]; });
 Object.keys(ViewBox).forEach((key) => { SVG[key] = ViewBox[key]; });
 Object.keys(File).forEach((key) => { SVG[key] = File[key]; });
+SVG.svg = SVG;
 SVG.NS = NS;
 
 export default SVG;
