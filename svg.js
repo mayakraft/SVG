@@ -5,8 +5,6 @@
   (global = global || self, global.SVG = factory());
 }(this, function () { 'use strict';
 
-  var namespace = "http://www.w3.org/2000/svg";
-
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
@@ -100,81 +98,158 @@
     win.document = window.document;
   }
 
-  var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "scale", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
+  function vkXML (text, step) {
+    var ar = text.replace(/>\s{0,}</g, "><").replace(/</g, "~::~<").replace(/\s*xmlns\:/g, "~::~xmlns:").split("~::~");
+    var len = ar.length;
+    var inComment = false;
+    var deep = 0;
+    var str = "";
+    var space = step != null && typeof step === "string" ? step : "\t";
+    var shift = ["\n"];
 
-  var removeChildren = function removeChildren(parent) {
-    while (parent.lastChild) {
-      parent.removeChild(parent.lastChild);
-    }
-  };
-  var appendTo = function appendTo(element, parent) {
-    if (parent != null) {
-      element.remove();
-      parent.appendChild(element);
-    }
-
-    return element;
-  };
-
-  var toKebab = function toKebab(string) {
-    return string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
-  };
-
-  var setAttributes = function setAttributes(element, attributes) {
-    Object.keys(attributes).forEach(function (key) {
-      element.setAttribute(toKebab(key), attributes[key]);
-    });
-    return element;
-  };
-
-  var getClassList = function getClassList(xmlNode) {
-    var currentClass = xmlNode.getAttribute("class");
-    return currentClass == null ? [] : currentClass.split(" ").filter(function (s) {
-      return s !== "";
-    });
-  };
-
-  var addClass = function addClass(xmlNode, newClass) {
-    if (xmlNode == null) {
-      return xmlNode;
+    for (var si = 0; si < 100; si += 1) {
+      shift.push(shift[si] + space);
     }
 
-    var classes = getClassList(xmlNode).filter(function (c) {
-      return c !== newClass;
-    });
-    classes.push(newClass);
-    xmlNode.setAttributeNS(null, "class", classes.join(" "));
-    return xmlNode;
-  };
-  var removeClass = function removeClass(xmlNode, removedClass) {
-    if (xmlNode == null) {
-      return xmlNode;
+    for (var ix = 0; ix < len; ix += 1) {
+      if (ar[ix].search(/<!/) > -1) {
+        str += shift[deep] + ar[ix];
+        inComment = true;
+
+        if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1 || ar[ix].search(/!DOCTYPE/) > -1) {
+          inComment = false;
+        }
+      } else if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1) {
+        str += ar[ix];
+        inComment = false;
+      } else if (/^<\w/.exec(ar[ix - 1]) && /^<\/\w/.exec(ar[ix]) && /^<[\w:\-\.\,]+/.exec(ar[ix - 1]) == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace("/", "")) {
+        str += ar[ix];
+
+        if (!inComment) {
+          deep -= 1;
+        }
+      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) === -1 && ar[ix].search(/\/>/) === -1) {
+        str = !inComment ? str += shift[deep++] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
+        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\//) > -1) {
+        str = !inComment ? str += shift[--deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/\/>/) > -1) {
+        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\?/) > -1) {
+        str += shift[deep] + ar[ix];
+      } else if (ar[ix].search(/xmlns\:/) > -1 || ar[ix].search(/xmlns\=/) > -1) {
+        str += shift[deep] + ar[ix];
+      } else {
+        str += ar[ix];
+      }
     }
 
-    var classes = getClassList(xmlNode).filter(function (c) {
-      return c !== removedClass;
+    return str[0] === "\n" ? str.slice(1) : str;
+  }
+
+  var NS = "http://www.w3.org/2000/svg";
+
+  var downloadInBrowser = function downloadInBrowser(filename, contentsAsString) {
+    var blob = new window.Blob([contentsAsString], {
+      type: "text/plain"
     });
-    xmlNode.setAttributeNS(null, "class", classes.join(" "));
-    return xmlNode;
-  };
-  var setClass = function setClass(xmlNode, className) {
-    xmlNode.setAttributeNS(null, "class", className);
-    return xmlNode;
-  };
-  var setID = function setID(xmlNode, idName) {
-    xmlNode.setAttributeNS(null, "id", idName);
-    return xmlNode;
+    var a = document.createElement("a");
+    a.setAttribute("href", window.URL.createObjectURL(blob));
+    a.setAttribute("download", filename);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
-  var DOM = /*#__PURE__*/Object.freeze({
+  var getPageCSS = function getPageCSS() {
+    var css = [];
+
+    for (var s = 0; s < document.styleSheets.length; s += 1) {
+      var sheet = document.styleSheets[s];
+
+      try {
+        var rules = "cssRules" in sheet ? sheet.cssRules : sheet.rules;
+
+        for (var r = 0; r < rules.length; r += 1) {
+          var rule = rules[r];
+
+          if ("cssText" in rule) {
+            css.push(rule.cssText);
+          } else {
+            css.push("".concat(rule.selectorText, " {\n").concat(rule.style.cssText, "\n}\n"));
+          }
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+
+    return css.join("\n");
+  };
+
+  var save = function save(svg) {
+    var filename = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "image.svg";
+    var includeDOMCSS = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    if (includeDOMCSS) {
+      var styleContainer = document.createElementNS(NS, "style");
+      styleContainer.setAttribute("type", "text/css");
+      styleContainer.innerHTML = getPageCSS();
+      svg.appendChild(styleContainer);
+    }
+
+    var source = new XMLSerializer().serializeToString(svg);
+    var formattedString = vkXML(source);
+
+    if (window != null) {
+      downloadInBrowser(filename, formattedString);
+    }
+
+    return formattedString;
+  };
+  var load = function load(input, callback) {
+    if (typeof input === "string" || input instanceof String) {
+      var xml = new DOMParser().parseFromString(input, "text/xml");
+      var parserErrors = xml.getElementsByTagName("parsererror");
+
+      if (parserErrors.length === 0) {
+        var parsedSVG = xml.documentElement;
+
+        if (callback != null) {
+          callback(parsedSVG);
+        }
+
+        return parsedSVG;
+      }
+
+      fetch(input).then(function (response) {
+        return response.text();
+      }).then(function (str) {
+        return new DOMParser().parseFromString(str, "text/xml");
+      }).then(function (svgData) {
+        var allSVGs = svgData.getElementsByTagName("svg");
+
+        if (allSVGs == null || allSVGs.length === 0) {
+          throw new Error("error, valid XML found, but no SVG element");
+        }
+
+        if (callback != null) {
+          callback(allSVGs[0]);
+        }
+
+        return allSVGs[0];
+      });
+    } else if (input instanceof Document) {
+      callback(input);
+      return input;
+    }
+  };
+
+  var File = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    removeChildren: removeChildren,
-    appendTo: appendTo,
-    setAttributes: setAttributes,
-    addClass: addClass,
-    removeClass: removeClass,
-    setClass: setClass,
-    setID: setID
+    save: save,
+    load: load
   });
 
   var getViewBox = function getViewBox(svg) {
@@ -261,353 +336,343 @@
     scaleViewBox: scaleViewBox
   });
 
-  var setTransform = function setTransform(element, transform) {
-    if (_typeof(transform) === "object") {
-      element.setAttribute("transform", transform.join(" "));
-    } else if (typeof transform === "string") {
-      element.setAttribute("transform", transform);
-    }
+  var Pointer = function Pointer(node) {
+    var pointer = Object.create(null);
+    Object.assign(pointer, {
+      isPressed: false,
+      position: [0, 0],
+      pressed: [0, 0],
+      drag: [0, 0],
+      prev: [0, 0],
+      x: 0,
+      y: 0
+    });
+
+    var copyPointer = function copyPointer() {
+      var m = pointer.position.slice();
+      Object.keys(pointer).filter(function (key) {
+        return _typeof(key) === "object";
+      }).forEach(function (key) {
+        m[key] = pointer[key].slice();
+      });
+      Object.keys(pointer).filter(function (key) {
+        return _typeof(key) !== "object";
+      }).forEach(function (key) {
+        m[key] = pointer[key];
+      });
+      return Object.freeze(m);
+    };
+
+    var setPosition = function setPosition(clientX, clientY) {
+      pointer.position = convertToViewBox(node, clientX, clientY);
+
+      var _pointer$position = _slicedToArray(pointer.position, 2);
+
+      pointer.x = _pointer$position[0];
+      pointer.y = _pointer$position[1];
+    };
+
+    var updateDrag = function updateDrag() {
+      pointer.drag = [pointer.position[0] - pointer.pressed[0], pointer.position[1] - pointer.pressed[1]];
+
+      var _pointer$drag = _slicedToArray(pointer.drag, 2);
+
+      pointer.drag.x = _pointer$drag[0];
+      pointer.drag.y = _pointer$drag[1];
+    };
+
+    var thisPointer = {};
+
+    var move = function move(clientX, clientY) {
+      pointer.prev = pointer.position;
+      setPosition(clientX, clientY);
+
+      if (pointer.isPressed) {
+        updateDrag();
+      }
+
+      return thisPointer;
+    };
+
+    var down = function down(clientX, clientY) {
+      pointer.isPressed = true;
+      pointer.pressed = convertToViewBox(node, clientX, clientY);
+      setPosition(clientX, clientY);
+      return thisPointer;
+    };
+
+    var up = function up() {
+      pointer.isPressed = false;
+      return thisPointer;
+    };
+
+    var pressed = function pressed(isPressed) {
+      pointer.isPressed = isPressed;
+      return thisPointer;
+    };
+
+    Object.defineProperty(thisPointer, "up", {
+      value: up
+    });
+    Object.defineProperty(thisPointer, "pressed", {
+      value: pressed
+    });
+    Object.defineProperty(thisPointer, "move", {
+      value: move
+    });
+    Object.defineProperty(thisPointer, "down", {
+      value: down
+    });
+    Object.defineProperty(thisPointer, "get", {
+      value: copyPointer
+    });
+    return thisPointer;
   };
 
-  var getTransform = function getTransform(element) {
-    var trans = element.getAttribute("transform");
-    return trans == null ? undefined : trans.split(" ");
-  };
+  var Touches = function Touches(node) {
+    var pointer = Pointer(node);
+    var handlers = {
+      mousemove: [],
+      touchmove: [],
+      mousedown: [],
+      touchstart: [],
+      mouseup: [],
+      touchend: [],
+      scroll: []
+    };
 
-  var translate = function translate(element, tx, ty) {
-    var trans = getTransform(element) || [];
-    trans.push("translate(".concat(tx, ", ").concat(ty, ")"));
-    setTransform(element, trans);
-    return element;
-  };
-  var rotate = function rotate(element, angle) {
-    var trans = getTransform(element) || [];
-    trans.push("rotate(".concat(angle, ")"));
-    setTransform(element, trans);
-    return element;
-  };
-  var scale = function scale(element, sx, sy) {
-    var trans = getTransform(element) || [];
-    trans.push("scale(".concat(sx, ", ").concat(sy, ")"));
-    setTransform(element, trans);
-    return element;
-  };
-  var clearTransforms = function clearTransforms(element) {
-    element.setAttribute("transform", "");
-    return element;
-  };
+    var clear = function clear() {
+      Object.keys(handlers).forEach(function (key) {
+        return handlers[key].forEach(function (f) {
+          return node.removeEventListener(key, f);
+        });
+      });
+      Object.keys(handlers).forEach(function (key) {
+        handlers[key] = [];
+      });
+    };
 
-  var Transform = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    translate: translate,
-    rotate: rotate,
-    scale: scale,
-    clearTransforms: clearTransforms
-  });
+    var onMouseMove = function onMouseMove(handler, event) {
+      event.preventDefault();
+      var e = pointer.move(event.clientX, event.clientY).pressed(event.buttons > 0).get();
+      handler(e);
+      return e;
+    };
 
-  var attachAppendableMethods = function attachAppendableMethods(element, methods) {
-    var el = element;
-    Object.keys(methods).filter(function (key) {
-      return el[key] === undefined;
-    }).forEach(function (key) {
-      el[key] = function () {
-        var g = methods[key].apply(methods, arguments);
-        element.appendChild(g);
-        return g;
+    var onTouchMove = function onTouchMove(handler, event) {
+      event.preventDefault();
+      var e = pointer.move(event.touches[0].clientX, event.touches[0].clientY).pressed(true).get();
+      handler(e);
+      return e;
+    };
+
+    var onMouseDown = function onMouseDown(handler, event) {
+      event.preventDefault();
+      var e = pointer.down(event.clientX, event.clientY).get();
+      handler(e);
+      return e;
+    };
+
+    var onTouchStart = function onTouchStart(handler, event) {
+      event.preventDefault();
+      var e = pointer.down(event.touches[0].clientX, event.touches[0].clientY).get();
+      handler(e);
+      return e;
+    };
+
+    var onEnd = function onEnd(handler, event) {
+      event.preventDefault();
+      var e = pointer.pressed(false).get();
+      handler(e);
+      return e;
+    };
+
+    var onScroll = function onScroll(handler, event) {
+      var e = {
+        deltaX: event.deltaX,
+        deltaY: event.deltaY,
+        deltaZ: event.deltaZ
       };
+      e.position = convertToViewBox(node, event.clientX, event.clientY);
+
+      var _e$position = _slicedToArray(e.position, 2);
+
+      e.x = _e$position[0];
+      e.y = _e$position[1];
+      event.preventDefault();
+      handler(e);
+      return e;
+    };
+
+    Object.defineProperty(node, "mouse", {
+      get: function get() {
+        return pointer.get();
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "mouseMoved", {
+      set: function set(handler) {
+        var mouseFunc = function mouseFunc(event) {
+          return onMouseMove(handler, event);
+        };
+
+        var touchFunc = function touchFunc(event) {
+          return onTouchMove(handler, event);
+        };
+
+        handlers.mousemove.push(mouseFunc);
+        handlers.touchmove.push(mouseFunc);
+        node.addEventListener("mousemove", mouseFunc);
+        node.addEventListener("touchmove", touchFunc);
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "mousePressed", {
+      set: function set(handler) {
+        var mouseFunc = function mouseFunc(event) {
+          return onMouseDown(handler, event);
+        };
+
+        var touchFunc = function touchFunc(event) {
+          return onTouchStart(handler, event);
+        };
+
+        handlers.mousedown.push(mouseFunc);
+        handlers.touchstart.push(touchFunc);
+        node.addEventListener("mousedown", mouseFunc);
+        node.addEventListener("touchstart", touchFunc);
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "mouseReleased", {
+      set: function set(handler) {
+        var mouseFunc = function mouseFunc(event) {
+          return onEnd(handler, event);
+        };
+
+        var touchFunc = function touchFunc(event) {
+          return onEnd(handler, event);
+        };
+
+        handlers.mouseup.push(mouseFunc);
+        handlers.touchend.push(touchFunc);
+        node.addEventListener("mouseup", mouseFunc);
+        node.addEventListener("touchend", touchFunc);
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "onScroll", {
+      set: function set(handler) {
+        var scrollFunc = function scrollFunc(event) {
+          return onScroll(handler, event);
+        };
+
+        handlers.mouseup.push(scrollFunc);
+        node.addEventListener("scroll", scrollFunc);
+      },
+      enumerable: true
+    });
+    return {
+      clear: clear,
+      pointer: pointer
+    };
+  };
+
+  var DEFAULT_DELAY = 1000 / 60;
+
+  var Animate = function Animate(node) {
+    var timers = [];
+    var frameNumber;
+    var delay = DEFAULT_DELAY;
+    var func;
+
+    var clear = function clear() {
+      while (timers.length > 0) {
+        clearInterval(timers.shift());
+      }
+
+      func = undefined;
+    };
+
+    var start = function start() {
+      if (typeof func !== "function") {
+        return;
+      }
+
+      timers.push(setInterval(function () {
+        func({
+          time: node.getCurrentTime(),
+          frame: frameNumber += 1
+        });
+      }, delay));
+    };
+
+    var setLoop = function setLoop(handler) {
+      clear();
+      func = handler;
+
+      if (typeof func === "function") {
+        frameNumber = 0;
+        start();
+      }
+    };
+
+    var validateMillis = function validateMillis(m) {
+      var parsed = parseFloat(m);
+
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        return parsed;
+      }
+
+      return DEFAULT_DELAY;
+    };
+
+    var setFPS = function setFPS(fps) {
+      clear();
+      delay = validateMillis(1000 / fps);
+      start();
+    };
+
+    Object.defineProperty(node, "animate", {
+      set: function set(handler) {
+        return setLoop(handler);
+      },
+      enumerable: true
+    });
+    Object.defineProperty(node, "clear", {
+      value: function value() {
+        return clear();
+      },
+      enumerable: true
+    });
+    return {
+      clear: clear,
+      setLoop: setLoop,
+      setFPS: setFPS
+    };
+  };
+
+  var Events = function Events(node) {
+    var animate = Animate(node);
+    var touches = Touches(node);
+    Object.defineProperty(node, "stopAnimations", {
+      value: animate.clear,
+      enumerated: true
+    });
+    Object.defineProperty(node, "freeze", {
+      value: function value() {
+        touches.clear();
+        animate.clear();
+      },
+      enumerated: true
+    });
+    Object.defineProperty(node, "fps", {
+      set: function set(fps) {
+        return animate.setFPS(fps);
+      },
+      enumerated: true
     });
   };
-  var attachDOMMethods = function attachDOMMethods(element) {
-    var el = element;
-    Object.keys(DOM).filter(function (key) {
-      return el[key] === undefined;
-    }).forEach(function (key) {
-      el[key] = function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        return DOM[key].apply(DOM, [element].concat(args));
-      };
-    });
-  };
-  var attachTransformMethods = function attachTransformMethods(element) {
-    var el = element;
-    Object.keys(Transform).forEach(function (key) {
-      el[key] = function () {
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
-        }
-
-        return Transform[key].apply(Transform, [element].concat(args));
-      };
-    });
-  };
-  var attachViewBoxMethods = function attachViewBoxMethods(element) {
-    var el = element;
-    Object.keys(ViewBox).filter(function (key) {
-      return el[key] === undefined;
-    }).forEach(function (key) {
-      el[key] = function () {
-        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
-        }
-
-        return ViewBox[key].apply(ViewBox, [element].concat(args));
-      };
-    });
-  };
-
-  var toCamel = function toCamel(s) {
-    return s.replace(/([-_][a-z])/ig, function ($1) {
-      return $1.toUpperCase().replace("-", "").replace("_", "");
-    });
-  };
-
-  var attachFunctionalSetters = function attachFunctionalSetters(element) {
-    var el = element;
-    attributes.filter(function (key) {
-      return el[toCamel(key)] === undefined;
-    }).forEach(function (key) {
-      el[toCamel(key)] = function () {
-        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          args[_key4] = arguments[_key4];
-        }
-
-        el.setAttribute.apply(el, [key].concat(args));
-        return el;
-      };
-    });
-  };
-  var attachClipMaskMakers = function attachClipMaskMakers(element, primitives) {
-    var el = element;
-
-    if (el.clipPath === undefined) {
-      el.clipPath = function () {
-        var c = primitives.clipPath.apply(primitives, arguments);
-        element.appendChild(c);
-        return c;
-      };
-    }
-
-    if (el.mask === undefined) {
-      el.mask = function () {
-        var m = primitives.mask.apply(primitives, arguments);
-        element.appendChild(m);
-        return m;
-      };
-    }
-  };
-
-  var findIdURL = function findIdURL(arg) {
-    if (arg == null) {
-      return undefined;
-    }
-
-    if (typeof arg === "string") {
-      return arg.slice(0, 3) === "url" ? arg : "url(#".concat(arg, ")");
-    }
-
-    if (arg.getAttribute != null) {
-      var idString = arg.getAttribute("id");
-      return "url(#".concat(idString, ")");
-    }
-
-    return "url(#)";
-  };
-
-  var attachClipMaskAttributes = function attachClipMaskAttributes(element) {
-    var el = element;
-
-    if (el.clipPath === undefined) {
-      el.clipPath = function (parent) {
-        var value = findIdURL(parent);
-
-        if (value === undefined) {
-          return el;
-        }
-
-        el.setAttribute("clip-path", value);
-        return el;
-      };
-    }
-
-    if (el.mask === undefined) {
-      el.mask = function (parent) {
-        var value = findIdURL(parent);
-
-        if (value === undefined) {
-          return el;
-        }
-
-        el.setAttribute("mask", value);
-        return el;
-      };
-    }
-  };
-
-  var preparePrimitive = function preparePrimitive(element) {
-    attachDOMMethods(element);
-    attachTransformMethods(element);
-    attachFunctionalSetters(element);
-    attachClipMaskAttributes(element);
-  };
-
-  var prepareText = function prepareText(element) {
-    attachDOMMethods(element);
-    attachFunctionalSetters(element);
-    attachClipMaskAttributes(element);
-  };
-
-  var prepareSVG = function prepareSVG(element, primitives) {
-    attachDOMMethods(element);
-    attachTransformMethods(element);
-    attachAppendableMethods(element, primitives);
-    attachViewBoxMethods(element);
-    attachClipMaskMakers(element, primitives);
-  };
-
-  var prepareGroup = function prepareGroup(element, primitives) {
-    attachDOMMethods(element);
-    attachTransformMethods(element);
-    attachAppendableMethods(element, primitives);
-    attachFunctionalSetters(element);
-    attachClipMaskAttributes(element);
-  };
-
-  var prepareMaskClipPath = function prepareMaskClipPath(element, primitives) {
-    attachDOMMethods(element);
-    attachTransformMethods(element);
-    attachAppendableMethods(element, primitives);
-    attachFunctionalSetters(element);
-    attachClipMaskAttributes(element);
-  };
-
-  var prepare = function prepare(type, element, primitiveList) {
-    switch (type) {
-      case "svg":
-        prepareSVG(element, primitiveList);
-        break;
-
-      case "primitive":
-        preparePrimitive(element);
-        break;
-
-      case "defs":
-      case "group":
-        prepareGroup(element, primitiveList);
-        break;
-
-      case "text":
-        prepareText(element);
-        break;
-
-      case "clipPath":
-      case "mask":
-        prepareMaskClipPath(element, primitiveList);
-        break;
-
-      default:
-        console.warn("prepare missing valid type (svg, group..");
-        break;
-    }
-  };
-
-  var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  var generateUUID = function generateUUID() {
-    var count = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 16;
-    var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
-    return Array.from(Array(count)).map(function () {
-      return Math.floor(Math.random() * abc.length);
-    }).map(function (i) {
-      return abc[i];
-    }).reduce(function (a, b) {
-      return "".concat(a).concat(b);
-    }, prefix);
-  };
-
-  var constructorsSVG = {};
-  var constructorsGroup = {};
-
-  var svg = function svg() {
-    var svgImage = win.document.createElementNS(namespace, "svg");
-    svgImage.setAttribute("version", "1.1");
-    svgImage.setAttribute("xmlns", namespace);
-    prepare("svg", svgImage, constructorsSVG);
-    return svgImage;
-  };
-
-  var group = function group() {
-    var g = win.document.createElementNS(namespace, "g");
-    prepare("group", g, constructorsGroup);
-    return g;
-  };
-
-  var defs = function defs() {
-    var d = win.document.createElementNS(namespace, "defs");
-    prepare("defs", d, constructorsGroup);
-    return d;
-  };
-
-  var style = function style() {
-    var s = win.document.createElementNS(namespace, "style");
-    s.setAttribute("type", "text/css");
-    return s;
-  };
-
-  var clipPath = function clipPath() {
-    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "clip-");
-    var clip = win.document.createElementNS(namespace, "clipPath");
-    clip.setAttribute("id", id);
-    prepare("clipPath", clip, constructorsGroup);
-    return clip;
-  };
-
-  var mask = function mask() {
-    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "mask-");
-    var msk = win.document.createElementNS(namespace, "mask");
-    msk.setAttribute("id", id);
-    prepare("mask", msk, constructorsGroup);
-    return msk;
-  };
-
-  var create = function create(tagName) {
-    return win.document.createElementNS(namespace, tagName);
-  };
-
-  var setConstructors = function setConstructors(elements) {
-    Object.keys(elements).filter(function (key) {
-      return key !== "svg";
-    }).forEach(function (key) {
-      constructorsSVG[key] = elements[key];
-    });
-    Object.keys(elements).filter(function (key) {
-      return key !== "svg";
-    }).filter(function (key) {
-      return key !== "defs";
-    }).filter(function (key) {
-      return key !== "style";
-    }).filter(function (key) {
-      return key !== "clipPath";
-    }).filter(function (key) {
-      return key !== "mask";
-    }).forEach(function (key) {
-      constructorsGroup[key] = elements[key];
-    });
-  };
-
-  var root = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    setConstructors: setConstructors,
-    svg: svg,
-    group: group,
-    defs: defs,
-    clipPath: clipPath,
-    mask: mask,
-    style: style,
-    create: create
-  });
 
   var is_iterable = function is_iterable(obj) {
     return obj != null && typeof obj[Symbol.iterator] === "function";
@@ -717,8 +782,337 @@
     setBezier: setBezier
   });
 
+  var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
+
+  var removeChildren = function removeChildren(parent) {
+    while (parent.lastChild) {
+      parent.removeChild(parent.lastChild);
+    }
+  };
+  var appendTo = function appendTo(element, parent) {
+    if (parent != null) {
+      element.remove();
+      parent.appendChild(element);
+    }
+
+    return element;
+  };
+
+  var toKebab = function toKebab(string) {
+    return string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
+  };
+
+  var setAttributes = function setAttributes(element, attributes) {
+    Object.keys(attributes).forEach(function (key) {
+      element.setAttribute(toKebab(key), attributes[key]);
+    });
+    return element;
+  };
+
+  var getClassList = function getClassList(xmlNode) {
+    var currentClass = xmlNode.getAttribute("class");
+    return currentClass == null ? [] : currentClass.split(" ").filter(function (s) {
+      return s !== "";
+    });
+  };
+
+  var addClass = function addClass(xmlNode, newClass) {
+    if (xmlNode == null) {
+      return xmlNode;
+    }
+
+    var classes = getClassList(xmlNode).filter(function (c) {
+      return c !== newClass;
+    });
+    classes.push(newClass);
+    xmlNode.setAttributeNS(null, "class", classes.join(" "));
+    return xmlNode;
+  };
+  var removeClass = function removeClass(xmlNode, removedClass) {
+    if (xmlNode == null) {
+      return xmlNode;
+    }
+
+    var classes = getClassList(xmlNode).filter(function (c) {
+      return c !== removedClass;
+    });
+    xmlNode.setAttributeNS(null, "class", classes.join(" "));
+    return xmlNode;
+  };
+  var setClass = function setClass(xmlNode, className) {
+    xmlNode.setAttributeNS(null, "class", className);
+    return xmlNode;
+  };
+  var setID = function setID(xmlNode, idName) {
+    xmlNode.setAttributeNS(null, "id", idName);
+    return xmlNode;
+  };
+
+  var DOM = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    removeChildren: removeChildren,
+    appendTo: appendTo,
+    setAttributes: setAttributes,
+    addClass: addClass,
+    removeClass: removeClass,
+    setClass: setClass,
+    setID: setID
+  });
+
+  var setTransform = function setTransform(element, transform) {
+    if (_typeof(transform) === "object") {
+      element.setAttribute("transform", transform.join(" "));
+    } else if (typeof transform === "string") {
+      element.setAttribute("transform", transform);
+    }
+  };
+
+  var getTransform = function getTransform(element) {
+    var trans = element.getAttribute("transform");
+    return trans == null ? undefined : trans.split(" ");
+  };
+
+  var translate = function translate(element, tx, ty) {
+    var trans = getTransform(element) || [];
+    trans.push("translate(".concat(tx, ", ").concat(ty, ")"));
+    setTransform(element, trans);
+    return element;
+  };
+  var rotate = function rotate(element, angle) {
+    var trans = getTransform(element) || [];
+    trans.push("rotate(".concat(angle, ")"));
+    setTransform(element, trans);
+    return element;
+  };
+  var scale = function scale(element, sx, sy) {
+    var trans = getTransform(element) || [];
+    trans.push("scale(".concat(sx, ", ").concat(sy, ")"));
+    setTransform(element, trans);
+    return element;
+  };
+  var clearTransforms = function clearTransforms(element) {
+    element.setAttribute("transform", "");
+    return element;
+  };
+
+  var Transform = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    translate: translate,
+    rotate: rotate,
+    scale: scale,
+    clearTransforms: clearTransforms
+  });
+
+  var attachAppendableMethods = function attachAppendableMethods(element, methods) {
+    var el = element;
+    Object.keys(methods).filter(function (key) {
+      return el[key] === undefined;
+    }).forEach(function (key) {
+      el[key] = function () {
+        var g = methods[key].apply(methods, arguments);
+        element.appendChild(g);
+        return g;
+      };
+    });
+  };
+  var attachDOMMethods = function attachDOMMethods(element) {
+    var el = element;
+    Object.keys(DOM).filter(function (key) {
+      return el[key] === undefined;
+    }).forEach(function (key) {
+      el[key] = function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        return DOM[key].apply(DOM, [element].concat(args));
+      };
+    });
+  };
+  var attachTransformMethods = function attachTransformMethods(element) {
+    var el = element;
+    Object.keys(Transform).forEach(function (key) {
+      el[key] = function () {
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        return Transform[key].apply(Transform, [element].concat(args));
+      };
+    });
+  };
+  var attachViewBoxMethods = function attachViewBoxMethods(element) {
+    var el = element;
+    Object.keys(ViewBox).filter(function (key) {
+      return el[key] === undefined;
+    }).forEach(function (key) {
+      el[key] = function () {
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        return ViewBox[key].apply(ViewBox, [element].concat(args));
+      };
+    });
+  };
+
+  var toCamel = function toCamel(s) {
+    return s.replace(/([-_][a-z])/ig, function ($1) {
+      return $1.toUpperCase().replace("-", "").replace("_", "");
+    });
+  };
+
+  var attachFunctionalStyleSetters = function attachFunctionalStyleSetters(element) {
+    var el = element;
+    attributes.filter(function (key) {
+      return el[toCamel(key)] === undefined;
+    }).forEach(function (key) {
+      el[toCamel(key)] = function () {
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
+        }
+
+        el.setAttribute.apply(el, [key].concat(args));
+        return el;
+      };
+    });
+  };
+  var attachClipMaskMakers = function attachClipMaskMakers(element, primitives) {
+    var el = element;
+
+    if (el.clipPath === undefined) {
+      el.clipPath = function () {
+        var c = primitives.clipPath.apply(primitives, arguments);
+        element.appendChild(c);
+        return c;
+      };
+    }
+
+    if (el.mask === undefined) {
+      el.mask = function () {
+        var m = primitives.mask.apply(primitives, arguments);
+        element.appendChild(m);
+        return m;
+      };
+    }
+  };
+
+  var findIdURL = function findIdURL(arg) {
+    if (arg == null) {
+      return undefined;
+    }
+
+    if (typeof arg === "string") {
+      return arg.slice(0, 3) === "url" ? arg : "url(#".concat(arg, ")");
+    }
+
+    if (arg.getAttribute != null) {
+      var idString = arg.getAttribute("id");
+      return "url(#".concat(idString, ")");
+    }
+
+    return "url(#)";
+  };
+
+  var attachClipMaskAttributes = function attachClipMaskAttributes(element) {
+    var el = element;
+
+    if (el.clipPath === undefined) {
+      el.clipPath = function (parent) {
+        var value = findIdURL(parent);
+
+        if (value === undefined) {
+          return el;
+        }
+
+        el.setAttribute("clip-path", value);
+        return el;
+      };
+    }
+
+    if (el.mask === undefined) {
+      el.mask = function (parent) {
+        var value = findIdURL(parent);
+
+        if (value === undefined) {
+          return el;
+        }
+
+        el.setAttribute("mask", value);
+        return el;
+      };
+    }
+  };
+
+  var preparePrimitive = function preparePrimitive(element) {
+    attachFunctionalStyleSetters(element);
+    attachDOMMethods(element);
+    attachTransformMethods(element);
+    attachClipMaskAttributes(element);
+  };
+
+  var prepareText = function prepareText(element) {
+    attachFunctionalStyleSetters(element);
+    attachDOMMethods(element);
+    attachClipMaskAttributes(element);
+  };
+
+  var prepareSVG = function prepareSVG(element, primitives) {
+    attachDOMMethods(element);
+    attachTransformMethods(element);
+    attachAppendableMethods(element, primitives);
+    attachViewBoxMethods(element);
+    attachClipMaskMakers(element, primitives);
+  };
+
+  var prepareGroup = function prepareGroup(element, primitives) {
+    attachFunctionalStyleSetters(element);
+    attachDOMMethods(element);
+    attachTransformMethods(element);
+    attachAppendableMethods(element, primitives);
+    attachClipMaskAttributes(element);
+  };
+
+  var prepareMaskClipPath = function prepareMaskClipPath(element, primitives) {
+    attachFunctionalStyleSetters(element);
+    attachDOMMethods(element);
+    attachTransformMethods(element);
+    attachAppendableMethods(element, primitives);
+    attachClipMaskAttributes(element);
+  };
+
+  var prepare = function prepare(type, element, primitiveList) {
+    switch (type) {
+      case "svg":
+        prepareSVG(element, primitiveList);
+        break;
+
+      case "primitive":
+        preparePrimitive(element);
+        break;
+
+      case "defs":
+      case "group":
+        prepareGroup(element, primitiveList);
+        break;
+
+      case "text":
+        prepareText(element);
+        break;
+
+      case "clipPath":
+      case "mask":
+        prepareMaskClipPath(element, primitiveList);
+        break;
+
+      default:
+        console.warn("prepare missing valid type (svg, group..");
+        break;
+    }
+  };
+
   var line = function line(x1, y1, x2, y2) {
-    var shape = win.document.createElementNS(namespace, "line");
+    var shape = win.document.createElementNS(NS, "line");
 
     if (x1) {
       shape.setAttributeNS(null, "x1", x1);
@@ -740,7 +1134,7 @@
     return shape;
   };
   var circle = function circle(x, y, radius) {
-    var shape = win.document.createElementNS(namespace, "circle");
+    var shape = win.document.createElementNS(NS, "circle");
 
     if (x) {
       shape.setAttributeNS(null, "cx", x);
@@ -758,7 +1152,7 @@
     return shape;
   };
   var ellipse = function ellipse(x, y, rx, ry) {
-    var shape = win.document.createElementNS(namespace, "ellipse");
+    var shape = win.document.createElementNS(NS, "ellipse");
 
     if (x) {
       shape.setAttributeNS(null, "cx", x);
@@ -780,7 +1174,7 @@
     return shape;
   };
   var rect = function rect(x, y, width, height) {
-    var shape = win.document.createElementNS(namespace, "rect");
+    var shape = win.document.createElementNS(NS, "rect");
 
     if (x) {
       shape.setAttributeNS(null, "x", x);
@@ -802,7 +1196,7 @@
     return shape;
   };
   var polygon = function polygon() {
-    var shape = win.document.createElementNS(namespace, "polygon");
+    var shape = win.document.createElementNS(NS, "polygon");
 
     for (var _len = arguments.length, pointsArray = new Array(_len), _key = 0; _key < _len; _key++) {
       pointsArray[_key] = arguments[_key];
@@ -822,7 +1216,7 @@
     return shape;
   };
   var polyline = function polyline() {
-    var shape = win.document.createElementNS(namespace, "polyline");
+    var shape = win.document.createElementNS(NS, "polyline");
 
     for (var _len3 = arguments.length, pointsArray = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
       pointsArray[_key3] = arguments[_key3];
@@ -842,12 +1236,8 @@
     return shape;
   };
   var bezier = function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
-    var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
-      return p.join(",");
-    });
-    var d = "M ".concat(pts[0], " C ").concat(pts[1], " ").concat(pts[2], " ").concat(pts[3]);
-    var shape = win.document.createElementNS(namespace, "path");
-    shape.setAttributeNS(null, "d", d);
+    var shape = win.document.createElementNS(NS, "path");
+    setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY);
     prepare("primitive", shape);
 
     shape.setBezier = function () {
@@ -861,7 +1251,7 @@
     return shape;
   };
   var text = function text(textString, x, y) {
-    var shape = win.document.createElementNS(namespace, "text");
+    var shape = win.document.createElementNS(NS, "text");
     shape.innerHTML = textString;
     shape.setAttributeNS(null, "x", x);
     shape.setAttributeNS(null, "y", y);
@@ -869,7 +1259,7 @@
     return shape;
   };
   var arc = function arc(x, y, radius, angleA, angleB) {
-    var shape = win.document.createElementNS(namespace, "path");
+    var shape = win.document.createElementNS(NS, "path");
     setArc(shape, x, y, radius, angleA, angleB, false);
     prepare("primitive", shape);
 
@@ -884,7 +1274,7 @@
     return shape;
   };
   var wedge = function wedge(x, y, radius, angleA, angleB) {
-    var shape = win.document.createElementNS(namespace, "path");
+    var shape = win.document.createElementNS(NS, "path");
     setArc(shape, x, y, radius, angleA, angleB, true);
     prepare("primitive", shape);
 
@@ -899,7 +1289,7 @@
     return shape;
   };
   var arcEllipse = function arcEllipse(x, y, rx, ry, angleA, angleB) {
-    var shape = win.document.createElementNS(namespace, "path");
+    var shape = win.document.createElementNS(NS, "path");
     setEllipticalArc(shape, x, y, rx, ry, angleA, angleB, false);
     prepare("primitive", shape);
 
@@ -914,7 +1304,7 @@
     return shape;
   };
   var wedgeEllipse = function wedgeEllipse(x, y, rx, ry, angleA, angleB) {
-    var shape = win.document.createElementNS(namespace, "path");
+    var shape = win.document.createElementNS(NS, "path");
     setEllipticalArc(shape, x, y, rx, ry, angleA, angleB, true);
     prepare("primitive", shape);
 
@@ -974,630 +1364,300 @@
     regularPolygon: regularPolygon
   });
 
-  var straightArrow = function straightArrow(startPoint, endPoint, options) {
-    var p = {
-      color: "#000",
-      strokeWidth: 0.5,
-      strokeStyle: "",
-      fillStyle: "",
-      highlight: undefined,
-      highlightStrokeStyle: "",
-      highlightFillStyle: "",
-      width: 0.5,
-      length: 2,
-      padding: 0.0,
-      start: false,
-      end: true
+  var controlPoint = function controlPoint(parent) {
+    var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var options = Object.assign({}, opts);
+
+    if (options.radius == null) {
+      options.radius = 1;
+    }
+
+    if (options.fill == null) {
+      options.fill = "#000";
+    }
+
+    if (options.stroke == null) {
+      options.stroke = "none";
+    }
+
+    var c = circle(0, 0, options.radius).fill(options.fill).stroke(options.stroke);
+    var position = [0, 0];
+    var selected = false;
+
+    if (parent != null) {
+      parent.appendChild(c);
+    }
+
+    var setPosition = function setPosition(x, y) {
+      position[0] = x;
+      position[1] = y;
+      c.setAttribute("cx", x);
+      c.setAttribute("cy", y);
     };
 
-    if (_typeof(options) === "object" && options !== null) {
-      Object.assign(p, options);
-    }
+    if ("position" in options) {
+      var pos = options.position;
 
-    var arrowFill = ["stroke:none", "fill:".concat(p.color), p.fillStyle, "pointer-events:none"].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var arrowStroke = ["fill:none", "stroke:".concat(p.color), "stroke-width:".concat(p.strokeWidth), p.strokeStyle].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var thinStroke = Math.floor(p.strokeWidth * 3) / 10;
-    var thinSpace = Math.floor(p.strokeWidth * 6) / 10;
-    var highlightStroke = ["fill:none", "stroke:".concat(p.highlight), "stroke-width:".concat(p.strokeWidth * 0.5), "stroke-dasharray:".concat(thinStroke, " ").concat(thinSpace), "stroke-linecap:round", p.strokeStyle].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var highlightFill = ["stroke:none", "fill:".concat(p.highlight), p.fillStyle, "pointer-events:none"].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var start = startPoint;
-    var end = endPoint;
-    var vec = [end[0] - start[0], end[1] - start[1]];
-    var arrowLength = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
-    var arrowVector = [vec[0] / arrowLength, vec[1] / arrowLength];
-    var arrow90 = [arrowVector[1], -arrowVector[0]];
-    start = [startPoint[0] + arrowVector[0] * (p.start ? 1 : 0) * p.padding, startPoint[1] + arrowVector[1] * (p.start ? 1 : 0) * p.padding];
-    end = [endPoint[0] - arrowVector[0] * (p.end ? 1 : 0) * p.padding, endPoint[1] - arrowVector[1] * (p.end ? 1 : 0) * p.padding];
-    var endHead = [[end[0] + arrow90[0] * p.width, end[1] + arrow90[1] * p.width], [end[0] - arrow90[0] * p.width, end[1] - arrow90[1] * p.width], [end[0] + arrowVector[0] * p.length, end[1] + arrowVector[1] * p.length]];
-    var startHead = [[start[0] - arrow90[0] * p.width, start[1] - arrow90[1] * p.width], [start[0] + arrow90[0] * p.width, start[1] + arrow90[1] * p.width], [start[0] - arrowVector[0] * p.length, start[1] - arrowVector[1] * p.length]];
-    var arrow = win.document.createElementNS(namespace, "g");
-    var l = line(start[0], start[1], end[0], end[1]);
-    l.setAttribute("style", arrowStroke);
-    arrow.appendChild(l);
-
-    if (p.end) {
-      var endArrowPoly = polygon(endHead);
-      endArrowPoly.setAttribute("style", arrowFill);
-      arrow.appendChild(endArrowPoly);
-    }
-
-    if (p.start) {
-      var startArrowPoly = polygon(startHead);
-      startArrowPoly.setAttribute("style", arrowFill);
-      arrow.appendChild(startArrowPoly);
-    }
-
-    if (p.highlight !== undefined) {
-      var hScale = 0.6;
-      var centering = [arrowVector[0] * p.length * 0.09, arrowVector[1] * p.length * 0.09];
-      var endHeadHighlight = [[centering[0] + end[0] + arrow90[0] * (p.width * hScale), centering[1] + end[1] + arrow90[1] * (p.width * hScale)], [centering[0] + end[0] - arrow90[0] * (p.width * hScale), centering[1] + end[1] - arrow90[1] * (p.width * hScale)], [centering[0] + end[0] + arrowVector[0] * (p.length * hScale), centering[1] + end[1] + arrowVector[1] * (p.length * hScale)]];
-      var startHeadHighlight = [[-centering[0] + start[0] - arrow90[0] * (p.width * hScale), -centering[1] + start[1] - arrow90[1] * (p.width * hScale)], [-centering[0] + start[0] + arrow90[0] * (p.width * hScale), -centering[1] + start[1] + arrow90[1] * (p.width * hScale)], [-centering[0] + start[0] - arrowVector[0] * (p.length * hScale), -centering[1] + start[1] - arrowVector[1] * (p.length * hScale)]];
-      var highline = line(start[0], start[1], end[0], end[1]);
-      highline.setAttribute("style", highlightStroke);
-      arrow.appendChild(highline);
-
-      if (p.end) {
-        var endArrowHighlight = polygon(endHeadHighlight);
-        endArrowHighlight.setAttribute("style", highlightFill);
-        arrow.appendChild(endArrowHighlight);
-      }
-
-      if (p.start) {
-        var startArrowHighlight = polygon(startHeadHighlight);
-        startArrowHighlight.setAttribute("style", highlightFill);
-        arrow.appendChild(startArrowHighlight);
+      if (pos[0] != null) {
+        setPosition.apply(void 0, _toConsumableArray(pos));
+      } else if (pos.x != null) {
+        setPosition(pos.x, pos.y);
       }
     }
 
-    return arrow;
-  };
-  var arcArrow = function arcArrow(start, end, options) {
-    var p = {
-      color: "#000",
-      strokeWidth: 0.5,
-      width: 0.5,
-      length: 2,
-      bend: 0.3,
-      pinch: 0.618,
-      padding: 0.5,
-      side: true,
-      start: false,
-      end: true,
-      strokeStyle: "",
-      fillStyle: ""
-    };
-
-    if (_typeof(options) === "object" && options !== null) {
-      Object.assign(p, options);
-    }
-
-    var arrowFill = ["stroke:none", "fill:".concat(p.color), p.fillStyle].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var arrowStroke = ["fill:none", "stroke:".concat(p.color), "stroke-width:".concat(p.strokeWidth), p.strokeStyle].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var startPoint = start;
-    var endPoint = end;
-    var vector = [endPoint[0] - startPoint[0], endPoint[1] - startPoint[1]];
-    var midpoint = [startPoint[0] + vector[0] / 2, startPoint[1] + vector[1] / 2];
-    var len = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
-    var minLength = (p.start ? 1 + p.padding : 0 + p.end ? 1 + p.padding : 0) * p.length * 2.5;
-
-    if (len < minLength) {
-      var minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
-      startPoint = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
-      endPoint = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
-      vector = [endPoint[0] - startPoint[0], endPoint[1] - startPoint[1]];
-    }
-
-    var perpendicular = [vector[1], -vector[0]];
-    var bezPoint = [midpoint[0] + perpendicular[0] * (p.side ? 1 : -1) * p.bend, midpoint[1] + perpendicular[1] * (p.side ? 1 : -1) * p.bend];
-    var bezStart = [bezPoint[0] - startPoint[0], bezPoint[1] - startPoint[1]];
-    var bezEnd = [bezPoint[0] - endPoint[0], bezPoint[1] - endPoint[1]];
-    var bezStartLen = Math.sqrt(bezStart[0] * bezStart[0] + bezStart[1] * bezStart[1]);
-    var bezEndLen = Math.sqrt(bezEnd[0] * bezEnd[0] + bezEnd[1] * bezEnd[1]);
-    var bezStartNorm = [bezStart[0] / bezStartLen, bezStart[1] / bezStartLen];
-    var bezEndNorm = [bezEnd[0] / bezEndLen, bezEnd[1] / bezEndLen];
-    var startHeadVec = [-bezStartNorm[0], -bezStartNorm[1]];
-    var endHeadVec = [-bezEndNorm[0], -bezEndNorm[1]];
-    var startNormal = [startHeadVec[1], -startHeadVec[0]];
-    var endNormal = [endHeadVec[1], -endHeadVec[0]];
-    var arcStart = [startPoint[0] + bezStartNorm[0] * p.length * ((p.start ? 1 : 0) + p.padding), startPoint[1] + bezStartNorm[1] * p.length * ((p.start ? 1 : 0) + p.padding)];
-    var arcEnd = [endPoint[0] + bezEndNorm[0] * p.length * ((p.end ? 1 : 0) + p.padding), endPoint[1] + bezEndNorm[1] * p.length * ((p.end ? 1 : 0) + p.padding)];
-    vector = [arcEnd[0] - arcStart[0], arcEnd[1] - arcStart[1]];
-    perpendicular = [vector[1], -vector[0]];
-    midpoint = [arcStart[0] + vector[0] / 2, arcStart[1] + vector[1] / 2];
-    bezPoint = [midpoint[0] + perpendicular[0] * (p.side ? 1 : -1) * p.bend, midpoint[1] + perpendicular[1] * (p.side ? 1 : -1) * p.bend];
-    var controlStart = [arcStart[0] + (bezPoint[0] - arcStart[0]) * p.pinch, arcStart[1] + (bezPoint[1] - arcStart[1]) * p.pinch];
-    var controlEnd = [arcEnd[0] + (bezPoint[0] - arcEnd[0]) * p.pinch, arcEnd[1] + (bezPoint[1] - arcEnd[1]) * p.pinch];
-    var startHeadPoints = [[arcStart[0] + startNormal[0] * -p.width, arcStart[1] + startNormal[1] * -p.width], [arcStart[0] + startNormal[0] * p.width, arcStart[1] + startNormal[1] * p.width], [arcStart[0] + startHeadVec[0] * p.length, arcStart[1] + startHeadVec[1] * p.length]];
-    var endHeadPoints = [[arcEnd[0] + endNormal[0] * -p.width, arcEnd[1] + endNormal[1] * -p.width], [arcEnd[0] + endNormal[0] * p.width, arcEnd[1] + endNormal[1] * p.width], [arcEnd[0] + endHeadVec[0] * p.length, arcEnd[1] + endHeadVec[1] * p.length]];
-    var arrowGroup = win.document.createElementNS(namespace, "g");
-    var arrowArc = bezier(arcStart[0], arcStart[1], controlStart[0], controlStart[1], controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]);
-    arrowArc.setAttribute("style", arrowStroke);
-    arrowGroup.appendChild(arrowArc);
-
-    if (p.start) {
-      var startHead = polygon(startHeadPoints);
-      startHead.setAttribute("style", arrowFill);
-      arrowGroup.appendChild(startHead);
-    }
-
-    if (p.end) {
-      var endHead = polygon(endHeadPoints);
-      endHead.setAttribute("style", arrowFill);
-      arrowGroup.appendChild(endHead);
-    }
-
-    return arrowGroup;
-  };
-
-  var arrows = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    straightArrow: straightArrow,
-    arcArrow: arcArrow
-  });
-
-  function vkXML (text, step) {
-    var ar = text.replace(/>\s{0,}</g, "><").replace(/</g, "~::~<").replace(/\s*xmlns\:/g, "~::~xmlns:").split("~::~");
-    var len = ar.length;
-    var inComment = false;
-    var deep = 0;
-    var str = "";
-    var space = step != null && typeof step === "string" ? step : "\t";
-    var shift = ["\n"];
-
-    for (var si = 0; si < 100; si += 1) {
-      shift.push(shift[si] + space);
-    }
-
-    for (var ix = 0; ix < len; ix += 1) {
-      if (ar[ix].search(/<!/) > -1) {
-        str += shift[deep] + ar[ix];
-        inComment = true;
-
-        if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1 || ar[ix].search(/!DOCTYPE/) > -1) {
-          inComment = false;
-        }
-      } else if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1) {
-        str += ar[ix];
-        inComment = false;
-      } else if (/^<\w/.exec(ar[ix - 1]) && /^<\/\w/.exec(ar[ix]) && /^<[\w:\-\.\,]+/.exec(ar[ix - 1]) == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace("/", "")) {
-        str += ar[ix];
-
-        if (!inComment) {
-          deep -= 1;
-        }
-      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) === -1 && ar[ix].search(/\/>/) === -1) {
-        str = !inComment ? str += shift[deep++] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
-        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/<\//) > -1) {
-        str = !inComment ? str += shift[--deep] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/\/>/) > -1) {
-        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/<\?/) > -1) {
-        str += shift[deep] + ar[ix];
-      } else if (ar[ix].search(/xmlns\:/) > -1 || ar[ix].search(/xmlns\=/) > -1) {
-        str += shift[deep] + ar[ix];
-      } else {
-        str += ar[ix];
-      }
-    }
-
-    return str[0] === "\n" ? str.slice(1) : str;
-  }
-
-  var downloadInBrowser = function downloadInBrowser(filename, contentsAsString) {
-    var blob = new window.Blob([contentsAsString], {
-      type: "text/plain"
-    });
-    var a = document.createElement("a");
-    a.setAttribute("href", window.URL.createObjectURL(blob));
-    a.setAttribute("download", filename);
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  };
-
-  var getPageCSS = function getPageCSS() {
-    var css = [];
-
-    for (var s = 0; s < document.styleSheets.length; s += 1) {
-      var sheet = document.styleSheets[s];
-
-      try {
-        var rules = "cssRules" in sheet ? sheet.cssRules : sheet.rules;
-
-        for (var r = 0; r < rules.length; r += 1) {
-          var rule = rules[r];
-
-          if ("cssText" in rule) {
-            css.push(rule.cssText);
-          } else {
-            css.push("".concat(rule.selectorText, " {\n").concat(rule.style.cssText, "\n}\n"));
-          }
-        }
-      } catch (error) {
-        console.warn(error);
-      }
-    }
-
-    return css.join("\n");
-  };
-  var save = function save(svg) {
-    var filename = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "image.svg";
-    var includeDOMCSS = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-    if (includeDOMCSS) {
-      var styleContainer = document.createElementNS(namespace, "style");
-      styleContainer.setAttribute("type", "text/css");
-      styleContainer.innerHTML = getPageCSS();
-      svg.appendChild(styleContainer);
-    }
-
-    var source = new XMLSerializer().serializeToString(svg);
-    var formattedString = vkXML(source);
-
-    if (window != null) {
-      downloadInBrowser(filename, formattedString);
-    } else {
-      console.warn("save() meant for in-browser use");
-    }
-  };
-
-  var load = function load(input, callback) {
-    if (typeof input === "string" || input instanceof String) {
-      var xml = new DOMParser().parseFromString(input, "text/xml");
-      var parserErrors = xml.getElementsByTagName("parsererror");
-
-      if (parserErrors.length === 0) {
-        var parsedSVG = xml.documentElement;
-
-        if (callback != null) {
-          callback(parsedSVG);
-        }
-
-        return parsedSVG;
-      }
-
-      fetch(input).then(function (response) {
-        return response.text();
-      }).then(function (str) {
-        return new DOMParser().parseFromString(str, "text/xml");
-      }).then(function (svgData) {
-        var allSVGs = svgData.getElementsByTagName("svg");
-
-        if (allSVGs == null || allSVGs.length === 0) {
-          throw "error, valid XML found, but no SVG element";
-        }
-
-        if (callback != null) {
-          callback(allSVGs[0]);
-        }
-
-        return allSVGs[0];
-      });
-    } else if (input instanceof Document) {
-      callback(input);
+    var updatePosition = function updatePosition(input) {
       return input;
+    };
+
+    var onMouseMove = function onMouseMove(mouse) {
+      if (selected) {
+        var _pos = updatePosition(mouse);
+
+        setPosition(_pos[0], _pos[1]);
+      }
+    };
+
+    var onMouseUp = function onMouseUp() {
+      selected = false;
+    };
+
+    var distance = function distance(mouse) {
+      return Math.sqrt(Math.pow(mouse[0] - position[0], 2) + Math.pow(mouse[1] - position[1], 2));
+    };
+
+    var remove = function remove() {
+      parent.removeChild(c);
+    };
+
+    return {
+      circle: c,
+
+      set position(pos) {
+        if (pos[0] != null) {
+          setPosition(pos[0], pos[1]);
+        } else if (pos.x != null) {
+          setPosition(pos.x, pos.y);
+        }
+      },
+
+      get position() {
+        return [].concat(position);
+      },
+
+      onMouseUp: onMouseUp,
+      onMouseMove: onMouseMove,
+      distance: distance,
+      remove: remove,
+
+      set positionDidUpdate(method) {
+        updatePosition = method;
+      },
+
+      set selected(value) {
+        selected = true;
+      }
+
+    };
+  };
+
+  var controls = function controls(svg, number) {
+    var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var options = Object.assign({}, opts);
+
+    if (options.radius == null) {
+      options.radius = 1;
     }
-  };
 
-  var Pointer = function Pointer(node) {
-    var pointer = Object.create(null);
-    Object.assign(pointer, {
-      isPressed: false,
-      position: [0, 0],
-      pressed: [0, 0],
-      drag: [0, 0],
-      prev: [0, 0],
-      x: 0,
-      y: 0
+    if (options.fill == null) {
+      options.fill = "#000";
+    }
+
+    var points = Array.from(Array(number)).map(function () {
+      return controlPoint(svg, options);
     });
+    var selected;
 
-    var copyPointer = function copyPointer() {
-      var m = pointer.position.slice();
-      Object.keys(pointer).filter(function (key) {
-        return _typeof(key) === "object";
-      }).forEach(function (key) {
-        m[key] = pointer[key].slice();
-      });
-      Object.keys(pointer).filter(function (key) {
-        return _typeof(key) !== "object";
-      }).forEach(function (key) {
-        m[key] = pointer[key];
-      });
-      return Object.freeze(m);
-    };
-
-    var setPosition = function setPosition(clientX, clientY) {
-      pointer.position = convertToViewBox(node, clientX, clientY);
-
-      var _pointer$position = _slicedToArray(pointer.position, 2);
-
-      pointer.x = _pointer$position[0];
-      pointer.y = _pointer$position[1];
-    };
-
-    var updateDrag = function updateDrag() {
-      pointer.drag = [pointer.position[0] - pointer.pressed[0], pointer.position[1] - pointer.pressed[1]];
-
-      var _pointer$drag = _slicedToArray(pointer.drag, 2);
-
-      pointer.drag.x = _pointer$drag[0];
-      pointer.drag.y = _pointer$drag[1];
-    };
-
-    var thisPointer = {};
-
-    var move = function move(clientX, clientY) {
-      pointer.prev = pointer.position;
-      setPosition(clientX, clientY);
-
-      if (pointer.isPressed) {
-        updateDrag();
+    var mouseDownHandler = function mouseDownHandler(mouse) {
+      if (!(points.length > 0)) {
+        return;
       }
 
-      return thisPointer;
+      selected = points.map(function (p, i) {
+        return {
+          i: i,
+          d: p.distance(mouse)
+        };
+      }).sort(function (a, b) {
+        return a.d - b.d;
+      }).shift().i;
+      points[selected].selected = true;
     };
 
-    var down = function down(clientX, clientY) {
-      pointer.isPressed = true;
-      pointer.pressed = convertToViewBox(node, clientX, clientY);
-      setPosition(clientX, clientY);
-      return thisPointer;
+    var mouseMoveHandler = function mouseMoveHandler(mouse) {
+      points.forEach(function (p) {
+        return p.onMouseMove(mouse);
+      });
     };
 
-    var up = function up() {
-      pointer.isPressed = false;
-      return thisPointer;
+    var mouseUpHandler = function mouseUpHandler() {
+      points.forEach(function (p) {
+        return p.onMouseUp();
+      });
+      selected = undefined;
     };
 
-    var pressed = function pressed(isPressed) {
-      pointer.isPressed = isPressed;
-      return thisPointer;
+    var touchDownHandler = function touchDownHandler(pointer) {
+      if (!(points.length > 0)) {
+        return;
+      }
+
+      selected = points.map(function (p, i) {
+        return {
+          i: i,
+          d: p.distance(pointer)
+        };
+      }).sort(function (a, b) {
+        return a.d - b.d;
+      }).shift().i;
+      points[selected].selected = true;
     };
 
-    Object.defineProperty(thisPointer, "up", {
-      value: up
-    });
-    Object.defineProperty(thisPointer, "pressed", {
-      value: pressed
-    });
-    Object.defineProperty(thisPointer, "move", {
-      value: move
-    });
-    Object.defineProperty(thisPointer, "down", {
-      value: down
-    });
-    Object.defineProperty(thisPointer, "get", {
-      value: copyPointer
-    });
-    return thisPointer;
-  };
-
-  var Touches = function Touches(node) {
-    var pointer = Pointer(node);
-
-    var clear = function clear() {
-      node.onmousemove = null;
-      node.ontouchmove = null;
-      node.onmousedown = null;
-      node.ontouchstart = null;
-      node.onmouseup = null;
-      node.ontouchend = null;
-      node.onscroll = null;
+    var touchMoveHandler = function touchMoveHandler(pointer) {
+      points.forEach(function (p) {
+        return p.onMouseMove(pointer);
+      });
     };
 
-    var onMouseMove = function onMouseMove(handler, event) {
-      event.preventDefault();
-      var e = pointer.move(event.clientX, event.clientY).pressed(event.buttons > 0).get();
-      handler(e);
-      return e;
+    var touchUpHandler = function touchUpHandler() {
+      points.forEach(function (p) {
+        return p.onMouseUp();
+      });
+      selected = undefined;
     };
 
-    var onTouchMove = function onTouchMove(handler, event) {
-      event.preventDefault();
-      var e = pointer.move(event.touches[0].clientX, event.touches[0].clientY).pressed(true).get();
-      handler(e);
-      return e;
-    };
-
-    var onMouseDown = function onMouseDown(handler, event) {
-      event.preventDefault();
-      var e = pointer.down(event.clientX, event.clientY).get();
-      handler(e);
-      return e;
-    };
-
-    var onTouchStart = function onTouchStart(handler, event) {
-      event.preventDefault();
-      var e = pointer.down(event.touches[0].clientX, event.touches[0].clientY).get();
-      handler(e);
-      return e;
-    };
-
-    var onEnd = function onEnd(handler, event) {
-      event.preventDefault();
-      var e = pointer.pressed(false).get();
-      handler(e);
-      return e;
-    };
-
-    var onScroll = function onScroll(handler, event) {
-      var e = {
-        deltaX: event.deltaX,
-        deltaY: event.deltaY,
-        deltaZ: event.deltaZ
-      };
-      e.position = convertToViewBox(node, event.clientX, event.clientY);
-
-      var _e$position = _slicedToArray(e.position, 2);
-
-      e.x = _e$position[0];
-      e.y = _e$position[1];
-      event.preventDefault();
-      handler(e);
-      return e;
-    };
-
-    Object.defineProperty(node, "mouse", {
+    svg.mousePressed = touchDownHandler;
+    svg.mousePressed = mouseDownHandler;
+    svg.mouseMoved = mouseMoveHandler;
+    svg.mouseMoved = touchMoveHandler;
+    svg.mouseReleased = mouseUpHandler;
+    svg.mouseReleased = touchUpHandler;
+    Object.defineProperty(points, "selectedIndex", {
       get: function get() {
-        return pointer.get();
-      },
-      enumerable: true
+        return selected;
+      }
     });
-    Object.defineProperty(node, "mouseMoved", {
-      set: function set(handler) {
-        node.onmousemove = function (event) {
-          return onMouseMove(handler, event);
-        };
-
-        node.ontouchmove = function (event) {
-          return onTouchMove(handler, event);
-        };
-      },
-      enumerable: true
+    Object.defineProperty(points, "selected", {
+      get: function get() {
+        return points[selected];
+      }
     });
-    Object.defineProperty(node, "mousePressed", {
-      set: function set(handler) {
-        node.onmousedown = function (event) {
-          return onMouseDown(handler, event);
-        };
-
-        node.ontouchstart = function (event) {
-          return onTouchStart(handler, event);
-        };
-      },
-      enumerable: true
+    Object.defineProperty(points, "add", {
+      value: function value(opt) {
+        points.push(controlPoint(svg, opt));
+      }
     });
-    Object.defineProperty(node, "mouseReleased", {
-      set: function set(handler) {
-        node.onmouseup = function (event) {
-          return onEnd(handler, event);
-        };
-
-        node.ontouchend = function (event) {
-          return onEnd(handler, event);
-        };
-      },
-      enumerable: true
-    });
-    Object.defineProperty(node, "onScroll", {
-      set: function set(handler) {
-        node.onscroll = function (event) {
-          return onScroll(handler, event);
-        };
-      },
-      enumerable: true
-    });
-    return {
-      clear: clear,
-      pointer: pointer
-    };
+    return points;
   };
 
-  var DEFAULT_DELAY = 1000 / 60;
+  var constructorsSVG = {};
+  var constructorsGroup = {};
+  var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  var Animate = function Animate(node) {
-    var timers = [];
-    var frameNumber;
-    var delay = DEFAULT_DELAY;
-    var func;
-
-    var clear = function clear() {
-      while (timers.length > 0) {
-        clearInterval(timers.shift());
-      }
-
-      func = undefined;
-    };
-
-    var start = function start() {
-      timers.push(setInterval(function () {
-        func({
-          time: node.getCurrentTime(),
-          frame: frameNumber += 1
-        });
-      }, delay));
-    };
-
-    var setLoop = function setLoop(handler) {
-      clear();
-      func = handler;
-
-      if (typeof func === "function") {
-        frameNumber = 0;
-        start();
-      }
-    };
-
-    var validateMillis = function validateMillis(m) {
-      var parsed = parseFloat(m);
-
-      if (!isNaN(parsed) && isFinite(parsed)) {
-        return parsed;
-      }
-
-      return DEFAULT_DELAY;
-    };
-
-    var setFPS = function setFPS(fps) {
-      clear();
-      delay = validateMillis(1000 / fps);
-      start();
-    };
-
-    Object.defineProperty(node, "animate", {
-      set: function set(handler) {
-        return setLoop(handler);
-      },
-      enumerable: true
-    });
-    Object.defineProperty(node, "clear", {
-      value: function value() {
-        return clear();
-      },
-      enumerable: true
-    });
-    return {
-      clear: clear,
-      setLoop: setLoop,
-      setFPS: setFPS
-    };
+  var randomString = function randomString() {
+    var count = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    return Array.from(Array(count)).map(function () {
+      return Math.floor(Math.random() * abc.length);
+    }).map(function (i) {
+      return abc[i];
+    }).reduce(function (a, b) {
+      return "".concat(a).concat(b);
+    }, "");
   };
 
-  var Events = function Events(node) {
-    var animate = Animate(node);
-    var touches = Touches(node);
-    Object.defineProperty(node, "stopAnimations", {
-      value: animate.clear,
-      enumerated: true
+  var generateUUID = function generateUUID() {
+    var count = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 16;
+    var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+    return prefix + randomString(count);
+  };
+
+  var svg = function svg() {
+    var svgImage = win.document.createElementNS(NS, "svg");
+    svgImage.setAttribute("version", "1.1");
+    svgImage.setAttribute("xmlns", NS);
+    prepare("svg", svgImage, constructorsSVG);
+    return svgImage;
+  };
+
+  var group = function group() {
+    var g = win.document.createElementNS(NS, "g");
+    prepare("group", g, constructorsGroup);
+    return g;
+  };
+
+  var defs = function defs() {
+    var d = win.document.createElementNS(NS, "defs");
+    prepare("defs", d, constructorsGroup);
+    return d;
+  };
+
+  var style = function style() {
+    var s = win.document.createElementNS(NS, "style");
+    s.setAttribute("type", "text/css");
+    return s;
+  };
+
+  var clipPath = function clipPath() {
+    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "clip-");
+    var clip = win.document.createElementNS(NS, "clipPath");
+    clip.setAttribute("id", id);
+    prepare("clipPath", clip, constructorsGroup);
+    return clip;
+  };
+
+  var mask = function mask() {
+    var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : generateUUID(8, "mask-");
+    var msk = win.document.createElementNS(NS, "mask");
+    msk.setAttribute("id", id);
+    prepare("mask", msk, constructorsGroup);
+    return msk;
+  };
+
+  var createElement = function createElement(tagName) {
+    return win.document.createElementNS(NS, tagName);
+  };
+
+  var setConstructors = function setConstructors(elements) {
+    Object.keys(elements).filter(function (key) {
+      return key !== "svg";
+    }).forEach(function (key) {
+      constructorsSVG[key] = elements[key];
     });
-    Object.defineProperty(node, "freeze", {
-      value: function value() {
-        touches.clear();
-        animate.clear();
-      },
-      enumerated: true
-    });
-    Object.defineProperty(node, "fps", {
-      set: function set(fps) {
-        return animate.setFPS(fps);
-      },
-      enumerated: true
+    Object.keys(elements).filter(function (key) {
+      return key !== "svg";
+    }).filter(function (key) {
+      return key !== "defs";
+    }).filter(function (key) {
+      return key !== "style";
+    }).filter(function (key) {
+      return key !== "clipPath";
+    }).filter(function (key) {
+      return key !== "mask";
+    }).forEach(function (key) {
+      constructorsGroup[key] = elements[key];
     });
   };
+
+  var root = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    setConstructors: setConstructors,
+    svg: svg,
+    group: group,
+    defs: defs,
+    clipPath: clipPath,
+    mask: mask,
+    style: style,
+    createElement: createElement
+  });
 
   var findElementInParams = function findElementInParams() {
     for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -1749,6 +1809,14 @@
     var element = svg();
     Events(element);
 
+    element.controls = function () {
+      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        args[_key4] = arguments[_key4];
+      }
+
+      return controls.apply(void 0, [element].concat(args));
+    };
+
     element.getWidth = function () {
       return getWidth(element);
     };
@@ -1758,32 +1826,32 @@
     };
 
     element.setWidth = function () {
-      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
+      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
       }
 
       return setWidth.apply(void 0, [element].concat(args));
     };
 
     element.setHeight = function () {
-      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
+      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+        args[_key6] = arguments[_key6];
       }
 
       return setHeight.apply(void 0, [element].concat(args));
     };
 
     element.background = function () {
-      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-        args[_key6] = arguments[_key6];
+      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+        args[_key7] = arguments[_key7];
       }
 
       return background.apply(void 0, [element].concat(args));
     };
 
     element.size = function () {
-      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-        args[_key7] = arguments[_key7];
+      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+        args[_key8] = arguments[_key8];
       }
 
       return size.apply(void 0, [element].concat(args));
@@ -1830,441 +1898,197 @@
     return element;
   };
 
+  var straightArrow = function straightArrow(startPoint, endPoint, options) {
+    var p = {
+      color: "#000",
+      strokeWidth: 0.5,
+      strokeStyle: "",
+      fillStyle: "",
+      highlight: undefined,
+      highlightStrokeStyle: "",
+      highlightFillStyle: "",
+      width: 0.5,
+      length: 2,
+      padding: 0.0,
+      start: false,
+      end: true
+    };
+
+    if (_typeof(options) === "object" && options !== null) {
+      Object.assign(p, options);
+    }
+
+    var arrowFill = ["stroke:none", "fill:".concat(p.color), p.fillStyle, "pointer-events:none"].filter(function (a) {
+      return a !== "";
+    }).join(";");
+    var arrowStroke = ["fill:none", "stroke:".concat(p.color), "stroke-width:".concat(p.strokeWidth), p.strokeStyle].filter(function (a) {
+      return a !== "";
+    }).join(";");
+    var thinStroke = Math.floor(p.strokeWidth * 3) / 10;
+    var thinSpace = Math.floor(p.strokeWidth * 6) / 10;
+    var highlightStroke = ["fill:none", "stroke:".concat(p.highlight), "stroke-width:".concat(p.strokeWidth * 0.5), "stroke-dasharray:".concat(thinStroke, " ").concat(thinSpace), "stroke-linecap:round", p.strokeStyle].filter(function (a) {
+      return a !== "";
+    }).join(";");
+    var highlightFill = ["stroke:none", "fill:".concat(p.highlight), p.fillStyle, "pointer-events:none"].filter(function (a) {
+      return a !== "";
+    }).join(";");
+    var start = startPoint;
+    var end = endPoint;
+    var vec = [end[0] - start[0], end[1] - start[1]];
+    var arrowLength = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+    var arrowVector = [vec[0] / arrowLength, vec[1] / arrowLength];
+    var arrow90 = [arrowVector[1], -arrowVector[0]];
+    start = [startPoint[0] + arrowVector[0] * (p.start ? 1 : 0) * p.padding, startPoint[1] + arrowVector[1] * (p.start ? 1 : 0) * p.padding];
+    end = [endPoint[0] - arrowVector[0] * (p.end ? 1 : 0) * p.padding, endPoint[1] - arrowVector[1] * (p.end ? 1 : 0) * p.padding];
+    var endHead = [[end[0] + arrow90[0] * p.width, end[1] + arrow90[1] * p.width], [end[0] - arrow90[0] * p.width, end[1] - arrow90[1] * p.width], [end[0] + arrowVector[0] * p.length, end[1] + arrowVector[1] * p.length]];
+    var startHead = [[start[0] - arrow90[0] * p.width, start[1] - arrow90[1] * p.width], [start[0] + arrow90[0] * p.width, start[1] + arrow90[1] * p.width], [start[0] - arrowVector[0] * p.length, start[1] - arrowVector[1] * p.length]];
+    var arrow = win.document.createElementNS(NS, "g");
+    var l = line(start[0], start[1], end[0], end[1]);
+    l.setAttribute("style", arrowStroke);
+    arrow.appendChild(l);
+
+    if (p.end) {
+      var endArrowPoly = polygon(endHead);
+      endArrowPoly.setAttribute("style", arrowFill);
+      arrow.appendChild(endArrowPoly);
+    }
+
+    if (p.start) {
+      var startArrowPoly = polygon(startHead);
+      startArrowPoly.setAttribute("style", arrowFill);
+      arrow.appendChild(startArrowPoly);
+    }
+
+    if (p.highlight !== undefined) {
+      var hScale = 0.6;
+      var centering = [arrowVector[0] * p.length * 0.09, arrowVector[1] * p.length * 0.09];
+      var endHeadHighlight = [[centering[0] + end[0] + arrow90[0] * (p.width * hScale), centering[1] + end[1] + arrow90[1] * (p.width * hScale)], [centering[0] + end[0] - arrow90[0] * (p.width * hScale), centering[1] + end[1] - arrow90[1] * (p.width * hScale)], [centering[0] + end[0] + arrowVector[0] * (p.length * hScale), centering[1] + end[1] + arrowVector[1] * (p.length * hScale)]];
+      var startHeadHighlight = [[-centering[0] + start[0] - arrow90[0] * (p.width * hScale), -centering[1] + start[1] - arrow90[1] * (p.width * hScale)], [-centering[0] + start[0] + arrow90[0] * (p.width * hScale), -centering[1] + start[1] + arrow90[1] * (p.width * hScale)], [-centering[0] + start[0] - arrowVector[0] * (p.length * hScale), -centering[1] + start[1] - arrowVector[1] * (p.length * hScale)]];
+      var highline = line(start[0], start[1], end[0], end[1]);
+      highline.setAttribute("style", highlightStroke);
+      arrow.appendChild(highline);
+
+      if (p.end) {
+        var endArrowHighlight = polygon(endHeadHighlight);
+        endArrowHighlight.setAttribute("style", highlightFill);
+        arrow.appendChild(endArrowHighlight);
+      }
+
+      if (p.start) {
+        var startArrowHighlight = polygon(startHeadHighlight);
+        startArrowHighlight.setAttribute("style", highlightFill);
+        arrow.appendChild(startArrowHighlight);
+      }
+    }
+
+    return arrow;
+  };
+  var arcArrow = function arcArrow(start, end, options) {
+    var p = {
+      color: "#000",
+      strokeWidth: 0.5,
+      width: 0.5,
+      length: 2,
+      bend: 0.3,
+      pinch: 0.618,
+      padding: 0.5,
+      side: true,
+      start: false,
+      end: true,
+      strokeStyle: "",
+      fillStyle: ""
+    };
+
+    if (_typeof(options) === "object" && options !== null) {
+      Object.assign(p, options);
+    }
+
+    var arrowFill = ["stroke:none", "fill:".concat(p.color), p.fillStyle].filter(function (a) {
+      return a !== "";
+    }).join(";");
+    var arrowStroke = ["fill:none", "stroke:".concat(p.color), "stroke-width:".concat(p.strokeWidth), p.strokeStyle].filter(function (a) {
+      return a !== "";
+    }).join(";");
+    var startPoint = start;
+    var endPoint = end;
+    var vector = [endPoint[0] - startPoint[0], endPoint[1] - startPoint[1]];
+    var midpoint = [startPoint[0] + vector[0] / 2, startPoint[1] + vector[1] / 2];
+    var len = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
+    var minLength = (p.start ? 1 + p.padding : 0 + p.end ? 1 + p.padding : 0) * p.length * 2.5;
+
+    if (len < minLength) {
+      var minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
+      startPoint = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
+      endPoint = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
+      vector = [endPoint[0] - startPoint[0], endPoint[1] - startPoint[1]];
+    }
+
+    var perpendicular = [vector[1], -vector[0]];
+    var bezPoint = [midpoint[0] + perpendicular[0] * (p.side ? 1 : -1) * p.bend, midpoint[1] + perpendicular[1] * (p.side ? 1 : -1) * p.bend];
+    var bezStart = [bezPoint[0] - startPoint[0], bezPoint[1] - startPoint[1]];
+    var bezEnd = [bezPoint[0] - endPoint[0], bezPoint[1] - endPoint[1]];
+    var bezStartLen = Math.sqrt(bezStart[0] * bezStart[0] + bezStart[1] * bezStart[1]);
+    var bezEndLen = Math.sqrt(bezEnd[0] * bezEnd[0] + bezEnd[1] * bezEnd[1]);
+    var bezStartNorm = [bezStart[0] / bezStartLen, bezStart[1] / bezStartLen];
+    var bezEndNorm = [bezEnd[0] / bezEndLen, bezEnd[1] / bezEndLen];
+    var startHeadVec = [-bezStartNorm[0], -bezStartNorm[1]];
+    var endHeadVec = [-bezEndNorm[0], -bezEndNorm[1]];
+    var startNormal = [startHeadVec[1], -startHeadVec[0]];
+    var endNormal = [endHeadVec[1], -endHeadVec[0]];
+    var arcStart = [startPoint[0] + bezStartNorm[0] * p.length * ((p.start ? 1 : 0) + p.padding), startPoint[1] + bezStartNorm[1] * p.length * ((p.start ? 1 : 0) + p.padding)];
+    var arcEnd = [endPoint[0] + bezEndNorm[0] * p.length * ((p.end ? 1 : 0) + p.padding), endPoint[1] + bezEndNorm[1] * p.length * ((p.end ? 1 : 0) + p.padding)];
+    vector = [arcEnd[0] - arcStart[0], arcEnd[1] - arcStart[1]];
+    perpendicular = [vector[1], -vector[0]];
+    midpoint = [arcStart[0] + vector[0] / 2, arcStart[1] + vector[1] / 2];
+    bezPoint = [midpoint[0] + perpendicular[0] * (p.side ? 1 : -1) * p.bend, midpoint[1] + perpendicular[1] * (p.side ? 1 : -1) * p.bend];
+    var controlStart = [arcStart[0] + (bezPoint[0] - arcStart[0]) * p.pinch, arcStart[1] + (bezPoint[1] - arcStart[1]) * p.pinch];
+    var controlEnd = [arcEnd[0] + (bezPoint[0] - arcEnd[0]) * p.pinch, arcEnd[1] + (bezPoint[1] - arcEnd[1]) * p.pinch];
+    var startHeadPoints = [[arcStart[0] + startNormal[0] * -p.width, arcStart[1] + startNormal[1] * -p.width], [arcStart[0] + startNormal[0] * p.width, arcStart[1] + startNormal[1] * p.width], [arcStart[0] + startHeadVec[0] * p.length, arcStart[1] + startHeadVec[1] * p.length]];
+    var endHeadPoints = [[arcEnd[0] + endNormal[0] * -p.width, arcEnd[1] + endNormal[1] * -p.width], [arcEnd[0] + endNormal[0] * p.width, arcEnd[1] + endNormal[1] * p.width], [arcEnd[0] + endHeadVec[0] * p.length, arcEnd[1] + endHeadVec[1] * p.length]];
+    var arrowGroup = win.document.createElementNS(NS, "g");
+    var arrowArc = bezier(arcStart[0], arcStart[1], controlStart[0], controlStart[1], controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]);
+    arrowArc.setAttribute("style", arrowStroke);
+    arrowGroup.appendChild(arrowArc);
+
+    if (p.start) {
+      var startHead = polygon(startHeadPoints);
+      startHead.setAttribute("style", arrowFill);
+      arrowGroup.appendChild(startHead);
+    }
+
+    if (p.end) {
+      var endHead = polygon(endHeadPoints);
+      endHead.setAttribute("style", arrowFill);
+      arrowGroup.appendChild(endHead);
+    }
+
+    return arrowGroup;
+  };
+
+  var arrows = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    straightArrow: straightArrow,
+    arcArrow: arcArrow
+  });
+
   var constructors = {};
-  Object.assign(constructors, root, arrows, primitives);
+  Object.assign(constructors, root, primitives, arrows);
   delete constructors.setConstructors;
   setConstructors(constructors);
   var elements = {};
-  Object.keys(arrows).forEach(function (key) {
-    elements[key] = arrows[key];
-  });
   Object.keys(primitives).forEach(function (key) {
     elements[key] = primitives[key];
+  });
+  Object.keys(arrows).forEach(function (key) {
+    elements[key] = arrows[key];
   });
   Object.keys(root).filter(function (key) {
     return key !== "setConstructors";
   }).forEach(function (key) {
     elements[key] = root[key];
   });
-  elements.svg = SVG;
+  delete elements.svg;
 
-  var F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
-  var G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
-  var F3 = 1.0 / 3.0;
-  var G3 = 1.0 / 6.0;
-  var F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
-  var G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
-
-  function SimplexNoise(randomOrSeed) {
-    var random;
-
-    if (typeof randomOrSeed == 'function') {
-      random = randomOrSeed;
-    } else if (randomOrSeed) {
-      random = alea(randomOrSeed);
-    } else {
-      random = Math.random;
-    }
-
-    this.p = buildPermutationTable(random);
-    this.perm = new Uint8Array(512);
-    this.permMod12 = new Uint8Array(512);
-
-    for (var i = 0; i < 512; i++) {
-      this.perm[i] = this.p[i & 255];
-      this.permMod12[i] = this.perm[i] % 12;
-    }
-  }
-
-  SimplexNoise.prototype = {
-    grad3: new Float32Array([1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0, 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1, 0, 1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1]),
-    grad4: new Float32Array([0, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, 1, 0, 1, -1, -1, 0, -1, 1, 1, 0, -1, 1, -1, 0, -1, -1, 1, 0, -1, -1, -1, 1, 0, 1, 1, 1, 0, 1, -1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 1, 1, -1, 0, 1, -1, -1, 0, -1, 1, -1, 0, -1, -1, 1, 1, 0, 1, 1, 1, 0, -1, 1, -1, 0, 1, 1, -1, 0, -1, -1, 1, 0, 1, -1, 1, 0, -1, -1, -1, 0, 1, -1, -1, 0, -1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, 1, 0, 1, -1, -1, 0, -1, 1, 1, 0, -1, 1, -1, 0, -1, -1, 1, 0, -1, -1, -1, 0]),
-    noise2D: function noise2D(xin, yin) {
-      var permMod12 = this.permMod12;
-      var perm = this.perm;
-      var grad3 = this.grad3;
-      var n0 = 0;
-      var n1 = 0;
-      var n2 = 0;
-      var s = (xin + yin) * F2;
-      var i = Math.floor(xin + s);
-      var j = Math.floor(yin + s);
-      var t = (i + j) * G2;
-      var X0 = i - t;
-      var Y0 = j - t;
-      var x0 = xin - X0;
-      var y0 = yin - Y0;
-      var i1, j1;
-
-      if (x0 > y0) {
-        i1 = 1;
-        j1 = 0;
-      } else {
-        i1 = 0;
-        j1 = 1;
-      }
-
-      var x1 = x0 - i1 + G2;
-      var y1 = y0 - j1 + G2;
-      var x2 = x0 - 1.0 + 2.0 * G2;
-      var y2 = y0 - 1.0 + 2.0 * G2;
-      var ii = i & 255;
-      var jj = j & 255;
-      var t0 = 0.5 - x0 * x0 - y0 * y0;
-
-      if (t0 >= 0) {
-        var gi0 = permMod12[ii + perm[jj]] * 3;
-        t0 *= t0;
-        n0 = t0 * t0 * (grad3[gi0] * x0 + grad3[gi0 + 1] * y0);
-      }
-
-      var t1 = 0.5 - x1 * x1 - y1 * y1;
-
-      if (t1 >= 0) {
-        var gi1 = permMod12[ii + i1 + perm[jj + j1]] * 3;
-        t1 *= t1;
-        n1 = t1 * t1 * (grad3[gi1] * x1 + grad3[gi1 + 1] * y1);
-      }
-
-      var t2 = 0.5 - x2 * x2 - y2 * y2;
-
-      if (t2 >= 0) {
-        var gi2 = permMod12[ii + 1 + perm[jj + 1]] * 3;
-        t2 *= t2;
-        n2 = t2 * t2 * (grad3[gi2] * x2 + grad3[gi2 + 1] * y2);
-      }
-
-      return 70.0 * (n0 + n1 + n2);
-    },
-    noise3D: function noise3D(xin, yin, zin) {
-      var permMod12 = this.permMod12;
-      var perm = this.perm;
-      var grad3 = this.grad3;
-      var n0, n1, n2, n3;
-      var s = (xin + yin + zin) * F3;
-      var i = Math.floor(xin + s);
-      var j = Math.floor(yin + s);
-      var k = Math.floor(zin + s);
-      var t = (i + j + k) * G3;
-      var X0 = i - t;
-      var Y0 = j - t;
-      var Z0 = k - t;
-      var x0 = xin - X0;
-      var y0 = yin - Y0;
-      var z0 = zin - Z0;
-      var i1, j1, k1;
-      var i2, j2, k2;
-
-      if (x0 >= y0) {
-        if (y0 >= z0) {
-          i1 = 1;
-          j1 = 0;
-          k1 = 0;
-          i2 = 1;
-          j2 = 1;
-          k2 = 0;
-        } else if (x0 >= z0) {
-          i1 = 1;
-          j1 = 0;
-          k1 = 0;
-          i2 = 1;
-          j2 = 0;
-          k2 = 1;
-        } else {
-          i1 = 0;
-          j1 = 0;
-          k1 = 1;
-          i2 = 1;
-          j2 = 0;
-          k2 = 1;
-        }
-      } else {
-        if (y0 < z0) {
-          i1 = 0;
-          j1 = 0;
-          k1 = 1;
-          i2 = 0;
-          j2 = 1;
-          k2 = 1;
-        } else if (x0 < z0) {
-          i1 = 0;
-          j1 = 1;
-          k1 = 0;
-          i2 = 0;
-          j2 = 1;
-          k2 = 1;
-        } else {
-          i1 = 0;
-          j1 = 1;
-          k1 = 0;
-          i2 = 1;
-          j2 = 1;
-          k2 = 0;
-        }
-      }
-
-      var x1 = x0 - i1 + G3;
-      var y1 = y0 - j1 + G3;
-      var z1 = z0 - k1 + G3;
-      var x2 = x0 - i2 + 2.0 * G3;
-      var y2 = y0 - j2 + 2.0 * G3;
-      var z2 = z0 - k2 + 2.0 * G3;
-      var x3 = x0 - 1.0 + 3.0 * G3;
-      var y3 = y0 - 1.0 + 3.0 * G3;
-      var z3 = z0 - 1.0 + 3.0 * G3;
-      var ii = i & 255;
-      var jj = j & 255;
-      var kk = k & 255;
-      var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
-      if (t0 < 0) n0 = 0.0;else {
-        var gi0 = permMod12[ii + perm[jj + perm[kk]]] * 3;
-        t0 *= t0;
-        n0 = t0 * t0 * (grad3[gi0] * x0 + grad3[gi0 + 1] * y0 + grad3[gi0 + 2] * z0);
-      }
-      var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
-      if (t1 < 0) n1 = 0.0;else {
-        var gi1 = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]]] * 3;
-        t1 *= t1;
-        n1 = t1 * t1 * (grad3[gi1] * x1 + grad3[gi1 + 1] * y1 + grad3[gi1 + 2] * z1);
-      }
-      var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
-      if (t2 < 0) n2 = 0.0;else {
-        var gi2 = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]]] * 3;
-        t2 *= t2;
-        n2 = t2 * t2 * (grad3[gi2] * x2 + grad3[gi2 + 1] * y2 + grad3[gi2 + 2] * z2);
-      }
-      var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
-      if (t3 < 0) n3 = 0.0;else {
-        var gi3 = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]]] * 3;
-        t3 *= t3;
-        n3 = t3 * t3 * (grad3[gi3] * x3 + grad3[gi3 + 1] * y3 + grad3[gi3 + 2] * z3);
-      }
-      return 32.0 * (n0 + n1 + n2 + n3);
-    },
-    noise4D: function noise4D(x, y, z, w) {
-      var perm = this.perm;
-      var grad4 = this.grad4;
-      var n0, n1, n2, n3, n4;
-      var s = (x + y + z + w) * F4;
-      var i = Math.floor(x + s);
-      var j = Math.floor(y + s);
-      var k = Math.floor(z + s);
-      var l = Math.floor(w + s);
-      var t = (i + j + k + l) * G4;
-      var X0 = i - t;
-      var Y0 = j - t;
-      var Z0 = k - t;
-      var W0 = l - t;
-      var x0 = x - X0;
-      var y0 = y - Y0;
-      var z0 = z - Z0;
-      var w0 = w - W0;
-      var rankx = 0;
-      var ranky = 0;
-      var rankz = 0;
-      var rankw = 0;
-      if (x0 > y0) rankx++;else ranky++;
-      if (x0 > z0) rankx++;else rankz++;
-      if (x0 > w0) rankx++;else rankw++;
-      if (y0 > z0) ranky++;else rankz++;
-      if (y0 > w0) ranky++;else rankw++;
-      if (z0 > w0) rankz++;else rankw++;
-      var i1, j1, k1, l1;
-      var i2, j2, k2, l2;
-      var i3, j3, k3, l3;
-      i1 = rankx >= 3 ? 1 : 0;
-      j1 = ranky >= 3 ? 1 : 0;
-      k1 = rankz >= 3 ? 1 : 0;
-      l1 = rankw >= 3 ? 1 : 0;
-      i2 = rankx >= 2 ? 1 : 0;
-      j2 = ranky >= 2 ? 1 : 0;
-      k2 = rankz >= 2 ? 1 : 0;
-      l2 = rankw >= 2 ? 1 : 0;
-      i3 = rankx >= 1 ? 1 : 0;
-      j3 = ranky >= 1 ? 1 : 0;
-      k3 = rankz >= 1 ? 1 : 0;
-      l3 = rankw >= 1 ? 1 : 0;
-      var x1 = x0 - i1 + G4;
-      var y1 = y0 - j1 + G4;
-      var z1 = z0 - k1 + G4;
-      var w1 = w0 - l1 + G4;
-      var x2 = x0 - i2 + 2.0 * G4;
-      var y2 = y0 - j2 + 2.0 * G4;
-      var z2 = z0 - k2 + 2.0 * G4;
-      var w2 = w0 - l2 + 2.0 * G4;
-      var x3 = x0 - i3 + 3.0 * G4;
-      var y3 = y0 - j3 + 3.0 * G4;
-      var z3 = z0 - k3 + 3.0 * G4;
-      var w3 = w0 - l3 + 3.0 * G4;
-      var x4 = x0 - 1.0 + 4.0 * G4;
-      var y4 = y0 - 1.0 + 4.0 * G4;
-      var z4 = z0 - 1.0 + 4.0 * G4;
-      var w4 = w0 - 1.0 + 4.0 * G4;
-      var ii = i & 255;
-      var jj = j & 255;
-      var kk = k & 255;
-      var ll = l & 255;
-      var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
-      if (t0 < 0) n0 = 0.0;else {
-        var gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32 * 4;
-        t0 *= t0;
-        n0 = t0 * t0 * (grad4[gi0] * x0 + grad4[gi0 + 1] * y0 + grad4[gi0 + 2] * z0 + grad4[gi0 + 3] * w0);
-      }
-      var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
-      if (t1 < 0) n1 = 0.0;else {
-        var gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32 * 4;
-        t1 *= t1;
-        n1 = t1 * t1 * (grad4[gi1] * x1 + grad4[gi1 + 1] * y1 + grad4[gi1 + 2] * z1 + grad4[gi1 + 3] * w1);
-      }
-      var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
-      if (t2 < 0) n2 = 0.0;else {
-        var gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32 * 4;
-        t2 *= t2;
-        n2 = t2 * t2 * (grad4[gi2] * x2 + grad4[gi2 + 1] * y2 + grad4[gi2 + 2] * z2 + grad4[gi2 + 3] * w2);
-      }
-      var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
-      if (t3 < 0) n3 = 0.0;else {
-        var gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32 * 4;
-        t3 *= t3;
-        n3 = t3 * t3 * (grad4[gi3] * x3 + grad4[gi3 + 1] * y3 + grad4[gi3 + 2] * z3 + grad4[gi3 + 3] * w3);
-      }
-      var t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
-      if (t4 < 0) n4 = 0.0;else {
-        var gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32 * 4;
-        t4 *= t4;
-        n4 = t4 * t4 * (grad4[gi4] * x4 + grad4[gi4 + 1] * y4 + grad4[gi4 + 2] * z4 + grad4[gi4 + 3] * w4);
-      }
-      return 27.0 * (n0 + n1 + n2 + n3 + n4);
-    }
-  };
-
-  function buildPermutationTable(random) {
-    var i;
-    var p = new Uint8Array(256);
-
-    for (i = 0; i < 256; i++) {
-      p[i] = i;
-    }
-
-    for (i = 0; i < 255; i++) {
-      var r = i + ~~(random() * (256 - i));
-      var aux = p[i];
-      p[i] = p[r];
-      p[r] = aux;
-    }
-
-    return p;
-  }
-
-  SimplexNoise._buildPermutationTable = buildPermutationTable;
-
-  function alea() {
-    var s0 = 0;
-    var s1 = 0;
-    var s2 = 0;
-    var c = 1;
-    var mash = masher();
-    s0 = mash(' ');
-    s1 = mash(' ');
-    s2 = mash(' ');
-
-    for (var i = 0; i < arguments.length; i++) {
-      s0 -= mash(arguments[i]);
-
-      if (s0 < 0) {
-        s0 += 1;
-      }
-
-      s1 -= mash(arguments[i]);
-
-      if (s1 < 0) {
-        s1 += 1;
-      }
-
-      s2 -= mash(arguments[i]);
-
-      if (s2 < 0) {
-        s2 += 1;
-      }
-    }
-
-    mash = null;
-    return function () {
-      var t = 2091639 * s0 + c * 2.3283064365386963e-10;
-      s0 = s1;
-      s1 = s2;
-      return s2 = t - (c = t | 0);
-    };
-  }
-
-  function masher() {
-    var n = 0xefc8249d;
-    return function (data) {
-      data = data.toString();
-
-      for (var i = 0; i < data.length; i++) {
-        n += data.charCodeAt(i);
-        var h = 0.02519603282416938 * n;
-        n = h >>> 0;
-        h -= n;
-        h *= n;
-        n = h >>> 0;
-        h -= n;
-        n += h * 0x100000000;
-      }
-
-      return (n >>> 0) * 2.3283064365386963e-10;
-    };
-  }
-
-  var Noise = new SimplexNoise();
-  var noise = function noise() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    switch (args.length) {
-      case 1:
-        return Noise.noise2D.apply(Noise, args.concat([0]));
-
-      case 2:
-        return Noise.noise2D.apply(Noise, args);
-
-      case 3:
-        return Noise.noise3D.apply(Noise, args);
-
-      case 4:
-        return Noise.noise4D.apply(Noise, args);
-
-      default:
-        return 0;
-    }
-  };
-  var random = function random(a, b) {
-    if (b != null) {
-      return Math.random() * (b - a) + a;
-    }
-
-    if (a != null) {
-      return Math.random() * a;
-    }
-
-    return Math.random();
-  };
-  var randomInt = function randomInt(a, b) {
-    return Math.floor(random(a, b));
-  };
-  var PI = Math.PI;
-
-  var math = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    noise: noise,
-    random: random,
-    randomInt: randomInt,
-    PI: PI
-  });
-
-  SVG.NS = namespace;
   Object.keys(elements).forEach(function (key) {
     SVG[key] = elements[key];
   });
@@ -2274,9 +2098,10 @@
   Object.keys(ViewBox).forEach(function (key) {
     SVG[key] = ViewBox[key];
   });
-  Object.keys(math).forEach(function (key) {
-    SVG[key] = math[key];
+  Object.keys(File).forEach(function (key) {
+    SVG[key] = File[key];
   });
+  SVG.NS = NS;
 
   return SVG;
 

@@ -5,10 +5,6 @@
 import vkXML from "../../include/vkbeautify-xml";
 import svgNS from "./namespace";
 
-/**
- * import, export
- */
-
 const downloadInBrowser = function (filename, contentsAsString) {
   const blob = new window.Blob([contentsAsString], { type: "text/plain" });
   const a = document.createElement("a");
@@ -19,7 +15,7 @@ const downloadInBrowser = function (filename, contentsAsString) {
   a.remove();
 };
 
-export const getPageCSS = function () {
+const getPageCSS = function () {
   const css = [];
   for (let s = 0; s < document.styleSheets.length; s += 1) {
     const sheet = document.styleSheets[s];
@@ -52,19 +48,18 @@ export const save = function (svg, filename = "image.svg", includeDOMCSS = false
   const formattedString = vkXML(source);
   if (window != null) {
     downloadInBrowser(filename, formattedString);
-  } else {
-    console.warn("save() meant for in-browser use");
   }
+  return formattedString;
 };
 
-const parseCSSText = function (styleContent) {
-  const styleElement = document.createElement("style");
-  styleElement.textContent = styleContent;
-  document.body.appendChild(styleElement);
-  const rules = styleElement.sheet.cssRules;
-  document.body.removeChild(styleElement);
-  return rules;
-};
+// const parseCSSText = function (styleContent) {
+//   const styleElement = document.createElement("style");
+//   styleElement.textContent = styleContent;
+//   document.body.appendChild(styleElement);
+//   const rules = styleElement.sheet.cssRules;
+//   document.body.removeChild(styleElement);
+//   return rules;
+// };
 
 /** parser error to check against */
 // const pErr = (new DOMParser())
@@ -96,7 +91,7 @@ export const load = function (input, callback) {
       .then((svgData) => {
         const allSVGs = svgData.getElementsByTagName("svg");
         if (allSVGs == null || allSVGs.length === 0) {
-          throw "error, valid XML found, but no SVG element";
+          throw new Error("error, valid XML found, but no SVG element");
         }
         if (callback != null) {
           callback(allSVGs[0]);

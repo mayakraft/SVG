@@ -45,7 +45,7 @@ const toCamel = s => s
     .replace("-", "")
     .replace("_", ""));
 
-export const attachFunctionalSetters = function (element) {
+export const attachFunctionalStyleSetters = function (element) {
   const el = element;
   // attributes.filter(attr => attr !== element.tagName).forEach((key) => {
   attributes.filter(key => el[toCamel(key)] === undefined).forEach((key) => {

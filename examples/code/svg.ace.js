@@ -105,6 +105,8 @@ const CodeSVG = function (container) {
       // remove any Timer functions. handlers will get cleaned up automatically
       app.svg.freeze();
       app.svg.clearTransforms();
+      app.svg.size(300, 150);
+      app.svg.fps = 60;
     }
   };
 

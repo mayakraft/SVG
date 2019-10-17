@@ -9,21 +9,21 @@ import {
   attachClipMaskAttributes,
   attachTransformMethods,
   attachViewBoxMethods,
-  attachFunctionalSetters
+  attachFunctionalStyleSetters
 } from "./attach";
 
 const preparePrimitive = function (element) {
+  attachFunctionalStyleSetters(element);
   attachDOMMethods(element);
   attachTransformMethods(element);
-  attachFunctionalSetters(element);
   attachClipMaskAttributes(element);
 };
 
 const prepareText = function (element) {
+  attachFunctionalStyleSetters(element);
   attachDOMMethods(element);
   // text element has a problem with "rotate"
   // attachTransformMethods(element);
-  attachFunctionalSetters(element);
   attachClipMaskAttributes(element);
 };
 
@@ -32,23 +32,23 @@ const prepareSVG = function (element, primitives) {
   attachTransformMethods(element);
   attachAppendableMethods(element, primitives);
   attachViewBoxMethods(element);
-  // attachFunctionalSetters(element);
+  // attachFunctionalStyleSetters(element);
   attachClipMaskMakers(element, primitives);
 };
 
 const prepareGroup = function (element, primitives) {
+  attachFunctionalStyleSetters(element);
   attachDOMMethods(element);
   attachTransformMethods(element);
   attachAppendableMethods(element, primitives);
-  attachFunctionalSetters(element);
   attachClipMaskAttributes(element);
 };
 
 const prepareMaskClipPath = function (element, primitives) {
+  attachFunctionalStyleSetters(element);
   attachDOMMethods(element);
   attachTransformMethods(element);
   attachAppendableMethods(element, primitives);
-  attachFunctionalSetters(element);
   attachClipMaskAttributes(element);
 };
 

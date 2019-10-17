@@ -6,17 +6,24 @@ import Pointer from "./pointer";
 import { convertToViewBox } from "../attributes/viewBox";
 
 const Touches = function (node) {
-  // hook up mouse and touch events
   const pointer = Pointer(node);
+  // todo, more pointers for multiple screen touches
+
+  const handlers = {
+    mousemove: [],
+    touchmove: [],
+    mousedown: [],
+    touchstart: [],
+    mouseup: [],
+    touchend: [],
+    scroll: []
+  };
 
   const clear = () => {
-    node.onmousemove = null;
-    node.ontouchmove = null;
-    node.onmousedown = null;
-    node.ontouchstart = null;
-    node.onmouseup = null;
-    node.ontouchend = null;
-    node.onscroll = null;
+    Object.keys(handlers)
+      .forEach(key => handlers[key]
+        .forEach(f => node.removeEventListener(key, f)));
+    Object.keys(handlers).forEach((key) => { handlers[key] = []; });
   };
 
   const onMouseMove = (handler, event) => {
@@ -79,28 +86,42 @@ const Touches = function (node) {
   });
   Object.defineProperty(node, "mouseMoved", {
     set: (handler) => {
-      node.onmousemove = event => onMouseMove(handler, event);
-      node.ontouchmove = event => onTouchMove(handler, event);
+      const mouseFunc = event => onMouseMove(handler, event);
+      const touchFunc = event => onTouchMove(handler, event);
+      handlers.mousemove.push(mouseFunc);
+      handlers.touchmove.push(mouseFunc);
+      node.addEventListener("mousemove", mouseFunc);
+      node.addEventListener("touchmove", touchFunc);
     },
     enumerable: true
   });
   Object.defineProperty(node, "mousePressed", {
     set: (handler) => {
-      node.onmousedown = event => onMouseDown(handler, event);
-      node.ontouchstart = event => onTouchStart(handler, event);
+      const mouseFunc = event => onMouseDown(handler, event);
+      const touchFunc = event => onTouchStart(handler, event);
+      handlers.mousedown.push(mouseFunc);
+      handlers.touchstart.push(touchFunc);
+      node.addEventListener("mousedown", mouseFunc);
+      node.addEventListener("touchstart", touchFunc);
     },
     enumerable: true
   });
   Object.defineProperty(node, "mouseReleased", {
     set: (handler) => {
-      node.onmouseup = event => onEnd(handler, event);
-      node.ontouchend = event => onEnd(handler, event);
+      const mouseFunc = event => onEnd(handler, event);
+      const touchFunc = event => onEnd(handler, event);
+      handlers.mouseup.push(mouseFunc);
+      handlers.touchend.push(touchFunc);
+      node.addEventListener("mouseup", mouseFunc);
+      node.addEventListener("touchend", touchFunc);
     },
     enumerable: true
   });
   Object.defineProperty(node, "onScroll", {
     set: (handler) => {
-      node.onscroll = event => onScroll(handler, event);
+      const scrollFunc = event => onScroll(handler, event);
+      handlers.mouseup.push(scrollFunc);
+      node.addEventListener("scroll", scrollFunc);
     },
     enumerable: true
   });

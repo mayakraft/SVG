@@ -73,12 +73,8 @@ export const polyline = function (...pointsArray) {
 };
 
 export const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
-  const pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]]
-    .map(p => p.join(","));
-  const d = `M ${pts[0]} C ${pts[1]} ${pts[2]} ${pts[3]}`;
   const shape = window.document.createElementNS(svgNS, "path");
-  shape.setAttributeNS(null, "d", d);
-  // GeometryMod.setBezier(shape, ...args);
+  setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY);
   prepare("primitive", shape);
   shape.setBezier = (...args) => setBezier(shape, ...args);
   return shape;

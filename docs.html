@@ -127,6 +127,7 @@ v   { color: #A6E22E; } /* variable */
 arg { color: #e53; } /* #FD9720;    argument */
 key { color: #f15; } /* #F92672;  operator */
 str { color: #ec3; } /* string */
+c   { color: #777; } /* comment */
 
 h1, h2, h3, h4, h5, h6, pre, code, p, ul, li, div {
   z-index: 2;
@@ -166,8 +167,8 @@ circle { fill: #12130A; }
 </style>
 <body>
 
-  <!-- <h1>SVG Reference</h1> -->
-  <div class="header"></div>
+  <h1>SVG Reference</h1>
+  <!-- <div class="header"></div> -->
 
   <h3>Drawing</h3>
 
@@ -276,10 +277,108 @@ circle { fill: #12130A; }
     <pre><code><f>line</f>(<n>0</n>, <n>0</n>, <n>300</n>, <n>300</n>)<br>   .<f>stroke</f>(<str>"#F08"</str>)<br>   .<f>strokeWidth</f>(<n>3</n>);</code></pre>
   </div>
 
+<div>
+  <h1>Appendix</h1>
+  <h2>Top level</h2>
+  <pre><code><f>console</f>.<f>log</f>(SVG)  <c>// <-- this library</c>
+
+<n>0</n>: <str>"line"</str>               - primitive
+<n>1</n>: <str>"circle"</str>             - primitive
+<n>2</n>: <str>"ellipse"</str>            - primitive
+<n>3</n>: <str>"rect"</str>               - primitive
+<n>4</n>: <str>"polygon"</str>            - primitive
+<n>5</n>: <str>"polyline"</str>           - primitive
+<n>6</n>: <str>"bezier"</str>             - primitive
+<n>7</n>: <str>"text"</str>               - primitive
+<n>8</n>: <str>"arc"</str>                - primitive
+<n>9</n>: <str>"wedge"</str>              - primitive
+<n>10</n>: <str>"arcEllipse"</str>        - primitive
+<n>11</n>: <str>"wedgeEllipse"</str>      - primitive
+<n>12</n>: <str>"parabola"</str>          - primitive
+<n>13</n>: <str>"regularPolygon"</str>    - primitive
+<n>14</n>: <str>"straightArrow"</str>     - primitive
+<n>15</n>: <str>"arcArrow"</str>          - primitive
+<n>16</n>: <str>"svg"</str>               - svg element
+<n>17</n>: <str>"group"</str>             - layer element
+<n>18</n>: <str>"defs"</str>              - header element
+<n>19</n>: <str>"clipPath"</str>          - header element
+<n>20</n>: <str>"mask"</str>              - header element
+<n>21</n>: <str>"style"</str>             - header element
+<n>22</n>: <str>"createElement"</str>     - (wildcard) element
+<n>23</n>: <str>"setPoints"</str>         - geometry
+<n>24</n>: <str>"setArc"</str>            - geometry
+<n>25</n>: <str>"setEllipticalArc"</str>  - geometry
+<n>26</n>: <str>"setBezier"</str>         - geometry
+<n>27</n>: <str>"getViewBox"</str>        - viewport
+<n>28</n>: <str>"setViewBox"</str>        - viewport
+<n>29</n>: <str>"convertToViewBox"</str>  - viewport
+<n>30</n>: <str>"translateViewBox"</str>  - viewport
+<n>31</n>: <str>"scaleViewBox"</str>      - viewport
+<n>32</n>: <str>"save"</str>              - import/export
+<n>33</n>: <str>"load"</str>              - import/export
+<n>34</n>: <str>"NS"</str>                - namespace</code></pre>
+
+  <h2>Primitive object methods</h2>
+  <pre><code><f>console</f>.<f>log</f>(SVG.line())
+
+<n>0</n>: <str>"removeChildren"</str>    - DOM
+<n>1</n>: <str>"appendTo"</str>          - DOM
+<n>2</n>: <str>"setAttributes"</str>     - attributes
+<n>3</n>: <str>"addClass"</str>          - attributes
+<n>4</n>: <str>"removeClass"</str>       - attributes
+<n>5</n>: <str>"setClass"</str>          - attributes
+<n>6</n>: <str>"setID"</str>             - attributes
+<n>7</n>: <str>"translate"</str>         - attributes
+<n>8</n>: <str>"rotate"</str>            - attributes
+<n>9</n>: <str>"scale"</str>             - attributes
+<n>10</n>: <str>"clearTransforms"</str>  - attributes
+<n>11</n>: <str>"clipPath"</str>         - attributes
+<n>12</n>: <str>"mask"</str>             - attributes
+...
++200 methods, SVG style attribute setters</code></pre>
+
+  <h2>Layer object methods</h2>
+  <pre><code><f>console</f>.<f>log</f>(SVG.group())
+
+<n>0</n>: <str>"removeChildren"</str>     - DOM
+<n>1</n>: <str>"appendTo"</str>           - DOM
+<n>2</n>: <str>"setAttributes"</str>      - attributes
+<n>3</n>: <str>"addClass"</str>           - attributes
+<n>4</n>: <str>"removeClass"</str>        - attributes
+<n>5</n>: <str>"setClass"</str>           - attributes
+<n>6</n>: <str>"setID"</str>              - attributes
+<n>7</n>: <str>"translate"</str>          - attributes
+<n>8</n>: <str>"rotate"</str>             - attributes
+<n>9</n>: <str>"scale"</str>              - attributes
+<n>10</n>: <str>"clearTransforms"</str>   - attributes
+<n>11</n>: <str>"group"</str>             - create child
+<n>12</n>: <str>"createElement"</str>     - create child
+<n>13</n>: <str>"line"</str>              - create child
+<n>14</n>: <str>"circle"</str>            - create child
+<n>15</n>: <str>"ellipse"</str>           - create child
+<n>16</n>: <str>"rect"</str>              - create child
+<n>17</n>: <str>"polygon"</str>           - create child
+<n>18</n>: <str>"polyline"</str>          - create child
+<n>19</n>: <str>"bezier"</str>            - create child
+<n>20</n>: <str>"text"</str>              - create child
+<n>21</n>: <str>"arc"</str>               - create child
+<n>22</n>: <str>"wedge"</str>             - create child
+<n>23</n>: <str>"arcEllipse"</str>        - create child
+<n>24</n>: <str>"wedgeEllipse"</str>      - create child
+<n>25</n>: <str>"parabola"</str>          - create child
+<n>26</n>: <str>"regularPolygon"</str>    - create child
+<n>27</n>: <str>"straightArrow"</str>     - create child
+<n>28</n>: <str>"arcArrow"</str>          - create child
+<n>29</n>: <str>"clipPath"</str>          - create child
+<n>30</n>: <str>"mask"</str>              - create child
+...
++200 methods, SVG style attribute setters</code></pre>
+</div>
 <script type="text/javascript" src="https://svg.rabbitear.org/svg.min.js"></script>
 
 <script>
 window.onload = function () {
+/*
   var title = SVG(document.getElementsByClassName("header")[0]);
   var titleString = "SVG Playground";
   title.setViewBox(0, 0, 560, 80);
@@ -321,6 +420,7 @@ window.onload = function () {
     walkerPoints = [];
     title.animate = animationFunction;
   };
+  */
   /*
   // make the stars. but do it later after page load
   setTimeout(function () {
@@ -334,8 +434,8 @@ window.onload = function () {
       ).setClass("twinkle-" + (i % 5));
     }
   }, 3000);
-*/
-/*
+  */
+  /*
   var spinner = SVG(window.innerWidth, document.body.clientHeight);
   spinner.setClass("spinner");
   var poly = spinner.polyline().fillRule("evenodd").fill("#23251e");

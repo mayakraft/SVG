@@ -46,6 +46,7 @@ const CodeSVGxMenu = function (container) {
       "dragon.js",
       "draw.js",
       "harmonic.js",
+      "lerp.js",
       "mask.js",
       "mystify.js",
       "parabola.js",

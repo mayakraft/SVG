@@ -1,7 +1,7 @@
 {
   "name": "rabbit-ear-svg",
   "version": "0.1.0",
-  "description": "a small library to create and manipulate SVGs with an emphasis on interactivity",
+  "description": "make SVG a little more friendly and accessible",
   "main": "svg.js",
   "directories": {
     "example": "examples"
