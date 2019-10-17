@@ -5,6 +5,7 @@
 import window from "../environment/window";
 import * as File from "../environment/file";
 import Events from "../events/index";
+import Controls from "../events/controls";
 import { rect } from "./primitives";
 import { svg } from "./root";
 import { removeChildren } from "../attributes/DOM";
@@ -158,13 +159,13 @@ const SVG = function (...params) {
 
   // setup that can occur immediately
   Events(element);
+  element.controls = (...args) => Controls(element, ...args);
   element.getWidth = () => getWidth(element);
   element.getHeight = () => getHeight(element);
   element.setWidth = (...args) => setWidth(element, ...args);
   element.setHeight = (...args) => setHeight(element, ...args);
   element.background = (...args) => background(element, ...args);
   element.size = (...args) => size(element, ...args);
-  // element.events = Events(element);
   element.save = function (filename = "image.svg") {
     return File.save(element, filename);
   };

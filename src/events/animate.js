@@ -18,6 +18,7 @@ const Animate = function (node) {
   };
 
   const start = () => {
+    if (typeof func !== "function") { return; }
     timers.push(setInterval(() => {
       func({
         time: node.getCurrentTime(),

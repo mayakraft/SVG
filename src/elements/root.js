@@ -6,15 +6,19 @@ import svgNS from "../environment/namespace";
 import window from "../environment/window";
 import prepare from "../attributes/prepare";
 
-const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const generateUUID = function (count = 16, prefix = "") {
-  return Array.from(Array(count))
-    .map(() => Math.floor(Math.random() * abc.length))
-    .map(i => abc[i]).reduce((a, b) => `${a}${b}`, prefix);
-};
-
 const constructorsSVG = {};
 const constructorsGroup = {};
+
+const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const randomString = function (count = 0) {
+  return Array.from(Array(count))
+    .map(() => Math.floor(Math.random() * abc.length))
+    .map(i => abc[i]).reduce((a, b) => `${a}${b}`, "");
+};
+
+const generateUUID = function (count = 16, prefix = "") {
+  return prefix + randomString(count);
+};
 
 const svg = function () {
   const svgImage = window.document.createElementNS(svgNS, "svg");
@@ -57,7 +61,7 @@ const mask = function (id = generateUUID(8, "mask-")) {
 };
 
 // the placeholder constructor. create any element type in the SVG namespace
-const create = function (tagName) {
+const createElement = function (tagName) {
   return window.document.createElementNS(svgNS, tagName);
 };
 
@@ -83,5 +87,5 @@ export {
   clipPath,
   mask,
   style,
-  create
+  createElement
 };

@@ -30,6 +30,7 @@ module.exports = [{
     format: "umd",
     // format: "es",
     banner: "/* SVG (c) Robby Kraft, MIT License */",
+    bannerNewline: true,
   },
   plugins: [
     cleanup({ comments: "none" }),

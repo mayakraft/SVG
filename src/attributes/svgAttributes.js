@@ -476,7 +476,7 @@ export default [
   // "rx",
   // "ry",
   "SSection",
-  "scale",
+  // "scale",  // Robby removed this. transforms
   "seed",
   "shape-rendering",
   "slope",

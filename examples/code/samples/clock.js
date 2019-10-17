@@ -1,15 +1,18 @@
 size(-1, -1, 2, 2);
 background("#edb");
 svg.fps = 30;
+var r = 0.666;
+var sw = 0.0333;
 
 for (var i = 0; i < 60; i += 1) {
   var a = PI * i / 30;
-  var r = i % 5 === 0 ? 0.92 : 0.84;
-  line(-Math.cos(a) * r, -Math.sin(a) * r, Math.cos(a) * r, Math.sin(a) * r)
+  var m = i % 5 === 0 ? r + sw * 3 : r + sw * 2;
+  line(-Math.cos(a) * m, -Math.sin(a) * m, Math.cos(a) * m, Math.sin(a) * m)
     .stroke("#000")
-    .strokeWidth(0.04);
+    .strokeWidth(sw);
 }
 
+circle(0, 0, r + sw).fill("black")
 var pies = [
   wedge().fill("#158"),
   wedge().fill("#ec3"),
@@ -27,6 +30,6 @@ svg.animate = function (time) {
     -PI / 2 + h * 2 * PI + m * 2 * PI / 60
   ].sort(function(a, b) { return a - b; })
     .forEach(function(a, i, arr) {
-      pies[i].setArc(0, 0, 0.8, a, arr[(i + 1) % arr.length], true);
+      pies[i].setArc(0, 0, r, a, arr[(i + 1) % arr.length], true);
     });
 };
