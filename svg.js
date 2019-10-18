@@ -937,6 +937,13 @@
     clearTransforms: clearTransforms
   });
 
+  var attachStyleMethods = function attachStyleMethods(element) {
+    var el = element;
+
+    el.appendTo = function (arg) {
+      return appendTo(element, arg);
+    };
+  };
   var attachAppendableMethods = function attachAppendableMethods(element, methods) {
     var el = element;
     Object.keys(methods).filter(function (key) {
@@ -1115,6 +1122,10 @@
     attachClipMaskAttributes(element);
   };
 
+  var prepareStyle = function prepareStyle(element) {
+    attachStyleMethods(element);
+  };
+
   var prepare = function prepare(type, element, primitiveList) {
     switch (type) {
       case "svg":
@@ -1137,6 +1148,10 @@
       case "clipPath":
       case "mask":
         prepareMaskClipPath(element, primitiveList);
+        break;
+
+      case "style":
+        prepareStyle(element);
         break;
 
       default:
@@ -1634,9 +1649,11 @@
     return d;
   };
 
-  var style = function style() {
+  var style = function style(textContent) {
     var s = win.document.createElementNS(NS, "style");
     s.setAttribute("type", "text/css");
+    prepare("style", s);
+    s.textContent = textContent;
     return s;
   };
 
@@ -1836,6 +1853,31 @@
     }
   };
 
+  var stylesheet = function stylesheet(element, textContent) {
+    var styleSection = Array.from(element.childNodes).filter(function (child) {
+      return child.getAttribute("tagName") === "style";
+    }).shift();
+
+    if (styleSection == null) {
+      var defs = Array.from(element.childNodes).filter(function (child) {
+        return child.getAttribute("tagName") === "defs";
+      }).shift();
+
+      if (defs != null) {
+        styleSection = Array.from(defs.childNodes).filter(function (child) {
+          return child.getAttribute("tagName") === "style";
+        }).shift();
+      }
+    }
+
+    if (styleSection != null) {
+      styleSection.textContent = textContent;
+    } else {
+      styleSection = style(textContent);
+      element.insertBefore(styleSection, element.firstChild);
+    }
+  };
+
   var replaceWithSVG = function replaceWithSVG(oldSVG, newSVG) {
     Array.from(oldSVG.attributes).forEach(function (attr) {
       return oldSVG.removeAttribute(attr.name);
@@ -1921,6 +1963,10 @@
           callback(element, error);
         }
       });
+    };
+
+    element.stylesheet = function (textContent) {
+      return stylesheet(element, textContent);
     };
 
     var initialize = function initialize() {

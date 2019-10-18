@@ -7,6 +7,7 @@ import {
   attachDOMMethods,
   attachClipMaskMakers,
   attachClipMaskAttributes,
+  attachStyleMethods,
   attachTransformMethods,
   attachViewBoxMethods,
   attachFunctionalStyleSetters
@@ -52,6 +53,9 @@ const prepareMaskClipPath = function (element, primitives) {
   attachClipMaskAttributes(element);
 };
 
+const prepareStyle = function (element) {
+  attachStyleMethods(element);
+};
 
 const prepare = function (type, element, primitiveList) {
   switch (type) {
@@ -62,6 +66,7 @@ const prepare = function (type, element, primitiveList) {
     case "text": prepareText(element, primitiveList); break;
     case "clipPath":
     case "mask": prepareMaskClipPath(element, primitiveList); break;
+    case "style": prepareStyle(element); break;
     default: console.warn("prepare missing valid type (svg, group.."); break;
   }
 };

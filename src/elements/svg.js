@@ -8,7 +8,7 @@ import Globalize from "../environment/globalize";
 import Events from "../events/index";
 import Controls from "../events/controls";
 import { rect } from "./primitives";
-import { svg } from "./root";
+import { svg, style } from "./root";
 import { removeChildren } from "../attributes/DOM";
 import {
   getViewBox,
@@ -134,6 +134,28 @@ const background = function (element, color, setParent = true) {
   }
 };
 
+const stylesheet = function (element, textContent) {
+  let styleSection = Array.from(element.childNodes)
+    .filter(child => child.getAttribute("tagName") === "style")
+    .shift();
+  if (styleSection == null) {
+    const defs = Array.from(element.childNodes)
+      .filter(child => child.getAttribute("tagName") === "defs")
+      .shift();
+    if (defs != null) {
+      styleSection = Array.from(defs.childNodes)
+        .filter(child => child.getAttribute("tagName") === "style")
+        .shift();
+    }
+  }
+  if (styleSection != null) {
+    styleSection.textContent = textContent;
+  } else {
+    styleSection = style(textContent);
+    element.insertBefore(styleSection, element.firstChild);
+  }
+};
+
 const replaceWithSVG = function (oldSVG, newSVG) {
   // Part 1: reset old SVG
   // #1 clear attributes
@@ -184,6 +206,7 @@ const SVG = function (...params) {
       if (callback != null) { callback(element, error); }
     });
   };
+  element.stylesheet = textContent => stylesheet(element, textContent);
 
   // initialize requires a loaded DOM to append
   const initialize = function () {

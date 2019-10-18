@@ -43,13 +43,22 @@ const CodeSVGxMenu = function (container) {
   shareButton.setAttribute("class", "share-button");
   const shareButtonP = document.createElement("p");
   shareButton.setAttribute("title", "create shareable link");
-  shareButtonP.innerHTML = "☛";
+  // shareButtonP.innerHTML = "☛";
+  const shareImage = document.createElement("i");
+  shareImage.setAttribute("class", "fa fa-share");
+  // const shareImage = document.querySelector("#share-icon");
+  shareImage.setAttribute("width", "1rem");
+  shareImage.setAttribute("height", "1rem");
+  shareButton.appendChild(shareImage);
+  // "<i class="fas fa-share-square"></i>"
   shareButton.appendChild(shareButtonP);
   container.appendChild(shareButton);
 
   const loadAndRunExamples = function (callback) {
     const examples = [];
     const exampleFilenames = [
+      "albers1.js",
+      "albers2.js",
       "astroid.js",
       "bezier.js",
       "bugs.js",

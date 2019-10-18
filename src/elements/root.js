@@ -40,9 +40,11 @@ const defs = function () {
   return d;
 };
 
-const style = function () {
+const style = function (textContent) {
   const s = window.document.createElementNS(svgNS, "style");
   s.setAttribute("type", "text/css");
+  prepare("style", s);
+  s.textContent = textContent;
   return s;
 };
 

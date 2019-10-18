@@ -7,6 +7,11 @@ import * as DOM from "./DOM";
 import * as ViewBox from "./viewBox";
 import * as Transform from "./transform";
 
+export const attachStyleMethods = function (element) {
+  const el = element;
+  el.appendTo = arg => DOM.appendTo(element, arg);
+};
+
 export const attachAppendableMethods = function (element, methods) {
   const el = element;
   Object.keys(methods).filter(key => el[key] === undefined).forEach((key) => {
