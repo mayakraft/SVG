@@ -134,25 +134,38 @@ const background = function (element, color, setParent = true) {
   }
 };
 
-const stylesheet = function (element, textContent) {
-  let styleSection = Array.from(element.childNodes)
+const findStyleSheet = function (element) {
+  const children = Array.from(element.childNodes);
+  console.log("findStyleSheet");
+
+  console.log("topLevel");
+  const topLevel = children
     .filter(child => child.getAttribute("tagName") === "style")
     .shift();
+  if (topLevel) { return topLevel; }
+
+  console.log("defs");
+  const defs = children
+    .filter(child => child.getAttribute("tagName") === "defs")
+    .shift();
+  if (defs == null) { return defs; }
+
+  console.log("insideDefs");
+  const insideDefs = Array.from(defs.childNodes)
+    .filter(child => child.getAttribute("tagName") === "style")
+    .shift();
+  if (insideDefs != null) { return insideDefs; }
+  console.log("undefined");
+  return undefined;
+};
+
+const stylesheet = function (element, textContent) {
+  let styleSection = findStyleSheet(element);
   if (styleSection == null) {
-    const defs = Array.from(element.childNodes)
-      .filter(child => child.getAttribute("tagName") === "defs")
-      .shift();
-    if (defs != null) {
-      styleSection = Array.from(defs.childNodes)
-        .filter(child => child.getAttribute("tagName") === "style")
-        .shift();
-    }
-  }
-  if (styleSection != null) {
-    styleSection.textContent = textContent;
-  } else {
     styleSection = style(textContent);
     element.insertBefore(styleSection, element.firstChild);
+  } else {
+    styleSection.setTextContent(textContent);
   }
 };
 
@@ -205,8 +218,13 @@ const SVG = function (...params) {
       if (newSVG != null) { replaceWithSVG(element, newSVG); }
       if (callback != null) { callback(element, error); }
     });
-  };
-  element.stylesheet = textContent => stylesheet(element, textContent);
+  };//
+  //
+  /////////////////////////////////////
+  element.stylesheet = textContent => stylesheet(element, textContent); // this needs to change////////s
+  //////////// something ehre
+  ///////////asifoaie fas
+  //////////// / //////// / / ///////////// // /
 
   // initialize requires a loaded DOM to append
   const initialize = function () {

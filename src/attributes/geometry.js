@@ -43,8 +43,29 @@ export const setPoints = function (shape, ...pointsArray) {
   shape.setAttributeNS(null, "points", pointsString);
 };
 
+export const setLinePoints = function (shape, ...pointsArray) {
+  const flat = flatten_input(...pointsArray);
+  let points = [];
+  if (typeof flat[0] === "number") {
+    points = flat;
+  }
+  if (typeof flat[0] === "object") {
+    if (typeof flat[0].x === "number") {
+      points = flat.map(p => [p[0], p[1]]).reduce((a, b) => a.concat(b), []);
+    }
+    if (typeof flat[0][0] === "number") {
+      points = flat.reduce((a, b) => a.concat(b), []);
+    }
+  }
+  if (points[0]) { shape.setAttributeNS(null, "x1", points[0]); }
+  if (points[1]) { shape.setAttributeNS(null, "y1", points[1]); }
+  if (points[2]) { shape.setAttributeNS(null, "x2", points[2]); }
+  if (points[3]) { shape.setAttributeNS(null, "y2", points[3]); }
+};
+
 export const setArc = function (shape, x, y, radius,
   startAngle, endAngle, includeCenter = false) {
+  if (endAngle == null) { return; }
   const start = [
     x + Math.cos(startAngle) * radius,
     y + Math.sin(startAngle) * radius];
@@ -68,6 +89,7 @@ export const setArc = function (shape, x, y, radius,
 
 export const setEllipticalArc = function (shape, x, y, rX, rY,
   startAngle, endAngle, includeCenter = false) {
+  if (endAngle == null) { return; }
   const start = [
     x + Math.cos(startAngle) * rX,
     y + Math.sin(startAngle) * rY];
@@ -90,6 +112,7 @@ export const setEllipticalArc = function (shape, x, y, rX, rY,
 };
 
 export const setBezier = function (shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
+  if (toY == null) { return; }
   const pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]]
     .map(p => p.join(","));
   const d = `M ${pts[0]} C ${pts[1]} ${pts[2]} ${pts[3]}`;

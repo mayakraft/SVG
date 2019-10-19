@@ -28,12 +28,17 @@ const controlPoint = function (parent, opts = {}) {
     c.setAttribute("cy", y);
   };
   // set default position
-  if ("position" in options) {
-    const pos = options.position;
-    if (pos[0] != null) {
-      setPosition(...pos);
-    } else if (pos.x != null) {
-      setPosition(pos.x, pos.y);
+  if (options.position != null) {
+    let pos = options.position;
+    if (typeof options.position === "function") {
+      pos = options.position();
+    }
+    if (typeof pos === "object") {
+      if (typeof pos[0] === "number") {
+        setPosition(...pos);
+      } else if (typeof pos.x === "number") {
+        setPosition(pos.x, pos.y);
+      }
     }
   }
   let updatePosition = function (input) { return input; };

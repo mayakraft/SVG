@@ -10,7 +10,8 @@ import {
   attachStyleMethods,
   attachTransformMethods,
   attachViewBoxMethods,
-  attachFunctionalStyleSetters
+  attachFunctionalStyleSetters,
+  attachPathMethods
 } from "./attach";
 
 const preparePrimitive = function (element) {
@@ -18,6 +19,9 @@ const preparePrimitive = function (element) {
   attachDOMMethods(element);
   attachTransformMethods(element);
   attachClipMaskAttributes(element);
+  if (element.tagName === "path") {
+    attachPathMethods(element);
+  }
 };
 
 const prepareText = function (element) {
@@ -31,26 +35,26 @@ const prepareText = function (element) {
 const prepareSVG = function (element, primitives) {
   attachDOMMethods(element);
   attachTransformMethods(element);
-  attachAppendableMethods(element, primitives);
   attachViewBoxMethods(element);
   // attachFunctionalStyleSetters(element);
   attachClipMaskMakers(element, primitives);
+  attachAppendableMethods(element, primitives);
 };
 
 const prepareGroup = function (element, primitives) {
   attachFunctionalStyleSetters(element);
   attachDOMMethods(element);
   attachTransformMethods(element);
-  attachAppendableMethods(element, primitives);
   attachClipMaskAttributes(element);
+  attachAppendableMethods(element, primitives);
 };
 
 const prepareMaskClipPath = function (element, primitives) {
   attachFunctionalStyleSetters(element);
   attachDOMMethods(element);
   attachTransformMethods(element);
-  attachAppendableMethods(element, primitives);
   attachClipMaskAttributes(element);
+  attachAppendableMethods(element, primitives);
 };
 
 const prepareStyle = function (element) {

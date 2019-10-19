@@ -72,6 +72,13 @@ export const polyline = function (...pointsArray) {
   return shape;
 };
 
+export const path = function (d) {
+  const shape = window.document.createElementNS(svgNS, "path");
+  if (d != null) { shape.setAttributeNS(null, "d", d); }
+  prepare("primitive", shape);
+  return shape;
+};
+
 export const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
   const shape = window.document.createElementNS(svgNS, "path");
   setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY);

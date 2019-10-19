@@ -444,7 +444,7 @@ export default [
   "PSection",
   "panose-1",
   "paint-order",
-  "path",
+  // "path",   // Robby removed this
   // "pathLength",
   "patternContentUnits",
   "patternTransform",

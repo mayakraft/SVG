@@ -6,6 +6,7 @@ import attributes from "./svgAttributes";
 import * as DOM from "./DOM";
 import * as ViewBox from "./viewBox";
 import * as Transform from "./transform";
+import * as Path from "./path";
 
 export const attachStyleMethods = function (element) {
   const el = element;
@@ -20,6 +21,13 @@ export const attachAppendableMethods = function (element, methods) {
       element.appendChild(g);
       return g;
     };
+  });
+};
+
+export const attachPathMethods = function (element) {
+  const el = element;
+  Object.keys(Path).forEach((key) => {
+    el[key] = (...args) => Path[key](element, ...args);
   });
 };
 

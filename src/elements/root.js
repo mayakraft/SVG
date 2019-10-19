@@ -40,11 +40,20 @@ const defs = function () {
   return d;
 };
 
+const cdata = function (textContent) {
+  const c = (new window.DOMParser())
+    .parseFromString("<root></root>", "text/xml")
+    .createCDATASection(`\n${textContent}\n`);
+  // prepare("style", s);
+  return c;
+};
+
 const style = function (textContent) {
   const s = window.document.createElementNS(svgNS, "style");
   s.setAttribute("type", "text/css");
   prepare("style", s);
-  s.textContent = textContent;
+  s.setTextContent = (newText) => { s.textContent = ""; s.appendChild(cdata(newText)); };
+  s.appendChild(cdata(textContent));
   return s;
 };
 

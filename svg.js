@@ -766,6 +766,11 @@
   };
   var setArc = function setArc(shape, x, y, radius, startAngle, endAngle) {
     var includeCenter = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
+
+    if (endAngle == null) {
+      return;
+    }
+
     var start = [x + Math.cos(startAngle) * radius, y + Math.sin(startAngle) * radius];
     var vecStart = [Math.cos(startAngle) * radius, Math.sin(startAngle) * radius];
     var vecEnd = [Math.cos(endAngle) * radius, Math.sin(endAngle) * radius];
@@ -784,6 +789,11 @@
   };
   var setEllipticalArc = function setEllipticalArc(shape, x, y, rX, rY, startAngle, endAngle) {
     var includeCenter = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
+
+    if (endAngle == null) {
+      return;
+    }
+
     var start = [x + Math.cos(startAngle) * rX, y + Math.sin(startAngle) * rY];
     var vecStart = [Math.cos(startAngle) * rX, Math.sin(startAngle) * rY];
     var vecEnd = [Math.cos(endAngle) * rX, Math.sin(endAngle) * rY];
@@ -801,6 +811,10 @@
     shape.setAttributeNS(null, "d", d);
   };
   var setBezier = function setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
+    if (toY == null) {
+      return;
+    }
+
     var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
       return p.join(",");
     });
@@ -816,7 +830,7 @@
     setBezier: setBezier
   });
 
-  var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "path", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
+  var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
 
   var removeChildren = function removeChildren(parent) {
     while (parent.lastChild) {
@@ -937,6 +951,71 @@
     clearTransforms: clearTransforms
   });
 
+  var d = function d(element) {
+    var attr = element.getAttribute("d");
+
+    if (attr == null) {
+      attr = "";
+    }
+
+    return attr;
+  };
+
+  var append = function append(element, command) {
+    for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+      args[_key - 2] = arguments[_key];
+    }
+
+    var params = args.join(",");
+    element.setAttribute("d", "".concat(d(element)).concat(command).concat(params));
+  };
+
+  var moveTo = function moveTo(element, x, y) {
+    var relative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    append(element, relative ? "m" : "M", x, y);
+    return element;
+  };
+  var lineTo = function lineTo(element, x, y) {
+    var relative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    append(element, relative ? "l" : "L", x, y);
+    return element;
+  };
+  var verticalLineTo = function verticalLineTo(element, y) {
+    var relative = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    append(element, relative ? "v" : "V", y);
+    return element;
+  };
+  var horizontalLineTo = function horizontalLineTo(element, x) {
+    var relative = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    append(element, relative ? "h" : "H", x);
+    return element;
+  };
+  var smoothTo = function smoothTo(element, c1x, c1y, x, y) {
+    var relative = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
+    append(element, relative ? "s" : "S", c1x, c1y, x, y);
+    return element;
+  };
+  var curveTo = function curveTo(element, c1x, c1y, c2x, c2y, x, y) {
+    var relative = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
+    append(element, relative ? "c" : "C", c1x, c1y, c2x, c2y, x, y);
+    return element;
+  };
+  var close = function close(element) {
+    append(element, "Z");
+    return element;
+  };
+
+  var Path = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    moveTo: moveTo,
+    lineTo: lineTo,
+    verticalLineTo: verticalLineTo,
+    horizontalLineTo: horizontalLineTo,
+    smoothTo: smoothTo,
+    curveTo: curveTo,
+    close: close
+  });
+
   var attachStyleMethods = function attachStyleMethods(element) {
     var el = element;
 
@@ -956,14 +1035,26 @@
       };
     });
   };
+  var attachPathMethods = function attachPathMethods(element) {
+    var el = element;
+    Object.keys(Path).forEach(function (key) {
+      el[key] = function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        return Path[key].apply(Path, [element].concat(args));
+      };
+    });
+  };
   var attachDOMMethods = function attachDOMMethods(element) {
     var el = element;
     Object.keys(DOM).filter(function (key) {
       return el[key] === undefined;
     }).forEach(function (key) {
       el[key] = function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
         }
 
         return DOM[key].apply(DOM, [element].concat(args));
@@ -974,8 +1065,8 @@
     var el = element;
     Object.keys(Transform).forEach(function (key) {
       el[key] = function () {
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
         }
 
         return Transform[key].apply(Transform, [element].concat(args));
@@ -988,8 +1079,8 @@
       return el[key] === undefined;
     }).forEach(function (key) {
       el[key] = function () {
-        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
         return ViewBox[key].apply(ViewBox, [element].concat(args));
@@ -1009,8 +1100,8 @@
       return el[toCamel(key)] === undefined;
     }).forEach(function (key) {
       el[toCamel(key)] = function () {
-        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          args[_key4] = arguments[_key4];
+        for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
         }
 
         el.setAttribute.apply(el, [key].concat(args));
@@ -1090,6 +1181,10 @@
     attachDOMMethods(element);
     attachTransformMethods(element);
     attachClipMaskAttributes(element);
+
+    if (element.tagName === "path") {
+      attachPathMethods(element);
+    }
   };
 
   var prepareText = function prepareText(element) {
@@ -1101,25 +1196,25 @@
   var prepareSVG = function prepareSVG(element, primitives) {
     attachDOMMethods(element);
     attachTransformMethods(element);
-    attachAppendableMethods(element, primitives);
     attachViewBoxMethods(element);
     attachClipMaskMakers(element, primitives);
+    attachAppendableMethods(element, primitives);
   };
 
   var prepareGroup = function prepareGroup(element, primitives) {
     attachFunctionalStyleSetters(element);
     attachDOMMethods(element);
     attachTransformMethods(element);
-    attachAppendableMethods(element, primitives);
     attachClipMaskAttributes(element);
+    attachAppendableMethods(element, primitives);
   };
 
   var prepareMaskClipPath = function prepareMaskClipPath(element, primitives) {
     attachFunctionalStyleSetters(element);
     attachDOMMethods(element);
     attachTransformMethods(element);
-    attachAppendableMethods(element, primitives);
     attachClipMaskAttributes(element);
+    attachAppendableMethods(element, primitives);
   };
 
   var prepareStyle = function prepareStyle(element) {
@@ -1284,6 +1379,16 @@
 
     return shape;
   };
+  var path = function path(d) {
+    var shape = win.document.createElementNS(NS, "path");
+
+    if (d != null) {
+      shape.setAttributeNS(null, "d", d);
+    }
+
+    prepare("primitive", shape);
+    return shape;
+  };
   var bezier = function bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
     var shape = win.document.createElementNS(NS, "path");
     setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY);
@@ -1403,6 +1508,7 @@
     rect: rect,
     polygon: polygon,
     polyline: polyline,
+    path: path,
     bezier: bezier,
     text: text,
     arc: arc,
@@ -1444,13 +1550,19 @@
       c.setAttribute("cy", y);
     };
 
-    if ("position" in options) {
+    if (options.position != null) {
       var pos = options.position;
 
-      if (pos[0] != null) {
-        setPosition.apply(void 0, _toConsumableArray(pos));
-      } else if (pos.x != null) {
-        setPosition(pos.x, pos.y);
+      if (typeof options.position === "function") {
+        pos = options.position();
+      }
+
+      if (_typeof(pos) === "object") {
+        if (typeof pos[0] === "number") {
+          setPosition.apply(void 0, _toConsumableArray(pos));
+        } else if (typeof pos.x === "number") {
+          setPosition(pos.x, pos.y);
+        }
       }
     }
 
@@ -1649,11 +1761,22 @@
     return d;
   };
 
+  var cdata = function cdata(textContent) {
+    var c = new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n".concat(textContent, "\n"));
+    return c;
+  };
+
   var style = function style(textContent) {
     var s = win.document.createElementNS(NS, "style");
     s.setAttribute("type", "text/css");
     prepare("style", s);
-    s.textContent = textContent;
+
+    s.setTextContent = function (newText) {
+      s.textContent = "";
+      s.appendChild(cdata(newText));
+    };
+
+    s.appendChild(cdata(textContent));
     return s;
   };
 
@@ -1853,28 +1976,48 @@
     }
   };
 
-  var stylesheet = function stylesheet(element, textContent) {
-    var styleSection = Array.from(element.childNodes).filter(function (child) {
+  var findStyleSheet = function findStyleSheet(element) {
+    var children = Array.from(element.childNodes);
+    console.log("findStyleSheet");
+    console.log("topLevel");
+    var topLevel = children.filter(function (child) {
       return child.getAttribute("tagName") === "style";
     }).shift();
 
-    if (styleSection == null) {
-      var defs = Array.from(element.childNodes).filter(function (child) {
-        return child.getAttribute("tagName") === "defs";
-      }).shift();
-
-      if (defs != null) {
-        styleSection = Array.from(defs.childNodes).filter(function (child) {
-          return child.getAttribute("tagName") === "style";
-        }).shift();
-      }
+    if (topLevel) {
+      return topLevel;
     }
 
-    if (styleSection != null) {
-      styleSection.textContent = textContent;
-    } else {
+    console.log("defs");
+    var defs = children.filter(function (child) {
+      return child.getAttribute("tagName") === "defs";
+    }).shift();
+
+    if (defs == null) {
+      return defs;
+    }
+
+    console.log("insideDefs");
+    var insideDefs = Array.from(defs.childNodes).filter(function (child) {
+      return child.getAttribute("tagName") === "style";
+    }).shift();
+
+    if (insideDefs != null) {
+      return insideDefs;
+    }
+
+    console.log("undefined");
+    return undefined;
+  };
+
+  var stylesheet = function stylesheet(element, textContent) {
+    var styleSection = findStyleSheet(element);
+
+    if (styleSection == null) {
       styleSection = style(textContent);
       element.insertBefore(styleSection, element.firstChild);
+    } else {
+      styleSection.setTextContent(textContent);
     }
   };
 

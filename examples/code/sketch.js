@@ -1,62 +1,39 @@
-const CodeSVGxMenu = function (container) {
-  const app = CodeSVG(container);
-  const queryCode = QueryWatcher("code");
-  // attach as early as possible
+var CodeSVGxMenu = function CodeSVGxMenu(container) {
+  var app = CodeSVG(container);
+  var queryCode = QueryWatcher("code"); // attach as early as possible
+
   window.svg = app.svg;
-
-  const downloadButton = document.createElement("div");
-  downloadButton.setAttribute("class", "menu-button");
-  const downloadButtonP = document.createElement("p");
-  downloadButtonP.innerHTML = "⤓"; // "▼";
-  downloadButton.setAttribute("title", "download image");
-  downloadButton.appendChild(downloadButtonP);
-  container.appendChild(downloadButton);
-  downloadButton.onclick = function () {
-    // inject the code into a new section in the header
-    let defs = app.svg.getElementsByTagName("defs");
-    const code = document.createElementNS(SVG.NS, "code");
-    const cdata = (new window.DOMParser())
-      .parseFromString("<root></root>", "text/xml")
-      .createCDATASection(`\n${app.getCode()}\n`);
-    code.appendChild(cdata);
-    if (defs.length === 0) {
-      defs = [document.createElementNS(SVG.NS, "defs")];
-      app.svg.prepend(defs[0]);
-    }
-    defs[0].prepend(code);
-    app.svg.save();
-  };
-
-  const questionButton = document.createElement("div");
+  var questionButton = document.createElement("div");
   questionButton.setAttribute("class", "question-button");
-  const questionButtonP = document.createElement("p");
+  questionButton.setAttribute("title", "~ Reserved Keywords ~\narc\narcArrow\narcEllipse\nbackground\nbezier\ncircle\nclipPath\ncontrols\ndefs\nellipse\ngetWidth\ngetHeight\ngroup\nline\nmask\nparabola\npath\npolygon\npolyline\nrect\nregularPolygon\nsave\nsetWidth\nsetHeight\nsize\nstraightArrow\nstylesheet\nsvg\ntext\nwedge\nwedgeEllipse");
+  var questionButtonP = document.createElement("p");
   questionButtonP.innerHTML = "?";
   questionButton.appendChild(questionButtonP);
   container.appendChild(questionButton);
-  questionButton.onclick = function () {
-    const win = window.open("https://robbykraft.github.io/SVG/docs.html", "_blank");
-    win.focus();
-  };
-  questionButton.setAttribute("title", "~ reserved keywords ~\narc\nbackground\nbezier\ncircle\nclipPath\nellipse\ngroup\nline\nmask\npolygon\npolyline\nrect\nregularPolygon\nsize\nstyle\nsvg\ntext\nwedge");
 
-  const shareButton = document.createElement("div");
+  var shareButton = document.createElement("div");
   shareButton.setAttribute("class", "share-button");
-  const shareButtonP = document.createElement("p");
-  shareButton.setAttribute("title", "create shareable link");
-  // shareButtonP.innerHTML = "☛";
-  const shareImage = document.createElement("i");
-  shareImage.setAttribute("class", "fa fa-share");
-  // const shareImage = document.querySelector("#share-icon");
-  shareImage.setAttribute("width", "1rem");
-  shareImage.setAttribute("height", "1rem");
+  shareButton.setAttribute("title", "Share");
+  var shareImage = document.createElement("img");
+  shareImage.src = "share.svg";
+  shareImage.setAttribute("width", "30px");
+  shareImage.setAttribute("height", "30px");
   shareButton.appendChild(shareImage);
-  // "<i class="fas fa-share-square"></i>"
-  shareButton.appendChild(shareButtonP);
   container.appendChild(shareButton);
 
-  const loadAndRunExamples = function (callback) {
-    const examples = [];
-    const exampleFilenames = [
+  var downloadButton = document.createElement("div");
+  downloadButton.setAttribute("class", "menu-button");
+  downloadButton.setAttribute("title", "Download");
+  var downloadImg = document.createElement("img");
+  downloadImg.src = "download.svg";
+  downloadImg.setAttribute("width", "30px");
+  downloadImg.setAttribute("height", "30px");
+  downloadButton.appendChild(downloadImg);
+  container.appendChild(downloadButton);
+
+  var loadAndRunExamples = function loadAndRunExamples(callback) {
+    var examples = [];
+    var exampleFilenames = [
       "albers1.js",
       "albers2.js",
       "astroid.js",
@@ -75,37 +52,60 @@ const CodeSVGxMenu = function (container) {
       "text.js",
       "walker.js"
     ];
-    exampleFilenames.forEach((file) => {
-      fetch(`samples/${file}`)
-        .then(data => data.text())
-        .then((result) => {
-          examples.push(result);
-          if (examples.length === exampleFilenames.length) {
-            callback(examples);
-          }
-        });
+    exampleFilenames.forEach(function (file) {
+      fetch("samples/" + file).then(function (data) {
+        return data.text();
+      }).then(function (result) {
+        examples.push(result);
+        if (examples.length === exampleFilenames.length) {
+          callback(examples);
+        }
+      });
     });
   };
 
-  // boot, fill code console with query string if it exists. or welcome sketch.
-  const bootQueryValue = queryCode.value;
+  var bootQueryValue = queryCode.value;
+
   if (bootQueryValue === "") {
-    loadAndRunExamples(examples => app
-      .injectCode(examples[Math.floor(Math.random() * examples.length)]));
+    loadAndRunExamples(function (examples) {
+      return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
+    });
   } else {
     app.injectCode(bootQueryValue);
     queryCode.value = undefined;
   }
+
   shareButton.onclick = function () {
-    const url = queryCode.makeURLWithQueryValue(app.editor.getValue());
-    navigator.clipboard.writeText(url).then(() => {
+    var url = queryCode.makeURLWithQueryValue(app.editor.getValue());
+    navigator.clipboard.writeText(url).then(function () {
       alert("✓ Shareable link copied to clipboard.");
-    }, err => alert(err));
+    }, function (err) {
+      return alert(err);
+    });
+  };
+
+  downloadButton.onclick = function () {
+    // inject the code into a new section in the header
+    var defs = app.svg.getElementsByTagName("defs");
+    var code = document.createElementNS(SVG.NS, "code");
+    var cdata = new window.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n" + app.getCode() + "\n");
+    code.appendChild(cdata);
+    if (defs.length === 0) {
+      defs = [document.createElementNS(SVG.NS, "defs")];
+      app.svg.prepend(defs[0]);
+    }
+    defs[0].prepend(code);
+    app.svg.save();
+  };
+
+  questionButton.onclick = function () {
+    var win = window.open("https://robbykraft.github.io/SVG/docs.html", "_blank");
+    win.focus();
   };
 
   return app;
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
   window.app = CodeSVGxMenu(document.querySelectorAll(".app")[0]);
 });

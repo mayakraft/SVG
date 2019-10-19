@@ -51,7 +51,7 @@
     return Array.from(Array(count))
       .map(function () { return Math.floor(Math.random() * abc.length); })
       .map(function (i) { return abc[i]; })
-      .reduce(function (a, b) { return a+b; }, "");
+      .reduce(function (a, b) { return a + b; }, "");
   };
 
   window.noise = noise;
