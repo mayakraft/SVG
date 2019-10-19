@@ -13,19 +13,15 @@ svg {
   display: flex;
   flex-direction: row;
 }
-.app div {
-  flex: 1;
-}
+.app div { flex: 1; }
 .image-container {
-  display: flex;
   width: 100%;
   height: 100%;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
-.code-container {
-  height: 100%;
-}
+.code-container { height: 100%; }
 .console {
   position: absolute;
   z-index: 7;
@@ -34,84 +30,63 @@ svg {
   width: 50vw;
 }
 .console p {
-  width: calc(100% - 4rem);
-  margin: 1rem;
+  width: calc(100% - 8rem);
+  margin: 1rem 4rem;
   padding: 1rem;
   background-color: rgb(64,98,85);
   border-radius: 1em;
   color: #ddd;
   font-family: monospace;
 }
-.menu-button {
+.button-container {
+  position: absolute;
+  right: 50vw;
+  top: 0;
+  width: 4rem;
+  height: 100vh;
+}
+.menu-button, .share-button, .question-button, .random-button {
   position: absolute;
   z-index: 8;
-  left: 50vw;
-  bottom: 0rem;
-  width: 3rem;
-  height: 1.5rem;
-  border-radius: 1.5rem 1.5rem 0 0;
-  margin-left: -1.5rem;
-  background-color: rgb(245, 89, 75);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  font-size: 100%;
-}
-.menu-button p {
-  margin: 0;
-  margin-top: 0.25rem;
-  padding: 0;
-}
-.share-button {
-  position: absolute;
-  z-index: 9;
-  left: 50vw;
-  top: 0rem;
-  width: 3rem;
-  height: 1.5rem;
-  border-radius: 0rem 0 1.5rem 1.5rem;
-  margin-left: -1.5rem;
-  background-color: rgb(64,98,85); /*#158;*/
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  font-size: 100%;
-}
-.share-button p {
-  margin: 0;
-  margin-bottom: 0.5rem;
-  padding: 0;
-}
-.question-button {
-  position: absolute;
-  z-index: 10;
-  left: 2.5rem;
-  bottom: 1rem;
   width: 2rem;
   height: 2rem;
   border-radius: 1rem;
-  margin-left: -2rem;
-  background-color: #ec3;
-  color: #333;
-  opacity: 0.8;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
+  font-size: 100%;
 }
-.question-button p {
+.menu-button {
+  background-color: #e53;
+  left: 0.5rem;
+  bottom: 1rem;
+}
+.share-button {
+  background-color: #e53;
+  left: 0.5rem;
+  bottom: 3.5rem;
+}
+.random-button {
+  background-color: #ec3;
+  left: 0.5rem;
+  bottom: 6rem;
+}
+.question-button {
+  color: #222;
+  background-color: #ec3;
+  top: 0.5rem;
+  left: calc(50vw - 2.5rem);
+  opacity: 0.8;
+}
+.question-button p, .share-button p, .menu-button p {
   font-weight: 800;
   font-family: monospace, sans-serif;
   font-size: 150%;
+  margin: 0;
+  padding: 0;
 }
-
 
 @media not all and (hover) {
   html {

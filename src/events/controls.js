@@ -28,12 +28,18 @@ const controlPoint = function (parent, opts = {}) {
     c.setAttribute("cy", y);
   };
   // set default position
-  if ("position" in options) {
-    const pos = options.position;
-    if (pos[0] != null) {
-      setPosition(...pos);
-    } else if (pos.x != null) {
-      setPosition(pos.x, pos.y);
+  if (options.position != null) {
+    let pos = options.position;
+    // this should really be inside "controls", so the (i) => {} can pass in i
+    if (typeof options.position === "function") {
+      pos = options.position();
+    }
+    if (typeof pos === "object") {
+      if (typeof pos[0] === "number") {
+        setPosition(...pos);
+      } else if (typeof pos.x === "number") {
+        setPosition(pos.x, pos.y);
+      }
     }
   }
   let updatePosition = function (input) { return input; };
@@ -150,6 +156,23 @@ const controls = function (svg, number, opts = {}) {
       points.push(controlPoint(svg, opt));
     },
   });
+
+  // Object.defineProperty(points, "position", {
+  //   set: (func) => {
+  //     points.forEach((p, i) => {
+  //       p.position = func(i);
+  //     });
+  //   }
+  // });
+
+  points.positions = function (func) {
+    if (typeof func === "function") {
+      points.forEach((pt, i) => {
+        pt.position = func(i);
+      });
+    }
+    return points;
+  };
 
   return points;
 };

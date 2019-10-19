@@ -7,6 +7,8 @@ import window from "../environment/window";
 
 import {
   setPoints,
+  setCenter,
+  setLinePoints,
   setArc,
   setEllipticalArc,
   setBezier
@@ -17,41 +19,40 @@ import prepare from "../attributes/prepare";
 /**
  *  primitives
  */
-export const line = function (x1, y1, x2, y2) {
+export const line = function (...endpoints) {
   const shape = window.document.createElementNS(svgNS, "line");
-  if (x1) { shape.setAttributeNS(null, "x1", x1); }
-  if (y1) { shape.setAttributeNS(null, "y1", y1); }
-  if (x2) { shape.setAttributeNS(null, "x2", x2); }
-  if (y2) { shape.setAttributeNS(null, "y2", y2); }
+  setLinePoints(shape, ...endpoints);
   prepare("primitive", shape);
+  shape.setPoints = (...args) => setLinePoints(shape, ...args);
   return shape;
 };
 
 export const circle = function (x, y, radius) {
   const shape = window.document.createElementNS(svgNS, "circle");
-  if (x) { shape.setAttributeNS(null, "cx", x); }
-  if (y) { shape.setAttributeNS(null, "cy", y); }
-  if (radius) { shape.setAttributeNS(null, "r", radius); }
+  setCenter(shape, x, y);
+  if (radius != null) { shape.setAttributeNS(null, "r", radius); }
   prepare("primitive", shape);
+  shape.setCenter = (...args) => setCenter(shape, ...args);
+  shape.setRadius = (r) => { shape.setAttributeNS(null, "r", r); return shape; };
   return shape;
 };
 
 export const ellipse = function (x, y, rx, ry) {
   const shape = window.document.createElementNS(svgNS, "ellipse");
-  if (x) { shape.setAttributeNS(null, "cx", x); }
-  if (y) { shape.setAttributeNS(null, "cy", y); }
-  if (rx) { shape.setAttributeNS(null, "rx", rx); }
-  if (ry) { shape.setAttributeNS(null, "ry", ry); }
+  if (x != null) { shape.setAttributeNS(null, "cx", x); }
+  if (y != null) { shape.setAttributeNS(null, "cy", y); }
+  if (rx != null) { shape.setAttributeNS(null, "rx", rx); }
+  if (ry != null) { shape.setAttributeNS(null, "ry", ry); }
   prepare("primitive", shape);
   return shape;
 };
 
 export const rect = function (x, y, width, height) {
   const shape = window.document.createElementNS(svgNS, "rect");
-  if (x) { shape.setAttributeNS(null, "x", x); }
-  if (y) { shape.setAttributeNS(null, "y", y); }
-  if (width) { shape.setAttributeNS(null, "width", width); }
-  if (height) { shape.setAttributeNS(null, "height", height); }
+  if (x != null) { shape.setAttributeNS(null, "x", x); }
+  if (y != null) { shape.setAttributeNS(null, "y", y); }
+  if (width != null) { shape.setAttributeNS(null, "width", width); }
+  if (height != null) { shape.setAttributeNS(null, "height", height); }
   prepare("primitive", shape);
   return shape;
 };
@@ -69,6 +70,13 @@ export const polyline = function (...pointsArray) {
   setPoints(shape, ...pointsArray);
   prepare("primitive", shape);
   shape.setPoints = (...args) => setPoints(shape, ...args);
+  return shape;
+};
+
+export const path = function (d) {
+  const shape = window.document.createElementNS(svgNS, "path");
+  if (d != null) { shape.setAttributeNS(null, "d", d); }
+  prepare("primitive", shape);
   return shape;
 };
 

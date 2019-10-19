@@ -8,7 +8,7 @@ import Globalize from "../environment/globalize";
 import Events from "../events/index";
 import Controls from "../events/controls";
 import { rect } from "./primitives";
-import { svg } from "./root";
+import { svg, style } from "./root";
 import { removeChildren } from "../attributes/DOM";
 import {
   getViewBox,
@@ -134,6 +134,41 @@ const background = function (element, color, setParent = true) {
   }
 };
 
+const findStyleSheet = function (element) {
+  const children = Array.from(element.childNodes);
+  console.log("findStyleSheet");
+
+  console.log("topLevel");
+  const topLevel = children
+    .filter(child => child.getAttribute("tagName") === "style")
+    .shift();
+  if (topLevel) { return topLevel; }
+
+  console.log("defs");
+  const defs = children
+    .filter(child => child.getAttribute("tagName") === "defs")
+    .shift();
+  if (defs == null) { return defs; }
+
+  console.log("insideDefs");
+  const insideDefs = Array.from(defs.childNodes)
+    .filter(child => child.getAttribute("tagName") === "style")
+    .shift();
+  if (insideDefs != null) { return insideDefs; }
+  console.log("undefined");
+  return undefined;
+};
+
+const stylesheet = function (element, textContent) {
+  let styleSection = findStyleSheet(element);
+  if (styleSection == null) {
+    styleSection = style(textContent);
+    element.insertBefore(styleSection, element.firstChild);
+  } else {
+    styleSection.setTextContent(textContent);
+  }
+};
+
 const replaceWithSVG = function (oldSVG, newSVG) {
   // Part 1: reset old SVG
   // #1 clear attributes
@@ -183,7 +218,13 @@ const SVG = function (...params) {
       if (newSVG != null) { replaceWithSVG(element, newSVG); }
       if (callback != null) { callback(element, error); }
     });
-  };
+  };//
+  //
+  /////////////////////////////////////
+  element.stylesheet = textContent => stylesheet(element, textContent); // this needs to change////////s
+  //////////// something ehre
+  ///////////asifoaie fas
+  //////////// / //////// / / ///////////// // /
 
   // initialize requires a loaded DOM to append
   const initialize = function () {
