@@ -19,6 +19,7 @@ module.exports = {
         "no-confusing-arrow": ["error", {"allowParens": true}],
         "camelcase": ["error", {"allow": [".*"]}],
         "no-restricted-globals": 0,
-        "comma-dangle": 0
+        "comma-dangle": 0,
+        "no-underscore-dangle": 0,
     }
 };

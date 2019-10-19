@@ -41,6 +41,7 @@ export const setPoints = function (shape, ...pointsArray) {
     }
   }
   shape.setAttributeNS(null, "points", pointsString);
+  return shape;
 };
 
 export const setLinePoints = function (shape, ...pointsArray) {
@@ -57,15 +58,29 @@ export const setLinePoints = function (shape, ...pointsArray) {
       points = flat.reduce((a, b) => a.concat(b), []);
     }
   }
-  if (points[0]) { shape.setAttributeNS(null, "x1", points[0]); }
-  if (points[1]) { shape.setAttributeNS(null, "y1", points[1]); }
-  if (points[2]) { shape.setAttributeNS(null, "x2", points[2]); }
-  if (points[3]) { shape.setAttributeNS(null, "y2", points[3]); }
+  if (points[0] != null) { shape.setAttributeNS(null, "x1", points[0]); }
+  if (points[1] != null) { shape.setAttributeNS(null, "y1", points[1]); }
+  if (points[2] != null) { shape.setAttributeNS(null, "x2", points[2]); }
+  if (points[3] != null) { shape.setAttributeNS(null, "y2", points[3]); }
+  return shape;
+};
+
+export const setCenter = function (shape, ...args) {
+  const flat = flatten_input(...args);
+  if (typeof flat[0] === "number") {
+    if (flat[0] != null) { shape.setAttributeNS(null, "cx", flat[0]); }
+    if (flat[1] != null) { shape.setAttributeNS(null, "cy", flat[1]); }
+  }
+  if (typeof flat.x === "number") {
+    if (flat.x != null) { shape.setAttributeNS(null, "cx", flat.x); }
+    if (flat.y != null) { shape.setAttributeNS(null, "cy", flat.y); }
+  }
+  return shape;
 };
 
 export const setArc = function (shape, x, y, radius,
   startAngle, endAngle, includeCenter = false) {
-  if (endAngle == null) { return; }
+  if (endAngle == null) { return undefined; }
   const start = [
     x + Math.cos(startAngle) * radius,
     y + Math.sin(startAngle) * radius];
@@ -85,11 +100,12 @@ export const setArc = function (shape, x, y, radius,
   d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
   if (includeCenter) { d += " Z"; }
   shape.setAttributeNS(null, "d", d);
+  return shape;
 };
 
 export const setEllipticalArc = function (shape, x, y, rX, rY,
   startAngle, endAngle, includeCenter = false) {
-  if (endAngle == null) { return; }
+  if (endAngle == null) { return undefined; }
   const start = [
     x + Math.cos(startAngle) * rX,
     y + Math.sin(startAngle) * rY];
@@ -109,12 +125,14 @@ export const setEllipticalArc = function (shape, x, y, rX, rY,
   d += ["a ", rX, rY, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
   if (includeCenter) { d += " Z"; }
   shape.setAttributeNS(null, "d", d);
+  return shape;
 };
 
 export const setBezier = function (shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
-  if (toY == null) { return; }
+  if (toY == null) { return undefined; }
   const pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]]
     .map(p => p.join(","));
   const d = `M ${pts[0]} C ${pts[1]} ${pts[2]} ${pts[3]}`;
   shape.setAttributeNS(null, "d", d);
+  return shape;
 };

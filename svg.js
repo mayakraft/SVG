@@ -763,12 +763,88 @@
     }
 
     shape.setAttributeNS(null, "points", pointsString);
+    return shape;
+  };
+  var setLinePoints = function setLinePoints(shape) {
+    for (var _len3 = arguments.length, pointsArray = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      pointsArray[_key3 - 1] = arguments[_key3];
+    }
+
+    var flat = flatten_input.apply(void 0, pointsArray);
+    var points = [];
+
+    if (typeof flat[0] === "number") {
+      points = flat;
+    }
+
+    if (_typeof(flat[0]) === "object") {
+      if (typeof flat[0].x === "number") {
+        points = flat.map(function (p) {
+          return [p[0], p[1]];
+        }).reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+
+      if (typeof flat[0][0] === "number") {
+        points = flat.reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+    }
+
+    if (points[0] != null) {
+      shape.setAttributeNS(null, "x1", points[0]);
+    }
+
+    if (points[1] != null) {
+      shape.setAttributeNS(null, "y1", points[1]);
+    }
+
+    if (points[2] != null) {
+      shape.setAttributeNS(null, "x2", points[2]);
+    }
+
+    if (points[3] != null) {
+      shape.setAttributeNS(null, "y2", points[3]);
+    }
+
+    return shape;
+  };
+  var setCenter = function setCenter(shape) {
+    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+      args[_key4 - 1] = arguments[_key4];
+    }
+
+    var flat = flatten_input.apply(void 0, args);
+
+    if (typeof flat[0] === "number") {
+      if (flat[0] != null) {
+        shape.setAttributeNS(null, "cx", flat[0]);
+      }
+
+      if (flat[1] != null) {
+        shape.setAttributeNS(null, "cy", flat[1]);
+      }
+    }
+
+    if (typeof flat.x === "number") {
+      if (flat.x != null) {
+        shape.setAttributeNS(null, "cx", flat.x);
+      }
+
+      if (flat.y != null) {
+        shape.setAttributeNS(null, "cy", flat.y);
+      }
+    }
+
+    return shape;
   };
   var setArc = function setArc(shape, x, y, radius, startAngle, endAngle) {
     var includeCenter = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
 
     if (endAngle == null) {
-      return;
+      return undefined;
     }
 
     var start = [x + Math.cos(startAngle) * radius, y + Math.sin(startAngle) * radius];
@@ -786,12 +862,13 @@
     }
 
     shape.setAttributeNS(null, "d", d);
+    return shape;
   };
   var setEllipticalArc = function setEllipticalArc(shape, x, y, rX, rY, startAngle, endAngle) {
     var includeCenter = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
 
     if (endAngle == null) {
-      return;
+      return undefined;
     }
 
     var start = [x + Math.cos(startAngle) * rX, y + Math.sin(startAngle) * rY];
@@ -809,10 +886,11 @@
     }
 
     shape.setAttributeNS(null, "d", d);
+    return shape;
   };
   var setBezier = function setBezier(shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
     if (toY == null) {
-      return;
+      return undefined;
     }
 
     var pts = [[fromX, fromY], [c1X, c1Y], [c2X, c2Y], [toX, toY]].map(function (p) {
@@ -820,11 +898,14 @@
     });
     var d = "M ".concat(pts[0], " C ").concat(pts[1], " ").concat(pts[2], " ").concat(pts[3]);
     shape.setAttributeNS(null, "d", d);
+    return shape;
   };
 
   var geometryMods = /*#__PURE__*/Object.freeze({
     __proto__: null,
     setPoints: setPoints,
+    setLinePoints: setLinePoints,
+    setCenter: setCenter,
     setArc: setArc,
     setEllipticalArc: setEllipticalArc,
     setBezier: setBezier
@@ -951,6 +1032,32 @@
     clearTransforms: clearTransforms
   });
 
+  var is_iterable$1 = function is_iterable(obj) {
+    return obj != null && typeof obj[Symbol.iterator] === "function";
+  };
+
+  var flatten_input$1 = function flatten_input() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    switch (args.length) {
+      case undefined:
+      case 0:
+        return args;
+
+      case 1:
+        return is_iterable$1(args[0]) && typeof args[0] !== "string" ? flatten_input.apply(void 0, _toConsumableArray(args[0])) : [args[0]];
+
+      default:
+        return Array.from(args).map(function (a) {
+          return is_iterable$1(a) ? _toConsumableArray(flatten_input(a)) : a;
+        }).reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+    }
+  };
+
   var d = function d(element) {
     var attr = element.getAttribute("d");
 
@@ -962,58 +1069,115 @@
   };
 
   var append = function append(element, command) {
-    for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-      args[_key - 2] = arguments[_key];
+    for (var _len2 = arguments.length, args = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+      args[_key2 - 2] = arguments[_key2];
     }
 
-    var params = args.join(",");
+    var params = flatten_input$1(args).join(",");
     element.setAttribute("d", "".concat(d(element)).concat(command).concat(params));
+    return element;
   };
 
-  var moveTo = function moveTo(element, x, y) {
-    var relative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-    append(element, relative ? "m" : "M", x, y);
-    return element;
+  var command = function command(element, cmd) {
+    for (var _len3 = arguments.length, args = new Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+      args[_key3 - 2] = arguments[_key3];
+    }
+
+    return append.apply(void 0, [element, cmd].concat(args));
   };
-  var lineTo = function lineTo(element, x, y) {
-    var relative = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-    append(element, relative ? "l" : "L", x, y);
-    return element;
+  var moveTo = function moveTo(element) {
+    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+      args[_key4 - 1] = arguments[_key4];
+    }
+
+    return append.apply(void 0, [element, "M"].concat(args));
+  };
+  var _moveTo = function _moveTo(element) {
+    for (var _len5 = arguments.length, args = new Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+      args[_key5 - 1] = arguments[_key5];
+    }
+
+    return append.apply(void 0, [element, "m"].concat(args));
+  };
+  var lineTo = function lineTo(element) {
+    for (var _len6 = arguments.length, args = new Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
+      args[_key6 - 1] = arguments[_key6];
+    }
+
+    return append.apply(void 0, [element, "L"].concat(args));
+  };
+  var _lineTo = function _lineTo(element) {
+    for (var _len7 = arguments.length, args = new Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
+      args[_key7 - 1] = arguments[_key7];
+    }
+
+    return append.apply(void 0, [element, "l"].concat(args));
   };
   var verticalLineTo = function verticalLineTo(element, y) {
-    var relative = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    append(element, relative ? "v" : "V", y);
-    return element;
+    return append(element, "V", y);
+  };
+  var _verticalLineTo = function _verticalLineTo(element, y) {
+    return append(element, "v", y);
   };
   var horizontalLineTo = function horizontalLineTo(element, x) {
-    var relative = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    append(element, relative ? "h" : "H", x);
-    return element;
+    return append(element, "H", x);
   };
-  var smoothTo = function smoothTo(element, c1x, c1y, x, y) {
-    var relative = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
-    append(element, relative ? "s" : "S", c1x, c1y, x, y);
-    return element;
+  var _horizontalLineTo = function _horizontalLineTo(element, x) {
+    return append(element, "h", x);
   };
-  var curveTo = function curveTo(element, c1x, c1y, c2x, c2y, x, y) {
-    var relative = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : false;
-    append(element, relative ? "c" : "C", c1x, c1y, c2x, c2y, x, y);
-    return element;
+  var smoothTo = function smoothTo(element) {
+    for (var _len8 = arguments.length, args = new Array(_len8 > 1 ? _len8 - 1 : 0), _key8 = 1; _key8 < _len8; _key8++) {
+      args[_key8 - 1] = arguments[_key8];
+    }
+
+    return append.apply(void 0, [element, "S"].concat(args));
+  };
+  var _smoothTo = function _smoothTo(element) {
+    for (var _len9 = arguments.length, args = new Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
+      args[_key9 - 1] = arguments[_key9];
+    }
+
+    return append.apply(void 0, [element, "s"].concat(args));
+  };
+  var curveTo = function curveTo(element) {
+    for (var _len10 = arguments.length, args = new Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
+      args[_key10 - 1] = arguments[_key10];
+    }
+
+    return append.apply(void 0, [element, "C"].concat(args));
+  };
+  var _curveTo = function _curveTo(element) {
+    for (var _len11 = arguments.length, args = new Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {
+      args[_key11 - 1] = arguments[_key11];
+    }
+
+    return append.apply(void 0, [element, "c"].concat(args));
   };
   var close = function close(element) {
-    append(element, "Z");
+    return append(element, "Z");
+  };
+  var clear = function clear(element) {
+    element.setAttribute("d", "");
     return element;
   };
 
   var Path = /*#__PURE__*/Object.freeze({
     __proto__: null,
+    command: command,
     moveTo: moveTo,
+    _moveTo: _moveTo,
     lineTo: lineTo,
+    _lineTo: _lineTo,
     verticalLineTo: verticalLineTo,
+    _verticalLineTo: _verticalLineTo,
     horizontalLineTo: horizontalLineTo,
+    _horizontalLineTo: _horizontalLineTo,
     smoothTo: smoothTo,
+    _smoothTo: _smoothTo,
     curveTo: curveTo,
-    close: close
+    _curveTo: _curveTo,
+    close: close,
+    clear: clear
   });
 
   var attachStyleMethods = function attachStyleMethods(element) {
@@ -1255,62 +1419,67 @@
     }
   };
 
-  var line = function line(x1, y1, x2, y2) {
+  var line = function line() {
     var shape = win.document.createElementNS(NS, "line");
 
-    if (x1) {
-      shape.setAttributeNS(null, "x1", x1);
+    for (var _len = arguments.length, endpoints = new Array(_len), _key = 0; _key < _len; _key++) {
+      endpoints[_key] = arguments[_key];
     }
 
-    if (y1) {
-      shape.setAttributeNS(null, "y1", y1);
-    }
-
-    if (x2) {
-      shape.setAttributeNS(null, "x2", x2);
-    }
-
-    if (y2) {
-      shape.setAttributeNS(null, "y2", y2);
-    }
-
+    setLinePoints.apply(void 0, [shape].concat(endpoints));
     prepare("primitive", shape);
+
+    shape.setPoints = function () {
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return setLinePoints.apply(void 0, [shape].concat(args));
+    };
+
     return shape;
   };
   var circle = function circle(x, y, radius) {
     var shape = win.document.createElementNS(NS, "circle");
+    setCenter(shape, x, y);
 
-    if (x) {
-      shape.setAttributeNS(null, "cx", x);
-    }
-
-    if (y) {
-      shape.setAttributeNS(null, "cy", y);
-    }
-
-    if (radius) {
+    if (radius != null) {
       shape.setAttributeNS(null, "r", radius);
     }
 
     prepare("primitive", shape);
+
+    shape.setCenter = function () {
+      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments[_key3];
+      }
+
+      return setCenter.apply(void 0, [shape].concat(args));
+    };
+
+    shape.setRadius = function (r) {
+      shape.setAttributeNS(null, "r", r);
+      return shape;
+    };
+
     return shape;
   };
   var ellipse = function ellipse(x, y, rx, ry) {
     var shape = win.document.createElementNS(NS, "ellipse");
 
-    if (x) {
+    if (x != null) {
       shape.setAttributeNS(null, "cx", x);
     }
 
-    if (y) {
+    if (y != null) {
       shape.setAttributeNS(null, "cy", y);
     }
 
-    if (rx) {
+    if (rx != null) {
       shape.setAttributeNS(null, "rx", rx);
     }
 
-    if (ry) {
+    if (ry != null) {
       shape.setAttributeNS(null, "ry", ry);
     }
 
@@ -1320,19 +1489,19 @@
   var rect = function rect(x, y, width, height) {
     var shape = win.document.createElementNS(NS, "rect");
 
-    if (x) {
+    if (x != null) {
       shape.setAttributeNS(null, "x", x);
     }
 
-    if (y) {
+    if (y != null) {
       shape.setAttributeNS(null, "y", y);
     }
 
-    if (width) {
+    if (width != null) {
       shape.setAttributeNS(null, "width", width);
     }
 
-    if (height) {
+    if (height != null) {
       shape.setAttributeNS(null, "height", height);
     }
 
@@ -1342,16 +1511,16 @@
   var polygon = function polygon() {
     var shape = win.document.createElementNS(NS, "polygon");
 
-    for (var _len = arguments.length, pointsArray = new Array(_len), _key = 0; _key < _len; _key++) {
-      pointsArray[_key] = arguments[_key];
+    for (var _len4 = arguments.length, pointsArray = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      pointsArray[_key4] = arguments[_key4];
     }
 
     setPoints.apply(void 0, [shape].concat(pointsArray));
     prepare("primitive", shape);
 
     shape.setPoints = function () {
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
       }
 
       return setPoints.apply(void 0, [shape].concat(args));
@@ -1362,16 +1531,16 @@
   var polyline = function polyline() {
     var shape = win.document.createElementNS(NS, "polyline");
 
-    for (var _len3 = arguments.length, pointsArray = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      pointsArray[_key3] = arguments[_key3];
+    for (var _len6 = arguments.length, pointsArray = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      pointsArray[_key6] = arguments[_key6];
     }
 
     setPoints.apply(void 0, [shape].concat(pointsArray));
     prepare("primitive", shape);
 
     shape.setPoints = function () {
-      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-        args[_key4] = arguments[_key4];
+      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+        args[_key7] = arguments[_key7];
       }
 
       return setPoints.apply(void 0, [shape].concat(args));
@@ -1395,8 +1564,8 @@
     prepare("primitive", shape);
 
     shape.setBezier = function () {
-      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
+      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+        args[_key8] = arguments[_key8];
       }
 
       return setBezier.apply(void 0, [shape].concat(args));
@@ -1418,8 +1587,8 @@
     prepare("primitive", shape);
 
     shape.setArc = function () {
-      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-        args[_key6] = arguments[_key6];
+      for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+        args[_key9] = arguments[_key9];
       }
 
       return setArc.apply(void 0, [shape].concat(args));
@@ -1433,8 +1602,8 @@
     prepare("primitive", shape);
 
     shape.setArc = function () {
-      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-        args[_key7] = arguments[_key7];
+      for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+        args[_key10] = arguments[_key10];
       }
 
       return setArc.apply(void 0, [shape].concat(args));
@@ -1448,8 +1617,8 @@
     prepare("primitive", shape);
 
     shape.setArc = function () {
-      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-        args[_key8] = arguments[_key8];
+      for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+        args[_key11] = arguments[_key11];
       }
 
       return setEllipticalArc.apply(void 0, [shape].concat(args));
@@ -1463,8 +1632,8 @@
     prepare("primitive", shape);
 
     shape.setArc = function () {
-      for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-        args[_key9] = arguments[_key9];
+      for (var _len12 = arguments.length, args = new Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+        args[_key12] = arguments[_key12];
       }
 
       return setEllipticalArc.apply(void 0, [shape].concat(args));
@@ -1717,6 +1886,17 @@
         points.push(controlPoint(svg, opt));
       }
     });
+
+    points.positions = function (func) {
+      if (typeof func === "function") {
+        points.forEach(function (pt, i) {
+          pt.position = func(i);
+        });
+      }
+
+      return points;
+    };
+
     return points;
   };
 

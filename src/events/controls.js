@@ -30,6 +30,7 @@ const controlPoint = function (parent, opts = {}) {
   // set default position
   if (options.position != null) {
     let pos = options.position;
+    // this should really be inside "controls", so the (i) => {} can pass in i
     if (typeof options.position === "function") {
       pos = options.position();
     }
@@ -155,6 +156,23 @@ const controls = function (svg, number, opts = {}) {
       points.push(controlPoint(svg, opt));
     },
   });
+
+  // Object.defineProperty(points, "position", {
+  //   set: (func) => {
+  //     points.forEach((p, i) => {
+  //       p.position = func(i);
+  //     });
+  //   }
+  // });
+
+  points.positions = function (func) {
+    if (typeof func === "function") {
+      points.forEach((pt, i) => {
+        pt.position = func(i);
+      });
+    }
+    return points;
+  };
 
   return points;
 };

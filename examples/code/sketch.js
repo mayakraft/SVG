@@ -31,6 +31,16 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   downloadButton.appendChild(downloadImg);
   container.appendChild(downloadButton);
 
+  var randomSketchButton = document.createElement("div");
+  randomSketchButton.setAttribute("class", "random-button");
+  randomSketchButton.setAttribute("title", "Load an example");
+  var randomSketchImage = document.createElement("img");
+  randomSketchImage.src = "dice.svg";
+  randomSketchImage.setAttribute("width", "30px");
+  randomSketchImage.setAttribute("height", "30px");
+  randomSketchButton.appendChild(randomSketchImage);
+  container.appendChild(randomSketchButton);
+
   var loadAndRunExamples = function loadAndRunExamples(callback) {
     var examples = [];
     var exampleFilenames = [
@@ -48,6 +58,7 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
       "mask.js",
       "mystify.js",
       "parabola.js",
+      "riley1.js",
       "ten-print.js",
       "text.js",
       "walker.js"
@@ -67,9 +78,9 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   var bootQueryValue = queryCode.value;
 
   if (bootQueryValue === "") {
-    loadAndRunExamples(function (examples) {
-      return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
-    });
+    // loadAndRunExamples(function (examples) {
+    //   return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
+    // });
   } else {
     app.injectCode(bootQueryValue);
     queryCode.value = undefined;
@@ -101,6 +112,13 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   questionButton.onclick = function () {
     var win = window.open("https://robbykraft.github.io/SVG/docs.html", "_blank");
     win.focus();
+  };
+
+  randomSketchButton.onclick = function () {
+    loadAndRunExamples(function (examples) {
+      app.clear();
+      return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
+    });
   };
 
   return app;

@@ -90,6 +90,10 @@ var CodeSVG = function CodeSVG(container) {
       app.svg.fps = 60;
     }
   };
+  
+  app.clear = function () {
+    app.editor.setValue("");
+  };
 
   compileAndRun();
   return app;
