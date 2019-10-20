@@ -160,7 +160,7 @@ export const setArrowPoints = function (shape, ...args) {
     // get endpoints from cache
     endpoints = shape.endpoints;
   }
-  if (!endpoints.length) { return; }
+  if (!endpoints.length) { return shape; }
   // we have to cache the endpoints in case we need to rebuild
   shape.endpoints = endpoints;
 

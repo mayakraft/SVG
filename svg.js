@@ -708,6 +708,194 @@
     });
   };
 
+  var controlPoint = function controlPoint(parent) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var position = [0, 0];
+    var selected = false;
+    var svg;
+
+    var updateSVG = function updateSVG() {
+      if (svg != null) {
+        if (svg.parentNode == null) {
+          parent.appendChild(svg);
+        }
+
+        svg.setAttribute("cx", position[0]);
+        svg.setAttribute("cy", position[1]);
+      }
+    };
+
+    var proxy = new Proxy(position, {
+      set: function set(target, property, value, receiver) {
+        target[property] = value;
+        updateSVG();
+        return true;
+      }
+    });
+
+    var setPosition = function setPosition() {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      if (args.length === 0) {
+        return;
+      }
+
+      var root = _typeof(args[0]);
+
+      if (root === "number") {
+        position[0] = args[0];
+        position[1] = args[1];
+        updateSVG();
+      }
+
+      if (root === "object") {
+        if (typeof args[0][0] === "number") {
+          position[0] = args[0][0];
+          position[1] = args[0][1];
+          updateSVG();
+        } else if (typeof args[0].x === "number") {
+          position[0] = args[0].x;
+          position[1] = args[0].y;
+          updateSVG();
+        }
+      }
+    };
+
+    setPosition(options.position);
+
+    var updatePosition = function updatePosition(input) {
+      return input;
+    };
+
+    var onMouseMove = function onMouseMove(mouse) {
+      if (selected) {
+        setPosition(updatePosition(mouse));
+      }
+    };
+
+    var onMouseUp = function onMouseUp() {
+      selected = false;
+    };
+
+    var distance = function distance(mouse) {
+      return [0, 1].map(function (i) {
+        return mouse[i] - position[i];
+      }).map(function (e) {
+        return Math.pow(e, 2);
+      }).reduce(function (a, b) {
+        return a + b;
+      }, 0);
+    };
+
+    position.setPosition = setPosition;
+    position.onMouseMove = onMouseMove;
+    position.onMouseUp = onMouseUp;
+    position.distance = distance;
+    Object.defineProperty(position, "svg", {
+      get: function get() {
+        return svg;
+      },
+      set: function set(newSVG) {
+        svg = newSVG;
+      }
+    });
+    Object.defineProperty(position, "positionDidUpdate", {
+      set: function set(method) {
+        updatePosition = method;
+      }
+    });
+    Object.defineProperty(position, "selected", {
+      set: function set(value) {
+        selected = value;
+      }
+    });
+    return proxy;
+  };
+
+  var controls = function controls(svg, number, options) {
+    var selected;
+    var points = Array.from(Array(number)).map(function () {
+      return controlPoint(svg, options);
+    });
+    points.forEach(function (pt, i) {
+      if (_typeof(options) === "object" && typeof options.position === "function") {
+        pt.setPosition(options.position(i));
+      }
+    });
+
+    var mousePressedHandler = function mousePressedHandler(mouse) {
+      if (!(points.length > 0)) {
+        return;
+      }
+
+      selected = points.map(function (p, i) {
+        return {
+          i: i,
+          d: p.distance(mouse)
+        };
+      }).sort(function (a, b) {
+        return a.d - b.d;
+      }).shift().i;
+      points[selected].selected = true;
+    };
+
+    var mouseMovedHandler = function mouseMovedHandler(mouse) {
+      points.forEach(function (p) {
+        return p.onMouseMove(mouse);
+      });
+    };
+
+    var mouseReleasedHandler = function mouseReleasedHandler() {
+      points.forEach(function (p) {
+        return p.onMouseUp();
+      });
+      selected = undefined;
+    };
+
+    svg.mousePressed = mousePressedHandler;
+    svg.mouseMoved = mouseMovedHandler;
+    svg.mouseReleased = mouseReleasedHandler;
+    Object.defineProperty(points, "selectedIndex", {
+      get: function get() {
+        return selected;
+      }
+    });
+    Object.defineProperty(points, "selected", {
+      get: function get() {
+        return points[selected];
+      }
+    });
+    Object.defineProperty(points, "add", {
+      value: function value(opt) {
+        points.push(controlPoint(svg, opt));
+      }
+    });
+
+    points.position = function (func) {
+      if (typeof func === "function") {
+        points.forEach(function (p, i) {
+          return p.setPosition(func(i));
+        });
+      }
+
+      return points;
+    };
+
+    points.svg = function (func) {
+      if (typeof func === "function") {
+        points.forEach(function (p, i) {
+          p.svg = func(i);
+        });
+      }
+
+      return points;
+    };
+
+    return points;
+  };
+
   var is_iterable = function is_iterable(obj) {
     return obj != null && typeof obj[Symbol.iterator] === "function";
   };
@@ -943,7 +1131,7 @@
     }
 
     if (!endpoints.length) {
-      return;
+      return shape;
     }
 
     shape.endpoints = endpoints;
@@ -1856,218 +2044,6 @@
     regularPolygon: regularPolygon,
     arrow: arrow
   });
-
-  var controlPoint = function controlPoint(parent) {
-    var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var options = Object.assign({}, opts);
-
-    if (options.radius == null) {
-      options.radius = 1;
-    }
-
-    if (options.fill == null) {
-      options.fill = "#000";
-    }
-
-    if (options.stroke == null) {
-      options.stroke = "none";
-    }
-
-    var c = circle(0, 0, options.radius).fill(options.fill).stroke(options.stroke);
-    var position = [0, 0];
-    var selected = false;
-
-    if (parent != null) {
-      parent.appendChild(c);
-    }
-
-    var setPosition = function setPosition(x, y) {
-      position[0] = x;
-      position[1] = y;
-      c.setAttribute("cx", x);
-      c.setAttribute("cy", y);
-    };
-
-    if (options.position != null) {
-      var pos = options.position;
-
-      if (typeof options.position === "function") {
-        pos = options.position();
-      }
-
-      if (_typeof(pos) === "object") {
-        if (typeof pos[0] === "number") {
-          setPosition.apply(void 0, _toConsumableArray(pos));
-        } else if (typeof pos.x === "number") {
-          setPosition(pos.x, pos.y);
-        }
-      }
-    }
-
-    var updatePosition = function updatePosition(input) {
-      return input;
-    };
-
-    var onMouseMove = function onMouseMove(mouse) {
-      if (selected) {
-        var _pos = updatePosition(mouse);
-
-        setPosition(_pos[0], _pos[1]);
-      }
-    };
-
-    var onMouseUp = function onMouseUp() {
-      selected = false;
-    };
-
-    var distance = function distance(mouse) {
-      return Math.sqrt(Math.pow(mouse[0] - position[0], 2) + Math.pow(mouse[1] - position[1], 2));
-    };
-
-    var remove = function remove() {
-      parent.removeChild(c);
-    };
-
-    return {
-      circle: c,
-
-      set position(pos) {
-        if (pos[0] != null) {
-          setPosition(pos[0], pos[1]);
-        } else if (pos.x != null) {
-          setPosition(pos.x, pos.y);
-        }
-      },
-
-      get position() {
-        return [].concat(position);
-      },
-
-      onMouseUp: onMouseUp,
-      onMouseMove: onMouseMove,
-      distance: distance,
-      remove: remove,
-
-      set positionDidUpdate(method) {
-        updatePosition = method;
-      },
-
-      set selected(value) {
-        selected = true;
-      }
-
-    };
-  };
-
-  var controls = function controls(svg, number) {
-    var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    var options = Object.assign({}, opts);
-
-    if (options.radius == null) {
-      options.radius = 1;
-    }
-
-    if (options.fill == null) {
-      options.fill = "#000";
-    }
-
-    var points = Array.from(Array(number)).map(function () {
-      return controlPoint(svg, options);
-    });
-    var selected;
-
-    var mouseDownHandler = function mouseDownHandler(mouse) {
-      if (!(points.length > 0)) {
-        return;
-      }
-
-      selected = points.map(function (p, i) {
-        return {
-          i: i,
-          d: p.distance(mouse)
-        };
-      }).sort(function (a, b) {
-        return a.d - b.d;
-      }).shift().i;
-      points[selected].selected = true;
-    };
-
-    var mouseMoveHandler = function mouseMoveHandler(mouse) {
-      points.forEach(function (p) {
-        return p.onMouseMove(mouse);
-      });
-    };
-
-    var mouseUpHandler = function mouseUpHandler() {
-      points.forEach(function (p) {
-        return p.onMouseUp();
-      });
-      selected = undefined;
-    };
-
-    var touchDownHandler = function touchDownHandler(pointer) {
-      if (!(points.length > 0)) {
-        return;
-      }
-
-      selected = points.map(function (p, i) {
-        return {
-          i: i,
-          d: p.distance(pointer)
-        };
-      }).sort(function (a, b) {
-        return a.d - b.d;
-      }).shift().i;
-      points[selected].selected = true;
-    };
-
-    var touchMoveHandler = function touchMoveHandler(pointer) {
-      points.forEach(function (p) {
-        return p.onMouseMove(pointer);
-      });
-    };
-
-    var touchUpHandler = function touchUpHandler() {
-      points.forEach(function (p) {
-        return p.onMouseUp();
-      });
-      selected = undefined;
-    };
-
-    svg.mousePressed = touchDownHandler;
-    svg.mousePressed = mouseDownHandler;
-    svg.mouseMoved = mouseMoveHandler;
-    svg.mouseMoved = touchMoveHandler;
-    svg.mouseReleased = mouseUpHandler;
-    svg.mouseReleased = touchUpHandler;
-    Object.defineProperty(points, "selectedIndex", {
-      get: function get() {
-        return selected;
-      }
-    });
-    Object.defineProperty(points, "selected", {
-      get: function get() {
-        return points[selected];
-      }
-    });
-    Object.defineProperty(points, "add", {
-      value: function value(opt) {
-        points.push(controlPoint(svg, opt));
-      }
-    });
-
-    points.positions = function (func) {
-      if (typeof func === "function") {
-        points.forEach(function (pt, i) {
-          pt.position = func(i);
-        });
-      }
-
-      return points;
-    };
-
-    return points;
-  };
 
   var constructorsSVG = {};
   var constructorsGroup = {};

@@ -2,94 +2,95 @@
  * SVG (c) Robby Kraft
  */
 
-import { circle } from "../elements/primitives";
-
-const controlPoint = function (parent, opts = {}) {
-  const options = Object.assign({}, opts);
-  if (options.radius == null) { options.radius = 1; }
-  if (options.fill == null) { options.fill = "#000"; }
-  if (options.stroke == null) { options.stroke = "none"; }
-
-  const c = circle(0, 0, options.radius)
-    .fill(options.fill)
-    .stroke(options.stroke);
-  // c.setAttribute("style", `fill:${options.fill};stroke:${options.stroke};`);
-
-  const position = [0, 0]; // do below
+const controlPoint = function (parent, options = {}) {
+  const position = [0, 0]; // initialize below
   let selected = false;
+  let svg;
 
-  if (parent != null) {
-    parent.appendChild(c);
-  }
-  const setPosition = function (x, y) {
-    position[0] = x;
-    position[1] = y;
-    c.setAttribute("cx", x);
-    c.setAttribute("cy", y);
-  };
-  // set default position
-  if (options.position != null) {
-    let pos = options.position;
-    // this should really be inside "controls", so the (i) => {} can pass in i
-    if (typeof options.position === "function") {
-      pos = options.position();
+  const updateSVG = () => {
+    if (svg != null) {
+      if (svg.parentNode == null) { parent.appendChild(svg); }
+      svg.setAttribute("cx", position[0]);
+      svg.setAttribute("cy", position[1]);
     }
-    if (typeof pos === "object") {
-      if (typeof pos[0] === "number") {
-        setPosition(...pos);
-      } else if (typeof pos.x === "number") {
-        setPosition(pos.x, pos.y);
+  };
+
+  const proxy = new Proxy(position, {
+    set: (target, property, value, receiver) => {
+      target[property] = value;
+      updateSVG();
+      return true;
+    }
+  });
+
+  const setPosition = function (...args) {
+    if (args.length === 0) { return; }
+    const root = typeof args[0];
+    if (root === "number") {
+      position[0] = args[0];
+      position[1] = args[1];
+      updateSVG();
+    }
+    if (root === "object") {
+      if (typeof args[0][0] === "number") {
+        position[0] = args[0][0];
+        position[1] = args[0][1];
+        updateSVG();
+      } else if (typeof args[0].x === "number") {
+        position[0] = args[0].x;
+        position[1] = args[0].y;
+        updateSVG();
       }
     }
-  }
-  let updatePosition = function (input) { return input; };
+  };
+
+  // set default position
+  setPosition(options.position);
+
+  // to be overwritten
+  let updatePosition = input => input;
+
   const onMouseMove = function (mouse) {
     if (selected) {
-      const pos = updatePosition(mouse);
-      setPosition(pos[0], pos[1]);
+      setPosition(updatePosition(mouse));
     }
   };
-  const onMouseUp = function () {
-    selected = false;
-  };
-  const distance = function (mouse) {
-    return Math.sqrt(((mouse[0] - position[0]) ** 2)
-      + ((mouse[1] - position[1]) ** 2));
-  };
-  const remove = function () {
-    parent.removeChild(c);
-  };
+  const onMouseUp = () => { selected = false; };
+  const distance = mouse => ([0, 1]
+    .map(i => mouse[i] - position[i])
+    .map(e => e ** 2)
+    .reduce((a, b) => a + b, 0));
 
-  return {
-    circle: c,
-    set position(pos) {
-      if (pos[0] != null) {
-        setPosition(pos[0], pos[1]);
-      } else if (pos.x != null) {
-        setPosition(pos.x, pos.y);
-      }
-    },
-    get position() { return [...position]; },
-    onMouseUp,
-    onMouseMove,
-    distance,
-    remove,
-    set positionDidUpdate(method) { updatePosition = method; },
-    set selected(value) { selected = true; },
-  };
+  position.setPosition = setPosition;
+  position.onMouseMove = onMouseMove;
+  position.onMouseUp = onMouseUp;
+  position.distance = distance;
+  Object.defineProperty(position, "svg", {
+    get: () => svg,
+    set: (newSVG) => { svg = newSVG; }
+  });
+  Object.defineProperty(position, "positionDidUpdate", {
+    set: (method) => { updatePosition = method; }
+  });
+  Object.defineProperty(position, "selected", {
+    set: (value) => { selected = value; }
+  });
+
+  return proxy;
 };
 
-const controls = function (svg, number, opts = {}) {
-  // constructor options
-  const options = Object.assign({}, opts);
-  if (options.radius == null) { options.radius = 1; }
-  if (options.fill == null) { options.fill = "#000"; }
-
+const controls = function (svg, number, options) {
+  let selected;
   const points = Array.from(Array(number))
     .map(() => controlPoint(svg, options));
-  let selected;
+  points.forEach((pt, i) => {
+    if (typeof options === "object"
+      && typeof options.position === "function") {
+      pt.setPosition(options.position(i));
+    }
+  });
 
-  const mouseDownHandler = function (mouse) {
+  const mousePressedHandler = function (mouse) {
     if (!(points.length > 0)) { return; }
     selected = points
       .map((p, i) => ({ i, d: p.distance(mouse) }))
@@ -98,78 +99,36 @@ const controls = function (svg, number, opts = {}) {
       .i;
     points[selected].selected = true;
   };
-  const mouseMoveHandler = function (mouse) {
+  const mouseMovedHandler = function (mouse) {
     points.forEach(p => p.onMouseMove(mouse));
   };
-  const mouseUpHandler = function () {
-    points.forEach(p => p.onMouseUp());
-    selected = undefined;
-  };
-  const touchDownHandler = function (pointer) {
-    if (!(points.length > 0)) { return; }
-    selected = points
-      .map((p, i) => ({ i, d: p.distance(pointer) }))
-      .sort((a, b) => a.d - b.d)
-      .shift()
-      .i;
-    points[selected].selected = true;
-  };
-  const touchMoveHandler = function (pointer) {
-    points.forEach(p => p.onMouseMove(pointer));
-  };
-  const touchUpHandler = function () {
-    // event.preventDefault();
+  const mouseReleasedHandler = function () {
     points.forEach(p => p.onMouseUp());
     selected = undefined;
   };
 
-  svg.mousePressed = touchDownHandler;
-  svg.mousePressed = mouseDownHandler;
-  svg.mouseMoved = mouseMoveHandler;
-  svg.mouseMoved = touchMoveHandler;
-  svg.mouseReleased = mouseUpHandler;
-  svg.mouseReleased = touchUpHandler;
-  // todo
+  svg.mousePressed = mousePressedHandler;
+  svg.mouseMoved = mouseMovedHandler;
+  svg.mouseReleased = mouseReleasedHandler;
   // svg.addEventListener("touchcancel", touchUpHandler, false);
 
-  Object.defineProperty(points, "selectedIndex", {
-    get: () => selected,
-  });
-  Object.defineProperty(points, "selected", {
-    get: () => points[selected],
-  });
-  // Object.defineProperty(points, "removeAll", {
-  //   value: () => {
-  //     points.forEach(tp => tp.remove());
-  //     points.splice(0, points.length);
-  //     selected = undefined;
-  //   // todo: do we need to untie all event handlers?
-  //   //  Object.keys(handlers)
-  //   //    .forEach(key => handlers[key]
-  //   //      .forEach(f => node.removeEventListener(key, f)));
-  //   //  Object.keys(handlers).forEach((key) => { handlers[key] = []; });
-  //   }
-  // });
-
+  Object.defineProperty(points, "selectedIndex", { get: () => selected });
+  Object.defineProperty(points, "selected", { get: () => points[selected] });
   Object.defineProperty(points, "add", {
     value: (opt) => {
       points.push(controlPoint(svg, opt));
     },
   });
 
-  // Object.defineProperty(points, "position", {
-  //   set: (func) => {
-  //     points.forEach((p, i) => {
-  //       p.position = func(i);
-  //     });
-  //   }
-  // });
-
-  points.positions = function (func) {
+  points.position = function (func) {
     if (typeof func === "function") {
-      points.forEach((pt, i) => {
-        pt.position = func(i);
-      });
+      points.forEach((p, i) => p.setPosition(func(i)));
+    }
+    return points;
+  };
+  points.svg = function (func) {
+    if (typeof func === "function") {
+      points.forEach((p, i) => { p.svg = func(i); });
     }
     return points;
   };

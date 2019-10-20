@@ -1,17 +1,16 @@
 size(-1, -1, 2, 2);
 background("#edb");
-var r = 0.666;
-var sw = 0.0333;
+var r = getWidth() * 0.333;
+var strokeW = r / 20;
 
 for (var i = 0; i < 60; i += 1) {
   var a = PI * i / 30;
-  var m = i % 5 === 0 ? r + sw * 5 : r + sw * 2;
-  line(-Math.cos(a) * m, -Math.sin(a) * m, Math.cos(a) * m, Math.sin(a) * m)
-    .stroke("#000")
-    .strokeWidth(sw);
+  var h = i % 5 === 0;
+  var d = h ? r + strokeW * 3 : r + strokeW;
+  circle(-Math.cos(a) * d, -Math.sin(a) * d, r/30);
 }
 
-circle(0, 0, r + sw).fill("#000");
+circle(0, 0, r + strokeW).fill("#000");
 var pies = [
   wedge().fill("#edb"),
   wedge().fill("#e53"),
@@ -23,7 +22,7 @@ svg.animate = function (time) {
   var s = (d.getSeconds() + d.getMilliseconds() / 1000) / 60;
   var m = d.getMinutes() / 60;
   var h = (d.getHours() % 12) / 12;
-  [(s), (m + s / 60), (h + m / 60)]
+  [(s), (m + s / 60), (h + m / 60 + s / 360)]
     .sort(function(a, b) { return a - b; })
     .forEach(function(a, i, arr) {
       var a1 = -PI / 2 + 2 * PI * a;
