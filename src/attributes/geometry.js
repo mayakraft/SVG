@@ -136,3 +136,81 @@ export const setBezier = function (shape, fromX, fromY, c1X, c1Y, c2X, c2Y, toX,
   shape.setAttributeNS(null, "d", d);
   return shape;
 };
+
+export const setArrowPoints = function (shape, ...args) {
+  const children = Array.from(shape.childNodes);
+  const path = children.filter(node => node.tagName === "path").shift();
+  const polys = ["svg-arrow-head", "svg-arrow-tail"]
+    .map(c => children.filter(n => n.getAttribute("class") === c).shift());
+
+  const flat = flatten_input(...args);
+  let endpoints = [];
+  if (typeof flat[0] === "number") {
+    endpoints = flat;
+  }
+  if (typeof flat[0] === "object") {
+    if (typeof flat[0].x === "number") {
+      endpoints = flat.map(p => [p[0], p[1]]).reduce((a, b) => a.concat(b), []);
+    }
+    if (typeof flat[0][0] === "number") {
+      endpoints = flat.reduce((a, b) => a.concat(b), []);
+    }
+  }
+  if (!endpoints.length && shape.endpoints != null) {
+    // get endpoints from cache
+    endpoints = shape.endpoints;
+  }
+  if (!endpoints.length) { return; }
+  // we have to cache the endpoints in case we need to rebuild
+  shape.endpoints = endpoints;
+
+  const o = shape.options;
+
+  let tailPt = [endpoints[0], endpoints[1]];
+  let headPt = [endpoints[2], endpoints[3]];
+
+  const vec = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+  const arrowLength = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+  const arrowVector = [vec[0] / arrowLength, vec[1] / arrowLength];
+  const arrow90 = [arrowVector[1], -arrowVector[0]];
+
+  // adjust tailPt and headPt if there's padding
+  tailPt = [
+    tailPt[0] + arrowVector[0] * (o.head.visible ? 1 : 0) * o.head.padding,
+    tailPt[1] + arrowVector[1] * (o.head.visible ? 1 : 0) * o.head.padding,
+  ];
+  headPt = [
+    headPt[0] - arrowVector[0] * (o.tail.visible ? 1 : 0) * o.tail.padding,
+    headPt[1] - arrowVector[1] * (o.tail.visible ? 1 : 0) * o.tail.padding,
+  ];
+
+  // black triangle
+  const headCoords = [
+    [headPt[0] + arrow90[0] * o.head.width, headPt[1] + arrow90[1] * o.head.width],
+    [headPt[0] - arrow90[0] * o.head.width, headPt[1] - arrow90[1] * o.head.width],
+    [headPt[0] + arrowVector[0] * o.head.height, headPt[1] + arrowVector[1] * o.head.height],
+  ];
+  const tailCoords = [
+    [tailPt[0] - arrow90[0] * o.tail.width, tailPt[1] - arrow90[1] * o.tail.width],
+    [tailPt[0] + arrow90[0] * o.tail.width, tailPt[1] + arrow90[1] * o.tail.width],
+    [tailPt[0] - arrowVector[0] * o.tail.height, tailPt[1] - arrowVector[1] * o.tail.height],
+  ];
+
+  // if straight or curved
+  path.setAttribute("d", `M${tailPt[0]},${tailPt[1]}L${headPt[0]},${headPt[1]}`);
+
+  if (o.head.visible) {
+    polys[0].removeAttribute("display");
+    setPoints(polys[0], headCoords);
+  } else {
+    polys[0].setAttribute("display", "none");
+  }
+
+  if (o.tail.visible) {
+    polys[1].removeAttribute("display");
+    setPoints(polys[1], tailCoords);
+  } else {
+    polys[1].setAttribute("display", "none");
+  }
+  return shape;
+};

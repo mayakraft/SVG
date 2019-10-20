@@ -2,15 +2,13 @@
  * SVG (c) Robby Kraft
  */
 
-import svgNS from "../environment/namespace";
-import window from "../environment/window";
-
 import {
   line,
   bezier,
   polygon,
 } from "./primitives";
 
+import { group } from "./root";
 
 export const straightArrow = function (startPoint, endPoint, options) {
   const p = {
@@ -33,15 +31,15 @@ export const straightArrow = function (startPoint, endPoint, options) {
 
   const arrowFill = [
     "stroke:none",
-    `fill:${p.color}`,
-    p.fillStyle,
+    // `fill:${p.color}`,
+    // p.fillStyle,
     "pointer-events:none",
   ].filter(a => a !== "").join(";");
 
   const arrowStroke = [
     "fill:none",
-    `stroke:${p.color}`,
-    `stroke-width:${p.strokeWidth}`,
+    // `stroke:${p.color}`,
+    // `stroke-width:${p.strokeWidth}`,
     p.strokeStyle,
   ].filter(a => a !== "").join(";");
 
@@ -49,17 +47,17 @@ export const straightArrow = function (startPoint, endPoint, options) {
   const thinSpace = Math.floor(p.strokeWidth * 6) / 10;
   const highlightStroke = [
     "fill:none",
-    `stroke:${p.highlight}`,
-    `stroke-width:${p.strokeWidth * 0.5}`,
-    `stroke-dasharray:${thinStroke} ${thinSpace}`,
-    "stroke-linecap:round",
+    // `stroke:${p.highlight}`,
+    // `stroke-width:${p.strokeWidth * 0.5}`,
+    // `stroke-dasharray:${thinStroke} ${thinSpace}`,
+    // "stroke-linecap:round",
     p.strokeStyle,
   ].filter(a => a !== "").join(";");
 
   const highlightFill = [
     "stroke:none",
-    `fill:${p.highlight}`,
-    p.fillStyle,
+    // `fill:${p.highlight}`,
+    // p.fillStyle,
     "pointer-events:none",
   ].filter(a => a !== "").join(";");
 
@@ -94,7 +92,7 @@ export const straightArrow = function (startPoint, endPoint, options) {
     [start[0] + arrow90[0] * p.width, start[1] + arrow90[1] * p.width],
     [start[0] - arrowVector[0] * p.length, start[1] - arrowVector[1] * p.length],
   ];
-  const arrow = window.document.createElementNS(svgNS, "g");
+  const arrow = group();
   const l = line(start[0], start[1], end[0], end[1]);
   l.setAttribute("style", arrowStroke);
   arrow.appendChild(l);
@@ -178,14 +176,15 @@ export const arcArrow = function (start, end, options) {
 
   const arrowFill = [
     "stroke:none",
-    `fill:${p.color}`,
+    // `fill:${p.color}`,
     p.fillStyle,
+    "pointer-events:none",
   ].filter(a => a !== "").join(";");
 
   const arrowStroke = [
     "fill:none",
-    `stroke:${p.color}`,
-    `stroke-width:${p.strokeWidth}`,
+    // `stroke:${p.color}`,
+    // `stroke-width:${p.strokeWidth}`,
     p.strokeStyle,
   ].filter(a => a !== "").join(";");
 
@@ -260,7 +259,7 @@ export const arcArrow = function (start, end, options) {
   ];
 
   // draw
-  const arrowGroup = window.document.createElementNS(svgNS, "g");
+  const arrowGroup = group();
   const arrowArc = bezier(
     arcStart[0], arcStart[1], controlStart[0], controlStart[1],
     controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]

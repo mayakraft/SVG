@@ -7,48 +7,82 @@ import * as DOM from "./DOM";
 import * as ViewBox from "./viewBox";
 import * as Transform from "./transform";
 import * as Path from "./path";
+import { setArrowPoints } from "./geometry";
 
 export const attachStyleMethods = function (element) {
-  const el = element;
-  el.appendTo = arg => DOM.appendTo(element, arg);
+  element.appendTo = arg => DOM.appendTo(element, arg);
 };
 
 export const attachAppendableMethods = function (element, methods) {
-  const el = element;
-  Object.keys(methods).filter(key => el[key] === undefined).forEach((key) => {
-    el[key] = function (...args) {
-      const g = methods[key](...args);
-      element.appendChild(g);
-      return g;
-    };
-  });
+  Object.keys(methods)
+    .filter(key => element[key] === undefined)
+    .forEach((key) => {
+      element[key] = function (...args) {
+        const g = methods[key](...args);
+        element.appendChild(g);
+        return g;
+      };
+    });
+};
+
+export const attachArrowMethods = function (element) {
+  element.curve = (amount) => {
+    element.options.curve = amount;
+    setArrowPoints(element);
+    return element;
+  };
+  element.head = (options) => {
+    if (typeof options === "object") {
+      Object.assign(element.options.head, options);
+      if (options.visible === undefined) {
+        element.options.head.visible = true;
+      }
+    } else if (typeof options === "boolean") {
+      element.options.head.visible = options;
+    } else if (options == null) {
+      element.options.head.visible = true;
+    }
+    setArrowPoints(element);
+    return element;
+  };
+  element.tail = (options) => {
+    if (typeof options === "object") {
+      Object.assign(element.options.tail, options);
+      if (options.visible === undefined) {
+        element.options.tail.visible = true;
+      }
+      element.options.tail.visible = true;
+    } else if (typeof options === "boolean") {
+      element.options.tail.visible = options;
+    } else if (options == null) {
+      element.options.tail.visible = true;
+    }
+    setArrowPoints(element);
+    return element;
+  };
 };
 
 export const attachPathMethods = function (element) {
-  const el = element;
   Object.keys(Path).forEach((key) => {
-    el[key] = (...args) => Path[key](element, ...args);
+    element[key] = (...args) => Path[key](element, ...args);
   });
 };
 
 export const attachDOMMethods = function (element) {
-  const el = element;
-  Object.keys(DOM).filter(key => el[key] === undefined).forEach((key) => {
-    el[key] = (...args) => DOM[key](element, ...args);
+  Object.keys(DOM).filter(key => element[key] === undefined).forEach((key) => {
+    element[key] = (...args) => DOM[key](element, ...args);
   });
 };
 
 export const attachTransformMethods = function (element) {
-  const el = element;
   Object.keys(Transform).forEach((key) => {
-    el[key] = (...args) => Transform[key](element, ...args);
+    element[key] = (...args) => Transform[key](element, ...args);
   });
 };
 
 export const attachViewBoxMethods = function (element) {
-  const el = element;
-  Object.keys(ViewBox).filter(key => el[key] === undefined).forEach((key) => {
-    el[key] = (...args) => ViewBox[key](element, ...args);
+  Object.keys(ViewBox).filter(key => element[key] === undefined).forEach((key) => {
+    element[key] = (...args) => ViewBox[key](element, ...args);
   });
 };
 
@@ -59,27 +93,26 @@ const toCamel = s => s
     .replace("_", ""));
 
 export const attachFunctionalStyleSetters = function (element) {
-  const el = element;
   // attributes.filter(attr => attr !== element.tagName).forEach((key) => {
-  attributes.filter(key => el[toCamel(key)] === undefined).forEach((key) => {
-    el[toCamel(key)] = (...args) => {
-      el.setAttribute(key, ...args);
-      return el;
-    };
-  });
+  attributes.filter(key => element[toCamel(key)] === undefined)
+    .forEach((key) => {
+      element[toCamel(key)] = (...args) => {
+        element.setAttribute(key, ...args);
+        return element;
+      };
+    });
 };
 
 export const attachClipMaskMakers = function (element, primitives) {
-  const el = element;
-  if (el.clipPath === undefined) {
-    el.clipPath = (...args) => {
+  if (element.clipPath === undefined) {
+    element.clipPath = (...args) => {
       const c = primitives.clipPath(...args);
       element.appendChild(c);
       return c;
     };
   }
-  if (el.mask === undefined) {
-    el.mask = (...args) => {
+  if (element.mask === undefined) {
+    element.mask = (...args) => {
       const m = primitives.mask(...args);
       element.appendChild(m);
       return m;
@@ -103,21 +136,20 @@ const findIdURL = function (arg) {
 };
 
 export const attachClipMaskAttributes = function (element) {
-  const el = element;
-  if (el.clipPath === undefined) {
-    el.clipPath = function (parent) {
+  if (element.clipPath === undefined) {
+    element.clipPath = function (parent) {
       const value = findIdURL(parent);
-      if (value === undefined) { return el; }
-      el.setAttribute("clip-path", value);
-      return el;
+      if (value === undefined) { return element; }
+      element.setAttribute("clip-path", value);
+      return element;
     };
   }
-  if (el.mask === undefined) {
-    el.mask = function (parent) {
+  if (element.mask === undefined) {
+    element.mask = function (parent) {
       const value = findIdURL(parent);
-      if (value === undefined) { return el; }
-      el.setAttribute("mask", value);
-      return el;
+      if (value === undefined) { return element; }
+      element.setAttribute("mask", value);
+      return element;
     };
   }
 };

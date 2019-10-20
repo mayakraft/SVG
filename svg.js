@@ -900,6 +900,82 @@
     shape.setAttributeNS(null, "d", d);
     return shape;
   };
+  var setArrowPoints = function setArrowPoints(shape) {
+    var children = Array.from(shape.childNodes);
+    var path = children.filter(function (node) {
+      return node.tagName === "path";
+    }).shift();
+    var polys = ["svg-arrow-head", "svg-arrow-tail"].map(function (c) {
+      return children.filter(function (n) {
+        return n.getAttribute("class") === c;
+      }).shift();
+    });
+
+    for (var _len5 = arguments.length, args = new Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+      args[_key5 - 1] = arguments[_key5];
+    }
+
+    var flat = flatten_input.apply(void 0, args);
+    var endpoints = [];
+
+    if (typeof flat[0] === "number") {
+      endpoints = flat;
+    }
+
+    if (_typeof(flat[0]) === "object") {
+      if (typeof flat[0].x === "number") {
+        endpoints = flat.map(function (p) {
+          return [p[0], p[1]];
+        }).reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+
+      if (typeof flat[0][0] === "number") {
+        endpoints = flat.reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+    }
+
+    if (!endpoints.length && shape.endpoints != null) {
+      endpoints = shape.endpoints;
+    }
+
+    if (!endpoints.length) {
+      return;
+    }
+
+    shape.endpoints = endpoints;
+    var o = shape.options;
+    var tailPt = [endpoints[0], endpoints[1]];
+    var headPt = [endpoints[2], endpoints[3]];
+    var vec = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+    var arrowLength = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+    var arrowVector = [vec[0] / arrowLength, vec[1] / arrowLength];
+    var arrow90 = [arrowVector[1], -arrowVector[0]];
+    tailPt = [tailPt[0] + arrowVector[0] * (o.head.visible ? 1 : 0) * o.head.padding, tailPt[1] + arrowVector[1] * (o.head.visible ? 1 : 0) * o.head.padding];
+    headPt = [headPt[0] - arrowVector[0] * (o.tail.visible ? 1 : 0) * o.tail.padding, headPt[1] - arrowVector[1] * (o.tail.visible ? 1 : 0) * o.tail.padding];
+    var headCoords = [[headPt[0] + arrow90[0] * o.head.width, headPt[1] + arrow90[1] * o.head.width], [headPt[0] - arrow90[0] * o.head.width, headPt[1] - arrow90[1] * o.head.width], [headPt[0] + arrowVector[0] * o.head.height, headPt[1] + arrowVector[1] * o.head.height]];
+    var tailCoords = [[tailPt[0] - arrow90[0] * o.tail.width, tailPt[1] - arrow90[1] * o.tail.width], [tailPt[0] + arrow90[0] * o.tail.width, tailPt[1] + arrow90[1] * o.tail.width], [tailPt[0] - arrowVector[0] * o.tail.height, tailPt[1] - arrowVector[1] * o.tail.height]];
+    path.setAttribute("d", "M".concat(tailPt[0], ",").concat(tailPt[1], "L").concat(headPt[0], ",").concat(headPt[1]));
+
+    if (o.head.visible) {
+      polys[0].removeAttribute("display");
+      setPoints(polys[0], headCoords);
+    } else {
+      polys[0].setAttribute("display", "none");
+    }
+
+    if (o.tail.visible) {
+      polys[1].removeAttribute("display");
+      setPoints(polys[1], tailCoords);
+    } else {
+      polys[1].setAttribute("display", "none");
+    }
+
+    return shape;
+  };
 
   var geometryMods = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -908,7 +984,8 @@
     setCenter: setCenter,
     setArc: setArc,
     setEllipticalArc: setEllipticalArc,
-    setBezier: setBezier
+    setBezier: setBezier,
+    setArrowPoints: setArrowPoints
   });
 
   var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "class", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "panose-1", "paint-order", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
@@ -1181,28 +1258,67 @@
   });
 
   var attachStyleMethods = function attachStyleMethods(element) {
-    var el = element;
-
-    el.appendTo = function (arg) {
+    element.appendTo = function (arg) {
       return appendTo(element, arg);
     };
   };
   var attachAppendableMethods = function attachAppendableMethods(element, methods) {
-    var el = element;
     Object.keys(methods).filter(function (key) {
-      return el[key] === undefined;
+      return element[key] === undefined;
     }).forEach(function (key) {
-      el[key] = function () {
+      element[key] = function () {
         var g = methods[key].apply(methods, arguments);
         element.appendChild(g);
         return g;
       };
     });
   };
+  var attachArrowMethods = function attachArrowMethods(element) {
+    element.curve = function (amount) {
+      element.options.curve = amount;
+      setArrowPoints(element);
+      return element;
+    };
+
+    element.head = function (options) {
+      if (_typeof(options) === "object") {
+        Object.assign(element.options.head, options);
+
+        if (options.visible === undefined) {
+          element.options.head.visible = true;
+        }
+      } else if (typeof options === "boolean") {
+        element.options.head.visible = options;
+      } else if (options == null) {
+        element.options.head.visible = true;
+      }
+
+      setArrowPoints(element);
+      return element;
+    };
+
+    element.tail = function (options) {
+      if (_typeof(options) === "object") {
+        Object.assign(element.options.tail, options);
+
+        if (options.visible === undefined) {
+          element.options.tail.visible = true;
+        }
+
+        element.options.tail.visible = true;
+      } else if (typeof options === "boolean") {
+        element.options.tail.visible = options;
+      } else if (options == null) {
+        element.options.tail.visible = true;
+      }
+
+      setArrowPoints(element);
+      return element;
+    };
+  };
   var attachPathMethods = function attachPathMethods(element) {
-    var el = element;
     Object.keys(Path).forEach(function (key) {
-      el[key] = function () {
+      element[key] = function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
@@ -1212,11 +1328,10 @@
     });
   };
   var attachDOMMethods = function attachDOMMethods(element) {
-    var el = element;
     Object.keys(DOM).filter(function (key) {
-      return el[key] === undefined;
+      return element[key] === undefined;
     }).forEach(function (key) {
-      el[key] = function () {
+      element[key] = function () {
         for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
         }
@@ -1226,9 +1341,8 @@
     });
   };
   var attachTransformMethods = function attachTransformMethods(element) {
-    var el = element;
     Object.keys(Transform).forEach(function (key) {
-      el[key] = function () {
+      element[key] = function () {
         for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
           args[_key3] = arguments[_key3];
         }
@@ -1238,11 +1352,10 @@
     });
   };
   var attachViewBoxMethods = function attachViewBoxMethods(element) {
-    var el = element;
     Object.keys(ViewBox).filter(function (key) {
-      return el[key] === undefined;
+      return element[key] === undefined;
     }).forEach(function (key) {
-      el[key] = function () {
+      element[key] = function () {
         for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
           args[_key4] = arguments[_key4];
         }
@@ -1259,33 +1372,30 @@
   };
 
   var attachFunctionalStyleSetters = function attachFunctionalStyleSetters(element) {
-    var el = element;
     attributes.filter(function (key) {
-      return el[toCamel(key)] === undefined;
+      return element[toCamel(key)] === undefined;
     }).forEach(function (key) {
-      el[toCamel(key)] = function () {
+      element[toCamel(key)] = function () {
         for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
           args[_key5] = arguments[_key5];
         }
 
-        el.setAttribute.apply(el, [key].concat(args));
-        return el;
+        element.setAttribute.apply(element, [key].concat(args));
+        return element;
       };
     });
   };
   var attachClipMaskMakers = function attachClipMaskMakers(element, primitives) {
-    var el = element;
-
-    if (el.clipPath === undefined) {
-      el.clipPath = function () {
+    if (element.clipPath === undefined) {
+      element.clipPath = function () {
         var c = primitives.clipPath.apply(primitives, arguments);
         element.appendChild(c);
         return c;
       };
     }
 
-    if (el.mask === undefined) {
-      el.mask = function () {
+    if (element.mask === undefined) {
+      element.mask = function () {
         var m = primitives.mask.apply(primitives, arguments);
         element.appendChild(m);
         return m;
@@ -1311,31 +1421,29 @@
   };
 
   var attachClipMaskAttributes = function attachClipMaskAttributes(element) {
-    var el = element;
-
-    if (el.clipPath === undefined) {
-      el.clipPath = function (parent) {
+    if (element.clipPath === undefined) {
+      element.clipPath = function (parent) {
         var value = findIdURL(parent);
 
         if (value === undefined) {
-          return el;
+          return element;
         }
 
-        el.setAttribute("clip-path", value);
-        return el;
+        element.setAttribute("clip-path", value);
+        return element;
       };
     }
 
-    if (el.mask === undefined) {
-      el.mask = function (parent) {
+    if (element.mask === undefined) {
+      element.mask = function (parent) {
         var value = findIdURL(parent);
 
         if (value === undefined) {
-          return el;
+          return element;
         }
 
-        el.setAttribute("mask", value);
-        return el;
+        element.setAttribute("mask", value);
+        return element;
       };
     }
   };
@@ -1349,6 +1457,14 @@
     if (element.tagName === "path") {
       attachPathMethods(element);
     }
+  };
+
+  var prepareArrow = function prepareArrow(element) {
+    attachFunctionalStyleSetters(element);
+    attachDOMMethods(element);
+    attachTransformMethods(element);
+    attachClipMaskAttributes(element);
+    attachArrowMethods(element);
   };
 
   var prepareText = function prepareText(element) {
@@ -1393,6 +1509,10 @@
 
       case "primitive":
         preparePrimitive(element);
+        break;
+
+      case "arrow":
+        prepareArrow(element);
         break;
 
       case "defs":
@@ -1668,6 +1788,54 @@
     });
     return polygon(points);
   };
+  var arrow = function arrow() {
+    var shape = win.document.createElementNS(NS, "g");
+    var tailPoly = win.document.createElementNS(NS, "polygon");
+    var headPoly = win.document.createElementNS(NS, "polygon");
+    var arrowPath = win.document.createElementNS(NS, "path");
+    tailPoly.setAttributeNS(null, "class", "svg-arrow-tail");
+    headPoly.setAttributeNS(null, "class", "svg-arrow-head");
+    arrowPath.setAttributeNS(null, "class", "svg-arrow-path");
+    tailPoly.setAttributeNS(null, "style", "stroke: none; pointer-events: none;");
+    headPoly.setAttributeNS(null, "style", "stroke: none; pointer-events: none;");
+    arrowPath.setAttributeNS(null, "style", "fill: none;");
+    shape.appendChild(arrowPath);
+    shape.appendChild(tailPoly);
+    shape.appendChild(headPoly);
+    shape.options = {
+      head: {
+        width: 0.5,
+        height: 2,
+        visible: false,
+        padding: 0.0
+      },
+      tail: {
+        width: 0.5,
+        height: 2,
+        visible: false,
+        padding: 0.0
+      },
+      curve: 0.0,
+      endpoints: []
+    };
+
+    for (var _len13 = arguments.length, args = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+      args[_key13] = arguments[_key13];
+    }
+
+    setArrowPoints.apply(void 0, [shape].concat(args));
+    prepare("arrow", shape);
+
+    shape.setPoints = function () {
+      for (var _len14 = arguments.length, a = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
+        a[_key14] = arguments[_key14];
+      }
+
+      return setArrowPoints.apply(void 0, [shape].concat(a));
+    };
+
+    return shape;
+  };
 
   var primitives = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -1685,7 +1853,8 @@
     arcEllipse: arcEllipse,
     wedgeEllipse: wedgeEllipse,
     parabola: parabola,
-    regularPolygon: regularPolygon
+    regularPolygon: regularPolygon,
+    arrow: arrow
   });
 
   var controlPoint = function controlPoint(parent) {
@@ -2109,7 +2278,7 @@
     }
 
     if (args.length === 2 && typeof args[0] === "number" && typeof args[1] === "number") {
-      setViewBox(element, 0, 0, args[0], args[1]);
+      setViewBox.apply(void 0, [element, 0, 0].concat(args));
     } else if (args.length === 4 && _typeof(args.map(function (a) {
       return typeof a === "number";
     }).reduce(function (a, b) {
@@ -2158,8 +2327,6 @@
 
   var findStyleSheet = function findStyleSheet(element) {
     var children = Array.from(element.childNodes);
-    console.log("findStyleSheet");
-    console.log("topLevel");
     var topLevel = children.filter(function (child) {
       return child.getAttribute("tagName") === "style";
     }).shift();
@@ -2168,7 +2335,6 @@
       return topLevel;
     }
 
-    console.log("defs");
     var defs = children.filter(function (child) {
       return child.getAttribute("tagName") === "defs";
     }).shift();
@@ -2177,7 +2343,6 @@
       return defs;
     }
 
-    console.log("insideDefs");
     var insideDefs = Array.from(defs.childNodes).filter(function (child) {
       return child.getAttribute("tagName") === "style";
     }).shift();
@@ -2186,7 +2351,6 @@
       return insideDefs;
     }
 
-    console.log("undefined");
     return undefined;
   };
 
@@ -2341,18 +2505,16 @@
       Object.assign(p, options);
     }
 
-    var arrowFill = ["stroke:none", "fill:".concat(p.color), p.fillStyle, "pointer-events:none"].filter(function (a) {
+    var arrowFill = ["stroke:none", "pointer-events:none"].filter(function (a) {
       return a !== "";
     }).join(";");
-    var arrowStroke = ["fill:none", "stroke:".concat(p.color), "stroke-width:".concat(p.strokeWidth), p.strokeStyle].filter(function (a) {
+    var arrowStroke = ["fill:none", p.strokeStyle].filter(function (a) {
       return a !== "";
     }).join(";");
-    var thinStroke = Math.floor(p.strokeWidth * 3) / 10;
-    var thinSpace = Math.floor(p.strokeWidth * 6) / 10;
-    var highlightStroke = ["fill:none", "stroke:".concat(p.highlight), "stroke-width:".concat(p.strokeWidth * 0.5), "stroke-dasharray:".concat(thinStroke, " ").concat(thinSpace), "stroke-linecap:round", p.strokeStyle].filter(function (a) {
+    var highlightStroke = ["fill:none", p.strokeStyle].filter(function (a) {
       return a !== "";
     }).join(";");
-    var highlightFill = ["stroke:none", "fill:".concat(p.highlight), p.fillStyle, "pointer-events:none"].filter(function (a) {
+    var highlightFill = ["stroke:none", "pointer-events:none"].filter(function (a) {
       return a !== "";
     }).join(";");
     var start = startPoint;
@@ -2365,7 +2527,7 @@
     end = [endPoint[0] - arrowVector[0] * (p.end ? 1 : 0) * p.padding, endPoint[1] - arrowVector[1] * (p.end ? 1 : 0) * p.padding];
     var endHead = [[end[0] + arrow90[0] * p.width, end[1] + arrow90[1] * p.width], [end[0] - arrow90[0] * p.width, end[1] - arrow90[1] * p.width], [end[0] + arrowVector[0] * p.length, end[1] + arrowVector[1] * p.length]];
     var startHead = [[start[0] - arrow90[0] * p.width, start[1] - arrow90[1] * p.width], [start[0] + arrow90[0] * p.width, start[1] + arrow90[1] * p.width], [start[0] - arrowVector[0] * p.length, start[1] - arrowVector[1] * p.length]];
-    var arrow = win.document.createElementNS(NS, "g");
+    var arrow = group();
     var l = line(start[0], start[1], end[0], end[1]);
     l.setAttribute("style", arrowStroke);
     arrow.appendChild(l);
@@ -2426,10 +2588,10 @@
       Object.assign(p, options);
     }
 
-    var arrowFill = ["stroke:none", "fill:".concat(p.color), p.fillStyle].filter(function (a) {
+    var arrowFill = ["stroke:none", p.fillStyle, "pointer-events:none"].filter(function (a) {
       return a !== "";
     }).join(";");
-    var arrowStroke = ["fill:none", "stroke:".concat(p.color), "stroke-width:".concat(p.strokeWidth), p.strokeStyle].filter(function (a) {
+    var arrowStroke = ["fill:none", p.strokeStyle].filter(function (a) {
       return a !== "";
     }).join(";");
     var startPoint = start;
@@ -2468,7 +2630,7 @@
     var controlEnd = [arcEnd[0] + (bezPoint[0] - arcEnd[0]) * p.pinch, arcEnd[1] + (bezPoint[1] - arcEnd[1]) * p.pinch];
     var startHeadPoints = [[arcStart[0] + startNormal[0] * -p.width, arcStart[1] + startNormal[1] * -p.width], [arcStart[0] + startNormal[0] * p.width, arcStart[1] + startNormal[1] * p.width], [arcStart[0] + startHeadVec[0] * p.length, arcStart[1] + startHeadVec[1] * p.length]];
     var endHeadPoints = [[arcEnd[0] + endNormal[0] * -p.width, arcEnd[1] + endNormal[1] * -p.width], [arcEnd[0] + endNormal[0] * p.width, arcEnd[1] + endNormal[1] * p.width], [arcEnd[0] + endHeadVec[0] * p.length, arcEnd[1] + endHeadVec[1] * p.length]];
-    var arrowGroup = win.document.createElementNS(NS, "g");
+    var arrowGroup = group();
     var arrowArc = bezier(arcStart[0], arcStart[1], controlStart[0], controlStart[1], controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]);
     arrowArc.setAttribute("style", arrowStroke);
     arrowGroup.appendChild(arrowArc);

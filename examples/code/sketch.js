@@ -60,8 +60,7 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
       "parabola.js",
       "riley1.js",
       "ten-print.js",
-      "text.js",
-      "walker.js"
+      "text.js"
     ];
     exampleFilenames.forEach(function (file) {
       fetch("samples/" + file).then(function (data) {

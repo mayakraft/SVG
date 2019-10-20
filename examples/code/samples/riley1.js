@@ -15,10 +15,9 @@ for (var i = 0; i <= 100 / space; i += 1) {
 
   for (var j = 0; j < 10; j += 1) {
     var dir = (j % 2) ? 0.5 : -0.5;
-    p.curveTo(
-      (i + dir) * space, (j + 0.333) * 10,
-      (i + dir) * space, (j + 0.666) * 10,
-      i * space, (j + 1) * 10
-    );
+    var controlA = [(i + dir) * space, (j + 0.333) * 10];
+    var controlB = [(i + dir) * space, (j + 0.666) * 10];
+    var end = [i * space, (j + 1) * 10];
+    p.curveTo(controlA, controlB, end);
   }
 }

@@ -15,7 +15,6 @@ import {
   setViewBox
 } from "../attributes/viewBox";
 
-
 const findWindowBooleanParam = function (...params) {
   const objects = params
     .filter(arg => typeof arg === "object")
@@ -91,7 +90,7 @@ const size = function (element, ...args) {
     && typeof args[0] === "number"
     && typeof args[1] === "number"
   ) {
-    setViewBox(element, 0, 0, args[0], args[1]);
+    setViewBox(element, 0, 0, ...args);
   } else if (args.length === 4
     && typeof args.map(a => typeof a === "number")
       .reduce((a, b) => a && b, true)
@@ -136,26 +135,22 @@ const background = function (element, color, setParent = true) {
 
 const findStyleSheet = function (element) {
   const children = Array.from(element.childNodes);
-  console.log("findStyleSheet");
 
-  console.log("topLevel");
   const topLevel = children
     .filter(child => child.getAttribute("tagName") === "style")
     .shift();
   if (topLevel) { return topLevel; }
 
-  console.log("defs");
   const defs = children
     .filter(child => child.getAttribute("tagName") === "defs")
     .shift();
   if (defs == null) { return defs; }
 
-  console.log("insideDefs");
   const insideDefs = Array.from(defs.childNodes)
     .filter(child => child.getAttribute("tagName") === "style")
     .shift();
   if (insideDefs != null) { return insideDefs; }
-  console.log("undefined");
+  
   return undefined;
 };
 
