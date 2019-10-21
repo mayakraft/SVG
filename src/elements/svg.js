@@ -113,8 +113,8 @@ const getFrame = function (element) {
   return frame;
 };
 
-const background = function (element, color, setParent = true) {
-  if (setParent) {
+const background = function (element, color, setParent = false) {
+  if (setParent === true) {
     const parent = element.parentElement;
     if (parent != null) {
       parent.setAttribute("style", `background-color: ${color}`);

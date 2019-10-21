@@ -1,5 +1,5 @@
 size(100, 100);
-background("black");
+background("black", true);
 
 var style = {
   fontFamily: "avenir next, helvetica neue, arial",

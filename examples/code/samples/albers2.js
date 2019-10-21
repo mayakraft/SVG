@@ -1,5 +1,5 @@
 size(50, 60);
-background("white");
+background("white", true);
 
 rect(0, 0, 50, 30).fill("steelblue");
 rect(0, 30, 50, 30).fill("peru");

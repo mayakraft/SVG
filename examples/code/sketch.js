@@ -113,7 +113,7 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   };
 
   questionButton.onclick = function () {
-    var win = window.open("https://robbykraft.github.io/SVG/docs.html", "_blank");
+    var win = window.open("/docs/", "_blank");
     win.focus();
   };
 

@@ -1,5 +1,5 @@
 size(512, 512);
-background("#edb");
+background("#edb", true);
 
 var SEGMENTS = randomInt(13, 128);
 

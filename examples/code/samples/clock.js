@@ -1,5 +1,5 @@
 size(-1, -1, 2, 2);
-background("#edb");
+background("#edb", true);
 var r = getWidth() * 0.333;
 var strokeW = r / 20;
 
@@ -17,12 +17,12 @@ var pies = [
   wedge().fill("#158")
 ];
 
-svg.animate = function (time) {
+animate = function (time) {
   var d = new Date();
   var s = (d.getSeconds() + d.getMilliseconds() / 1000) / 60;
   var m = d.getMinutes() / 60;
   var h = (d.getHours() % 12) / 12;
-  [(s), (m + s / 60), (h + m / 60 + s / 360)]
+  [(s), (m + s / 60), (h + m / 12 + s / 720)]
     .sort(function(a, b) { return a - b; })
     .forEach(function(a, i, arr) {
       var a1 = -PI / 2 + 2 * PI * a;

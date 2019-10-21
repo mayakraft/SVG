@@ -1,5 +1,5 @@
 size(100, 100);
-background("#edb");
+background("#edb", true);
 
 var clip = clipPath();
 clip.circle(50, 0, 70.7);

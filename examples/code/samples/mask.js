@@ -1,5 +1,5 @@
 size(1, 1);
-background("#edb");
+background("#edb", true);
 
 var points = Array.from(Array(100))
   .map(() => [random(-1, 2), random(-1, 2)]);

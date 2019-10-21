@@ -16,8 +16,8 @@ var Particle = function () {
 };
 
 size(400, 400);
-svg.fps = 30;
-background("black");
+fps = 30;
+background("black", true);
 
 var tail = random(20, 150);
 var joints = random(4, 10);
@@ -25,7 +25,7 @@ var lines = group().fill("none");
 var pts = [];
 for (var i = 0; i < joints; i += 1) { pts.push(Particle()); }
 
-svg.animate = function (event) {
+animate = function (event) {
   for (var i = 0; i < joints; i += 1) { pts[i].update(); }
   var points = pts.map(function(p) { return p.p; });
   lines.polygon(points)

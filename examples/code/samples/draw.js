@@ -9,7 +9,7 @@ var p = polygon()
   .stroke("#158")
   .strokeLinecap("round");
 
-svg.mouseMoved = function (mouse) {
+mouseMoved = function (mouse) {
   points.push(mouse);
   if (points.length > 100) { points.shift(); }
   p.setPoints(points);

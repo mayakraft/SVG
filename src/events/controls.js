@@ -42,6 +42,10 @@ const controlPoint = function (parent, options = {}) {
         updateSVG();
       }
     }
+    // alert delegate
+    if (typeof position.delegate === "function") {
+      position.delegate(proxy);
+    }
   };
 
   // set default position
@@ -61,6 +65,7 @@ const controlPoint = function (parent, options = {}) {
     .map(e => e ** 2)
     .reduce((a, b) => a + b, 0));
 
+  position.delegate = undefined; // to be set
   position.setPosition = setPosition;
   position.onMouseMove = onMouseMove;
   position.onMouseUp = onMouseUp;
@@ -81,6 +86,7 @@ const controlPoint = function (parent, options = {}) {
 
 const controls = function (svg, number, options) {
   let selected;
+  let delegate;
   const points = Array.from(Array(number))
     .map(() => controlPoint(svg, options));
   points.forEach((pt, i) => {
@@ -89,6 +95,14 @@ const controls = function (svg, number, options) {
       pt.setPosition(options.position(i));
     }
   });
+
+  // hook up the delegate callback for the on change event
+  const protocol = function (point) {
+    if (typeof delegate === "function") {
+      delegate.call(points, point);
+    }
+  };
+  points.forEach((p) => { p.delegate = protocol; });
 
   const mousePressedHandler = function (mouse) {
     if (!(points.length > 0)) { return; }
@@ -120,6 +134,14 @@ const controls = function (svg, number, options) {
     },
   });
 
+  points.changed = function (func, runOnceAtStart) {
+    if (typeof func === "function") {
+      delegate = func;
+      if (runOnceAtStart === true) { delegate.call(points); }
+    }
+    return points;
+  };
+
   points.position = function (func) {
     if (typeof func === "function") {
       points.forEach((p, i) => p.setPosition(func(i)));
@@ -129,6 +151,12 @@ const controls = function (svg, number, options) {
   points.svg = function (func) {
     if (typeof func === "function") {
       points.forEach((p, i) => { p.svg = func(i); });
+    }
+    return points;
+  };
+  points.parent = function (parent) {
+    if (parent != null && parent.appendChild != null) {
+      points.forEach((p) => { parent.appendChild(p.svg); });
     }
     return points;
   };

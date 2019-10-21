@@ -7,12 +7,11 @@ import window from "./window";
 // const { SVG } = window;
 
 /**
- *
- * this creates a more accessible interface in the direction of Processing / p5.js
+ * this creates a more accessible interface for beginner coders.
+ * similar to the structure of Processing / p5.js
  *
  * only works for browser! no node.
  * this attaches an SVG to the document, and binds member functions to the window
- *
  */
 
 const bindSVGMethodsTo = function (svg, environment) {
@@ -26,6 +25,32 @@ const bindSVGMethodsTo = function (svg, environment) {
     .filter(key => environment[key] === undefined)
     .filter(key => forbidden.indexOf(key) === -1)
     .forEach((key) => { environment[key] = window.SVG[key]; });
+  // bind events
+  // and other top level svg setters
+  Object.defineProperty(window, "mousePressed", {
+    set: (value) => { svg.mousePressed = value; },
+    get: () => svg.mousePressed
+  });
+  Object.defineProperty(window, "mouseReleased", {
+    set: (value) => { svg.mouseReleased = value; },
+    get: () => svg.mouseReleased
+  });
+  Object.defineProperty(window, "mouseMoved", {
+    set: (value) => { svg.mouseMoved = value; },
+    get: () => svg.mouseMoved
+  });
+  Object.defineProperty(window, "scroll", {
+    set: (value) => { svg.scroll = value; },
+    get: () => svg.scroll
+  });
+  Object.defineProperty(window, "animate", {
+    set: (value) => { svg.animate = value; },
+    get: () => svg.animate
+  });
+  Object.defineProperty(window, "fps", {
+    set: (value) => { svg.fps = value; },
+    get: () => svg.fps
+  });
 };
 
 const globalize = function (svg, ...args) {

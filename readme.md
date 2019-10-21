@@ -62,9 +62,9 @@ The code above will create:
 
 # Examples
 
-Refresh this page for a new example: [svg.rabbitear.org](https://svg.rabbitear.org)
+This page contains live-code examples: [svg.rabbitear.org](https://svg.rabbitear.org)
 
-Read [this introduction blog post](https://blog.rabbitear.org/2018/12/29/svg/) and check out the `examples/` folder included in this project for more demos:
+After download, check out the `examples/` folder.
 
 ![example](https://robbykraft.github.io/SVG/examples/vera.svg)
 
@@ -174,7 +174,7 @@ mouse
 mouseMoved = function (event) { }
 mousePressed = function (event) { }
 mouseReleased = function (event) { }
-onScroll = function (event) { }
+scroll = function (event) { }
 animate = function (event) { }
 
 // clear all event handlers
