@@ -20,11 +20,10 @@ test("all primitives", () => {
   group.appendChild(SVG.wedge(0, 1, 2, 3, 4));
   group.appendChild(SVG.arcEllipse(0, 1, 2, 3, 4, 5));
   group.appendChild(SVG.wedgeEllipse(0, 1, 2, 3, 4, 5));
-  group.appendChild(SVG.arcArrow([0, 1], [2, 3], {}));
-  group.appendChild(SVG.straightArrow([0, 1], [2, 3], {}));
-  const nodeNames = ["line", "rect", "circle", "ellipse", "polygon", "polyline", "path", "text", "path", "path", "path", "path", "g", "g"];
+  group.appendChild(SVG.arrow([0, 1], [2, 3]));
+  const nodeNames = ["line", "rect", "circle", "ellipse", "polygon", "polyline", "path", "text", "path", "path", "path", "path", "g"];
   Array.from(group.childNodes).forEach((el, i) => {
     expect(el.nodeName).toBe(nodeNames[i]);
   });
-  expect(group.childNodes.length).toBe(14);
+  expect(group.childNodes.length).toBe(13);
 });
