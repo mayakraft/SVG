@@ -168,6 +168,126 @@ export const setArrowPoints = function (shape, ...args) {
 
   let tailPt = [endpoints[0], endpoints[1]];
   let headPt = [endpoints[2], endpoints[3]];
+  let vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+  let midpoint = [tailPt[0] + vector[0] / 2, tailPt[1] + vector[1] / 2];
+  // make sure arrow isn't too small
+  const len = Math.sqrt((vector[0] ** 2) + (vector[1] ** 2));
+  const minLength = (
+    (o.tail.visible ? (1 + o.tail.padding) * o.tail.height * 2.5 : 0)
+  + (o.head.visible ? (1 + o.head.padding) * o.head.height * 2.5 : 0)
+  );
+  if (len < minLength) {
+    const minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
+    tailPt = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
+    headPt = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
+    vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+  }
+  let perpendicular = [vector[1], -vector[0]];
+  let bezPoint = [
+    midpoint[0] + perpendicular[0] * o.curve,
+    midpoint[1] + perpendicular[1] * o.curve
+  ];
+
+  const bezTail = [bezPoint[0] - tailPt[0], bezPoint[1] - tailPt[1]];
+  const bezHead = [bezPoint[0] - headPt[0], bezPoint[1] - headPt[1]];
+  const bezTailLen = Math.sqrt((bezTail[0] ** 2) + (bezTail[1] ** 2));
+  const bezHeadLen = Math.sqrt((bezHead[0] ** 2) + (bezHead[1] ** 2));
+  const bezTailNorm = [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
+  const bezHeadNorm = [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
+  const tailVector = [-bezTailNorm[0], -bezTailNorm[1]];
+  const headVector = [-bezHeadNorm[0], -bezHeadNorm[1]];
+  const tailNormal = [tailVector[1], -tailVector[0]];
+  const headNormal = [headVector[1], -headVector[0]];
+
+  const tailArc = [
+    tailPt[0] + bezTailNorm[0] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding),
+    tailPt[1] + bezTailNorm[1] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding)
+  ];
+  const headArc = [
+    headPt[0] + bezHeadNorm[0] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding),
+    headPt[1] + bezHeadNorm[1] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding)
+  ];
+  // readjust bezier curve now that the arrow heads push inwards
+  vector = [headArc[0] - tailArc[0], headArc[1] - tailArc[1]];
+  perpendicular = [vector[1], -vector[0]];
+  midpoint = [tailArc[0] + vector[0] / 2, tailArc[1] + vector[1] / 2];
+  bezPoint = [
+    midpoint[0] + perpendicular[0] * o.curve,
+    midpoint[1] + perpendicular[1] * o.curve
+  ];
+
+  // done adjust
+  const tailControl = [
+    tailArc[0] + (bezPoint[0] - tailArc[0]) * o.pinch,
+    tailArc[1] + (bezPoint[1] - tailArc[1]) * o.pinch
+  ];
+  const headControl = [
+    headArc[0] + (bezPoint[0] - headArc[0]) * o.pinch,
+    headArc[1] + (bezPoint[1] - headArc[1]) * o.pinch
+  ];
+
+  const tailPolyPts = [
+    [tailArc[0] + tailNormal[0] * -o.tail.width, tailArc[1] + tailNormal[1] * -o.tail.width],
+    [tailArc[0] + tailNormal[0] * o.tail.width, tailArc[1] + tailNormal[1] * o.tail.width],
+    [tailArc[0] + tailVector[0] * o.tail.height, tailArc[1] + tailVector[1] * o.tail.height]
+  ];
+  const headPolyPts = [
+    [headArc[0] + headNormal[0] * -o.head.width, headArc[1] + headNormal[1] * -o.head.width],
+    [headArc[0] + headNormal[0] * o.head.width, headArc[1] + headNormal[1] * o.head.width],
+    [headArc[0] + headVector[0] * o.head.height, headArc[1] + headVector[1] * o.head.height]
+  ];
+
+  // draw
+  // if straight or curved
+  path.setAttribute("d", `M${tailArc[0]},${tailArc[1]}C${tailControl[0]},${tailControl[1]},${headControl[0]},${headControl[1]},${headArc[0]},${headArc[1]}`);
+
+  if (o.head.visible) {
+    polys[0].removeAttribute("display");
+    setPoints(polys[0], headPolyPts);
+  } else {
+    polys[0].setAttribute("display", "none");
+  }
+
+  if (o.tail.visible) {
+    polys[1].removeAttribute("display");
+    setPoints(polys[1], tailPolyPts);
+  } else {
+    polys[1].setAttribute("display", "none");
+  }
+  return shape;
+};
+
+const setArrowPointsStraightOnly = function (shape, ...args) {
+  const children = Array.from(shape.childNodes);
+  const path = children.filter(node => node.tagName === "path").shift();
+  const polys = ["svg-arrow-head", "svg-arrow-tail"]
+    .map(c => children.filter(n => n.getAttribute("class") === c).shift());
+
+  const flat = flatten_input(...args);
+  let endpoints = [];
+  if (typeof flat[0] === "number") {
+    endpoints = flat;
+  }
+  if (typeof flat[0] === "object") {
+    if (typeof flat[0].x === "number") {
+      endpoints = flat.map(p => [p[0], p[1]]).reduce((a, b) => a.concat(b), []);
+    }
+    if (typeof flat[0][0] === "number") {
+      endpoints = flat.reduce((a, b) => a.concat(b), []);
+    }
+  }
+  if (!endpoints.length && shape.endpoints != null) {
+    // get endpoints from cache
+    endpoints = shape.endpoints;
+  }
+  if (!endpoints.length) { return shape; }
+  // we have to cache the endpoints in case we need to rebuild
+  shape.endpoints = endpoints;
+
+  const o = shape.options;
+
+  let tailPt = [endpoints[0], endpoints[1]];
+  let headPt = [endpoints[2], endpoints[3]];
 
   const vec = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
   const arrowLength = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);

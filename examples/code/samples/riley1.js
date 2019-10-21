@@ -1,6 +1,6 @@
 size(100, 100);
 
-var space = random(3,7);
+var space = random(3, 6);
 var clip = clipPath();
 clip.rect(0, 0, 100, 100);
 

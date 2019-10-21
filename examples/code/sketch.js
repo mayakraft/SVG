@@ -46,6 +46,7 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
     var exampleFilenames = [
       "albers1.js",
       "albers2.js",
+      "arrows.js",
       "astroid.js",
       "bezier.js",
       "bugs.js",

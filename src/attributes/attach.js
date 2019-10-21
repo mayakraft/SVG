@@ -26,11 +26,6 @@ export const attachAppendableMethods = function (element, methods) {
 };
 
 export const attachArrowMethods = function (element) {
-  element.curve = (amount) => {
-    element.options.curve = amount;
-    setArrowPoints(element);
-    return element;
-  };
   element.head = (options) => {
     if (typeof options === "object") {
       Object.assign(element.options.head, options);
@@ -57,6 +52,16 @@ export const attachArrowMethods = function (element) {
     } else if (options == null) {
       element.options.tail.visible = true;
     }
+    setArrowPoints(element);
+    return element;
+  };
+  element.curve = (amount) => {
+    element.options.curve = amount;
+    setArrowPoints(element);
+    return element;
+  };
+  element.pinch = (amount) => {
+    element.options.pinch = amount;
     setArrowPoints(element);
     return element;
   };

@@ -170,7 +170,7 @@ export const arrow = function (...args) {
     head: { width: 0.5, height: 2, visible: false, padding: 0.0 },
     tail: { width: 0.5, height: 2, visible: false, padding: 0.0 },
     curve: 0.0,
-    // padding: 0.0, // %
+    pinch: 0.618,
     endpoints: [],
   };
   setArrowPoints(shape, ...args);

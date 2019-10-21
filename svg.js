@@ -1138,26 +1138,52 @@
     var o = shape.options;
     var tailPt = [endpoints[0], endpoints[1]];
     var headPt = [endpoints[2], endpoints[3]];
-    var vec = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
-    var arrowLength = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
-    var arrowVector = [vec[0] / arrowLength, vec[1] / arrowLength];
-    var arrow90 = [arrowVector[1], -arrowVector[0]];
-    tailPt = [tailPt[0] + arrowVector[0] * (o.head.visible ? 1 : 0) * o.head.padding, tailPt[1] + arrowVector[1] * (o.head.visible ? 1 : 0) * o.head.padding];
-    headPt = [headPt[0] - arrowVector[0] * (o.tail.visible ? 1 : 0) * o.tail.padding, headPt[1] - arrowVector[1] * (o.tail.visible ? 1 : 0) * o.tail.padding];
-    var headCoords = [[headPt[0] + arrow90[0] * o.head.width, headPt[1] + arrow90[1] * o.head.width], [headPt[0] - arrow90[0] * o.head.width, headPt[1] - arrow90[1] * o.head.width], [headPt[0] + arrowVector[0] * o.head.height, headPt[1] + arrowVector[1] * o.head.height]];
-    var tailCoords = [[tailPt[0] - arrow90[0] * o.tail.width, tailPt[1] - arrow90[1] * o.tail.width], [tailPt[0] + arrow90[0] * o.tail.width, tailPt[1] + arrow90[1] * o.tail.width], [tailPt[0] - arrowVector[0] * o.tail.height, tailPt[1] - arrowVector[1] * o.tail.height]];
-    path.setAttribute("d", "M".concat(tailPt[0], ",").concat(tailPt[1], "L").concat(headPt[0], ",").concat(headPt[1]));
+    var vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+    var midpoint = [tailPt[0] + vector[0] / 2, tailPt[1] + vector[1] / 2];
+    var len = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+    var minLength = (o.tail.visible ? (1 + o.tail.padding) * o.tail.height * 2.5 : 0) + (o.head.visible ? (1 + o.head.padding) * o.head.height * 2.5 : 0);
+
+    if (len < minLength) {
+      var minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
+      tailPt = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
+      headPt = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
+      vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+    }
+
+    var perpendicular = [vector[1], -vector[0]];
+    var bezPoint = [midpoint[0] + perpendicular[0] * o.curve, midpoint[1] + perpendicular[1] * o.curve];
+    var bezTail = [bezPoint[0] - tailPt[0], bezPoint[1] - tailPt[1]];
+    var bezHead = [bezPoint[0] - headPt[0], bezPoint[1] - headPt[1]];
+    var bezTailLen = Math.sqrt(Math.pow(bezTail[0], 2) + Math.pow(bezTail[1], 2));
+    var bezHeadLen = Math.sqrt(Math.pow(bezHead[0], 2) + Math.pow(bezHead[1], 2));
+    var bezTailNorm = [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
+    var bezHeadNorm = [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
+    var tailVector = [-bezTailNorm[0], -bezTailNorm[1]];
+    var headVector = [-bezHeadNorm[0], -bezHeadNorm[1]];
+    var tailNormal = [tailVector[1], -tailVector[0]];
+    var headNormal = [headVector[1], -headVector[0]];
+    var tailArc = [tailPt[0] + bezTailNorm[0] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding), tailPt[1] + bezTailNorm[1] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding)];
+    var headArc = [headPt[0] + bezHeadNorm[0] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding), headPt[1] + bezHeadNorm[1] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding)];
+    vector = [headArc[0] - tailArc[0], headArc[1] - tailArc[1]];
+    perpendicular = [vector[1], -vector[0]];
+    midpoint = [tailArc[0] + vector[0] / 2, tailArc[1] + vector[1] / 2];
+    bezPoint = [midpoint[0] + perpendicular[0] * o.curve, midpoint[1] + perpendicular[1] * o.curve];
+    var tailControl = [tailArc[0] + (bezPoint[0] - tailArc[0]) * o.pinch, tailArc[1] + (bezPoint[1] - tailArc[1]) * o.pinch];
+    var headControl = [headArc[0] + (bezPoint[0] - headArc[0]) * o.pinch, headArc[1] + (bezPoint[1] - headArc[1]) * o.pinch];
+    var tailPolyPts = [[tailArc[0] + tailNormal[0] * -o.tail.width, tailArc[1] + tailNormal[1] * -o.tail.width], [tailArc[0] + tailNormal[0] * o.tail.width, tailArc[1] + tailNormal[1] * o.tail.width], [tailArc[0] + tailVector[0] * o.tail.height, tailArc[1] + tailVector[1] * o.tail.height]];
+    var headPolyPts = [[headArc[0] + headNormal[0] * -o.head.width, headArc[1] + headNormal[1] * -o.head.width], [headArc[0] + headNormal[0] * o.head.width, headArc[1] + headNormal[1] * o.head.width], [headArc[0] + headVector[0] * o.head.height, headArc[1] + headVector[1] * o.head.height]];
+    path.setAttribute("d", "M".concat(tailArc[0], ",").concat(tailArc[1], "C").concat(tailControl[0], ",").concat(tailControl[1], ",").concat(headControl[0], ",").concat(headControl[1], ",").concat(headArc[0], ",").concat(headArc[1]));
 
     if (o.head.visible) {
       polys[0].removeAttribute("display");
-      setPoints(polys[0], headCoords);
+      setPoints(polys[0], headPolyPts);
     } else {
       polys[0].setAttribute("display", "none");
     }
 
     if (o.tail.visible) {
       polys[1].removeAttribute("display");
-      setPoints(polys[1], tailCoords);
+      setPoints(polys[1], tailPolyPts);
     } else {
       polys[1].setAttribute("display", "none");
     }
@@ -1462,12 +1488,6 @@
     });
   };
   var attachArrowMethods = function attachArrowMethods(element) {
-    element.curve = function (amount) {
-      element.options.curve = amount;
-      setArrowPoints(element);
-      return element;
-    };
-
     element.head = function (options) {
       if (_typeof(options) === "object") {
         Object.assign(element.options.head, options);
@@ -1500,6 +1520,18 @@
         element.options.tail.visible = true;
       }
 
+      setArrowPoints(element);
+      return element;
+    };
+
+    element.curve = function (amount) {
+      element.options.curve = amount;
+      setArrowPoints(element);
+      return element;
+    };
+
+    element.pinch = function (amount) {
+      element.options.pinch = amount;
       setArrowPoints(element);
       return element;
     };
@@ -2004,6 +2036,7 @@
         padding: 0.0
       },
       curve: 0.0,
+      pinch: 0.618,
       endpoints: []
     };
 
@@ -2461,187 +2494,13 @@
     return element;
   };
 
-  var straightArrow = function straightArrow(startPoint, endPoint, options) {
-    var p = {
-      color: "#000",
-      strokeWidth: 0.5,
-      strokeStyle: "",
-      fillStyle: "",
-      highlight: undefined,
-      highlightStrokeStyle: "",
-      highlightFillStyle: "",
-      width: 0.5,
-      length: 2,
-      padding: 0.0,
-      start: false,
-      end: true
-    };
-
-    if (_typeof(options) === "object" && options !== null) {
-      Object.assign(p, options);
-    }
-
-    var arrowFill = ["stroke:none", "pointer-events:none"].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var arrowStroke = ["fill:none", p.strokeStyle].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var highlightStroke = ["fill:none", p.strokeStyle].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var highlightFill = ["stroke:none", "pointer-events:none"].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var start = startPoint;
-    var end = endPoint;
-    var vec = [end[0] - start[0], end[1] - start[1]];
-    var arrowLength = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
-    var arrowVector = [vec[0] / arrowLength, vec[1] / arrowLength];
-    var arrow90 = [arrowVector[1], -arrowVector[0]];
-    start = [startPoint[0] + arrowVector[0] * (p.start ? 1 : 0) * p.padding, startPoint[1] + arrowVector[1] * (p.start ? 1 : 0) * p.padding];
-    end = [endPoint[0] - arrowVector[0] * (p.end ? 1 : 0) * p.padding, endPoint[1] - arrowVector[1] * (p.end ? 1 : 0) * p.padding];
-    var endHead = [[end[0] + arrow90[0] * p.width, end[1] + arrow90[1] * p.width], [end[0] - arrow90[0] * p.width, end[1] - arrow90[1] * p.width], [end[0] + arrowVector[0] * p.length, end[1] + arrowVector[1] * p.length]];
-    var startHead = [[start[0] - arrow90[0] * p.width, start[1] - arrow90[1] * p.width], [start[0] + arrow90[0] * p.width, start[1] + arrow90[1] * p.width], [start[0] - arrowVector[0] * p.length, start[1] - arrowVector[1] * p.length]];
-    var arrow = group();
-    var l = line(start[0], start[1], end[0], end[1]);
-    l.setAttribute("style", arrowStroke);
-    arrow.appendChild(l);
-
-    if (p.end) {
-      var endArrowPoly = polygon(endHead);
-      endArrowPoly.setAttribute("style", arrowFill);
-      arrow.appendChild(endArrowPoly);
-    }
-
-    if (p.start) {
-      var startArrowPoly = polygon(startHead);
-      startArrowPoly.setAttribute("style", arrowFill);
-      arrow.appendChild(startArrowPoly);
-    }
-
-    if (p.highlight !== undefined) {
-      var hScale = 0.6;
-      var centering = [arrowVector[0] * p.length * 0.09, arrowVector[1] * p.length * 0.09];
-      var endHeadHighlight = [[centering[0] + end[0] + arrow90[0] * (p.width * hScale), centering[1] + end[1] + arrow90[1] * (p.width * hScale)], [centering[0] + end[0] - arrow90[0] * (p.width * hScale), centering[1] + end[1] - arrow90[1] * (p.width * hScale)], [centering[0] + end[0] + arrowVector[0] * (p.length * hScale), centering[1] + end[1] + arrowVector[1] * (p.length * hScale)]];
-      var startHeadHighlight = [[-centering[0] + start[0] - arrow90[0] * (p.width * hScale), -centering[1] + start[1] - arrow90[1] * (p.width * hScale)], [-centering[0] + start[0] + arrow90[0] * (p.width * hScale), -centering[1] + start[1] + arrow90[1] * (p.width * hScale)], [-centering[0] + start[0] - arrowVector[0] * (p.length * hScale), -centering[1] + start[1] - arrowVector[1] * (p.length * hScale)]];
-      var highline = line(start[0], start[1], end[0], end[1]);
-      highline.setAttribute("style", highlightStroke);
-      arrow.appendChild(highline);
-
-      if (p.end) {
-        var endArrowHighlight = polygon(endHeadHighlight);
-        endArrowHighlight.setAttribute("style", highlightFill);
-        arrow.appendChild(endArrowHighlight);
-      }
-
-      if (p.start) {
-        var startArrowHighlight = polygon(startHeadHighlight);
-        startArrowHighlight.setAttribute("style", highlightFill);
-        arrow.appendChild(startArrowHighlight);
-      }
-    }
-
-    return arrow;
-  };
-  var arcArrow = function arcArrow(start, end, options) {
-    var p = {
-      color: "#000",
-      strokeWidth: 0.5,
-      width: 0.5,
-      length: 2,
-      bend: 0.3,
-      pinch: 0.618,
-      padding: 0.5,
-      side: true,
-      start: false,
-      end: true,
-      strokeStyle: "",
-      fillStyle: ""
-    };
-
-    if (_typeof(options) === "object" && options !== null) {
-      Object.assign(p, options);
-    }
-
-    var arrowFill = ["stroke:none", p.fillStyle, "pointer-events:none"].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var arrowStroke = ["fill:none", p.strokeStyle].filter(function (a) {
-      return a !== "";
-    }).join(";");
-    var startPoint = start;
-    var endPoint = end;
-    var vector = [endPoint[0] - startPoint[0], endPoint[1] - startPoint[1]];
-    var midpoint = [startPoint[0] + vector[0] / 2, startPoint[1] + vector[1] / 2];
-    var len = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
-    var minLength = (p.start ? 1 + p.padding : 0 + p.end ? 1 + p.padding : 0) * p.length * 2.5;
-
-    if (len < minLength) {
-      var minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
-      startPoint = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
-      endPoint = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
-      vector = [endPoint[0] - startPoint[0], endPoint[1] - startPoint[1]];
-    }
-
-    var perpendicular = [vector[1], -vector[0]];
-    var bezPoint = [midpoint[0] + perpendicular[0] * (p.side ? 1 : -1) * p.bend, midpoint[1] + perpendicular[1] * (p.side ? 1 : -1) * p.bend];
-    var bezStart = [bezPoint[0] - startPoint[0], bezPoint[1] - startPoint[1]];
-    var bezEnd = [bezPoint[0] - endPoint[0], bezPoint[1] - endPoint[1]];
-    var bezStartLen = Math.sqrt(bezStart[0] * bezStart[0] + bezStart[1] * bezStart[1]);
-    var bezEndLen = Math.sqrt(bezEnd[0] * bezEnd[0] + bezEnd[1] * bezEnd[1]);
-    var bezStartNorm = [bezStart[0] / bezStartLen, bezStart[1] / bezStartLen];
-    var bezEndNorm = [bezEnd[0] / bezEndLen, bezEnd[1] / bezEndLen];
-    var startHeadVec = [-bezStartNorm[0], -bezStartNorm[1]];
-    var endHeadVec = [-bezEndNorm[0], -bezEndNorm[1]];
-    var startNormal = [startHeadVec[1], -startHeadVec[0]];
-    var endNormal = [endHeadVec[1], -endHeadVec[0]];
-    var arcStart = [startPoint[0] + bezStartNorm[0] * p.length * ((p.start ? 1 : 0) + p.padding), startPoint[1] + bezStartNorm[1] * p.length * ((p.start ? 1 : 0) + p.padding)];
-    var arcEnd = [endPoint[0] + bezEndNorm[0] * p.length * ((p.end ? 1 : 0) + p.padding), endPoint[1] + bezEndNorm[1] * p.length * ((p.end ? 1 : 0) + p.padding)];
-    vector = [arcEnd[0] - arcStart[0], arcEnd[1] - arcStart[1]];
-    perpendicular = [vector[1], -vector[0]];
-    midpoint = [arcStart[0] + vector[0] / 2, arcStart[1] + vector[1] / 2];
-    bezPoint = [midpoint[0] + perpendicular[0] * (p.side ? 1 : -1) * p.bend, midpoint[1] + perpendicular[1] * (p.side ? 1 : -1) * p.bend];
-    var controlStart = [arcStart[0] + (bezPoint[0] - arcStart[0]) * p.pinch, arcStart[1] + (bezPoint[1] - arcStart[1]) * p.pinch];
-    var controlEnd = [arcEnd[0] + (bezPoint[0] - arcEnd[0]) * p.pinch, arcEnd[1] + (bezPoint[1] - arcEnd[1]) * p.pinch];
-    var startHeadPoints = [[arcStart[0] + startNormal[0] * -p.width, arcStart[1] + startNormal[1] * -p.width], [arcStart[0] + startNormal[0] * p.width, arcStart[1] + startNormal[1] * p.width], [arcStart[0] + startHeadVec[0] * p.length, arcStart[1] + startHeadVec[1] * p.length]];
-    var endHeadPoints = [[arcEnd[0] + endNormal[0] * -p.width, arcEnd[1] + endNormal[1] * -p.width], [arcEnd[0] + endNormal[0] * p.width, arcEnd[1] + endNormal[1] * p.width], [arcEnd[0] + endHeadVec[0] * p.length, arcEnd[1] + endHeadVec[1] * p.length]];
-    var arrowGroup = group();
-    var arrowArc = bezier(arcStart[0], arcStart[1], controlStart[0], controlStart[1], controlEnd[0], controlEnd[1], arcEnd[0], arcEnd[1]);
-    arrowArc.setAttribute("style", arrowStroke);
-    arrowGroup.appendChild(arrowArc);
-
-    if (p.start) {
-      var startHead = polygon(startHeadPoints);
-      startHead.setAttribute("style", arrowFill);
-      arrowGroup.appendChild(startHead);
-    }
-
-    if (p.end) {
-      var endHead = polygon(endHeadPoints);
-      endHead.setAttribute("style", arrowFill);
-      arrowGroup.appendChild(endHead);
-    }
-
-    return arrowGroup;
-  };
-
-  var arrows = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    straightArrow: straightArrow,
-    arcArrow: arcArrow
-  });
-
   var constructors = {};
-  Object.assign(constructors, root, primitives, arrows);
+  Object.assign(constructors, root, primitives);
   delete constructors.setConstructors;
   setConstructors(constructors);
   var elements = {};
   Object.keys(primitives).forEach(function (key) {
     elements[key] = primitives[key];
-  });
-  Object.keys(arrows).forEach(function (key) {
-    elements[key] = arrows[key];
   });
   Object.keys(root).filter(function (key) {
     return key !== "setConstructors";
@@ -2662,7 +2521,6 @@
   Object.keys(File).forEach(function (key) {
     SVG[key] = File[key];
   });
-  SVG.svg = SVG;
   SVG.NS = NS;
 
   return SVG;
