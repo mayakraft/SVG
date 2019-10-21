@@ -46,6 +46,7 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
     var exampleFilenames = [
       "albers1.js",
       "albers2.js",
+      "arrows.js",
       "astroid.js",
       "bezier.js",
       "bugs.js",
@@ -54,14 +55,12 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
       "dragon.js",
       "draw.js",
       "harmonic.js",
-      "lerp.js",
       "mask.js",
       "mystify.js",
       "parabola.js",
       "riley1.js",
       "ten-print.js",
-      "text.js",
-      "walker.js"
+      "text.js"
     ];
     exampleFilenames.forEach(function (file) {
       fetch("samples/" + file).then(function (data) {
@@ -98,13 +97,17 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   downloadButton.onclick = function () {
     // inject the code into a new section in the header
     var defs = app.svg.getElementsByTagName("defs");
-    var code = document.createElementNS(SVG.NS, "code");
-    var cdata = new window.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n" + app.getCode() + "\n");
-    code.appendChild(cdata);
     if (defs.length === 0) {
       defs = [document.createElementNS(SVG.NS, "defs")];
       app.svg.prepend(defs[0]);
     }
+    var codes = defs[0].getElementsByTagName("code");
+    var code = codes.length === 0
+      ? document.createElementNS(SVG.NS, "code")
+      : codes[0];
+    code.innerHTML = "";
+    var cdata = new window.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n" + app.getCode() + "\n");
+    code.appendChild(cdata);
     defs[0].prepend(code);
     app.svg.save();
   };

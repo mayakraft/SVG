@@ -11,7 +11,8 @@ import {
   attachTransformMethods,
   attachViewBoxMethods,
   attachFunctionalStyleSetters,
-  attachPathMethods
+  attachPathMethods,
+  attachArrowMethods
 } from "./attach";
 
 const preparePrimitive = function (element) {
@@ -22,6 +23,14 @@ const preparePrimitive = function (element) {
   if (element.tagName === "path") {
     attachPathMethods(element);
   }
+};
+
+const prepareArrow = function (element) {
+  attachFunctionalStyleSetters(element);
+  attachDOMMethods(element);
+  attachTransformMethods(element);
+  attachClipMaskAttributes(element);
+  attachArrowMethods(element);
 };
 
 const prepareText = function (element) {
@@ -65,6 +74,7 @@ const prepare = function (type, element, primitiveList) {
   switch (type) {
     case "svg": prepareSVG(element, primitiveList); break;
     case "primitive": preparePrimitive(element, primitiveList); break;
+    case "arrow": prepareArrow(element, primitiveList); break;
     case "defs":
     case "group": prepareGroup(element, primitiveList); break;
     case "text": prepareText(element, primitiveList); break;

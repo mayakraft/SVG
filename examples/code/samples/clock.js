@@ -1,22 +1,20 @@
 size(-1, -1, 2, 2);
 background("#edb");
-svg.fps = 30;
-var r = 0.666;
-var sw = 0.0333;
+var r = getWidth() * 0.333;
+var strokeW = r / 20;
 
 for (var i = 0; i < 60; i += 1) {
   var a = PI * i / 30;
-  var m = i % 5 === 0 ? r + sw * 3 : r + sw * 2;
-  line(-Math.cos(a) * m, -Math.sin(a) * m, Math.cos(a) * m, Math.sin(a) * m)
-    .stroke("#000")
-    .strokeWidth(sw);
+  var h = i % 5 === 0;
+  var d = h ? r + strokeW * 3 : r + strokeW;
+  circle(-Math.cos(a) * d, -Math.sin(a) * d, r/30);
 }
 
-circle(0, 0, r + sw).fill("black")
+circle(0, 0, r + strokeW).fill("#000");
 var pies = [
-  wedge().fill("#158"),
-  wedge().fill("#ec3"),
-  wedge().fill("#e53")
+  wedge().fill("#edb"),
+  wedge().fill("#e53"),
+  wedge().fill("#158")
 ];
 
 svg.animate = function (time) {
@@ -24,12 +22,11 @@ svg.animate = function (time) {
   var s = (d.getSeconds() + d.getMilliseconds() / 1000) / 60;
   var m = d.getMinutes() / 60;
   var h = (d.getHours() % 12) / 12;
-
-  [ -PI / 2 + s * 2 * PI,
-    -PI / 2 + m * 2 * PI + s * 2 * PI / 60,
-    -PI / 2 + h * 2 * PI + m * 2 * PI / 60
-  ].sort(function(a, b) { return a - b; })
+  [(s), (m + s / 60), (h + m / 60 + s / 360)]
+    .sort(function(a, b) { return a - b; })
     .forEach(function(a, i, arr) {
-      pies[i].setArc(0, 0, r, a, arr[(i + 1) % arr.length], true);
+      var a1 = -PI / 2 + 2 * PI * a;
+      var a2 = -PI / 2 + 2 * PI * arr[(i + 1) % arr.length];
+      pies[i].setArc(0, 0, r, a1, a2, true);
     });
 };

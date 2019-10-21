@@ -13,8 +13,7 @@ const primitives = [
   "arc",
   "parabola",
   "regularPolygon",
-  "arcArrow",
-  "straightArrow",
+  "arrow",
 ];
 
 const groupLevel = ["group"];
