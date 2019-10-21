@@ -1,5 +1,5 @@
 size(90, 90);
-background("#9590c0");
+background("#9590c0", true);
 
 var g = group().translate(35, 15);
 var style = { fill: "#2c266d", opacity: 0.4 };

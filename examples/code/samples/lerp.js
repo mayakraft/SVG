@@ -20,13 +20,13 @@ var pts = svg.controls(3)
 var curve = bezier(...makeCurve()).fill("none").stroke("#e53");
 var dot = circle(0, 0, radius).fill("#158");
 
-svg.animate = function (event) {
+animate = function (event) {
   var phase = Math.sin(event.time) * 0.5 + 0.5;
   var mids = [lerp(pts[0], pts[2], phase), lerp(pts[2], pts[1], phase)];
   var dotPos = lerp(mids[0], mids[1], phase);
   dot.setAttributes({cx: dotPos[0], cy: dotPos[1]});
 };
 
-svg.mouseMoved = function (mouse) {
+mouseMoved = function (mouse) {
   if (mouse.isPressed) { curve.setBezier(...makeCurve()); }
 };

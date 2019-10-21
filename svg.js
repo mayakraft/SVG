@@ -269,6 +269,54 @@
     }).forEach(function (key) {
       environment[key] = win.SVG[key];
     });
+    Object.defineProperty(win, "mousePressed", {
+      set: function set(value) {
+        svg.mousePressed = value;
+      },
+      get: function get() {
+        return svg.mousePressed;
+      }
+    });
+    Object.defineProperty(win, "mouseReleased", {
+      set: function set(value) {
+        svg.mouseReleased = value;
+      },
+      get: function get() {
+        return svg.mouseReleased;
+      }
+    });
+    Object.defineProperty(win, "mouseMoved", {
+      set: function set(value) {
+        svg.mouseMoved = value;
+      },
+      get: function get() {
+        return svg.mouseMoved;
+      }
+    });
+    Object.defineProperty(win, "scroll", {
+      set: function set(value) {
+        svg.scroll = value;
+      },
+      get: function get() {
+        return svg.scroll;
+      }
+    });
+    Object.defineProperty(win, "animate", {
+      set: function set(value) {
+        svg.animate = value;
+      },
+      get: function get() {
+        return svg.animate;
+      }
+    });
+    Object.defineProperty(win, "fps", {
+      set: function set(value) {
+        svg.fps = value;
+      },
+      get: function get() {
+        return svg.fps;
+      }
+    });
   };
 
   var globalize = function globalize(svg) {
@@ -595,7 +643,7 @@
       },
       enumerable: true
     });
-    Object.defineProperty(node, "onScroll", {
+    Object.defineProperty(node, "scroll", {
       set: function set(handler) {
         var scrollFunc = function scrollFunc(event) {
           return onScroll(handler, event);
@@ -761,6 +809,10 @@
           updateSVG();
         }
       }
+
+      if (typeof position.delegate === "function") {
+        position.delegate(proxy);
+      }
     };
 
     setPosition(options.position);
@@ -789,6 +841,7 @@
       }, 0);
     };
 
+    position.delegate = undefined;
     position.setPosition = setPosition;
     position.onMouseMove = onMouseMove;
     position.onMouseUp = onMouseUp;
@@ -816,6 +869,7 @@
 
   var controls = function controls(svg, number, options) {
     var selected;
+    var delegate;
     var points = Array.from(Array(number)).map(function () {
       return controlPoint(svg, options);
     });
@@ -823,6 +877,16 @@
       if (_typeof(options) === "object" && typeof options.position === "function") {
         pt.setPosition(options.position(i));
       }
+    });
+
+    var protocol = function protocol(point) {
+      if (typeof delegate === "function") {
+        delegate.call(points, point);
+      }
+    };
+
+    points.forEach(function (p) {
+      p.delegate = protocol;
     });
 
     var mousePressedHandler = function mousePressedHandler(mouse) {
@@ -873,6 +937,18 @@
       }
     });
 
+    points.changed = function (func, runOnceAtStart) {
+      if (typeof func === "function") {
+        delegate = func;
+
+        if (runOnceAtStart === true) {
+          delegate.call(points);
+        }
+      }
+
+      return points;
+    };
+
     points.position = function (func) {
       if (typeof func === "function") {
         points.forEach(function (p, i) {
@@ -887,6 +963,16 @@
       if (typeof func === "function") {
         points.forEach(function (p, i) {
           p.svg = func(i);
+        });
+      }
+
+      return points;
+    };
+
+    points.parent = function (parent) {
+      if (parent != null && parent.appendChild != null) {
+        points.forEach(function (p) {
+          parent.appendChild(p.svg);
         });
       }
 
@@ -2312,9 +2398,9 @@
   };
 
   var background = function background(element, color) {
-    var setParent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+    var setParent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-    if (setParent) {
+    if (setParent === true) {
       var parent = element.parentElement;
 
       if (parent != null) {

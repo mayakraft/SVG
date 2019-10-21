@@ -117,7 +117,7 @@ const Touches = function (node) {
     },
     enumerable: true
   });
-  Object.defineProperty(node, "onScroll", {
+  Object.defineProperty(node, "scroll", {
     set: (handler) => {
       const scrollFunc = event => onScroll(handler, event);
       handlers.mouseup.push(scrollFunc);

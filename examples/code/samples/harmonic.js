@@ -2,7 +2,7 @@ setViewBox(-1, -1, 2, 2);
 
 var poly = polyline().fillRule("evenodd").fill("#aaa");
 
-svg.animate = function (event) {
+animate = function (event) {
   var points = [];
   for (var i = 0; i < PI * 20; i += 1) {
     var amp = Math.cos(i / (2 + event.frame / 1000));

@@ -1,5 +1,5 @@
 size(256, 256);
-background("#158", false);
+background("#158");
 
 var p = polyline().fill("none")
   .stroke("#ec3").strokeLinejoin("round").strokeLinecap("round");
@@ -8,7 +8,7 @@ var x = getWidth() / 2;
 var y = getHeight() / 2;
 var points = [];
 
-svg.animate = function (event) {
+animate = function (event) {
   x += noise(event.time + 10);
   y += noise(event.time);
 

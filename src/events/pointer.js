@@ -82,7 +82,6 @@ const Pointer = function (node) {
   Object.defineProperty(thisPointer, "move", { value: move });
   Object.defineProperty(thisPointer, "down", { value: down });
   Object.defineProperty(thisPointer, "get", { value: copyPointer });
-  // Object.defineProperty(thisPointer, "node", { set: (n) => { node = n; } });
   return thisPointer;
 };
 
