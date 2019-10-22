@@ -36,6 +36,11 @@
   };
 
   var random = function (a, b) {
+    if (typeof a === "object" && a.length != null) {
+      return a.length > 0
+        ? a[Math.floor(Math.random() * a.length)]
+        : null;
+    }
     if (b != null) { return Math.random() * (b - a) + a; }
     if (a != null) { return Math.random() * a; }
     return Math.random();
