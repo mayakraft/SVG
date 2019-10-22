@@ -39,8 +39,26 @@ var CodeSVG = function CodeSVG(container) {
       app.console.innerHTML = "<p>" + err + "</p>";
     }
   };
+  var detectLoop = function detectLoop() {
+    var position = app.editor.getCursorPosition();
+    var token = app.editor.session.getTokenAt(position.row, position.column);
+    if (token) {
+      if (token.type === "keyword") {
+        if (token.value === "for") { return true; }
+        if (token.value === "while") { return true; }
+        if (token.value === "do") { return true; }
+      }
+    }
+    return false;
+  };
   var editorDidUpdate = function editorDidUpdate() {
-    compileAndRun();
+    if (detectLoop()) {
+      app.paused = true;
+    }
+
+    if (!isPaused) {
+      compileAndRun();
+    }
 
     if (typeof app.didUpdate === "function") {
       app.didUpdate();
@@ -72,6 +90,18 @@ var CodeSVG = function CodeSVG(container) {
   app.editor.session.on("change", editorDidUpdate);
   Object.defineProperty(app, "getCode", { value: getCode });
   Object.defineProperty(app, "injectCode", { value: injectCode });
+  var isPaused = false;
+  Object.defineProperty(app, "paused", {
+    get: function () { return isPaused; },
+    set: function (value) {
+      isPaused = value;
+      if (!isPaused) { compileAndRun(); }
+      else { app.console.innerHTML = ""; }
+      if (typeof app.didPause === "function") { app.didPause(isPaused); }
+    }
+  });
+
+  app.didPause = function () {};
 
   // allow these to be overwritten
   app.didUpdate = function () {};
@@ -90,7 +120,7 @@ var CodeSVG = function CodeSVG(container) {
       app.svg.fps = 60;
     }
   };
-  
+
   app.clear = function () {
     app.editor.setValue("");
   };

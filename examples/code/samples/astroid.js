@@ -1,7 +1,8 @@
 size(512, 512);
 background("#edb", true);
 
-var SEGMENTS = randomInt(13, 128);
+// var SEGMENTS = randomInt(13, 128);
+var SEGMENTS = 200;
 
 var w = getWidth() / SEGMENTS;
 var h = getHeight() / SEGMENTS;

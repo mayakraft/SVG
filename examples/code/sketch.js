@@ -41,6 +41,16 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   randomSketchButton.appendChild(randomSketchImage);
   container.appendChild(randomSketchButton);
 
+  var playPauseButton = document.createElement("div");
+  playPauseButton.setAttribute("class", "playpause-button pause");
+  playPauseButton.setAttribute("title", "Code is running. Press to pause");
+  var playPauseImage = document.createElement("img");
+  playPauseImage.src = "pause.svg";
+  playPauseImage.setAttribute("width", "30px");
+  playPauseImage.setAttribute("height", "30px");
+  playPauseButton.appendChild(playPauseImage);
+  container.appendChild(playPauseButton);
+
   var loadAndRunExamples = function loadAndRunExamples(callback) {
     var examples = [];
     var exampleFilenames = [
@@ -122,6 +132,16 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
       app.clear();
       return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
     });
+  };
+
+  playPauseButton.onclick = function () {
+    app.paused = !app.paused;
+  };
+
+  app.didPause = function (paused) {
+    playPauseButton.setAttribute("class", paused ? "playpause-button play" : "playpause-button pause");
+    playPauseImage.src = paused ? "play.svg" : "pause.svg";
+  playPauseButton.setAttribute("title", paused ? "Code is paused. Press to start" : "Code is running. Press to pause");
   };
 
   return app;
