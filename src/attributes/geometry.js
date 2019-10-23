@@ -180,19 +180,11 @@ export const setArrowPoints = function (shape, ...args) {
   );
   if (len < minLength) {
     const minVec = len === 0 // exactly 0. don't use epsilon here
-      ? vector
+      ? [minLength, 0]
       : [vector[0] / len * minLength, vector[1] / len * minLength];
     tailPt = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
     headPt = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
     vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
-    if (len === 0) {
-      console.log("---------- end of if");
-      console.log("minVec", minVec);
-      console.log("tailPt", tailPt);
-      console.log("headPt", headPt);
-      console.log("vector", vector);
-      console.log("====================");
-    }
   }
   let perpendicular = [vector[1], -vector[0]];
   let bezPoint = [
@@ -200,17 +192,6 @@ export const setArrowPoints = function (shape, ...args) {
     midpoint[1] + perpendicular[1] * o.curve
   ];
 
-  if (len === 0) {
-    console.log("endpoints", endpoints);
-    console.log("tailPt", tailPt);
-    console.log("headPt", headPt);
-    console.log("vector", vector);
-    console.log("midpoint", midpoint);
-    console.log("len", len);
-    console.log("minLength", minLength);
-    console.log("perpendicular", perpendicular);
-    console.log("bezPoint", bezPoint);
-  }
   const bezTail = [bezPoint[0] - tailPt[0], bezPoint[1] - tailPt[1]];
   const bezHead = [bezPoint[0] - headPt[0], bezPoint[1] - headPt[1]];
   const bezTailLen = Math.sqrt((bezTail[0] ** 2) + (bezTail[1] ** 2));
@@ -226,18 +207,6 @@ export const setArrowPoints = function (shape, ...args) {
   const tailNormal = [tailVector[1], -tailVector[0]];
   const headNormal = [headVector[1], -headVector[0]];
 
-    if (len === 0) {
-  console.log("bezTail", bezTail);
-  console.log("bezHead", bezHead);
-  console.log("bezTailLen", bezTailLen);
-  console.log("bezHeadLen", bezHeadLen);
-  console.log("bezTailNorm", bezTailNorm);
-  console.log("bezHeadNorm", bezHeadNorm);
-  console.log("tailVector", tailVector);
-  console.log("headVector", headVector);
-  console.log("tailNormal", tailNormal);
-  console.log("headNormal", headNormal);
-}
   const tailArc = [
     tailPt[0] + bezTailNorm[0] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding),
     tailPt[1] + bezTailNorm[1] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding)
@@ -276,14 +245,6 @@ export const setArrowPoints = function (shape, ...args) {
     [headArc[0] + headVector[0] * o.head.height, headArc[1] + headVector[1] * o.head.height]
   ];
 
-    if (len === 0) {
-  console.log("tailArc", tailArc);
-  console.log("headArc", headArc);
-  console.log("tailControl", tailControl);
-  console.log("headControl", headControl);
-  console.log("tailPolyPts", tailPolyPts);
-  console.log("headPolyPts", headPolyPts);
-}
   // draw
   // if straight or curved
   path.setAttribute("d", `M${tailArc[0]},${tailArc[1]}C${tailControl[0]},${tailControl[1]},${headControl[0]},${headControl[1]},${headArc[0]},${headArc[1]}`);
