@@ -1230,24 +1230,60 @@
     var minLength = (o.tail.visible ? (1 + o.tail.padding) * o.tail.height * 2.5 : 0) + (o.head.visible ? (1 + o.head.padding) * o.head.height * 2.5 : 0);
 
     if (len < minLength) {
-      var minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
+      var minVec = len === 0 ? vector : [vector[0] / len * minLength, vector[1] / len * minLength];
       tailPt = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
       headPt = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
       vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+
+      if (len === 0) {
+        console.log("---------- end of if");
+        console.log("minVec", minVec);
+        console.log("tailPt", tailPt);
+        console.log("headPt", headPt);
+        console.log("vector", vector);
+        console.log("====================");
+      }
     }
 
     var perpendicular = [vector[1], -vector[0]];
     var bezPoint = [midpoint[0] + perpendicular[0] * o.curve, midpoint[1] + perpendicular[1] * o.curve];
+
+    if (len === 0) {
+      console.log("endpoints", endpoints);
+      console.log("tailPt", tailPt);
+      console.log("headPt", headPt);
+      console.log("vector", vector);
+      console.log("midpoint", midpoint);
+      console.log("len", len);
+      console.log("minLength", minLength);
+      console.log("perpendicular", perpendicular);
+      console.log("bezPoint", bezPoint);
+    }
+
     var bezTail = [bezPoint[0] - tailPt[0], bezPoint[1] - tailPt[1]];
     var bezHead = [bezPoint[0] - headPt[0], bezPoint[1] - headPt[1]];
     var bezTailLen = Math.sqrt(Math.pow(bezTail[0], 2) + Math.pow(bezTail[1], 2));
     var bezHeadLen = Math.sqrt(Math.pow(bezHead[0], 2) + Math.pow(bezHead[1], 2));
-    var bezTailNorm = [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
-    var bezHeadNorm = [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
+    var bezTailNorm = bezTailLen === 0 ? bezTail : [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
+    var bezHeadNorm = bezTailLen === 0 ? bezHead : [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
     var tailVector = [-bezTailNorm[0], -bezTailNorm[1]];
     var headVector = [-bezHeadNorm[0], -bezHeadNorm[1]];
     var tailNormal = [tailVector[1], -tailVector[0]];
     var headNormal = [headVector[1], -headVector[0]];
+
+    if (len === 0) {
+      console.log("bezTail", bezTail);
+      console.log("bezHead", bezHead);
+      console.log("bezTailLen", bezTailLen);
+      console.log("bezHeadLen", bezHeadLen);
+      console.log("bezTailNorm", bezTailNorm);
+      console.log("bezHeadNorm", bezHeadNorm);
+      console.log("tailVector", tailVector);
+      console.log("headVector", headVector);
+      console.log("tailNormal", tailNormal);
+      console.log("headNormal", headNormal);
+    }
+
     var tailArc = [tailPt[0] + bezTailNorm[0] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding), tailPt[1] + bezTailNorm[1] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding)];
     var headArc = [headPt[0] + bezHeadNorm[0] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding), headPt[1] + bezHeadNorm[1] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding)];
     vector = [headArc[0] - tailArc[0], headArc[1] - tailArc[1]];
@@ -1258,6 +1294,16 @@
     var headControl = [headArc[0] + (bezPoint[0] - headArc[0]) * o.pinch, headArc[1] + (bezPoint[1] - headArc[1]) * o.pinch];
     var tailPolyPts = [[tailArc[0] + tailNormal[0] * -o.tail.width, tailArc[1] + tailNormal[1] * -o.tail.width], [tailArc[0] + tailNormal[0] * o.tail.width, tailArc[1] + tailNormal[1] * o.tail.width], [tailArc[0] + tailVector[0] * o.tail.height, tailArc[1] + tailVector[1] * o.tail.height]];
     var headPolyPts = [[headArc[0] + headNormal[0] * -o.head.width, headArc[1] + headNormal[1] * -o.head.width], [headArc[0] + headNormal[0] * o.head.width, headArc[1] + headNormal[1] * o.head.width], [headArc[0] + headVector[0] * o.head.height, headArc[1] + headVector[1] * o.head.height]];
+
+    if (len === 0) {
+      console.log("tailArc", tailArc);
+      console.log("headArc", headArc);
+      console.log("tailControl", tailControl);
+      console.log("headControl", headControl);
+      console.log("tailPolyPts", tailPolyPts);
+      console.log("headPolyPts", headPolyPts);
+    }
+
     path.setAttribute("d", "M".concat(tailArc[0], ",").concat(tailArc[1], "C").concat(tailControl[0], ",").concat(tailControl[1], ",").concat(headControl[0], ",").concat(headControl[1], ",").concat(headArc[0], ",").concat(headArc[1]));
 
     if (o.head.visible) {
