@@ -1230,7 +1230,7 @@
     var minLength = (o.tail.visible ? (1 + o.tail.padding) * o.tail.height * 2.5 : 0) + (o.head.visible ? (1 + o.head.padding) * o.head.height * 2.5 : 0);
 
     if (len < minLength) {
-      var minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
+      var minVec = len === 0 ? [minLength, 0] : [vector[0] / len * minLength, vector[1] / len * minLength];
       tailPt = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
       headPt = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
       vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
@@ -1242,8 +1242,8 @@
     var bezHead = [bezPoint[0] - headPt[0], bezPoint[1] - headPt[1]];
     var bezTailLen = Math.sqrt(Math.pow(bezTail[0], 2) + Math.pow(bezTail[1], 2));
     var bezHeadLen = Math.sqrt(Math.pow(bezHead[0], 2) + Math.pow(bezHead[1], 2));
-    var bezTailNorm = [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
-    var bezHeadNorm = [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
+    var bezTailNorm = bezTailLen === 0 ? bezTail : [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
+    var bezHeadNorm = bezTailLen === 0 ? bezHead : [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
     var tailVector = [-bezTailNorm[0], -bezTailNorm[1]];
     var headVector = [-bezHeadNorm[0], -bezHeadNorm[1]];
     var tailNormal = [tailVector[1], -tailVector[0]];

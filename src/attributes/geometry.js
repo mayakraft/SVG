@@ -2,6 +2,8 @@
  * SVG (c) Robby Kraft
  */
 
+const EPSILON = 1e-12;
+
 const is_iterable = obj => obj != null
   && typeof obj[Symbol.iterator] === "function";
 
@@ -177,7 +179,9 @@ export const setArrowPoints = function (shape, ...args) {
   + (o.head.visible ? (1 + o.head.padding) * o.head.height * 2.5 : 0)
   );
   if (len < minLength) {
-    const minVec = [vector[0] / len * minLength, vector[1] / len * minLength];
+    const minVec = len === 0 // exactly 0. don't use epsilon here
+      ? [minLength, 0]
+      : [vector[0] / len * minLength, vector[1] / len * minLength];
     tailPt = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
     headPt = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
     vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
@@ -192,8 +196,12 @@ export const setArrowPoints = function (shape, ...args) {
   const bezHead = [bezPoint[0] - headPt[0], bezPoint[1] - headPt[1]];
   const bezTailLen = Math.sqrt((bezTail[0] ** 2) + (bezTail[1] ** 2));
   const bezHeadLen = Math.sqrt((bezHead[0] ** 2) + (bezHead[1] ** 2));
-  const bezTailNorm = [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
-  const bezHeadNorm = [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
+  const bezTailNorm = bezTailLen === 0
+    ? bezTail
+    : [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
+  const bezHeadNorm = bezTailLen === 0
+    ? bezHead
+    : [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
   const tailVector = [-bezTailNorm[0], -bezTailNorm[1]];
   const headVector = [-bezHeadNorm[0], -bezHeadNorm[1]];
   const tailNormal = [tailVector[1], -tailVector[0]];
