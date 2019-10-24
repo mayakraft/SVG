@@ -14,24 +14,19 @@ Include svg.js in your project.
 
 # Introduction
 
-`SVG` is the global namespace. It's also a constructor.
+`SVG` is the global namespace. It's also a constructor. It makes an `<svg>` element. 
 
 ```javascript
 const mySVG = SVG();
 ```
 
-All other constructors exist in two places:
-
-* global level: `SVG.rect()` creates a `<rect>`.
-* object level: `mySVG.rect()` creates a `<rect>` and appends it to mySVG.
-
-*you probably want to use the 2nd approach.*
+This library is essentially a wrapper for creating SVG elements and setting attributes.
 
 ```javascript
-mySVG.rect(10, 10, 280, 130);
+SVG.rect(10, 10, 280, 130);
 ```
 
-Calling the one line above is synonymous with writing
+Calling the line above is the same as writing
 
 ```javascript
 const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -39,26 +34,30 @@ rect.setAttribute("x", 10);
 rect.setAttribute("y", 10);
 rect.setAttribute("width", 280);
 rect.setAttribute("height", 130);
-mySVG.appendChild(rect);
 ```
 
-Groups are an SVG's *layers*. Groups can create geometry too.
+Additional optimizations:
+
+- calling geometry methods on an svg or group will automatically append that geometry.
 
 ```javascript
-const mySVG = SVG();
-const group1 = mySVG.group();
-group1.rect(10, 10, 280, 130);
+mySVG.rect(10, 10, 280, 130);
 ```
 
-The code above will create:
+- `setAttribute("stroke", "#F08")` is made simpler by attribute-named-functions and method chaining.
 
-```html
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150">
-  <g>
-    ​<rect x=​"10" y=​"10" width=​"620" height=​"460">​</line>​
-  </g>​
-</svg>
+```javascript
+line(0, 0, 300, 300)
+  .stroke("#F08")
+  .strokeWidth(3)
+  .strokeDasharray("5 3");
 ```
+
+- event handlers for the `<svg>` element are all ready to go, for mouse and touchscreens. They somewhat follow the same names as in Processing.
+  - mousePressed
+  - mouseReleased
+  - mouseMoved
+  - animate
 
 # Examples
 
@@ -67,27 +66,6 @@ This page contains live-code examples: [svg.rabbitear.org](https://svg.rabbitear
 After download, check out the `examples/` folder.
 
 ![example](https://robbykraft.github.io/SVG/examples/vera.svg)
-
-# Methods: style
-
-```
-stroke: none
-fill: black
-```
-
-This is an SVG shape's default style, causing some shapes like <line> to be initially invisible! Typically, there are three ways to change this:
-
-1. `line.setAttribute("stroke", "black")`
-2. `line.setAttribute("style", "stroke: black;")`
-3. `<style> line { stroke: black; } </style>`
-
-This library introduces a fourth: chaining methods (which ultimately call setAttribute). The name of the function is the name of the style attribute (kebab-case is converted to camel-case).
-
-```javascript
-line(0, 0, 300, 300)
-  .stroke("#F08")
-  .strokeWidth(3);
-```
 
 # Methods: constructors
 
@@ -98,7 +76,7 @@ group()
 defs()
 clipPath()
 mask()
-create(tagName) // create any element under the svg namespace
+createElement(tagName) // create any element under the svg namespace
 ```
 
 geometry primitives
@@ -118,6 +96,7 @@ arcEllipse(x, y, radiusX, radiusY, startAngle, endAngle)
 wedgeEllipse(x, y, radiusX, radiusY, startAngle, endAngle)
 parabola(x, y, width, height)
 regularPolygon(cX, cY, radius, sides)
+roundRect(x, y, width, height, cornerRadius)
 straightArrow(start, end, options)
 arcArrow(start, end, options)
 ```

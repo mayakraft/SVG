@@ -51,9 +51,23 @@ var CodeSVG = function CodeSVG(container) {
     }
     return false;
   };
+  var flashTimeout;
+  var flashAutoPause = function flashAutoPause() {
+    if (flashTimeout != null) { clearInterval(flashTimeout); }
+    var blurAmount = 3;
+    flashTimeout = setInterval(function () {
+      document.querySelectorAll(".app")[0].setAttribute("style", `filter: blur(${blurAmount}px);`);
+      blurAmount -= 0.3;
+      if (blurAmount <= 0) {
+        document.querySelectorAll(".app")[0].setAttribute("style", "");
+        clearInterval(flashTimeout);
+      }
+    }, 40);
+  };
   var editorDidUpdate = function editorDidUpdate() {
-    if (detectLoop()) {
+    if (detectLoop() && !app.paused) {
       app.paused = true;
+      flashAutoPause();
     }
 
     if (!isPaused) {

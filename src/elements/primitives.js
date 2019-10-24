@@ -152,6 +152,15 @@ export const regularPolygon = function (cX, cY, radius, sides) {
   return polygon(points);
 };
 
+export const roundRect = function (x, y, width, height, cornerRadius = 0) {
+  if (cornerRadius > width / 2) { cornerRadius = width / 2; }
+  if (cornerRadius > height / 2) { cornerRadius = height / 2; }
+  const w = width - cornerRadius * 2;
+  const h = height - cornerRadius * 2;
+  const pathString = `M${x + (width - w) / 2} ${y} h${w} A${cornerRadius} ${cornerRadius} 0 0 1 ${x + width} ${y + (height - h) / 2} v${h} A${cornerRadius} ${cornerRadius} 0 0 1 ${x + width - cornerRadius} ${y + height} h${-w} A${cornerRadius} ${cornerRadius} 0 0 1 ${x} ${y + height - cornerRadius} v${-h} A${cornerRadius} ${cornerRadius} 0 0 1 ${x + cornerRadius} ${y} `;
+  return path(pathString);
+};
+
 export const arrow = function (...args) {
   const shape = window.document.createElementNS(svgNS, "g");
   const tailPoly = window.document.createElementNS(svgNS, "polygon");

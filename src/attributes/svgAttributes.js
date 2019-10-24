@@ -314,7 +314,7 @@ export default [
   "CSection",
   "calcMode",
   "cap-height",
-  "class",
+  // "class",
   "clip",
   // "clipPathUnits",
   // "clip-path",
@@ -442,7 +442,7 @@ export default [
   "overline-position",
   "overline-thickness",
   "PSection",
-  "panose-1",
+  // "panose-1",  // deprecated
   "paint-order",
   // "path",   // Robby removed this
   // "pathLength",

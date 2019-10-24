@@ -14,7 +14,7 @@ var examples = [
   "// this example does not visualize anything\n\nvar d = svg13.defs();\n\nvar t = SVG.createElement('title');\nt.innerHTML = 'metadata';\nd.appendChild(t);\n\nd.rect(20, 20, 100, 100);",
   "svg14.setClass('styled');\nvar css = '.styled rect { fill: crimson }';\nvar s = svg14.stylesheet(css);\n\nsvg14.rect(100, 25, 100, 100);",
   "var clip = svg15.clipPath();\nclip.text('clipping', 0, 95)\n  .fontSize('80px');\n\nsvg15.line(0, 75, 300, 75)\n  .stroke('orchid')\n  .strokeWidth(20)\n  .clipPath(clip);\n\nsvg15.line(0, 30, 300, 120)\n  .stroke('forestgreen')\n  .strokeWidth(20)\n  .clipPath(clip);",
-  "var m = svg16.mask();\nm.text('masking', 0, 95)\n  .fill('white')\n  .fontSize('80px');\nm.text('masking', 2, 97)\n  .fill('black')\n  .fontSize('80px');\n\nsvg16.rect(0, 0, 300, 150)\n  .strokeWidth(20)\n  .fill('orchid')\n  .mask(m);",
+  "var m = svg16.mask();\nm.text('MASK', 0, 95)\n  .fill('white')\n  .fontWeight(900)\n  .fontSize('80px');\nm.text('MASK', 5, 97)\n  .fill('black')\n  .fontWeight(900)\n  .fontSize('80px');\n\nsvg16.rect(0, 0, 300, 150)\n  .strokeWidth(20)\n  .fill('orchid')\n  .mask(m);",
   "var g = svg17.group().fill('dodgerblue');\n\nsvg17.rect(140, 0, 20, 150).fill('white');\n\ng.rect(0, 65, 300, 20);",
   "// var svg18 = SVG();\n\nsvg18.size(300, 50);\nsvg18.background('plum', false);\n\nsvg18.circle(25, 25, 25)\n  .fill('fuchsia');\n",
   "svg19.mouseMoved = function (mouse) {\n  svg19.circle(mouse.x, mouse.y, 10)\n    .fill('white')\n    .opacity(0.2);\n};",

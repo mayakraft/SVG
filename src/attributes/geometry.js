@@ -2,8 +2,6 @@
  * SVG (c) Robby Kraft
  */
 
-const EPSILON = 1e-12;
-
 const is_iterable = obj => obj != null
   && typeof obj[Symbol.iterator] === "function";
 

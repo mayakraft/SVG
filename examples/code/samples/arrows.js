@@ -1,5 +1,5 @@
 size(100, 100);
-background("#edb");
+background("#edb", true);
 
 var a1 = arrow()
   .stroke("#158")
