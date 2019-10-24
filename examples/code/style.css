@@ -7,6 +7,10 @@ body {
   background-color: #111;
 }
 svg {
+  display: none;
+}
+svg.svg-code {
+  display: initial;
   height: 96%;
   width: 96%;
   overflow: visible;

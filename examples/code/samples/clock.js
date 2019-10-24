@@ -1,16 +1,21 @@
 size(-1, -1, 2, 2);
 background("#edb", true);
 var r = getWidth() * 0.333;
-var strokeW = r / 20;
 
 for (var i = 0; i < 60; i += 1) {
-  var a = PI * i / 30;
   var h = i % 5 === 0;
-  var d = h ? r + strokeW * 3 : r + strokeW;
-  circle(-Math.cos(a) * d, -Math.sin(a) * d, r/30);
+  var a = PI * i / 30;
+  var d = h ? r + r / 50 * 1.5 : r + r / 50;
+  circle(-Math.cos(a) * d, -Math.sin(a) * d, h ? r/40: r/80);
+  if (h) {
+    var fontSize = getWidth() / 12;
+    text((i/5 + 11) % 12 + 1)
+      .fontFamily("Didot, Garamond, Palatino, Georgia, Times New Roman")
+      .fontSize(fontSize).textAnchor("middle").setAttribute("style",
+      "transform: rotate("+(i*6)+"deg)  translate(0, -0.73px)");
+  }
 }
 
-circle(0, 0, r + strokeW).fill("#000");
 var pies = [
   wedge().fill("#edb"),
   wedge().fill("#e53"),

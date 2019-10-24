@@ -3,6 +3,7 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   var queryCode = QueryWatcher("code"); // attach as early as possible
 
   window.svg = app.svg;
+  app.svg.setAttribute("class", "svg-code")
   var questionButton = document.createElement("div");
   questionButton.setAttribute("class", "question-button");
   questionButton.setAttribute("title", "~ Reserved Keywords ~\narc\narcArrow\narcEllipse\nbackground\nbezier\ncircle\nclipPath\ncontrols\ndefs\nellipse\ngetWidth\ngetHeight\ngroup\nline\nmask\nparabola\npath\npolygon\npolyline\nrect\nregularPolygon\nsave\nsetWidth\nsetHeight\nsize\nstraightArrow\nstylesheet\nsvg\ntext\nwedge\nwedgeEllipse");
@@ -51,27 +52,54 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   playPauseButton.appendChild(playPauseImage);
   container.appendChild(playPauseButton);
 
+  var shuffle = function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * i);
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+  };
+
+  var exampleFilenames = [
+    "albers1.js",
+    "albers2.js",
+    "arrows.js",
+    "astroid.js",
+    "bezier.js",
+    "bugs.js",
+    "clock.js",
+    "conics.js",
+    "dragon.js",
+    "draw.js",
+    "harmonic.js",
+    "mask.js",
+    "mystify.js",
+    "parabola.js",
+    "riley1.js",
+    "ten-print.js",
+    "text.js"
+  ];
+  shuffle(exampleFilenames);
+  var examples = [];
+  var exampleIndex = 0;
+
+  var loadExamples = function loadExamples(callback) {
+    exampleFilenames.forEach(function (file, i) {
+      var iteration = i;
+      fetch("samples/" + file).then(function (data) {
+        return data.text();
+      }).then(function (result) {
+        examples.push(result);
+        if (examples.length === exampleFilenames.length) {
+          examples = examples.filter(function (e) { return e != null; });
+          callback(examples);
+        }
+      });
+    });
+  };
+
   var loadAndRunExamples = function loadAndRunExamples(callback) {
-    var examples = [];
-    var exampleFilenames = [
-      "albers1.js",
-      "albers2.js",
-      "arrows.js",
-      "astroid.js",
-      "bezier.js",
-      "bugs.js",
-      "clock.js",
-      "conics.js",
-      "dragon.js",
-      "draw.js",
-      "harmonic.js",
-      "mask.js",
-      "mystify.js",
-      "parabola.js",
-      "riley1.js",
-      "ten-print.js",
-      "text.js"
-    ];
     exampleFilenames.forEach(function (file) {
       fetch("samples/" + file).then(function (data) {
         return data.text();
@@ -128,10 +156,21 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
   };
 
   randomSketchButton.onclick = function () {
-    loadAndRunExamples(function (examples) {
+    if (examples.length === 0) {
+      // first boot
+      // loadAndRunExamples(function (examples) {
+      loadExamples(function (examples) {
+        if (app.paused) { app.paused = false; }
+        app.clear();
+        exampleIndex = (exampleIndex + 1) % examples.length;
+        return app.injectCode(examples[exampleIndex]);
+      });
+    } else {
+      if (app.paused) { app.paused = false; }
       app.clear();
-      return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
-    });
+      exampleIndex = (exampleIndex + 1) % examples.length;
+      return app.injectCode(examples[exampleIndex]);
+    }
   };
 
   playPauseButton.onclick = function () {

@@ -44,25 +44,18 @@ export const verticalLineTo = (element, y) => append(element, "V", y);
 export const _verticalLineTo = (element, y) => append(element, "v", y);
 export const horizontalLineTo = (element, x) => append(element, "H", x);
 export const _horizontalLineTo = (element, x) => append(element, "h", x);
-export const smoothTo = (element, ...args) => append(element, "S", ...args);
-export const _smoothTo = (element, ...args) => append(element, "s", ...args);
+export const ellipseTo = (element, ...args) => append(element, "A", ...args);
+export const _ellipseTo = (element, ...args) => append(element, "a", ...args);
 export const curveTo = (element, ...args) => append(element, "C", ...args);
 export const _curveTo = (element, ...args) => append(element, "c", ...args);
+export const smoothCurveTo = (element, ...args) => append(element, "S", ...args);
+export const _smoothCurveTo = (element, ...args) => append(element, "s", ...args);
+export const quadCurveTo = (element, ...args) => append(element, "Q", ...args);
+export const _quadCurveTo = (element, ...args) => append(element, "q", ...args);
+export const smoothQuadCurveTo = (element, ...args) => append(element, "T", ...args);
+export const _smoothQuadCurveTo = (element, ...args) => append(element, "t", ...args);
 export const close = element => append(element, "Z");
 export const clear = (element) => {
   element.setAttribute("d", "");
   return element;
 };
-
-// { code:'C', b:'curveto', x1:33, y1:43, x2:38, y2:47, x:43, y:47 },
-// { code:'c', b:'curveto', relative:true, x1:0, y1:5, x2:5, y2:10, x:10, y:10 },
-// { code:'S', b:'smooth curveto', x2:63, y2:67, x:63, y:67 },
-// { code:'s', b:'smooth curveto', relative:true, x2:-10, y2:10, x:10, y:10 },
-// { code:'Q', b:'quadratic curveto', x1:50, y1:50, x:73, y:57 },
-// { code:'q', b:'quadratic curveto', relative:true, x1:20, y1:-5, x:0, y:-10 },
-// { code:'T', b:'smooth quadratic curveto', x:70, y:40 },
-// { code:'t', b:'smooth quadratic curveto', relative:true, x:0, y:-15 },
-// { code:'A', b:'elliptical arc', rx:5, ry:5, xAxisRotation:45, largeArc:true, sweep:false, x:40, y:20 },
-// { code:'a', b:'elliptical arc', relative:true, rx:5, ry:5, xAxisRotation:20, largeArc:false, sweep:true, x:-10, y:-10 },
-// { code:'Z', b:'closepath' }
-

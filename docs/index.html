@@ -39,15 +39,22 @@
     <p class="description">This function accepts any nested level of array of points (including x,y objects).</p>
     <div class="sketch-5"></div>
 
+    <pre class="title"><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
+    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</pre>
+    <p class="description">creates regular polygons of n number of sides (3 = eq. triangle), centered at point (cX, cY), with a circumscribed radius.</p>
+    <div class="sketch-10"></div>
+
     <pre class="title"><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolylineElement">&lt;polyline&gt;</a> element</pre>
     <p class="description">just like the polygon but the beginning and end aren't connected by a stroke.</p>
     <div class="sketch-6"></div>
 
-    <pre class="title"><code><f>bezier</f>(<arg>fromX</arg>, <arg>fromY</arg>, <arg>c1X</arg>, <arg>c1Y</arg>, <arg>c2X</arg>, <arg>c2Y</arg>, <arg>toX</arg>, <arg>toY</arg>)</code></pre>
-    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</pre>
-    <p class="description">a bezier curve is defined between two points (fromX, fromY) and (toX, toY) with two control points (c1X, c1Y) and (c2X, c2Y). The arguments are arranged in order of appearance when tracing the line from start to finish.</p>
-    <div class="sketch-7"></div>
+    <pre class="title"><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
+    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/text.html#TextElement">&lt;text&gt;</a> element</pre>
+    <p class="description">the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
+    <div class="sketch-12"></div>
+
+  <h3>Path and Curves</h3>
 
     <pre class="title"><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</pre>
@@ -59,33 +66,17 @@
     <p class="description">a wedge is a filled arc, like a slice of a pie that includes the center of the circle.</p>
     <div class="sketch-9"></div>
 
-    <pre class="title"><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
-    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolygonElement">&lt;polygon&gt;</a> element</pre>
-    <p class="description">creates regular polygons of n number of sides (3 = eq. triangle), centered at point (cX, cY), with a circumscribed radius.</p>
-    <div class="sketch-10"></div>
+    <pre class="title"><code><f>bezier</f>(<arg>fromX</arg>, <arg>fromY</arg>, <arg>c1X</arg>, <arg>c1Y</arg>, <arg>c2X</arg>, <arg>c2Y</arg>, <arg>toX</arg>, <arg>toY</arg>)</code></pre>
+    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/paths.html#PathElement">&lt;path&gt;</a> element</pre>
+    <p class="description">a bezier curve is defined between two points (fromX, fromY) and (toX, toY) with two control points (c1X, c1Y) and (c2X, c2Y). The arguments are arranged in order of appearance when tracing the line from start to finish.</p>
+    <div class="sketch-7"></div>
 
     <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
     <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/shapes.html#PolylineElement">&lt;polyline&gt;</a> element</pre>
     <p class="description">This creates a polyline approximation of the curve y=x², centered on the y-axis. The parameters define the rectangle that encloses the curve.</p>
     <div class="sketch-11"></div>
 
-    <pre class="title"><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
-    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/text.html#TextElement">&lt;text&gt;</a> element</pre>
-    <p class="description">the x and y describe the location of the left most point along the baseline. the text sits above the point in the y direction. if defined at (0,0) the text will sit above the top of the frame.</p>
-    <div class="sketch-12"></div>
-
   <h3>Header</h3>
-
-    <pre class="title"><code><f>defs</f>()</code></pre>
-    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#DefsElement">&lt;defs&gt;</a> element</pre>
-    <p class="description">Defs is the SVG's header element. It's recommend that style, clip paths, and masks all go in the defs section, though they still work elsewhere. Any drawing primitives appended to the defs <b>will not be drawn</b>.</p>
-    <div class="sketch-13"></div>
-
-    <pre class="title"><code><f>stylesheet</f>()</code></pre>
-    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/styling.html#StyleElement">&lt;style&gt;</a> element</pre>
-    <p class="description">A style section contain CSS text (on property .innerHTML). CSS is helpful for selecting multiple objects and styling them with one definition.</p>
-    <p class="description">But be careful! Style sections affect the global space. Multiple SVG images on the same HTML document all inherit each other's style sections.</p>
-    <div class="sketch-14"></div>
 
     <pre class="title"><code><f>clipPath</f>()</code></pre>
     <pre class="returns">&gt; creates one <a href="https://drafts.fxtf.org/css-masking-1/#ClipPathElement">&lt;clip-path&gt;</a> element</pre>
@@ -102,6 +93,17 @@
     <p class="description">which will automatically perform a call like this, matching the url id name parameter.</p>
     <ul class="description"><li><code>shape.<f>setAttribute</f>(<str>"mask"</str>, <str>"url(#id_name)"</str>);</code></li></ul>
     <div class="sketch-16"></div>
+
+    <pre class="title"><code><f>stylesheet</f>()</code></pre>
+    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/styling.html#StyleElement">&lt;style&gt;</a> element</pre>
+    <p class="description">A style section contain CSS text (on property .innerHTML). CSS is helpful for selecting multiple objects and styling them with one definition.</p>
+    <p class="description">But be careful! Style sections affect the global space. Multiple SVG images on the same HTML document all inherit each other's style sections.</p>
+    <div class="sketch-14"></div>
+
+    <pre class="title"><code><f>defs</f>()</code></pre>
+    <pre class="returns">&gt; creates one <a href="https://www.w3.org/TR/SVG/struct.html#DefsElement">&lt;defs&gt;</a> element</pre>
+    <p class="description">It's typical that everything mentioned in this section is a child in the defs() element: style, clip paths, and masks (though, it appears to not be required). Any drawing primitives appended to the defs <b>will not be drawn</b>.</p>
+    <div class="sketch-13"></div>
 
   <h3>Layering</h3>
 
@@ -131,17 +133,22 @@
     <div class="sketch-20"></div>
 
   <h3>About</h3>
-    <p>This is a Javascript library for creating svg images with code.</p>
+    <p>This is a Javascript library for creating and interacting with svg images.</p>
+    <p>The priority is the data .</p>
+    <p>Browsers take time to render SVG, the framerate will be lower than if you were using canvas. P5.js, Paper.js, Three.js are good for that.</p>
+    <p>You can download it <a href="https://github.com/robbykraft/SVG/releases">here</a>, the source code is hosted there too.</p>
+    <p>This <a href="https://svg.rabbitear.org/">web editor</a> is a quick way to start using the library.</p>
+    <p>Made by <a href="http://robbby.com">Robbby</a>.</p>
 
   <div class="section">
-    <h2>Web Editor</h2>
+    <h2>Global Mode</h2>
     <h3><a href="https://svg.rabbitear.org">svg.rabbitear.org</a></h3>
-    <h3>Global scope</h3>
-    <p>In the web editor you can leave out the prefix before the shape.</p>
+    <p>This web editor demonstrates global mode. One svg image <b>must</b> be created, as all the drawing methods are bound to the window, and reference that svg. allowing you to code</p>
+    <ul><li><code>line(0, 20, 130, 100)</code></li></ul>
+    <p>instead of</p>
     <ul><li><code><key>svg.</key>line(0, 20, 130, 100)</code></li></ul>
-    <p>It's possible to declare the svg to be in the "global space". </p>
     <h3>Toolkit</h3>
-    <p>Additional methods are attached to the window.</p>
+    <p>Additional methods which normally don't come with the library are attached to the window in the web editor.</p>
     <ul>
       <li><code><f>random</f>(<arg>min</arg>, <arg>max</arg>)</code></li>
       <li><code><f>randomInt</f>(<arg>min</arg>, <arg>max</arg>)</code></li>
@@ -149,8 +156,7 @@
       <li><code><f>noise</f>(<arg>a</arg>, <arg>b</arg>, <arg>c</arg>, <arg>d</arg>)</code></li>
       <li><code>PI</code></li>
     </ul>
-    <p>By default, randomString's character-set is Latin alpha-numeric characters.</p>
-    <p>The random functions are small methods that could be easily to polyfill. Noise is simplex noise, currently running on <a href="https://github.com/jwagner/simplex-noise.js">Jonas Wagner's library</a></p>.
+    <p>The random functions are small methods that could be easily to polyfill. Noise is simplex noise, currently running <a href="https://github.com/jwagner/simplex-noise.js">Jonas Wagner's library</a></p>.
     <div class="sketch-21"></div>
   </div>
 
@@ -261,11 +267,15 @@
 <n>30</n>: <str>"mask"</str>              - create child
 ...
 +200 methods, SVG style attribute setters</code></pre>
+
+<h2>SVG attribute setters</h2>
+
+<p><code>accumulate, additive, alignment-baseline, allowReorder, amplitude, attributeName, autoReverse, azimuth, BSection, baseFrequency, baseline-shift, baseProfile, bbox, begin, bias, by, CSection, calcMode, cap-height, clip, clip-rule, color, color-interpolation, color-interpolation-filters, color-profile, color-rendering, contentScriptType, contentStyleType, cursor, DSection, decelerate, descent, diffuseConstant, direction, display, divisor, dominant-baseline, dur, ESection, edgeMode, elevation, enable-background, end, exponent, externalResourcesRequired, FSection, fill, fill-opacity, fill-rule, filter, filterRes, filterUnits, flood-color, flood-opacity, font-family, font-size, font-size-adjust, font-stretch, font-style, font-variant, font-weight, format, from, fr, fx, fy, GSection, g1, g2, glyph-name, glyph-orientation-horizontal, glyph-orientation-vertical, glyphRef, gradientTransform, gradientUnits, HSection, hanging, href, hreflang, horiz-adv-x, horiz-origin-x, ISection, ideographic, image-rendering, in, in2, intercept, KSection, k, k1, k2, k3, k4, kernelMatrix, kernelUnitLength, kerning, keyPoints, keySplines, keyTimes, LSection, lang, letter-spacing, lighting-color, limitingConeAngle, local, MSection, marker-end, marker-mid, marker-start, markerHeight, markerUnits, markerWidth, mathematical, max, media, method, min, mode, NSection, name, numOctaves, OSection, offset, opacity, operator, order, orient, orientation, origin, overflow, overline-position, overline-thickness, PSection, paint-order, patternContentUnits, patternTransform, patternUnits, ping, pointer-events, pointsAtX, pointsAtY, pointsAtZ, preserveAlpha, preserveAspectRatio, primitiveUnits, RSection, radius, referrerPolicy, refX, refY, rel, rendering-intent, repeatCount, repeatDur, requiredFeatures, restart, result, SSection, seed, shape-rendering, slope, spacing, specularConstant, specularExponent, speed, spreadMethod, startOffset, stdDeviation, stemh, stemv, stitchTiles, stop-color, stop-opacity, strikethrough-position, strikethrough-thickness, string, stroke, stroke-dasharray, stroke-dashoffset, stroke-linecap, stroke-linejoin, stroke-miterlimit, stroke-opacity, stroke-width, surfaceScale, TSection, tabindex, tableValues, target, targetX, targetY, text-anchor, text-decoration, text-rendering, to, transform-origin, type, USection, u1, u2, underline-position, underline-thickness, unicode, unicode-bidi, unicode-range, units-per-em, VSection, v-alphabetic, v-hanging, v-ideographic, v-mathematical, values, vector-effect, version, vert-adv-y, vert-origin-x, vert-origin-y, viewBox, viewTarget, visibility, WSection, widths, word-spacing, writing-mode, XSection, x-height, xChannelSelector, YSection, yChannelSelector, ZSection, zoomAndPan</code></p>
 </div>
 
 <script type="text/javascript" charset="utf-8" src="ace/ace.js" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8" src="ace/keybinding-sublime.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://svg.rabbitear.org/svg.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/svg.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="svg.ace.js"></script>
 <script type="text/javascript" charset="utf-8" src="toolkit.js"></script>
 <script type="text/javascript" charset="utf-8" src="script.js"></script>
