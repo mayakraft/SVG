@@ -288,7 +288,7 @@ export default [
   "vert-adv-y",
   "vert-origin-x",
   "vert-origin-y",
-  "viewBox",
+  // "viewBox", // we have our own custom function for this
   "viewTarget",
   "visibility",
   "WSection",

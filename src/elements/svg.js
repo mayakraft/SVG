@@ -214,13 +214,8 @@ const SVG = function (...params) {
       if (newSVG != null) { replaceWithSVG(element, newSVG); }
       if (callback != null) { callback(element, error); }
     });
-  };//
-  //
-  /////////////////////////////////////
-  element.stylesheet = textContent => stylesheet(element, textContent); // this needs to change////////s
-  //////////// something ehre
-  ///////////asifoaie fas
-  //////////// / //////// / / ///////////// // /
+  };
+  element.stylesheet = textContent => stylesheet(element, textContent);
 
   // initialize requires a loaded DOM to append
   const initialize = function () {
