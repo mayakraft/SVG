@@ -153,3 +153,47 @@ h3:first-of-type { margin: 1rem 0 0.5rem 0; }
 @media (min-width: 1120px) {
   body { margin: 4rem 300px 6rem 300px; }
 }
+
+.menu-button, .share-button, .question-button, .random-button, .playpause-button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 100%;
+}
+.menu-button {
+  background-color: #e53;
+}
+.share-button {
+  background-color: #e53;
+}
+.random-button {
+  background-color: #ec3;
+}
+.playpause-button {
+}
+.playpause-button.pause { background-color: #5b2; }
+.playpause-button.play { background-color: #e53; }
+
+/*div.grid {
+  display: grid;
+  grid-template-columns: 80px auto;
+}
+
+div.grid div {
+  justify-self: end;
+}
+*/
+
+div.grid p img {
+  display: inline;
+  margin: 0 0.5rem;
+}
+
+div.grid p{
+  display: flex;
+  align-items: center;
+}

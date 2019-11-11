@@ -43,7 +43,7 @@ const defs = function () {
 const cdata = function (textContent) {
   const c = (new window.DOMParser())
     .parseFromString("<root></root>", "text/xml")
-    .createCDATASection(`\n${textContent}\n`);
+    .createCDATASection(`${textContent}`);
   // prepare("style", s);
   return c;
 };

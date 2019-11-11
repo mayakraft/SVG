@@ -1,13 +1,16 @@
 size(-1, -1, 2, 2);
+background("black", true);
 
-var lines = group().stroke("#888").strokeWidth(0.003);
+var lines = group().strokeWidth(0.003);
 var dots = group().fill("#ec3");
 var i = [0, 1];
+var stroke = "#158";
 
 animate = function (e) {
-  if (Math.random() < 0.04) {
-    i[0] = Math.floor(Math.random() * 4);
-    i[1] = Math.floor(Math.random() * 4);
+  if (!randomInt(25)) {
+    i[0] = randomInt(4);
+    i[1] = randomInt(4);
+    stroke = random(["#158", "#e53"]);
   }
   dots.circle(noise(e.time + 0), noise(e.time + 100), 0.01);
   dots.circle(noise(e.time + 10), noise(e.time + 90), 0.01);
@@ -18,12 +21,8 @@ animate = function (e) {
     noise(e.time + 100 - 10 * i[0]),
     noise(e.time + 10 * i[1]),
     noise(e.time + 100 - 10 * i[1])
-  );
+  ).stroke(stroke);
 
-  while (dots.childNodes.length > 60) {
-    dots.firstChild.remove();
-  }
-  while (lines.childNodes.length > 100) {
-    lines.firstChild.remove();
-  }
+  while (dots.childNodes.length > 60) { dots.firstChild.remove(); }
+  while (lines.childNodes.length > 100) { lines.firstChild.remove(); }
 };

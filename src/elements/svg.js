@@ -105,7 +105,7 @@ const getFrame = function (element) {
   let frame = [0, 0, 0, 0];
   if (element.viewBox != null) {
     const viewBox = element.viewBox.baseVal;
-    frame = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+    frame = [viewBox.x, viewBox.y, viewBox.width, viewBox.height];
   } else if (typeof element.getBoundingClientRect === "function") {
     const rr = element.getBoundingClientRect();
     frame = [rr.x, rr.y, rr.width, rr.height];
@@ -150,7 +150,7 @@ const findStyleSheet = function (element) {
     .filter(child => child.getAttribute("tagName") === "style")
     .shift();
   if (insideDefs != null) { return insideDefs; }
-  
+
   return undefined;
 };
 
@@ -162,6 +162,7 @@ const stylesheet = function (element, textContent) {
   } else {
     styleSection.setTextContent(textContent);
   }
+  return styleSection;
 };
 
 const replaceWithSVG = function (oldSVG, newSVG) {
@@ -213,13 +214,8 @@ const SVG = function (...params) {
       if (newSVG != null) { replaceWithSVG(element, newSVG); }
       if (callback != null) { callback(element, error); }
     });
-  };//
-  //
-  /////////////////////////////////////
-  element.stylesheet = textContent => stylesheet(element, textContent); // this needs to change////////s
-  //////////// something ehre
-  ///////////asifoaie fas
-  //////////// / //////// / / ///////////// // /
+  };
+  element.stylesheet = textContent => stylesheet(element, textContent);
 
   // initialize requires a loaded DOM to append
   const initialize = function () {

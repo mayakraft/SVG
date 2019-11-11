@@ -1,5 +1,4 @@
 size(100, 100);
-background("#edb", true);
 
 var points = [];
 

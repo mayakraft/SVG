@@ -1,5 +1,5 @@
 size(40, 25);
-background("#329");
+rect(0, 0, getWidth(), getHeight()).fill("#329");
 
 var clip = clipPath();
 clip.rect(0, 0, getWidth(), getHeight());

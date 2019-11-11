@@ -1,5 +1,4 @@
 size(100, 100);
-background("#edb");
 
 parabola(0, 0, 60, 60).fill("#000a").translate(20, 20);
 parabola(0, 0, 60, 60).fill("#ec3a").rotate(90).translate(20, -80);
