@@ -1,61 +1,37 @@
-var CodeSVGxMenu = function CodeSVGxMenu(container) {
-  var app = CodeSVG(container);
+document.addEventListener("DOMContentLoaded", function () {
+  var app = LiveCode(document.querySelector("#app"));
+  var SVG = window.SVG;
   var queryCode = QueryWatcher("code"); // attach as early as possible
+  var zoom = false;
 
-  window.svg = app.svg;
-  app.svg.setAttribute("class", "svg-code")
+  var svg = SVG(app.dom.canvas, 512, 512, { window: true });
+  window.svg = svg;
+  svg.setAttribute("class", "svg-code");
+
   var questionButton = document.createElement("div");
   questionButton.setAttribute("class", "question-button");
   questionButton.setAttribute("title", "~ Reserved Keywords ~\narc\narcArrow\narcEllipse\nbackground\nbezier\ncircle\nclipPath\ncontrols\ndefs\nellipse\ngetWidth\ngetHeight\ngroup\nline\nmask\nparabola\npath\npolygon\npolyline\nrect\nregularPolygon\nsave\nsetWidth\nsetHeight\nsize\nstraightArrow\nstylesheet\nsvg\ntext\nwedge\nwedgeEllipse");
-  var questionButtonP = document.createElement("p");
-  questionButtonP.innerHTML = "?";
-  questionButton.appendChild(questionButtonP);
-  container.appendChild(questionButton);
+  document.querySelector("#app").appendChild(questionButton);
+
+  var downloadButton = document.createElement("div");
+  downloadButton.setAttribute("class", "download-button");
+  downloadButton.setAttribute("title", "Download");
+  document.querySelector("#app").appendChild(downloadButton);
 
   var shareButton = document.createElement("div");
   shareButton.setAttribute("class", "share-button");
   shareButton.setAttribute("title", "Share");
-  var shareImage = document.createElement("img");
-  shareImage.src = "share.svg";
-  shareImage.setAttribute("width", "30px");
-  shareImage.setAttribute("height", "30px");
-  shareButton.appendChild(shareImage);
-  container.appendChild(shareButton);
-
-  var downloadButton = document.createElement("div");
-  downloadButton.setAttribute("class", "menu-button");
-  downloadButton.setAttribute("title", "Download");
-  var downloadImg = document.createElement("img");
-  downloadImg.src = "download.svg";
-  downloadImg.setAttribute("width", "30px");
-  downloadImg.setAttribute("height", "30px");
-  downloadButton.appendChild(downloadImg);
-  container.appendChild(downloadButton);
+  document.querySelector("#app").appendChild(shareButton);
 
   var randomSketchButton = document.createElement("div");
   randomSketchButton.setAttribute("class", "random-button");
   randomSketchButton.setAttribute("title", "Load an example");
-  var randomSketchImage = document.createElement("img");
-  randomSketchImage.src = "dice.svg";
-  randomSketchImage.setAttribute("width", "30px");
-  randomSketchImage.setAttribute("height", "30px");
-  randomSketchButton.appendChild(randomSketchImage);
-  container.appendChild(randomSketchButton);
-
-  var playPauseButton = document.createElement("div");
-  playPauseButton.setAttribute("class", "playpause-button pause");
-  playPauseButton.setAttribute("title", "Code is running. Press to pause");
-  var playPauseImage = document.createElement("img");
-  playPauseImage.src = "pause.svg";
-  playPauseImage.setAttribute("width", "30px");
-  playPauseImage.setAttribute("height", "30px");
-  playPauseButton.appendChild(playPauseImage);
-  container.appendChild(playPauseButton);
+  document.querySelector("#app").appendChild(randomSketchButton);
 
   var shuffle = function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * i);
-      const temp = array[i];
+    for (var i = array.length - 1; i > 0; i -= 1) {
+      var j = Math.floor(Math.random() * i);
+      var temp = array[i];
       array[i] = array[j];
       array[j] = temp;
     }
@@ -72,13 +48,12 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
     "conics.js",
     "dragon.js",
     "draw.js",
-    "harmonic.js",
     "mask.js",
     "mystify.js",
     "parabola.js",
     "riley1.js",
     "ten-print.js",
-    "text.js"
+    // "text.js"
   ];
   shuffle(exampleFilenames);
   var examples = [];
@@ -123,6 +98,7 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
     queryCode.value = undefined;
   }
 
+
   shareButton.onclick = function () {
     var url = queryCode.makeURLWithQueryValue(app.editor.getValue());
     navigator.clipboard.writeText(url).then(function () {
@@ -134,20 +110,20 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
 
   downloadButton.onclick = function () {
     // inject the code into a new section in the header
-    var defs = app.svg.getElementsByTagName("defs");
+    var defs = svg.getElementsByTagName("defs");
     if (defs.length === 0) {
       defs = [document.createElementNS(SVG.NS, "defs")];
-      app.svg.prepend(defs[0]);
+      svg.prepend(defs[0]);
     }
     var codes = defs[0].getElementsByTagName("code");
     var code = codes.length === 0
       ? document.createElementNS(SVG.NS, "code")
       : codes[0];
     code.innerHTML = "";
-    var cdata = new window.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n" + app.getCode() + "\n");
+    var cdata = new window.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n" + app.code + "\n");
     code.appendChild(cdata);
     defs[0].prepend(code);
-    app.svg.save();
+    svg.save();
   };
 
   questionButton.onclick = function () {
@@ -173,19 +149,29 @@ var CodeSVGxMenu = function CodeSVGxMenu(container) {
     }
   };
 
-  playPauseButton.onclick = function () {
-    app.paused = !app.paused;
+  app.didPause = function (paused) { };
+  app.didUpdate = function () { };
+  app.reset = function () {
+    app.dom.canvas.removeAttribute("style");
+
+    if (svg !== undefined) {
+      while (svg.lastChild) {
+        svg.removeChild(svg.lastChild);
+      }
+      Array.from(svg.attributes).filter(function (a) {
+        return ["version", "xmlns", "class", "width", "height"].indexOf(a.nodeName) === -1;
+      }).forEach(function(attr) { svg.removeAttribute(attr.nodeName); });
+      // while (svg.attributes.length > 0) {
+      //   svg.removeAttribute(svg.attributes[0].nodeName);
+      // }
+
+      // remove any Timer functions. handlers will get cleaned up automatically
+      svg.freeze();
+      svg.clearTransforms();
+      svg.size(300, 150);
+      svg.fps = 60;
+    }
   };
 
-  app.didPause = function (paused) {
-    playPauseButton.setAttribute("class", paused ? "playpause-button play" : "playpause-button pause");
-    playPauseImage.src = paused ? "play.svg" : "pause.svg";
-  playPauseButton.setAttribute("title", paused ? "Code is paused. Press to start" : "Code is running. Press to pause");
-  };
-
-  return app;
-};
-
-document.addEventListener("DOMContentLoaded", function () {
-  window.app = CodeSVGxMenu(document.querySelectorAll(".app")[0]);
+  window.app = app;
 });

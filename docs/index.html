@@ -7,6 +7,15 @@
 
   <h1>SVG Reference</h1>
 
+  <h3>Web Editor</h3>
+
+  <div class="grid">
+      <p class="description"><img class="playpause-button pause" src="images/pause.svg" width="30px" height="30px">Toggle auto-compile on/off.</p>
+      <p class="description"><img class="random-button" src="images/dice.svg" width="30px" height="30px">Load an example sketch.</p>
+      <p class="description"><img class="share-button" src="images/share.svg" width="30px" height="30px">Create a sharable link. The link contains your code.</p>
+      <p class="description"><img class="menu-button" src="images/download.svg" width="30px" height="30px">Download a still frame SVG image.</p>
+  </div>
+
   <h3>Drawing</h3>
 
     <pre class="title"><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
@@ -143,12 +152,12 @@
   <div class="section">
     <h2>Global Mode</h2>
     <h3><a href="https://svg.rabbitear.org">svg.rabbitear.org</a></h3>
-    <p>This web editor demonstrates global mode. One svg image <b>must</b> be created, as all the drawing methods are bound to the window, and reference that svg. allowing you to code</p>
+    <p>This web editor is demonstrating global mode. One svg image is created and all the drawing methods are bound to the window and to the svg. This allows you to write</p>
     <ul><li><code>line(0, 20, 130, 100)</code></li></ul>
     <p>instead of</p>
     <ul><li><code><key>svg.</key>line(0, 20, 130, 100)</code></li></ul>
     <h3>Toolkit</h3>
-    <p>Additional methods which normally don't come with the library are attached to the window in the web editor.</p>
+    <p>The web editor comes with additional small methods attached to the window to make Javascript friendlier.</p>
     <ul>
       <li><code><f>random</f>(<arg>min</arg>, <arg>max</arg>)</code></li>
       <li><code><f>randomInt</f>(<arg>min</arg>, <arg>max</arg>)</code></li>
@@ -156,8 +165,8 @@
       <li><code><f>noise</f>(<arg>a</arg>, <arg>b</arg>, <arg>c</arg>, <arg>d</arg>)</code></li>
       <li><code>PI</code></li>
     </ul>
-    <p>The random functions are small methods that could be easily to polyfill. Noise is simplex noise, currently running <a href="https://github.com/jwagner/simplex-noise.js">Jonas Wagner's library</a></p>.
     <div class="sketch-21"></div>
+    <p> Noise is simplex noise, currently running <a href="https://github.com/jwagner/simplex-noise.js">Jonas Wagner's library</a></p>.
   </div>
 
   <div class="section">
@@ -173,7 +182,8 @@
 
   <div class="section">
     <h1>Appendix</h1>
-    <h2>Top level</h2>
+
+  <h2>Contents of this library</h2>
     <pre><code><f>console</f>.<f>log</f>(SVG)  <c>// <-- this library</c>
 
 <n>0</n>: <str>"line"</str>               - primitive
@@ -211,6 +221,49 @@
 <n>32</n>: <str>"save"</str>              - import/export
 <n>33</n>: <str>"load"</str>              - import/export
 <n>34</n>: <str>"NS"</str>                - namespace</code></pre>
+  
+
+  <h2>Global-mode. Top level reserved keywords</h2>
+
+<pre><code><n>0</n>: <str>"arc"</str>                  - primitive
+<n>1</n>: <str>"arcArrow"</str>             - primitive
+<n>2</n>: <str>"arcEllipse"</str>           - primitive
+<n>3</n>: <str>"background"</str>           - svg property
+<n>4</n>: <str>"bezier"</str>               - primitive
+<n>5</n>: <str>"circle"</str>               - primitive
+<n>6</n>: <str>"clipPath"</str>             - header element
+<n>7</n>: <str>"controls"</str>             - touch handling
+<n>8</n>: <str>"convertToViewBox"</str>     - viewport
+<n>9</n>: <str>"createElement"</str>        - (wildcard) element
+<n>10</n>: <str>"defs"</str>                - header element
+<n>11</n>: <str>"ellipse"</str>             - primitive
+<n>12</n>: <str>"getWidth"</str>            - svg property
+<n>13</n>: <str>"getHeight"</str>           - svg property
+<n>14</n>: <str>"getViewBox"</str>          - viewport
+<n>15</n>: <str>"group"</str>               - primitive
+<n>16</n>: <str>"line"</str>                - primitive
+<n>17</n>: <str>"load"</str>                - file i/o
+<n>18</n>: <str>"mask"</str>                - header element
+<n>19</n>: <str>"NS"</str>                  - namespace
+<n>20</n>: <str>"parabola"</str>            - primitive
+<n>21</n>: <str>"path"</str>                - primitive
+<n>22</n>: <str>"polygon"</str>             - primitive
+<n>23</n>: <str>"polyline"</str>            - primitive
+<n>24</n>: <str>"rect"</str>                - primitive
+<n>25</n>: <str>"regularPolygon"</str>      - primitive
+<n>26</n>: <str>"save"</str>                - file i/o
+<n>27</n>: <str>"scaleViewBox"</str>        - viewport
+<n>28</n>: <str>"setWidth"</str>            - svg property
+<n>29</n>: <str>"setHeight"</str>           - svg property
+<n>30</n>: <str>"setViewBox"</str>          - viewport
+<n>31</n>: <str>"size"</str>                - svg property
+<n>32</n>: <str>"straightArrow"</str>       - primitive
+<n>33</n>: <str>"stylesheet"</str>          - header element
+<n>34</n>: <str>"text"</str>                - primitive
+<n>35</n>: <str>"translateViewBox"</str>    - viewport
+<n>36</n>: <str>"wedge"</str>               - primitive
+<n>37</n>: <str>"wedgeEllipse"</str>        - primitive</code></pre>
+
 
   <h2>Primitive object methods</h2>
   <pre><code><f>console</f>.<f>log</f>(SVG.line())

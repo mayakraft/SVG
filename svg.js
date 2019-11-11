@@ -864,6 +864,13 @@
         selected = value;
       }
     });
+    Object.defineProperty(position, "remove", {
+      value: function value() {
+        if (svg != null) {
+          svg.remove();
+        }
+      }
+    });
     return proxy;
   };
 
@@ -936,6 +943,12 @@
         points.push(controlPoint(svg, opt));
       }
     });
+
+    points.removeAll = function () {
+      while (points.length > 0) {
+        points.pop().remove();
+      }
+    };
 
     points.changed = function (func, runOnceAtStart) {
       if (typeof func === "function") {
@@ -1288,7 +1301,7 @@
     setArrowPoints: setArrowPoints
   });
 
-  var attributes = ["accumulate", "additive", "alignment-baseline", "allowReorder", "amplitude", "attributeName", "autoReverse", "azimuth", "BSection", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "ideographic", "image-rendering", "in", "in2", "intercept", "KSection", "k", "k1", "k2", "k3", "k4", "kernelMatrix", "kernelUnitLength", "kerning", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "offset", "opacity", "operator", "order", "orient", "orientation", "origin", "overflow", "overline-position", "overline-thickness", "PSection", "paint-order", "patternContentUnits", "patternTransform", "patternUnits", "ping", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "referrerPolicy", "refX", "refY", "rel", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "slope", "spacing", "specularConstant", "specularExponent", "speed", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "string", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-bidi", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "x-height", "xChannelSelector", "YSection", "yChannelSelector", "ZSection", "zoomAndPan"];
+  var attributes = ["accumulate", "additive", "alignment-baseline", "amplitude", "attributeName", "azimuth", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "image-rendering", "in", "in2", "intercept", "k1", "k2", "k3", "k4", "kernelMatrix", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "opacity", "operator", "order", "orient", "overflow", "overline-position", "overline-thickness", "PSection", "paint-order", "patternContentUnits", "patternTransform", "patternUnits", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "refX", "refY", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "spacing", "specularConstant", "specularExponent", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewBox", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "xChannelSelector", "YSection", "yChannelSelector", "ZSection"];
 
   var removeChildren = function removeChildren(parent) {
     while (parent.lastChild) {
@@ -1831,6 +1844,7 @@
     attachDOMMethods(element);
     attachTransformMethods(element);
     attachViewBoxMethods(element);
+    attachFunctionalStyleSetters(element);
     attachClipMaskMakers(element, primitives);
     attachAppendableMethods(element, primitives);
   };
@@ -2050,8 +2064,15 @@
   var text = function text(textString, x, y) {
     var shape = win.document.createElementNS(NS, "text");
     shape.innerHTML = textString;
-    shape.setAttributeNS(null, "x", x);
-    shape.setAttributeNS(null, "y", y);
+
+    if (x) {
+      shape.setAttributeNS(null, "x", x);
+    }
+
+    if (y) {
+      shape.setAttributeNS(null, "y", y);
+    }
+
     prepare("text", shape);
     return shape;
   };
@@ -2271,7 +2292,7 @@
   };
 
   var cdata = function cdata(textContent) {
-    var c = new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n".concat(textContent, "\n"));
+    var c = new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
     return c;
   };
 
@@ -2453,7 +2474,7 @@
 
     if (element.viewBox != null) {
       var viewBox = element.viewBox.baseVal;
-      frame = [viewBox.x, viewBox.y, viewBox.width - viewBox.x, viewBox.height - viewBox.y];
+      frame = [viewBox.x, viewBox.y, viewBox.width, viewBox.height];
     } else if (typeof element.getBoundingClientRect === "function") {
       var rr = element.getBoundingClientRect();
       frame = [rr.x, rr.y, rr.width, rr.height];
@@ -2523,6 +2544,8 @@
     } else {
       styleSection.setTextContent(textContent);
     }
+
+    return styleSection;
   };
 
   var replaceWithSVG = function replaceWithSVG(oldSVG, newSVG) {

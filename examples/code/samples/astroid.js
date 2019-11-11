@@ -1,15 +1,14 @@
 size(512, 512);
-background("#edb", true);
+svg.stroke("black");
 
-// var SEGMENTS = randomInt(13, 128);
-var SEGMENTS = 100;
+var SEGMENTS = 80;
+var w = getWidth() / SEGMENTS * 0.5;
+var h = getHeight() / SEGMENTS * 0.5;
 
-var w = getWidth() / SEGMENTS;
-var h = getHeight() / SEGMENTS;
-for (var i = 0; i <= SEGMENTS; i += 1) {
+for (var i = 0; i < SEGMENTS; i += 1) {
   var j = SEGMENTS - i;
-  line(w * i, 0, 0, h * j).stroke("#e53c");
-  line(w * j, getHeight(), getWidth(), h * i).stroke("#e53c");
-  line(w * i, 0, getWidth(), h * i).stroke("#111c");
-  line(w * j, getHeight(), 0, h * j).stroke("#111c");
+  line(w * i, getHeight() / 2, getWidth() / 2, h * j);
+  line(getWidth() - w * j, getHeight() / 2, getWidth() / 2, h * i);
+  line(getWidth() - w * i, getHeight() / 2, getWidth() / 2, getHeight() - h * j);
+  line(getWidth() / 2, getHeight() - h * i, w * j, getHeight() / 2);
 }

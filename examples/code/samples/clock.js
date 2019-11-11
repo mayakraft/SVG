@@ -1,11 +1,11 @@
 size(-1, -1, 2, 2);
-background("#edb", true);
+background("white", true);
 var r = getWidth() * 0.333;
 
 for (var i = 0; i < 60; i += 1) {
   var h = i % 5 === 0;
   var a = PI * i / 30;
-  var d = h ? r + r / 50 * 1.5 : r + r / 50;
+  var d = r + r / 50 * 1.5;
   circle(-Math.cos(a) * d, -Math.sin(a) * d, h ? r/40: r/80);
   if (h) {
     var fontSize = getWidth() / 12;
@@ -17,7 +17,7 @@ for (var i = 0; i < 60; i += 1) {
 }
 
 var pies = [
-  wedge().fill("#edb"),
+  wedge().fill("white"),
   wedge().fill("#e53"),
   wedge().fill("#158")
 ];

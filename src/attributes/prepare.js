@@ -45,7 +45,7 @@ const prepareSVG = function (element, primitives) {
   attachDOMMethods(element);
   attachTransformMethods(element);
   attachViewBoxMethods(element);
-  // attachFunctionalStyleSetters(element);
+  attachFunctionalStyleSetters(element);
   attachClipMaskMakers(element, primitives);
   attachAppendableMethods(element, primitives);
 };

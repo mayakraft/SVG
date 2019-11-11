@@ -92,8 +92,8 @@ export const bezier = function (fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY) {
 export const text = function (textString, x, y) {
   const shape = window.document.createElementNS(svgNS, "text");
   shape.innerHTML = textString;
-  shape.setAttributeNS(null, "x", x);
-  shape.setAttributeNS(null, "y", y);
+  if (x) { shape.setAttributeNS(null, "x", x); }
+  if (y) { shape.setAttributeNS(null, "y", y); }
   prepare("text", shape);
   return shape;
 };
