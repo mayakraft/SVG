@@ -44,7 +44,8 @@ const controlPoint = function (parent, options = {}) {
     }
     // alert delegate
     if (typeof position.delegate === "function") {
-      position.delegate(proxy);
+      // console.log("proxy.pointsContainer", position.pointsContainer);
+      position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
     }
   };
 
@@ -70,6 +71,14 @@ const controlPoint = function (parent, options = {}) {
   position.onMouseMove = onMouseMove;
   position.onMouseUp = onMouseUp;
   position.distance = distance;
+  Object.defineProperty(position, "x", {
+    get: () => position[0],
+    set: (newValue) => { position[0] = newValue; }
+  });
+  Object.defineProperty(position, "y", {
+    get: () => position[1],
+    set: (newValue) => { position[1] = newValue; }
+  });
   Object.defineProperty(position, "svg", {
     get: () => svg,
     set: (newSVG) => { svg = newSVG; }
@@ -104,10 +113,13 @@ const controls = function (svg, number, options) {
   // hook up the delegate callback for the on change event
   const protocol = function (point) {
     if (typeof delegate === "function") {
-      delegate.call(points, point);
+      delegate.call(points, points, point);
     }
   };
-  points.forEach((p) => { p.delegate = protocol; });
+  points.forEach((p) => {
+    p.delegate = protocol;
+    p.pointsContainer = points;
+  });
 
   const mousePressedHandler = function (mouse) {
     if (!(points.length > 0)) { return; }
@@ -144,23 +156,23 @@ const controls = function (svg, number, options) {
     }
   };
 
-  points.changed = function (func, runOnceAtStart) {
+  points.onChange = function (func, runOnceAtStart) {
     if (typeof func === "function") {
       delegate = func;
-      if (runOnceAtStart === true) { delegate.call(points); }
+      if (runOnceAtStart === true) { func.call(points, points, undefined); }
     }
     return points;
   };
 
   points.position = function (func) {
     if (typeof func === "function") {
-      points.forEach((p, i) => p.setPosition(func(i)));
+      points.forEach((p, i) => p.setPosition(func.call(points, i)));
     }
     return points;
   };
   points.svg = function (func) {
     if (typeof func === "function") {
-      points.forEach((p, i) => { p.svg = func(i); });
+      points.forEach((p, i) => { p.svg = func.call(points, i); });
     }
     return points;
   };

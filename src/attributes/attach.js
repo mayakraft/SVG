@@ -68,7 +68,7 @@ export const attachArrowMethods = function (element) {
 };
 
 export const attachPathMethods = function (element) {
-  Object.keys(Path).forEach((key) => {
+  Object.keys(Path).filter(key => element[key] === undefined).forEach((key) => {
     element[key] = (...args) => Path[key](element, ...args);
   });
 };
@@ -80,7 +80,7 @@ export const attachDOMMethods = function (element) {
 };
 
 export const attachTransformMethods = function (element) {
-  Object.keys(Transform).forEach((key) => {
+  Object.keys(Transform).filter(key => element[key] === undefined).forEach((key) => {
     element[key] = (...args) => Transform[key](element, ...args);
   });
 };

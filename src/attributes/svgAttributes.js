@@ -277,6 +277,7 @@ export default [
   // "unicode-bidi", // unclear usage
   "unicode-range",
   "units-per-em",
+  "user-select", // added by Robby
   "VSection",
   "v-alphabetic",
   "v-hanging",

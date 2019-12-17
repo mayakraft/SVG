@@ -37,7 +37,11 @@ const findElementInParams = function (...params) {
 const initSize = function (svgElement, params) {
   const numbers = params.filter(arg => !isNaN(arg));
   const viewBox = svgElement.getAttribute("viewBox");
-  if (numbers.length >= 2) {
+  if (numbers.length >= 4) {
+    svgElement.setAttributeNS(null, "width", numbers[2]);
+    svgElement.setAttributeNS(null, "height", numbers[3]);
+    setViewBox(svgElement, numbers[0], numbers[1], numbers[2], numbers[3]);
+  } else if (numbers.length >= 2) {
     svgElement.setAttributeNS(null, "width", numbers[0]);
     svgElement.setAttributeNS(null, "height", numbers[1]);
     setViewBox(svgElement, 0, 0, numbers[0], numbers[1]);
@@ -230,7 +234,8 @@ const SVG = function (...params) {
     // any function inside the arguments will get fired. with zero parameters.
     // a way of sending a callback to an unknown parameter list
     params.filter(arg => typeof arg === "function")
-      .forEach(func => func());
+      .forEach(func => func.call(element, element));
+    // element is bound to "this" and the first parameter.
   };
 
   // call initialize as soon as possible. check if page has loaded

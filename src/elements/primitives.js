@@ -35,6 +35,7 @@ export const circle = function (x, y, radius) {
   prepare("primitive", shape);
   shape.setCenter = (...args) => setCenter(shape, ...args);
   shape.setRadius = (r) => { shape.setAttributeNS(null, "r", r); return shape; };
+  shape.radius = (r) => { shape.setAttributeNS(null, "r", r); return shape; };
   return shape;
 };
 

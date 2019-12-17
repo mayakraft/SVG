@@ -49,11 +49,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "dragon.js",
     "draw.js",
     "mask.js",
-    "mystify.js",
     "parabola.js",
     "riley1.js",
     "ten-print.js",
-    // "text.js"
   ];
   shuffle(exampleFilenames);
   var examples = [];
