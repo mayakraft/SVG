@@ -1,19 +1,13 @@
 size(-1, -1, 2, 2);
 background("white", true);
-var r = getWidth() * 0.333;
+var radius = getWidth() * 0.333;
 
-for (var i = 0; i < 60; i += 1) {
-  var h = i % 5 === 0;
-  var a = PI * i / 30;
-  var d = r + r / 50 * 1.5;
-  circle(-Math.cos(a) * d, -Math.sin(a) * d, h ? r/40: r/80);
-  if (h) {
-    var fontSize = getWidth() / 12;
-    text((i/5 + 11) % 12 + 1)
-      .fontFamily("Didot, Garamond, Palatino, Georgia, Times New Roman")
-      .fontSize(fontSize).textAnchor("middle").setAttribute("style",
-      "transform: rotate("+(i*6)+"deg)  translate(0, -0.73px)");
-  }
+for (var i = 0; i < 12; i += 1) {
+  text((i + 11) % 12 + 1)
+    .fontFamily("Palatino, Georgia, Times New Roman")
+    .fontSize(getWidth() / 12)
+    .textAnchor("middle")
+    .setAttribute("style", "transform: rotate("+(i*30)+"deg) translate(0, -"+radius*1.05+"px)");
 }
 
 var pies = [
@@ -32,6 +26,6 @@ animate = function (time) {
     .forEach(function(a, i, arr) {
       var a1 = -PI / 2 + 2 * PI * a;
       var a2 = -PI / 2 + 2 * PI * arr[(i + 1) % arr.length];
-      pies[i].setArc(0, 0, r, a1, a2, true);
+      pies[i].setArc(0, 0, radius, a1, a2, true);
     });
 };

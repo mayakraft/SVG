@@ -16,16 +16,10 @@ var x1 = getWidth() * 0.25;
 var y1 = getHeight() * 0.6;
 var x2 = getWidth() * 0.85;
 var y2 = getHeight() * 0.6;
-var i1 = random(3); 
-var i2 = random(3, 6);
-var i3 = random(6, 9);
-var i4 = random(8, 11);
 
-polyline(dragon(x1, y1, x2, y2, 1, i1))
-  .setAttributes(attrs).stroke("#ec3").strokeWidth(81);
-polyline(dragon(x1, y1, x2, y2, 1, i2))
-  .setAttributes(attrs).stroke("#158a").strokeWidth(27);
-polyline(dragon(x1, y1, x2, y2, 1, i3))
-  .setAttributes(attrs).stroke("#e53").strokeWidth(9);
-polyline(dragon(x1, y1, x2, y2, 1, i4))
-  .setAttributes(attrs).stroke("#158").strokeWidth(3);
+polyline(dragon(x1, y1, x2, y2, 1, random(1, 6)))
+  .setAttributes(attrs).stroke("#e53").strokeWidth(27);
+polyline(dragon(x1, y1, x2, y2, 1, random(5, 9)))
+  .setAttributes(attrs).stroke("#ec3").strokeWidth(7);
+polyline(dragon(x1, y1, x2, y2, 1, random(8, 11)))
+  .setAttributes(attrs).stroke("#158").strokeWidth(4);

@@ -36,8 +36,7 @@ const prepareArrow = function (element) {
 const prepareText = function (element) {
   attachFunctionalStyleSetters(element);
   attachDOMMethods(element);
-  // text element has a problem with "rotate"
-  // attachTransformMethods(element);
+  attachTransformMethods(element);
   attachClipMaskAttributes(element);
 };
 

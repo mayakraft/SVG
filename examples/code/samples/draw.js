@@ -5,8 +5,7 @@ var points = [];
 var p = polygon()
   .fillRule("evenodd")
   .fill("#e53")
-  .stroke("#158")
-  .strokeLinecap("round");
+  .stroke("#158");
 
 mouseMoved = function (mouse) {
   points.push(mouse);

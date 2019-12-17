@@ -44,6 +44,10 @@
   }
 
   function _iterableToArrayLimit(arr, i) {
+    if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+      return;
+    }
+
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -811,7 +815,7 @@
       }
 
       if (typeof position.delegate === "function") {
-        position.delegate(proxy);
+        position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
       }
     };
 
@@ -846,6 +850,22 @@
     position.onMouseMove = onMouseMove;
     position.onMouseUp = onMouseUp;
     position.distance = distance;
+    Object.defineProperty(position, "x", {
+      get: function get() {
+        return position[0];
+      },
+      set: function set(newValue) {
+        position[0] = newValue;
+      }
+    });
+    Object.defineProperty(position, "y", {
+      get: function get() {
+        return position[1];
+      },
+      set: function set(newValue) {
+        position[1] = newValue;
+      }
+    });
     Object.defineProperty(position, "svg", {
       get: function get() {
         return svg;
@@ -888,12 +908,13 @@
 
     var protocol = function protocol(point) {
       if (typeof delegate === "function") {
-        delegate.call(points, point);
+        delegate.call(points, points, point);
       }
     };
 
     points.forEach(function (p) {
       p.delegate = protocol;
+      p.pointsContainer = points;
     });
 
     var mousePressedHandler = function mousePressedHandler(mouse) {
@@ -950,12 +971,12 @@
       }
     };
 
-    points.changed = function (func, runOnceAtStart) {
+    points.onChange = function (func, runOnceAtStart) {
       if (typeof func === "function") {
         delegate = func;
 
         if (runOnceAtStart === true) {
-          delegate.call(points);
+          func.call(points, points, undefined);
         }
       }
 
@@ -965,7 +986,7 @@
     points.position = function (func) {
       if (typeof func === "function") {
         points.forEach(function (p, i) {
-          return p.setPosition(func(i));
+          return p.setPosition(func.call(points, i));
         });
       }
 
@@ -975,7 +996,7 @@
     points.svg = function (func) {
       if (typeof func === "function") {
         points.forEach(function (p, i) {
-          p.svg = func(i);
+          p.svg = func.call(points, i);
         });
       }
 
@@ -1301,7 +1322,7 @@
     setArrowPoints: setArrowPoints
   });
 
-  var attributes = ["accumulate", "additive", "alignment-baseline", "amplitude", "attributeName", "azimuth", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "image-rendering", "in", "in2", "intercept", "k1", "k2", "k3", "k4", "kernelMatrix", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "opacity", "operator", "order", "orient", "overflow", "overline-position", "overline-thickness", "PSection", "paint-order", "patternContentUnits", "patternTransform", "patternUnits", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "refX", "refY", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "spacing", "specularConstant", "specularExponent", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-range", "units-per-em", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "xChannelSelector", "YSection", "yChannelSelector", "ZSection"];
+  var attributes = ["accumulate", "additive", "alignment-baseline", "amplitude", "attributeName", "azimuth", "baseFrequency", "baseline-shift", "baseProfile", "bbox", "begin", "bias", "by", "CSection", "calcMode", "cap-height", "clip", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "contentScriptType", "contentStyleType", "cursor", "DSection", "decelerate", "descent", "diffuseConstant", "direction", "display", "divisor", "dominant-baseline", "dur", "ESection", "edgeMode", "elevation", "enable-background", "end", "exponent", "externalResourcesRequired", "FSection", "fill", "fill-opacity", "fill-rule", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "format", "from", "fr", "fx", "fy", "GSection", "g1", "g2", "glyph-name", "glyph-orientation-horizontal", "glyph-orientation-vertical", "glyphRef", "gradientTransform", "gradientUnits", "HSection", "hanging", "href", "hreflang", "horiz-adv-x", "horiz-origin-x", "ISection", "image-rendering", "in", "in2", "intercept", "k1", "k2", "k3", "k4", "kernelMatrix", "keyPoints", "keySplines", "keyTimes", "LSection", "lang", "letter-spacing", "lighting-color", "limitingConeAngle", "local", "MSection", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "mathematical", "max", "media", "method", "min", "mode", "NSection", "name", "numOctaves", "OSection", "opacity", "operator", "order", "orient", "overflow", "overline-position", "overline-thickness", "PSection", "paint-order", "patternContentUnits", "patternTransform", "patternUnits", "pointer-events", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "preserveAspectRatio", "primitiveUnits", "RSection", "radius", "refX", "refY", "rendering-intent", "repeatCount", "repeatDur", "requiredFeatures", "restart", "result", "SSection", "seed", "shape-rendering", "spacing", "specularConstant", "specularExponent", "spreadMethod", "startOffset", "stdDeviation", "stemh", "stemv", "stitchTiles", "stop-color", "stop-opacity", "strikethrough-position", "strikethrough-thickness", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "surfaceScale", "TSection", "tabindex", "tableValues", "target", "targetX", "targetY", "text-anchor", "text-decoration", "text-rendering", "to", "transform-origin", "type", "USection", "u1", "u2", "underline-position", "underline-thickness", "unicode", "unicode-range", "units-per-em", "user-select", "VSection", "v-alphabetic", "v-hanging", "v-ideographic", "v-mathematical", "values", "vector-effect", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "viewTarget", "visibility", "WSection", "widths", "word-spacing", "writing-mode", "XSection", "xChannelSelector", "YSection", "yChannelSelector", "ZSection"];
 
   var removeChildren = function removeChildren(parent) {
     while (parent.lastChild) {
@@ -1684,7 +1705,9 @@
     };
   };
   var attachPathMethods = function attachPathMethods(element) {
-    Object.keys(Path).forEach(function (key) {
+    Object.keys(Path).filter(function (key) {
+      return element[key] === undefined;
+    }).forEach(function (key) {
       element[key] = function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
@@ -1708,7 +1731,9 @@
     });
   };
   var attachTransformMethods = function attachTransformMethods(element) {
-    Object.keys(Transform).forEach(function (key) {
+    Object.keys(Transform).filter(function (key) {
+      return element[key] === undefined;
+    }).forEach(function (key) {
       element[key] = function () {
         for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
           args[_key3] = arguments[_key3];
@@ -1837,6 +1862,7 @@
   var prepareText = function prepareText(element) {
     attachFunctionalStyleSetters(element);
     attachDOMMethods(element);
+    attachTransformMethods(element);
     attachClipMaskAttributes(element);
   };
 
@@ -1946,6 +1972,11 @@
     };
 
     shape.setRadius = function (r) {
+      shape.setAttributeNS(null, "r", r);
+      return shape;
+    };
+
+    shape.radius = function (r) {
       shape.setAttributeNS(null, "r", r);
       return shape;
     };
@@ -2405,7 +2436,11 @@
     });
     var viewBox = svgElement.getAttribute("viewBox");
 
-    if (numbers.length >= 2) {
+    if (numbers.length >= 4) {
+      svgElement.setAttributeNS(null, "width", numbers[2]);
+      svgElement.setAttributeNS(null, "height", numbers[3]);
+      setViewBox(svgElement, numbers[0], numbers[1], numbers[2], numbers[3]);
+    } else if (numbers.length >= 2) {
       svgElement.setAttributeNS(null, "width", numbers[0]);
       svgElement.setAttributeNS(null, "height", numbers[1]);
       setViewBox(svgElement, 0, 0, numbers[0], numbers[1]);
@@ -2655,7 +2690,7 @@
       params.filter(function (arg) {
         return typeof arg === "function";
       }).forEach(function (func) {
-        return func();
+        return func.call(element, element);
       });
     };
 

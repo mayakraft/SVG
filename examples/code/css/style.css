@@ -22,8 +22,9 @@ svg {
   display: flex;
   flex-direction: row;
 }
-#app > div {
+.canvas-container, .code-container {
   flex: 1;
+  width: 0;
 }
 .console {
   position: absolute;
@@ -74,49 +75,87 @@ div[class*="-button"] {
 .dark-mode-button {
   bottom: 3rem;
   left: 0.5rem;
-  background-color: #ec3;
+  background-color: #fff9;
   background-image: url(../images/moon.svg);
 }
 .font-size-button {
-  background-color: #ec3;
+  background-color: #fff9;
   bottom: 5.5rem;
   left: 0.5rem;
   background-image: url(../images/font-size.svg);
 }
 /*  additional buttons  */
 .download-button {
-  background-color: #e53;
+  background-color: #fff9;
   bottom: 13rem;
   left: 0.5rem;
   background-image: url(../images/download.svg);
 }
 .share-button {
-  background-color: #e53;
+  background-color: #fff9;
   bottom: 10.5rem;
   left: 0.5rem;
   background-image: url(../images/share.svg);
 }
 .random-button {
-  background-color: #e53;
+  background-color: #fff9;
   bottom: 8rem;
   left: 0.5rem;
   background-image: url(../images/dice.svg);
 }
 .question-button {
   opacity: 0.8;
-  background-color: #ec3;
+  background-color: #fff9;
   top: 0.5rem;
   left: calc(50% - 2.5rem);
   background-image: url(../images/question.svg);
 }
 
-@media not all and (hover) {
+@media not all and (hover), (max-aspect-ratio: 1/1) {
   .ace_editor { font-size: 1rem; }
   #app { flex-direction: column-reverse; }
   .console { width: 100%; }
-  .question-button {
-    top: initial;
-    bottom: 15.5rem;
-    left: 0.5rem;
+  .canvas-container, .code-container {
+    width: initial;
+    height: 0;
   }
+
+  .play-pause-button {
+    left: initial;
+    right: 0.5rem;
+    bottom: 0.5rem;
+  }
+  .dark-mode-button {
+    left: initial;
+    right: 3rem;
+    bottom: 0.5rem;
+  }
+  .font-size-button {
+    left: initial;
+    right: 5.5rem;
+    bottom: 0.5rem;
+  }
+  .download-button {
+    left: initial;
+    right: 13rem;
+    bottom: 0.5rem;
+  }
+  .share-button {
+    left: initial;
+    right: 10.5rem;
+    bottom: 0.5rem;
+  }
+  .random-button {
+    left: initial;
+    right: 8rem;
+    bottom: 0.5rem;
+  }
+  .question-button {
+    opacity: 1.0;
+    top: initial;
+    left: initial;
+    right: 15.5rem;
+    bottom: 0.5rem;
+  }
+
 }
