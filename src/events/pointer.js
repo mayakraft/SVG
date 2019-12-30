@@ -12,10 +12,15 @@ const Pointer = function (node) {
     position: [0, 0], // the current position of the mouse [x,y]
     pressed: [0, 0], //  the location of the beginning of this press
     drag: [0, 0], //     vector, displacement from start to now
-    prev: [0, 0], //     on mouseMoved, the previous location
+    previous: [0, 0], //     on mouseMoved, the previous location
     x: 0, //
     y: 0 //              -- x and y, copy of position data
   });
+
+  [pointer.position.x, pointer.position.y] = [0, 0];
+  [pointer.pressed.x, pointer.pressed.y] = [0, 0];
+  [pointer.drag.x, pointer.drag.y] = [0, 0];
+  [pointer.previous.x, pointer.previous.y] = [0, 0];
 
   // deep copy mouse object
   const copyPointer = function () {
@@ -54,33 +59,33 @@ const Pointer = function (node) {
   */
   const thisPointer = {};
 
-  const move = function (clientX, clientY) {
-    pointer.prev = pointer.position;
+  // let lastFramePressed = false;
+  const move = function (clientX, clientY, isPressed = false) {
+    // if pressed, but last frame pressed is false, call down()
+    if (isPressed && !pointer.isPressed) {
+      // move happened, and the last move it wasn't pressed.
+      pointer.pressed = convertToViewBox(node, clientX, clientY);
+    }
+    pointer.isPressed = isPressed;
+    pointer.previous = pointer.position;
     setPosition(clientX, clientY);
     if (pointer.isPressed) {
       updateDrag();
+    } else {
+      pointer.drag = [0, 0];
+      pointer.pressed = [0, 0];
+      [pointer.drag.x, pointer.drag.y] = pointer.drag;
+      [pointer.pressed.x, pointer.pressed.y] = pointer.pressed;
     }
     return thisPointer;
   };
-  const down = function (clientX, clientY) {
-    pointer.isPressed = true;
-    pointer.pressed = convertToViewBox(node, clientX, clientY);
-    setPosition(clientX, clientY);
-    return thisPointer;
-  };
-  const up = function () {
+  const release = function () {
     pointer.isPressed = false;
     return thisPointer;
   };
-  const pressed = function (isPressed) {
-    pointer.isPressed = isPressed;
-    return thisPointer;
-  };
 
-  Object.defineProperty(thisPointer, "up", { value: up });
-  Object.defineProperty(thisPointer, "pressed", { value: pressed });
+  Object.defineProperty(thisPointer, "release", { value: release });
   Object.defineProperty(thisPointer, "move", { value: move });
-  Object.defineProperty(thisPointer, "down", { value: down });
   Object.defineProperty(thisPointer, "get", { value: copyPointer });
   return thisPointer;
 };

@@ -429,10 +429,22 @@
       position: [0, 0],
       pressed: [0, 0],
       drag: [0, 0],
-      prev: [0, 0],
+      previous: [0, 0],
       x: 0,
       y: 0
     });
+    var _ref = [0, 0];
+    pointer.position.x = _ref[0];
+    pointer.position.y = _ref[1];
+    var _ref2 = [0, 0];
+    pointer.pressed.x = _ref2[0];
+    pointer.pressed.y = _ref2[1];
+    var _ref3 = [0, 0];
+    pointer.drag.x = _ref3[0];
+    pointer.drag.y = _ref3[1];
+    var _ref4 = [0, 0];
+    pointer.previous.x = _ref4[0];
+    pointer.previous.y = _ref4[1];
 
     var copyPointer = function copyPointer() {
       var m = pointer.position.slice();
@@ -470,44 +482,46 @@
     var thisPointer = {};
 
     var move = function move(clientX, clientY) {
-      pointer.prev = pointer.position;
+      var isPressed = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      if (isPressed && !pointer.isPressed) {
+        pointer.pressed = convertToViewBox(node, clientX, clientY);
+      }
+
+      pointer.isPressed = isPressed;
+      pointer.previous = pointer.position;
       setPosition(clientX, clientY);
 
       if (pointer.isPressed) {
         updateDrag();
+      } else {
+        pointer.drag = [0, 0];
+        pointer.pressed = [0, 0];
+
+        var _pointer$drag2 = _slicedToArray(pointer.drag, 2);
+
+        pointer.drag.x = _pointer$drag2[0];
+        pointer.drag.y = _pointer$drag2[1];
+
+        var _pointer$pressed = _slicedToArray(pointer.pressed, 2);
+
+        pointer.pressed.x = _pointer$pressed[0];
+        pointer.pressed.y = _pointer$pressed[1];
       }
 
       return thisPointer;
     };
 
-    var down = function down(clientX, clientY) {
-      pointer.isPressed = true;
-      pointer.pressed = convertToViewBox(node, clientX, clientY);
-      setPosition(clientX, clientY);
-      return thisPointer;
-    };
-
-    var up = function up() {
+    var release = function release() {
       pointer.isPressed = false;
       return thisPointer;
     };
 
-    var pressed = function pressed(isPressed) {
-      pointer.isPressed = isPressed;
-      return thisPointer;
-    };
-
-    Object.defineProperty(thisPointer, "up", {
-      value: up
-    });
-    Object.defineProperty(thisPointer, "pressed", {
-      value: pressed
+    Object.defineProperty(thisPointer, "release", {
+      value: release
     });
     Object.defineProperty(thisPointer, "move", {
       value: move
-    });
-    Object.defineProperty(thisPointer, "down", {
-      value: down
     });
     Object.defineProperty(thisPointer, "get", {
       value: copyPointer
@@ -540,35 +554,35 @@
 
     var onMouseMove = function onMouseMove(handler, event) {
       event.preventDefault();
-      var e = pointer.move(event.clientX, event.clientY).pressed(event.buttons > 0).get();
+      var e = pointer.move(event.clientX, event.clientY, event.buttons > 0).get();
       handler(e);
       return e;
     };
 
     var onTouchMove = function onTouchMove(handler, event) {
       event.preventDefault();
-      var e = pointer.move(event.touches[0].clientX, event.touches[0].clientY).pressed(true).get();
+      var e = pointer.move(event.touches[0].clientX, event.touches[0].clientY, true).get();
       handler(e);
       return e;
     };
 
     var onMouseDown = function onMouseDown(handler, event) {
       event.preventDefault();
-      var e = pointer.down(event.clientX, event.clientY).get();
+      var e = pointer.move(event.clientX, event.clientY, true).get();
       handler(e);
       return e;
     };
 
     var onTouchStart = function onTouchStart(handler, event) {
       event.preventDefault();
-      var e = pointer.down(event.touches[0].clientX, event.touches[0].clientY).get();
+      var e = pointer.move(event.touches[0].clientX, event.touches[0].clientY, true).get();
       handler(e);
       return e;
     };
 
     var onEnd = function onEnd(handler, event) {
       event.preventDefault();
-      var e = pointer.pressed(false).get();
+      var e = pointer.release().get();
       handler(e);
       return e;
     };
