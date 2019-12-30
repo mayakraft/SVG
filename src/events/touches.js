@@ -29,8 +29,7 @@ const Touches = function (node) {
   const onMouseMove = (handler, event) => {
     event.preventDefault();
     const e = pointer
-      .move(event.clientX, event.clientY)
-      .pressed(event.buttons > 0)
+      .move(event.clientX, event.clientY, event.buttons > 0)
       .get();
     handler(e);
     return e;
@@ -38,8 +37,7 @@ const Touches = function (node) {
   const onTouchMove = (handler, event) => {
     event.preventDefault();
     const e = pointer
-      .move(event.touches[0].clientX, event.touches[0].clientY)
-      .pressed(true)
+      .move(event.touches[0].clientX, event.touches[0].clientY, true)
       .get();
     handler(e);
     return e;
@@ -47,7 +45,7 @@ const Touches = function (node) {
   const onMouseDown = (handler, event) => {
     event.preventDefault();
     const e = pointer
-      .down(event.clientX, event.clientY)
+      .move(event.clientX, event.clientY, true)
       .get();
     handler(e);
     return e;
@@ -55,14 +53,14 @@ const Touches = function (node) {
   const onTouchStart = (handler, event) => {
     event.preventDefault();
     const e = pointer
-      .down(event.touches[0].clientX, event.touches[0].clientY)
+      .move(event.touches[0].clientX, event.touches[0].clientY, true)
       .get();
     handler(e);
     return e;
   };
   const onEnd = (handler, event) => {
     event.preventDefault();
-    const e = pointer.pressed(false).get();
+    const e = pointer.release().get();
     handler(e);
     return e;
   };

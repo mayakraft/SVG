@@ -21,7 +21,7 @@ var arrowRed = arrow()
 
 controls(4)
   .position(function () { return [random(getWidth()), random(getHeight())]; })
-  .changed(function () {
+  .onChange(function () {
     arrowBlue.setPoints(this[0], this[1]);
     arrowBlack.setPoints(this[1], this[2]);
     arrowRed.setPoints(this[2], this[3]);
