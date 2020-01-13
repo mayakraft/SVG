@@ -181,8 +181,8 @@ const replaceWithSVG = function (oldSVG, newSVG) {
   // console.log(Array.from(blankSVG.attributes));
 
   // Part 2: copy contents over
-  Array.from(newSVG.children).forEach((node) => {
-    node.remove();
+  Array.from(newSVG.childNodes).forEach((node) => {
+    newSVG.removeChild(node);
     oldSVG.appendChild(node);
   });
   Array.from(newSVG.attributes)
@@ -210,9 +210,7 @@ const SVG = function (...params) {
   element.setHeight = (...args) => setHeight(element, ...args);
   element.background = (...args) => background(element, ...args);
   element.size = (...args) => size(element, ...args);
-  element.save = function (filename = "image.svg") {
-    return File.save(element, filename);
-  };
+  element.save = (options) => File.save(element, options);
   element.load = function (data, callback) {
     File.load(data, (newSVG, error) => {
       if (newSVG != null) { replaceWithSVG(element, newSVG); }
