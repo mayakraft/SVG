@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<title></title>
+<style>body{margin:0}</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+
+// "window" mode binds all the primitives to the window. allowing you to code
+// line(1,2,3,4) instead of svg.line(1,2,3,4)
+// getWidth() instead of svg.getWidth()
+// mouseMoved instead of svg.mouseMoved
+
+SVG(window.innerWidth, window.innerHeight, { window: true }, function (svg) {
+
+  background("linen");
+
+  rect(0, 0, getWidth(), getHeight())
+    .fill("none")
+    .stroke("sienna")
+    .strokeWidth(100);
+
+  var dot = circle(getWidth() / 2, getHeight() / 2)
+    .radius(getWidth() < getHeight() ? getWidth() / 2 : getHeight() / 2)
+    .fill("peru");
+
+  mouseMoved = function (mouse) {
+    dot.setCenter(mouse);
+  };
+});
+
+</script>

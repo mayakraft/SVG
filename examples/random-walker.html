@@ -4,23 +4,20 @@
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
-let walker = SVG(window.innerWidth, window.innerHeight);
+var walker = SVG(window.innerWidth, window.innerHeight);
+var polyline = walker.polyline().fill("none").stroke("black")
 
-walker.polyline = SVG.polyline();
-walker.polyline.setAttribute("style", "fill:none; stroke:black;");
-walker.appendChild(walker.polyline);
+var pen = [
+  window.innerWidth*0.5,
+  window.innerHeight*0.5
+];
+var points = [];
 
-walker.pen = {
-	x: window.innerWidth*0.5,
-	y: window.innerHeight*0.5
-};
-walker.points = [];
-
-walker.animate = function(event){
-	walker.pen.x += Math.random()*20 - 10;
-	walker.pen.y += Math.random()*20 - 10;
-	walker.points.push([walker.pen.x, walker.pen.y]);
-	SVG.setPoints(walker.polyline, walker.points);
+walker.animate = function (event) {
+  pen[0] += Math.random() * 20 - 10;
+  pen[1] += Math.random() * 20 - 10;
+  points.push([...pen]);
+  polyline.setPoints(points);
 }
 
 </script>

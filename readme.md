@@ -2,72 +2,71 @@
 
 [![Build Status](https://travis-ci.org/robbykraft/SVG.svg?branch=master)](https://travis-ci.org/robbykraft/SVG)
 
-make it a little easier to code and play with SVGs
+creative coding with SVG.
 
-# Usage
-
-Include svg.js in your project.
+This library makes drawing SVGs nearly easy enough to introduce to beginners of coding. The library adds method-chaining for styling, event handlers that work for computers and touch screens, and can run in the browser or Node:
 
 ```html
 <script src="svg.js"></script>
 ```
 
-# Introduction
-
-`SVG` is the global namespace. It's also a constructor. It makes an `<svg>` element. 
-
 ```javascript
-const mySVG = SVG();
+const SVG = require("rabbit-ear-svg")
 ```
 
-This library is essentially a wrapper for creating SVG elements and setting attributes.
+## Usage
 
 ```javascript
-SVG.rect(10, 10, 280, 130);
+const svg = SVG()
 ```
 
-Calling the line above is the same as writing
+This creates an `<svg>` element.
+
+**optional init parameters** can contain: *2 numbers*: viewBox width and height, *DOM node*: the svg's parent in the window, *function*: a callback after window.onload and after the SVG is on screen.
+
+All drawing primitives can be created as children of this new instance.
 
 ```javascript
-const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-rect.setAttribute("x", 10);
-rect.setAttribute("y", 10);
-rect.setAttribute("width", 280);
-rect.setAttribute("height", 130);
+svg.rect(x, y, width, height)
+svg.path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3)
 ```
 
-Additional optimizations:
-
-- calling geometry methods on an svg or group will automatically append that geometry.
+A **group** is one container-type element that can also be used to create primitives or more groups. Groups are used to manage layer order.
 
 ```javascript
-mySVG.rect(10, 10, 280, 130);
+const topLayer = svg.group()
+topLayer.rect(x, y, width, height)
 ```
 
-- `setAttribute("stroke", "#F08")` is made simpler by attribute-named-functions and method chaining.
+**Style** is applied using method-chaining.
 
 ```javascript
-line(0, 0, 300, 300)
+svg.line(0, 0, 300, 300)
   .stroke("#F08")
   .strokeWidth(3)
-  .strokeDasharray("5 3");
+  .strokeDasharray("5 3")
 ```
 
-- event handlers for the `<svg>` element are all ready to go, for mouse and touchscreens. They somewhat follow the same names as in Processing.
-  - mousePressed
-  - mouseReleased
-  - mouseMoved
-  - animate
+**Events** combine both mouse and touch ('onmousedown' and 'ontouchstart'). **Animate** is a simple way to initialize a 60-fps game loop.
 
-# Examples
+- mousePressed
+- mouseReleased
+- mouseMoved
+- animate
 
-This page contains live-code examples: [svg.rabbitear.org](https://svg.rabbitear.org)
+```javascript
+svg.mousePressed = function (mouse) {
 
-After download, check out the `examples/` folder.
+}
+```
 
-![example](https://robbykraft.github.io/SVG/examples/vera.svg)
+## Examples
 
-# Methods: constructors
+Check out the examples in the `examples/` folder.
+
+`examples/code/` contains a live-coding window, perfect for becoming acquainted. This example is also here [svg.rabbitear.org](https://svg.rabbitear.org).
+
+## Reference
 
 container and header types
 
@@ -88,6 +87,7 @@ ellipse(x, y, radiusX, radiusY)
 rect(x, y, width, height)
 polygon(pointsArray)
 polyline(pointsArray)
+path() // method-chain with .moveTo() .curveTo() ...
 bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY)
 text(textString, x, y)
 arc(x, y, radius, startAngle, endAngle)
@@ -97,37 +97,12 @@ wedgeEllipse(x, y, radiusX, radiusY, startAngle, endAngle)
 parabola(x, y, width, height)
 regularPolygon(cX, cY, radius, sides)
 roundRect(x, y, width, height, cornerRadius)
-straightArrow(start, end, options)
-arcArrow(start, end, options)
+arrow() // method-chain with .head() .tail()
 ```
 
-svg: optional initializers
-
-* 2 numbers: width *then* height
-* DOM object, this will be the parent to attach the SVG
+more SVG methods
 
 ```javascript
-let mySVG = SVG(640, 480, parent_element);
-```
-
-# Methods: object functions
-
-```javascript
-save(svg, filename = "image.svg")
-load(filename, callback)
-
-removeChildren()
-appendTo(parent)
-setAttributes(attributeObject)
-addClass(className)
-removeClass(className)
-setClass(className)
-setID(idName)
-
-translate(tx, ty)
-rotate(degrees)
-scale(sx, sy)
-
 getViewBox()
 setViewBox(x, y, w, h)
 convertToViewBox(x, y)
@@ -143,64 +118,11 @@ size(width, height)
 size(x, y, width, height)
 ```
 
-# Methods: interaction
+## Credit
 
-```javascript
-// a property of an SVG (not a method), the current location of the pointer
-mouse
+- [vkBeautify](https://github.com/vkiryukhin/vkBeautify)
+- [XML DOM](https://github.com/xmldom/xmldom)
 
-// event handlers
-mouseMoved = function (event) { }
-mousePressed = function (event) { }
-mouseReleased = function (event) { }
-scroll = function (event) { }
-animate = function (event) { }
+## License
 
-// clear all event handlers
-clear()
-```
-
-the mouse event is
-
-```javascript
-{
-  isPressed: false, // is the mouse button pressed (y/n)
-  position: [0,0],  // the current position of the mouse [x,y]
-  pressed: [0,0],   // the last location the mouse was pressed
-  drag: [0,0],      // vector, displacement from start to now
-  prev: [0,0],      // on mouseMoved, the previous location
-  x: 0,             //
-  y: 0              // -- x and y, these are the same as position
-}
-```
-
-the animate event is
-
-```javascript
-{
-  time: 0.0, // in seconds
-  frame: 0  // integer
-}
-```
-
-# Methods: on geometry primitives
-
-```javascript
-poly.setPoints(pointsArray)
-arc.setArc(x, y, radius, startAngle, endAngle, includeCenter = false)
-ellipseArc.setEllipticalArc(x, y, rX, rY, startAngle, endAngle, includeCenter = false)
-bezier.setBezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY)
-
-shape.mask(m) // the mask "m" will be 
-```
-
-# Methods: masking and clipping
-
-```javascript
-const c = clipPath(); // create a clip path
-c.rect(20, 20, 80, 80) // define the clip path
-
-line(0, 0, 100, 100).clipPath(c) // make a shape follow the clip path
-```
-
-![example](https://robbykraft.github.io/SVG/examples/dragon.svg)
+MIT

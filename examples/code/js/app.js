@@ -4,13 +4,13 @@ document.addEventListener("DOMContentLoaded", function () {
   var queryCode = QueryWatcher("code"); // attach as early as possible
   var zoom = false;
 
-  var svg = SVG(app.dom.canvas, 512, 512, { window: true });
+  var svg = SVG(app.dom.canvas, 300, 150, { window: true });
   window.svg = svg;
   svg.setAttribute("class", "svg-code");
 
   var questionButton = document.createElement("div");
   questionButton.setAttribute("class", "question-button");
-  questionButton.setAttribute("title", "~ Reserved Keywords ~\narc\narcArrow\narcEllipse\nbackground\nbezier\ncircle\nclipPath\ncontrols\ndefs\nellipse\ngetWidth\ngetHeight\ngroup\nline\nmask\nparabola\npath\npolygon\npolyline\nrect\nregularPolygon\nsave\nsetWidth\nsetHeight\nsize\nstraightArrow\nstylesheet\nsvg\ntext\nwedge\nwedgeEllipse");
+  questionButton.setAttribute("title", "Help");
   document.querySelector("#app").appendChild(questionButton);
 
   var downloadButton = document.createElement("div");
@@ -68,6 +68,8 @@ document.addEventListener("DOMContentLoaded", function () {
           examples = examples.filter(function (e) { return e != null; });
           callback(examples);
         }
+      }).catch(function(error) {
+        app.dom.console.innerHTML = "<p>examples require a localhost server. instead, run examples here: https://svg.rabbitear.org</p>";
       });
     });
   };
@@ -91,6 +93,28 @@ document.addEventListener("DOMContentLoaded", function () {
     // loadAndRunExamples(function (examples) {
     //   return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
     // });
+    // blank screen
+    const welcomeText = `// ~ Welcome to coding with SVG ~
+// here are some commands to get you started:
+
+// size(600, 600); // the viewBox size. default is 300x150
+// background("white") // background color
+
+// primitives:
+// line(x1, y1, x2, y2).stroke("black");
+// circle(x, y, radius);
+// rect(x, y, width, height)
+// path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3)
+
+// style:
+// rect(10, 10, 280, 130).fill("linen").stroke("sienna").strokeWidth(5)
+// default style is black fill AND NO STROKE (lines are invisible!)
+
+// more info: https://svg.rabbitear.org/docs/
+// or roll the dice for an example!
+
+`;
+    app.injectCode(welcomeText);
   } else {
     app.injectCode(bootQueryValue);
     queryCode.value = undefined;
@@ -118,14 +142,15 @@ document.addEventListener("DOMContentLoaded", function () {
       ? document.createElementNS(SVG.NS, "code")
       : codes[0];
     code.innerHTML = "";
-    var cdata = new window.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("\n" + app.code + "\n");
+    var cdata = new window.DOMParser().parseFromString("<root></root>", "text/xml")
+      .createCDATASection("\n" + app.code + "\n");
     code.appendChild(cdata);
     defs[0].prepend(code);
     svg.save();
   };
 
   questionButton.onclick = function () {
-    var win = window.open("/docs/", "_blank");
+    var win = window.open("//svg.rabbitear.org/docs/", "_blank");
     win.focus();
   };
 

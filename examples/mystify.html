@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<title>SVG example: introduction</title>
+<style>body{margin:0}</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+SVG(window.innerWidth, window.innerHeight, function (svg) {
+  var aspect = window.innerWidth / window.innerHeight;
+  svg.size(400 * aspect, 400);
+  svg.fps = 30;
+  svg.background("black", true);
+
+  var tail = Math.random() * 130 + 20;
+  var joints = Math.random() * 6 + 4;
+  var lines = svg.group().fill("none");
+  var pts = [];
+
+  var Particle = function () {
+    var a = Math.random() * Math.PI * 2;
+    var len = Math.random() * 5;
+    var obj = {
+      p: [Math.random() * svg.getWidth(), Math.random() * svg.getHeight()],
+      v: [Math.cos(a) * len, Math.sin(a) * len]
+    };
+    obj.update = function () {
+      var max = [svg.getWidth, svg.getHeight];
+      obj.p.forEach(function(p, i, arr) {
+        obj.p[i] += obj.v[i];
+        if (obj.p[i] < 0) { obj.p[i] = -obj.p[i]; obj.v[i] = -obj.v[i]; }
+        if (obj.p[i] > max[i]()) { obj.p[i] = -obj.p[i] + max[i]() * 2; obj.v[i] = -obj.v[i]; }
+      });
+    };
+    return obj;
+  };
+
+  for (var i = 0; i < joints; i += 1) {
+    pts.push(Particle());
+  }
+
+  svg.animate = function (event) {
+    for (var i = 0; i < joints; i += 1) { pts[i].update(); }
+    var points = pts.map(function(p) { return p.p; });
+    lines.polygon(points)
+      .stroke("hsl(" + (event.frame % 360) + ", 100%, 50%)");
+    while (lines.childNodes.length > tail) {
+      lines.removeChild(lines.childNodes[0]);
+    }
+  };
+
+});
+</script>
