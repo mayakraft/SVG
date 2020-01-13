@@ -73,18 +73,24 @@ div[class*="-button"] {
   background-image: url(../images/pause.svg);
 }
 .dark-mode-button {
-  bottom: 3rem;
+  bottom: 5.5rem;
   left: 0.5rem;
   background-color: #fff9;
   background-image: url(../images/moon.svg);
 }
 .font-size-button {
   background-color: #fff9;
-  bottom: 5.5rem;
+  bottom: 8rem;
   left: 0.5rem;
   background-image: url(../images/font-size.svg);
 }
 /*  additional buttons  */
+.random-button {
+  background-color: #fb3;
+  bottom: 3rem;
+  left: 0.5rem;
+  background-image: url(../images/dice.svg);
+}
 .download-button {
   background-color: #fff9;
   bottom: 13rem;
@@ -96,12 +102,6 @@ div[class*="-button"] {
   bottom: 10.5rem;
   left: 0.5rem;
   background-image: url(../images/share.svg);
-}
-.random-button {
-  background-color: #fff9;
-  bottom: 8rem;
-  left: 0.5rem;
-  background-image: url(../images/dice.svg);
 }
 .question-button {
   opacity: 0.8;
@@ -125,19 +125,19 @@ div[class*="-button"] {
     right: 0.5rem;
     bottom: 0.5rem;
   }
-  .dark-mode-button {
+  .random-button {
     left: initial;
     right: 3rem;
     bottom: 0.5rem;
   }
-  .font-size-button {
+  .dark-mode-button {
     left: initial;
     right: 5.5rem;
     bottom: 0.5rem;
   }
-  .download-button {
+  .font-size-button {
     left: initial;
-    right: 13rem;
+    right: 8rem;
     bottom: 0.5rem;
   }
   .share-button {
@@ -145,9 +145,9 @@ div[class*="-button"] {
     right: 10.5rem;
     bottom: 0.5rem;
   }
-  .random-button {
+  .download-button {
     left: initial;
-    right: 8rem;
+    right: 13rem;
     bottom: 0.5rem;
   }
   .question-button {

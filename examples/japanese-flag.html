@@ -2,23 +2,23 @@
 <title>SVG example: Japanese flag</title>
 <style>
 html, body{
-	margin: 0;
-	height: 100%;
-	background-color: black;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  margin: 0;
+  height: 100%;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
-let flag = SVG(600, 400);
-
-let rect = flag.rect(0, 0, flag.getWidth(), flag.getHeight());
-rect.setAttribute("fill", "white");
-
-let circle = flag.circle(flag.getWidth()/2, flag.getHeight()/2, flag.getHeight()*0.3);
-circle.setAttribute("fill", "#BC002D");
+window.onload = function () {
+  var flag = SVG(600, 400);
+  flag.rect(0, 0, flag.getWidth(), flag.getHeight())
+    .fill("white");
+  flag.circle(flag.getWidth()/2, flag.getHeight()/2, flag.getHeight()*0.3)
+    .fill("#BC002D");
+};
 
 </script>

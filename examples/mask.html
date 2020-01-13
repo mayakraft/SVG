@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<title>SVG example: introduction</title>
+<style>body{margin:0}</style>
+<script type="text/javascript" src="../svg.js"></script>
+<script>
+SVG(window.innerWidth, window.innerHeight, function (svg) {
+  svg.size(1, 1);
+  svg.background("#edb", true);
+
+  var points = Array.from(Array(100))
+    .map(() => [Math.random() * 2 - 1, Math.random() * 2 - 1]);
+
+  var maskA = svg.mask();
+  var maskB = svg.mask();
+
+  maskA.polygon(points).fill("white").fillRule("evenodd");
+  maskB.rect(-1, -1, 3, 3).fill("white");
+  maskB.polygon(points).fill("black").fillRule("evenodd");
+
+  svg.circle(Math.random(), Math.random(), 0.5).fill("black").mask(maskA);
+  svg.circle(Math.random(), Math.random(), 0.5).fill("#e53").mask(maskB);
+});
+</script>

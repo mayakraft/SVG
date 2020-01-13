@@ -1,0 +1,33 @@
+<!--
+These two sketches are the same:
+ - without: written in vanilla Javascript, without this library
+ - with: written using this SVG library
+-->
+<!DOCTYPE html>
+<title>SVG example: introduction</title>
+<style>body{margin:0}</style>
+<script type="text/javascript" src="../svg.js"></script>
+
+<script>
+
+// create a new SVG, append it to the DOM after window.onload
+SVG(window.innerWidth, window.innerHeight, function (sketch) {
+  // fill the canvas with a rectangle
+  sketch.background("black");
+
+  // create, style, and append a polyline
+  var poly = sketch.polyline()
+    .stroke("white")
+    .strokeWidth(5)
+    .strokeDasharray("6 12")
+    .strokeLinecap("round");
+
+  // create a draw handler
+  var points = [];
+  sketch.mouseMoved = function (event) {
+    points.push(event.position);
+    poly.setPoints(points);
+  };
+});
+
+</script>
