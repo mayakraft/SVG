@@ -105,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // circle(x, y, radius);
 // rect(x, y, width, height)
 // path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3)
+// (and many more)
 
 // style:
 // rect(10, 10, 280, 130).fill("linen").stroke("sienna").strokeWidth(5)

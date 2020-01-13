@@ -91,7 +91,7 @@ const controlPoint = function (parent, options = {}) {
   });
   Object.defineProperty(position, "remove", {
     value: () => {
-      if (svg != null) { svg.remove(); }
+      if (svg != null) { parent.removeChild(svg); }
     }
   });
 

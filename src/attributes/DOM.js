@@ -10,7 +10,6 @@ export const removeChildren = function (parent) {
 
 export const appendTo = function (element, parent) {
   if (parent != null) {
-    element.remove();
     parent.appendChild(element);
   }
   return element;
