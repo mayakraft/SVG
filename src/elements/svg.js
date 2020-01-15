@@ -23,7 +23,8 @@ const findWindowBooleanParam = function (...params) {
 };
 
 const findElementInParams = function (...params) {
-  const element = params.filter(arg => arg instanceof HTMLElement).shift();
+  const elementConstructor = window.document.createElement("a").constructor;
+  const element = params.filter(arg => arg instanceof elementConstructor).shift();
   const idElement = params
     .filter(a => typeof a === "string" || a instanceof String)
     .map(str => window.document.getElementById(str))
@@ -228,8 +229,8 @@ const SVG = function (...params) {
     if (findWindowBooleanParam(...params)) { // look for options { window: true }
       Globalize(element);
     }
-    // maybe dangerous:
-    // any function inside the arguments will get fired. with zero parameters.
+    // todo: check for any security issues here.
+    // any function inside the arguments will get fired with the SVG as a parameter.
     // a way of sending a callback to an unknown parameter list
     params.filter(arg => typeof arg === "function")
       .forEach(func => func.call(element, element));
