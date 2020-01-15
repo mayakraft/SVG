@@ -4,7 +4,7 @@
 
 creative coding with SVG.
 
-This library makes drawing SVGs nearly easy enough to introduce to beginners of coding. The library adds method-chaining for styling, event handlers that work for computers and touch screens, and can run in the browser or Node:
+This library makes drawing SVGs nearly easy enough to be used by people new to coding. The library introduces method-chaining for styling, event handlers that work for computers and touch screens, and can run in the browser or Node.
 
 ```html
 <script src="svg.js"></script>
