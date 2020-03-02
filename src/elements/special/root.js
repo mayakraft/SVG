@@ -4,7 +4,7 @@
 
 import svgNS from "../environment/namespace";
 import window from "../environment/window";
-import prepare from "../attributes/prepare";
+import prepare from "../methods/index";
 
 const constructorsSVG = {};
 const constructorsGroup = {};

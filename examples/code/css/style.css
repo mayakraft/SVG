@@ -22,18 +22,24 @@ svg {
   display: flex;
   flex-direction: row;
 }
-.canvas-container, .code-container {
+.code-editor,
+.code-canvas {
   flex: 1;
-  width: 0;
 }
-.console {
+/* center everything on the canvas */
+.code-canvas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.code-console {
   position: absolute;
   z-index: 2;
   bottom: 0;
   left: 0;
   width: 50%;
 }
-.console p {
+.code-console p {
   width: calc(100% - 8rem);
   margin: 1rem 4rem;
   padding: 0.5rem 1rem;
@@ -41,12 +47,6 @@ svg {
   border-radius: 0.5rem;
   color: #ddd;
   font-family: monospace;
-}
-/* center everything on the canvas */
-.canvas-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 /* buttons */
 div[class*="-button"] {
@@ -61,8 +61,8 @@ div[class*="-button"] {
   background-position: center center;
 }
 .play-pause-button {
-  bottom: 0.5rem;
   left: 0.5rem;
+  bottom: 0.5rem;
 }
 .play-pause-button.pause {
   background-color: #5b23;
@@ -73,53 +73,47 @@ div[class*="-button"] {
   background-image: url(../images/pause.svg);
 }
 .dark-mode-button {
-  bottom: 5.5rem;
   left: 0.5rem;
+  bottom: 5.5rem;
   background-color: #fff9;
   background-image: url(../images/moon.svg);
 }
 .font-size-button {
-  background-color: #fff9;
-  bottom: 8rem;
   left: 0.5rem;
+  bottom: 8rem;
+  background-color: #fff9;
   background-image: url(../images/font-size.svg);
 }
 /*  additional buttons  */
 .random-button {
-  background-color: #fb3;
-  bottom: 3rem;
   left: 0.5rem;
+  bottom: 3rem;
+  background-color: #fb3;
   background-image: url(../images/dice.svg);
 }
 .download-button {
-  background-color: #fff9;
-  bottom: 13rem;
   left: 0.5rem;
+  bottom: 13rem;
+  background-color: #fff9;
   background-image: url(../images/download.svg);
 }
 .share-button {
-  background-color: #fff9;
-  bottom: 10.5rem;
   left: 0.5rem;
+  bottom: 10.5rem;
+  background-color: #fff9;
   background-image: url(../images/share.svg);
 }
 .question-button {
+  left: calc(50% - 2.5rem);
+  top: 0.5rem;
   opacity: 0.8;
   background-color: #fff9;
-  top: 0.5rem;
-  left: calc(50% - 2.5rem);
   background-image: url(../images/question.svg);
 }
-
 @media not all and (hover), (max-aspect-ratio: 1/1) {
   .ace_editor { font-size: 1rem; }
   #app { flex-direction: column-reverse; }
-  .console { width: 100%; }
-  .canvas-container, .code-container {
-    width: initial;
-    height: 0;
-  }
-
+  .code-console { width: 100%; }
   .play-pause-button {
     left: initial;
     right: 0.5rem;
@@ -157,5 +151,4 @@ div[class*="-button"] {
     right: 15.5rem;
     bottom: 0.5rem;
   }
-
 }

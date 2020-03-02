@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import { convertToViewBox } from "../attributes/viewBox";
+import { convertToViewBox } from "../methods/viewBox";
 
 const Pointer = function (node) {
   const pointer = Object.create(null);

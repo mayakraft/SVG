@@ -3,7 +3,7 @@
  */
 
 import Pointer from "./pointer";
-import { convertToViewBox } from "../attributes/viewBox";
+import { convertToViewBox } from "../methods/viewBox";
 
 const Touches = function (node) {
   const pointer = Pointer(node);
@@ -16,7 +16,11 @@ const Touches = function (node) {
     touchstart: [],
     mouseup: [],
     touchend: [],
-    scroll: []
+    scroll: [],
+    // additional
+    mouseleave: [], // instead of mouseout
+    mouseover: [], // instead of mouseenter
+    touchcancel: []
   };
 
   const clear = () => {
@@ -101,6 +105,10 @@ const Touches = function (node) {
       handlers.touchstart.push(touchFunc);
       node.addEventListener("mousedown", mouseFunc);
       node.addEventListener("touchstart", touchFunc);
+      // additional
+      // const mouseOverFunc = event => onMouseDown(handler, event);
+      // handlers.mouseover.push(mouseOverFunc);
+      // node.addEventListener("mouseover", mouseOverFunc);
     },
     enumerable: true
   });
@@ -112,6 +120,13 @@ const Touches = function (node) {
       handlers.touchend.push(touchFunc);
       node.addEventListener("mouseup", mouseFunc);
       node.addEventListener("touchend", touchFunc);
+      // additional
+      // const mouseLeaveFunc = event => onEnd(handler, event);
+      // const touchCancelFunc = event => onEnd(handler, event);
+      // handlers.mouseleave.push(mouseLeaveFunc);
+      // handlers.touchcancel.push(touchCancelFunc);
+      // node.addEventListener("mouseleave", mouseLeaveFunc);
+      // node.addEventListener("touchcancel", touchCancelFunc);
     },
     enumerable: true
   });

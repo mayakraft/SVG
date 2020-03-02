@@ -2,11 +2,11 @@
  * SVG (c) Robby Kraft
  */
 
-import attributes from "./svgAttributes";
+import attributes from "../attributes/svgAttributes";
 import * as DOM from "./DOM";
 import * as ViewBox from "./viewBox";
 import * as Transform from "./transform";
-import * as Path from "./path";
+import * as Path from "../elements/path";
 import { setArrowPoints } from "./geometry";
 
 export const attachStyleMethods = function (element) {

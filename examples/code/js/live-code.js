@@ -16,9 +16,9 @@ var LiveCode = function LiveCode(container) {
     var playPauseButton = document.createElement("div");
     var darkModeButton = document.createElement("div");
     var fontSizeButton = document.createElement("div");
-    codeContainer.setAttribute("class", "code-container");
-    canvasContainer.setAttribute("class", "canvas-container");
-    consoleContainer.setAttribute("class", "console");
+    codeContainer.setAttribute("class", "code-editor");
+    canvasContainer.setAttribute("class", "code-canvas");
+    consoleContainer.setAttribute("class", "code-console");
     playPauseButton.setAttribute("class", "play-pause-button play");
     darkModeButton.setAttribute("class", "dark-mode-button");
     fontSizeButton.setAttribute("class", "font-size-button");

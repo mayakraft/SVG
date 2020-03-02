@@ -3,10 +3,10 @@
  */
 
 const setTransform = function (element, transform) {
-  if (typeof transform === "object") {
-    element.setAttribute("transform", transform.join(" "));
-  } else if (typeof transform === "string") {
-    element.setAttribute("transform", transform);
+  switch (typeof transform) {
+    case "string": element.setAttribute("transform", transform); break;
+    case "object": element.setAttribute("transform", transform.join(" ")); break;
+    default: break;
   }
 };
 

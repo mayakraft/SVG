@@ -13,9 +13,9 @@ import {
   setEllipticalArc,
   setBezier,
   setArrowPoints
-} from "../attributes/geometry";
+} from "../methods/geometry";
 
-import prepare from "../attributes/prepare";
+import prepare from "../methods/index";
 
 /**
  *  primitives

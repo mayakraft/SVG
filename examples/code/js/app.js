@@ -95,23 +95,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // });
     // blank screen
     const welcomeText = `// ~ Welcome to coding with SVG ~
-// here are some commands to get you started:
+// some commands to get started:
 
 // size(600, 600); // the viewBox size. default is 300x150
-// background("white") // background color
+// background("white"); // background color
 
-// primitives:
+// PRIMITIVES (there are many more!):
 // line(x1, y1, x2, y2).stroke("black");
 // circle(x, y, radius);
-// rect(x, y, width, height)
-// path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3)
-// (and many more)
+// rect(x, y, width, height);
+// path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3);
 
-// style:
-// rect(10, 10, 280, 130).fill("linen").stroke("sienna").strokeWidth(5)
-// default style is black fill AND NO STROKE (lines are invisible!)
+// STYLE (function names are SVG attributes):
+// rect(10, 10, 280, 130).fill("#edb").stroke("sienna").strokeWidth(5);
+// the default style is BLACK FILL AND NO STROKE (lines are invisible!)
 
-// more info: https://svg.rabbitear.org/docs/
+// read more: https://svg.rabbitear.org/docs/
 // or roll the dice for an example!
 
 `;
