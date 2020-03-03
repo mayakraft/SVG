@@ -19,30 +19,30 @@ const toCamel = s => s.replace(/([-_][a-z])/ig, $1 => $1
 //     });
 // };
 
-const prepare = function (element, tagName) {
-  if (typeof Attributes[tagName] === "object" && Attributes[tagName] !== null) {
-    Object.keys(Attributes[tagName])
-      .forEach(key => element.setAttribute(key, Attributes[tagName][key]));
+const prepare = function (element) {
+  const nodeName = element.nodeName;
+  if (typeof Attributes[nodeName] === "object" && Attributes[nodeName] !== null) {
+    Object.keys(Attributes[nodeName])
+      .forEach(key => element.setAttribute(key, Attributes[nodeName][key]));
   };
-  if (typeof Elements[tagName] === "object" && Elements[tagName] !== null) {
-    Elements[tagName].forEach(childTag => {
+  if (typeof Elements[nodeName] === "object" && Elements[nodeName] !== null) {
+    Elements[nodeName].forEach(childTag => {
       Object.defineProperty(element, childTag, { value: (...args) => {
-        const el = constructor(childTag, ...args);
-        prepare(el, childTag);
+        const el = prepare(constructor(childTag, ...args));
         element.appendChild(el);
         return el; // returns the new element;
       }});
     });
   };
-  if (typeof ElementAttr[tagName] === "object" && ElementAttr[tagName] !== null) {
-    ElementAttr[tagName].forEach(attribute => {
+  if (typeof ElementAttr[nodeName] === "object" && ElementAttr[nodeName] !== null) {
+    ElementAttr[nodeName].forEach(attribute => {
       Object.defineProperty(element, toCamel(attribute), { value: (...args) => {
         element.setAttribute(attribute, ...args);
         return element;
       }});
     });
   }
-  // switch (tagName) {
+  // switch (nodeName) {
   //   case "svg":
   //     // attach certain methods
   //     break;

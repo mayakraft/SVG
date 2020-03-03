@@ -1,10 +1,9 @@
+import window from "../environment/window";
 import svgNS from "../environment/namespace";
 import Args from "./args";
 
-const constructor = function (tagName, ...args) {
-  const el = window.document.createElementNS(svgNS, tagName);
-  Args(el, tagName, ...args);
-  return el;
+const constructor = function (nodeName, ...args) {
+  return Args(window.document.createElementNS(svgNS, nodeName), ...args);
 };
 
 export default constructor;

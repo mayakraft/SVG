@@ -1,25 +1,25 @@
-import T from "./tags";
+import N from "./nodeNames";
 
 const childElements = {
-  svg: [T.svg, T.defs, T.header, T.patterns, T.nonVisible, T.group, T.drawings, T.text],
+  svg: [N.svg, N.defs, N.header, N.patterns, N.nonVisible, N.group, N.drawings, N.text],
   // NON VISIBLE
-  defs: [T.header, T.patterns, T.nonVisible],
+  defs: [N.header, N.patterns, N.nonVisible],
   // desc: [],
-  filter: [T.childOfFilter],
+  filter: [N.childOfFilter],
   // metadata: [],
   // style: [],
   // script: [],
   // title: [],
   // view: [],
-  marker: [T.group, T.drawings, T.text],
-  symbol: [T.group, T.drawings, T.text],
-  clipPath: [T.group, T.drawings, T.text],
-  mask: [T.group, T.drawings, T.text],
+  marker: [N.group, N.drawings, N.text],
+  symbol: [N.group, N.drawings, N.text],
+  clipPath: [N.group, N.drawings, N.text],
+  mask: [N.group, N.drawings, N.text],
   // VISIBLE
-  g: [T.group, T.drawings, T.text],
-  text: [T.childOfText],
-  linearGradient: [T.childOfGradients],
-  radialGradient: [T.childOfGradients]
+  g: [N.group, N.drawings, N.text],
+  text: [N.childOfText],
+  linearGradient: [N.childOfGradients],
+  radialGradient: [N.childOfGradients]
 };
 
 Object.keys(childElements).forEach(key => {

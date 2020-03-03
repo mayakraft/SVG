@@ -5,75 +5,6 @@
   (global = global || self, global.SVG = factory());
 }(this, (function () { 'use strict';
 
-  var svgNS = "http://www.w3.org/2000/svg";
-
-  var prepare = function prepare(tagName) {
-    for (var _len = arguments.length, a = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      a[_key - 1] = arguments[_key];
-    }
-
-    switch (tagName) {
-      case "line":
-        return a;
-    }
-
-    return a;
-  };
-
-  var map = {
-    line: ["x1", "y1", "x2", "y2"],
-    rect: ["x", "y", "width", "height"],
-    circle: ["cx", "cy", "r"],
-    ellipse: ["cx", "cy", "rx", "ry"]
-  };
-
-  var args = function args(element, tagName) {
-    console.log("args 1", tagName);
-    var keys = map[tagName];
-
-    if (keys === undefined) {
-      return;
-    }
-
-    for (var _len2 = arguments.length, a = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-      a[_key2 - 2] = arguments[_key2];
-    }
-
-    var values = prepare.apply(void 0, [tagName].concat(a));
-    console.log("args 2", keys, values);
-    keys.forEach(function (key, i) {
-      if (values[i] != null) {
-        element.setAttribute(key, values[i]);
-      }
-    });
-  };
-
-  var constructor = function constructor(tagName) {
-    var el = window.document.createElementNS(svgNS, tagName);
-
-    for (var _len = arguments.length, args$1 = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args$1[_key - 1] = arguments[_key];
-    }
-
-    args.apply(void 0, [el, tagName].concat(args$1));
-    return el;
-  };
-
-  var T = {
-    childOfText: ["textPath", "tspan"],
-    childOfGradients: ["stop"],
-    childOfFilter: ["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"],
-    text: ["text"],
-    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"],
-    group: ["g"],
-    nonVisible: ["marker", "symbol", "clipPath", "mask"],
-    patterns: ["linearGradient", "radialGradient", "pattern"],
-    cdata: ["cdata"],
-    header: ["desc", "filter", "metadata", "style", "script", "title", "view"],
-    defs: ["defs"],
-    svg: ["svg"]
-  };
-
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
@@ -88,6 +19,101 @@
     return _typeof(obj);
   }
 
+  var isBrowser = typeof window !== "undefined" && typeof window.document !== "undefined";
+  var isNode = typeof process !== "undefined" && process.versions != null && process.versions.node != null;
+  var isWebWorker = (typeof self === "undefined" ? "undefined" : _typeof(self)) === "object" && self.constructor && self.constructor.name === "DedicatedWorkerGlobalScope";
+
+  var htmlString = "<!DOCTYPE html><title> </title>";
+
+  var win = function () {
+    var w = {};
+
+    if (isNode) {
+      var _require = require("xmldom"),
+          DOMParser = _require.DOMParser,
+          XMLSerializer = _require.XMLSerializer;
+
+      w.DOMParser = DOMParser;
+      w.XMLSerializer = XMLSerializer;
+      w.document = new DOMParser().parseFromString(htmlString, "text/html");
+    } else if (isBrowser) {
+      w = window;
+    }
+
+    return w;
+  }();
+
+  var svgNS = "http://www.w3.org/2000/svg";
+
+  var toArray = function toArray(nodeName) {
+    for (var _len = arguments.length, a = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      a[_key - 1] = arguments[_key];
+    }
+
+    switch (nodeName) {
+      case "line":
+        return a;
+    }
+
+    return a;
+  };
+
+  var map = {
+    line: ["x1", "y1", "x2", "y2"],
+    rect: ["x", "y", "width", "height"],
+    circle: ["cx", "cy", "r"],
+    ellipse: ["cx", "cy", "rx", "ry"],
+    polygon: ["points"],
+    polyline: ["points"],
+    path: ["d"],
+    text: [undefined, "x", "y"]
+  };
+  delete map.text[0];
+
+  var args = function args(element) {
+    var nodeName = element.nodeName;
+    var keys = map[nodeName];
+
+    if (keys === undefined) {
+      return element;
+    }
+
+    for (var _len2 = arguments.length, a = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      a[_key2 - 1] = arguments[_key2];
+    }
+
+    var values = toArray.apply(void 0, [nodeName].concat(a));
+    keys.forEach(function (key, i) {
+      if (values[i] != null) {
+        element.setAttribute(key, values[i]);
+      }
+    });
+    return element;
+  };
+
+  var constructor = function constructor(nodeName) {
+    for (var _len = arguments.length, args$1 = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args$1[_key - 1] = arguments[_key];
+    }
+
+    return args.apply(void 0, [win.document.createElementNS(svgNS, nodeName)].concat(args$1));
+  };
+
+  var NodeNames = {
+    childOfText: ["textPath", "tspan"],
+    childOfGradients: ["stop"],
+    childOfFilter: ["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"],
+    text: ["text"],
+    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"],
+    group: ["g"],
+    nonVisible: ["marker", "symbol", "clipPath", "mask"],
+    patterns: ["linearGradient", "radialGradient", "pattern"],
+    cdata: ["cdata"],
+    header: ["desc", "filter", "metadata", "style", "script", "title", "view"],
+    defs: ["defs"],
+    svg: ["svg"]
+  };
+
   var attributes = {
     svg: {
       version: "1.1",
@@ -99,17 +125,17 @@
   };
 
   var childElements = {
-    svg: [T.svg, T.defs, T.header, T.patterns, T.nonVisible, T.group, T.drawings, T.text],
-    defs: [T.header, T.patterns, T.nonVisible],
-    filter: [T.childOfFilter],
-    marker: [T.group, T.drawings, T.text],
-    symbol: [T.group, T.drawings, T.text],
-    clipPath: [T.group, T.drawings, T.text],
-    mask: [T.group, T.drawings, T.text],
-    g: [T.group, T.drawings, T.text],
-    text: [T.childOfText],
-    linearGradient: [T.childOfGradients],
-    radialGradient: [T.childOfGradients]
+    svg: [NodeNames.svg, NodeNames.defs, NodeNames.header, NodeNames.patterns, NodeNames.nonVisible, NodeNames.group, NodeNames.drawings, NodeNames.text],
+    defs: [NodeNames.header, NodeNames.patterns, NodeNames.nonVisible],
+    filter: [NodeNames.childOfFilter],
+    marker: [NodeNames.group, NodeNames.drawings, NodeNames.text],
+    symbol: [NodeNames.group, NodeNames.drawings, NodeNames.text],
+    clipPath: [NodeNames.group, NodeNames.drawings, NodeNames.text],
+    mask: [NodeNames.group, NodeNames.drawings, NodeNames.text],
+    g: [NodeNames.group, NodeNames.drawings, NodeNames.text],
+    text: [NodeNames.childOfText],
+    linearGradient: [NodeNames.childOfGradients],
+    radialGradient: [NodeNames.childOfGradients]
   };
   Object.keys(childElements).forEach(function (key) {
     childElements[key] = childElements[key].reduce(function (a, b) {
@@ -131,20 +157,26 @@
   };
 
   var elemAttr = {};
-  T.drawings.forEach(function (key) {
+  NodeNames.drawings.forEach(function (key) {
     elemAttr[key] = [Attr.general];
   });
-  T.childOfFilter.forEach(function (key) {
+  NodeNames.childOfFilter.forEach(function (key) {
     elemAttr[key] = [Attr.effects];
+  });
+  NodeNames.childOfGradients.forEach(function (key) {
+    elemAttr[key] = [Attr.gradient];
+  });
+  NodeNames.childOfText.forEach(function (key) {
+    elemAttr[key] = [Attr.general, Attr.text];
   });
   elemAttr.svg = [Attr.general];
   elemAttr.defs = [Attr.general];
   elemAttr.filter = [Attr.effects];
+  elemAttr.marker = [Attr.marker];
   elemAttr.clipPath = [Attr.clipPath];
+  elemAttr.pattern = [Attr.pattern];
   elemAttr.g = [Attr.general];
   elemAttr.text = [Attr.general, Attr.text];
-  elemAttr.textPath = [Attr.general, Attr.text];
-  elemAttr.tspan = [Attr.general, Attr.text];
   elemAttr.linearGradient = [Attr.gradient, Attr.linearGradient];
   elemAttr.radialGradient = [Attr.gradient, Attr.radialGradient];
   Object.keys(elemAttr).forEach(function (key) {
@@ -159,23 +191,24 @@
     });
   };
 
-  var prepare$1 = function prepare(element, tagName) {
-    if (_typeof(attributes[tagName]) === "object" && attributes[tagName] !== null) {
-      Object.keys(attributes[tagName]).forEach(function (key) {
-        return element.setAttribute(key, attributes[tagName][key]);
+  var prepare = function prepare(element) {
+    var nodeName = element.nodeName;
+
+    if (_typeof(attributes[nodeName]) === "object" && attributes[nodeName] !== null) {
+      Object.keys(attributes[nodeName]).forEach(function (key) {
+        return element.setAttribute(key, attributes[nodeName][key]);
       });
     }
 
-    if (_typeof(childElements[tagName]) === "object" && childElements[tagName] !== null) {
-      childElements[tagName].forEach(function (childTag) {
+    if (_typeof(childElements[nodeName]) === "object" && childElements[nodeName] !== null) {
+      childElements[nodeName].forEach(function (childTag) {
         Object.defineProperty(element, childTag, {
           value: function value() {
             for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
               args[_key] = arguments[_key];
             }
 
-            var el = constructor.apply(void 0, [childTag].concat(args));
-            prepare(el, childTag);
+            var el = prepare(constructor.apply(void 0, [childTag].concat(args)));
             element.appendChild(el);
             return el;
           }
@@ -183,8 +216,8 @@
       });
     }
 
-    if (_typeof(elemAttr[tagName]) === "object" && elemAttr[tagName] !== null) {
-      elemAttr[tagName].forEach(function (attribute) {
+    if (_typeof(elemAttr[nodeName]) === "object" && elemAttr[nodeName] !== null) {
+      elemAttr[nodeName].forEach(function (attribute) {
         Object.defineProperty(element, toCamel(attribute), {
           value: function value() {
             for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
@@ -202,19 +235,26 @@
   };
 
   var elements = {};
-  Object.keys(T).forEach(function (key) {
-    return T[key].forEach(function (tagName) {
-      elements[tagName] = function () {
+  Object.keys(NodeNames).forEach(function (key) {
+    return NodeNames[key].forEach(function (nodeName) {
+      elements[nodeName] = function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        return prepare$1(constructor.apply(void 0, [tagName].concat(args)), tagName);
+        return prepare(constructor.apply(void 0, [nodeName].concat(args)));
       };
     });
   });
 
-  var SVG = {};
+  var SVG = function SVG() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return prepare(constructor.apply(void 0, ["svg"].concat(args)));
+  };
+
   Object.assign(SVG, elements);
 
   return SVG;

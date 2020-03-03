@@ -1,5 +1,9 @@
-const prepare = function (tagName, ...a) {
-  switch (tagName) {
+/**
+ * convert all user-supplied arguments into a flat array
+ * to match the expected arguments ordered in "map"
+ */
+const toArray = function (nodeName, ...a) {
+  switch (nodeName) {
     case "line": return a;
   }
   return a;
@@ -10,17 +14,24 @@ const map = {
   rect: ["x", "y", "width", "height"],
   circle: ["cx", "cy", "r"],
   ellipse: ["cx", "cy", "rx", "ry"],
+  polygon: ["points"],
+  polyline: ["points"],
+  path: ["d"],
+  text: [undefined, "x", "y"],
 };
+delete map.text[0];
 
-const args = function (element, tagName, ...a) {
-  const keys = map[tagName];
-  if (keys === undefined) { return; }
-  const values = prepare(tagName, ...a);
+const args = function (element, ...a) {
+  const nodeName = element.nodeName;
+  const keys = map[nodeName];
+  if (keys === undefined) { return element; }
+  const values = toArray(nodeName, ...a);
   keys.forEach((key, i) => {
     if (values[i] != null) {
       element.setAttribute(key, values[i]);
     }
-  })
+  });
+  return element;
 };
 
 export default args;

@@ -21,16 +21,16 @@
 
 // export default elements;
 
-import constructor from "./constructor";
-import T from "./tags";
-import prepare from "./prepare";
+import Constructor from "./constructor";
+import NodeNames from "./nodeNames";
+import Prepare from "./prepare";
 
 const elements = {};
 
-Object.keys(T).forEach(key => T[key]
-  .forEach(tagName => {
-    elements[tagName] = function (...args) {
-      return prepare(constructor(tagName, ...args), tagName);
+Object.keys(NodeNames).forEach(key => NodeNames[key]
+  .forEach(nodeName => {
+    elements[nodeName] = function (...args) {
+      return Prepare(Constructor(nodeName, ...args));
     }
   }));
 

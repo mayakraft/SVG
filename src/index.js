@@ -18,7 +18,13 @@
 // export default SVG;
 
 import elements from "./elements/index";
+import constructor from "./elements/constructor";
+import prepare from "./elements/prepare";
 
-const SVG = {};
+const SVG = function (...args) {
+  return prepare(constructor("svg", ...args));
+};
+
 Object.assign(SVG, elements);
+
 export default SVG;
