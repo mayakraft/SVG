@@ -1,5 +1,5 @@
-import N from "./nodeNames";
-import Attr from "../attributes/attributes";
+import N from "../elements/nodeNames";
+import Attr from "./attributes";
 
 const elemAttr = { };
 

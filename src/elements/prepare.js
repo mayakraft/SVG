@@ -1,23 +1,22 @@
-import Attributes from "./attributes";
 import Elements from "./childElements";
-import constructor from "./constructor";
-import ElementAttr from "./elementAttributes";
+import Constructor from "./constructor";
+import ElementAttr from "../attributes/elementAttributes";
+import svgNS from "../environment/namespace";
+
+const Attributes = {
+  svg: {
+    version: "1.1",
+    xmlns: svgNS,
+  },
+  style: {
+    type: "text/css"
+  }
+};
 
 const toCamel = s => s.replace(/([-_][a-z])/ig, $1 => $1
   .toUpperCase()
   .replace("-", "")
   .replace("_", ""));
-
-// export const attachFunctionalStyleSetters = function (element) {
-//   // attributes.filter(attr => attr !== element.tagName).forEach((key) => {
-//   attributes.filter(key => element[toCamel(key)] === undefined)
-//     .forEach((key) => {
-//       element[toCamel(key)] = (...args) => {
-//         element.setAttribute(key, ...args);
-//         return element;
-//       };
-//     });
-// };
 
 const prepare = function (element) {
   const nodeName = element.nodeName;
@@ -28,7 +27,7 @@ const prepare = function (element) {
   if (typeof Elements[nodeName] === "object" && Elements[nodeName] !== null) {
     Elements[nodeName].forEach(childTag => {
       Object.defineProperty(element, childTag, { value: (...args) => {
-        const el = prepare(constructor(childTag, ...args));
+        const el = prepare(Constructor(childTag, ...args));
         element.appendChild(el);
         return el; // returns the new element;
       }});
