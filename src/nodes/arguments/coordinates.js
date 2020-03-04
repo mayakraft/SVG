@@ -1,8 +1,11 @@
 /**
+ * SVG (c) Robby Kraft
+ */
+
+/**
  * for best results, call this having already called flatten()
  * findCoordinates(...flatten(...args));
  */
-
 const findCoordinates = function (...args) {
   const numbers = args.filter(a => typeof a === "number");
   if (numbers.length) {

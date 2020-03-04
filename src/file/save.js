@@ -3,13 +3,13 @@
  */
 
 import vkXML from "../../include/vkbeautify-xml";
-import svgNS from "./namespace";
-import window from "./window";
+import svgNS from "../environment/namespace";
+import window from "../environment/window";
 import {
   isBrowser,
   isNode,
   isWebWorker
-} from "./detect";
+} from "../environment/detect";
 
 const downloadInBrowser = function (filename, contentsAsString) {
   const blob = new window.Blob([contentsAsString], { type: "text/plain" });
@@ -49,7 +49,7 @@ const SAVE_OPTIONS = () => ({
 });
 
 // export const save = function (svg, filename = "image.svg", includeDOMCSS = false) {
-export const save = function (svg, options) {
+const save = function (svg, options) {
   // prepare options
   if (typeof options === "string" || options instanceof String) {
     // expecting the user provided a filename instead of the options object
@@ -80,56 +80,4 @@ export const save = function (svg, options) {
   return (options.output === "svg" ? svg : formattedString);
 };
 
-// const parseCSSText = function (styleContent) {
-//   const styleElement = document.createElement("style");
-//   styleElement.textContent = styleContent;
-//   document.body.appendChild(styleElement);
-//   const rules = styleElement.sheet.cssRules;
-//   document.body.removeChild(styleElement);
-//   return rules;
-// };
-
-/** parser error to check against */
-// const pErr = (new window.DOMParser())
-//  .parseFromString("INVALID", "text/xml")
-//  .getElementsByTagName("parsererror")[0]
-//  .namespaceURI;
-
-// the SVG is returned, or given as the argument in the callback(svg, error)
-export const load = function (input, callback) {
-  // try cascading attempts at different possible param types
-  // "input" is either a (1) raw text encoding of the svg
-  //   (2) filename (3) already parsed DOM element
-  if (typeof input === "string" || input instanceof String) {
-    // (1) raw text encoding
-    const xml = (new window.DOMParser()).parseFromString(input, "text/xml");
-    const parserErrors = xml.getElementsByTagName("parsererror");
-    if (parserErrors.length === 0) {
-      const parsedSVG = xml.documentElement;
-      if (callback != null) {
-        callback(parsedSVG);
-      }
-      return parsedSVG;
-    }
-    // (2) filename
-    fetch(input)
-      .then(response => response.text())
-      .then(str => (new window.DOMParser())
-        .parseFromString(str, "text/xml"))
-      .then((svgData) => {
-        const allSVGs = svgData.getElementsByTagName("svg");
-        if (allSVGs == null || allSVGs.length === 0) {
-          throw new Error("error, valid XML found, but no SVG element");
-        }
-        if (callback != null) {
-          callback(allSVGs[0]);
-        }
-        return allSVGs[0];
-      // }).catch((err) => callback(null, err));
-      });
-  } else if (input instanceof Document) {
-    // (3) already parsed SVG... why would this happen? just return it
-    callback(input);
-    return input;
-  }
-};
+export default save;

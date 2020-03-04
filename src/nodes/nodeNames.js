@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 export default {
   childOfText: [
     "textPath",   // <text>  path and href attributes

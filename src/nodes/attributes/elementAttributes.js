@@ -1,4 +1,8 @@
-import N from "../elements/nodeNames";
+/**
+ * SVG (c) Robby Kraft
+ */
+
+import N from "../nodeNames";
 import Attr from "./attributes";
 
 const elemAttr = { };

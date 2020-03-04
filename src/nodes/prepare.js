@@ -1,7 +1,12 @@
-import Elements from "./childElements";
-import Constructor from "./constructor";
-import ElementAttr from "../attributes/elementAttributes";
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import svgNS from "../environment/namespace";
+import NodeChildren from "./nodeChildren";
+import Constructor from "./constructor";
+import ElementAttr from "./attributes/elementAttributes";
+import Methods from "./methods/index";
 
 const Attributes = {
   svg: {
@@ -19,13 +24,27 @@ const toCamel = s => s.replace(/([-_][a-z])/ig, $1 => $1
   .replace("_", ""));
 
 const prepare = function (element) {
+  Methods.Prepare = prepare;
+  Methods.Constructor = Constructor;
+
   const nodeName = element.nodeName;
+  // assign necessary attributes to this element
   if (typeof Attributes[nodeName] === "object" && Attributes[nodeName] !== null) {
     Object.keys(Attributes[nodeName])
       .forEach(key => element.setAttribute(key, Attributes[nodeName][key]));
   };
-  if (typeof Elements[nodeName] === "object" && Elements[nodeName] !== null) {
-    Elements[nodeName].forEach(childTag => {
+  // assign any custom methods specific to each node type
+  if (typeof Methods[nodeName] === "object" && Methods[nodeName] !== null) {
+    Object.keys(Methods[nodeName]).forEach(methodName => {
+      Object.defineProperty(element, methodName, {
+        value: (...args) => Methods[nodeName][methodName](element, ...args)
+      });
+    });
+  }
+  // attach creator-methods
+  // this allows calling svg.line() to create and append a <line>
+  if (typeof NodeChildren[nodeName] === "object" && NodeChildren[nodeName] !== null) {
+    NodeChildren[nodeName].forEach(childTag => {
       Object.defineProperty(element, childTag, { value: (...args) => {
         const el = prepare(Constructor(childTag, ...args));
         element.appendChild(el);
@@ -33,6 +52,8 @@ const prepare = function (element) {
       }});
     });
   };
+  // attach attribute-setter-methods
+  // this allows calling svg.fill("value") to set the attribute fill="value"
   if (typeof ElementAttr[nodeName] === "object" && ElementAttr[nodeName] !== null) {
     ElementAttr[nodeName].forEach(attribute => {
       Object.defineProperty(element, toCamel(attribute), { value: (...args) => {
@@ -41,21 +62,7 @@ const prepare = function (element) {
       }});
     });
   }
-  // switch (nodeName) {
-  //   case "svg":
-  //     // attach certain methods
-  //     break;
-  //   case "g":
-  //     break;
-  // }
   return element;
 };
 
 export default prepare;
-
-// const cdata = function (textContent) {
-//   const c = (new window.DOMParser())
-//     .parseFromString("<root></root>", "text/xml")
-//     .createCDATASection(`${textContent}`);
-//   return c;
-// };

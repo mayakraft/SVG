@@ -1,13 +1,18 @@
 /**
+ * SVG (c) Robby Kraft
+ */
+
+/**
  * convert all user-supplied arguments into a flat array
  * to match the expected arguments ordered in "map"
  */
-
-import window from "../environment/window";
+import window from "../../environment/window";
 import flatten from "./flatten";
 import findCoordinates from "./coordinates";
+
 import svgArguments from "./svg";
 import textArguments from "./text";
+import nonVisibleArguments from "./nonVisible";
 
 const map = {
   line: ["x1", "y1", "x2", "y2"],
@@ -17,6 +22,7 @@ const map = {
   polygon: ["points"],
   polyline: ["points"],
   path: ["d"],
+  clipPath: ["id"],
 };
 
 const polyString = function (...numbers) {
@@ -35,11 +41,16 @@ const toArray = function (nodeName, ...args) {
   return args;
 };
 
+
 const Args = function (element, ...args) {
   const nodeName = element.nodeName;
   switch (nodeName) {
     case "svg": return svgArguments(element, ...args);
     case "text": return textArguments(element, ...args);
+    case "mask":
+    case "clipPath":
+    case "symbol":
+    case "marker": return nonVisibleArguments(element, ...args);
     default: break;
   }
   const keys = map[nodeName];

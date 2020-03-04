@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import findCoordinates from "./coordinates";
 import flatten from "./flatten";
 

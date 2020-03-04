@@ -16,8 +16,7 @@ export const setViewBox = function (svg, x, y, width, height, padding = 0) {
   const Y = (y - d) - padding;
   const W = (width + d * 2) + padding * 2;
   const H = (height + d * 2) + padding * 2;
-  const viewBoxString = [X, Y, W, H].join(" ");
-  svg.setAttributeNS(null, "viewBox", viewBoxString);
+  svg.setAttributeNS(null, "viewBox", [X, Y, W, H].join(" "));
 };
 
 const setDefaultViewBox = function (svg) {
