@@ -4,6 +4,8 @@
 
 import SVG from "./svg";
 import Path from "./path";
+import Transforms from "./transforms";
+import NodeNames from "../nodeNames";
 
 import {
   setPoints,
@@ -35,6 +37,15 @@ const nodeMethods = {
   polyline: { setPoints: setPoints },
   style: { setTextContent: setTextContent },
 };
+
+// apply transforms to all visible element types
+[NodeNames.text, NodeNames.drawings, NodeNames.group, NodeNames.svg]
+  .forEach(category => category.forEach(node => {
+    if (nodeMethods[node] === undefined) { nodeMethods[node] = {}; }
+    Object.keys(Transforms).forEach(trans => {
+      nodeMethods[node][trans] = Transforms[trans];
+    });
+  }));
 
 const methods = {};
 

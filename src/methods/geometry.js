@@ -2,13 +2,13 @@
  * SVG (c) Robby Kraft
  */
 
-import { flatten_input } from "../environment/parsers";
+import flatten from "../nodes/arguments/flatten";
 
 /**
  *  modifiers
  */
 export const setPoints = function (shape, ...pointsArray) {
-  const flat = flatten_input(...pointsArray);
+  const flat = flatten(...pointsArray);
   let pointsString = "";
   if (typeof flat[0] === "number") {
     pointsString = Array.from(Array(Math.floor(flat.length / 2)))
@@ -27,7 +27,7 @@ export const setPoints = function (shape, ...pointsArray) {
 };
 
 export const setLinePoints = function (shape, ...pointsArray) {
-  const flat = flatten_input(...pointsArray);
+  const flat = flatten(...pointsArray);
   let points = [];
   if (typeof flat[0] === "number") {
     points = flat;
@@ -48,7 +48,7 @@ export const setLinePoints = function (shape, ...pointsArray) {
 };
 
 export const setCenter = function (shape, ...args) {
-  const flat = flatten_input(...args);
+  const flat = flatten(...args);
   if (typeof flat[0] === "number") {
     if (flat[0] != null) { shape.setAttributeNS(null, "cx", flat[0]); }
     if (flat[1] != null) { shape.setAttributeNS(null, "cy", flat[1]); }
@@ -125,7 +125,7 @@ export const setArrowPoints = function (shape, ...args) {
   const polys = ["svg-arrow-head", "svg-arrow-tail"]
     .map(c => children.filter(n => n.getAttribute("class") === c).shift());
 
-  const flat = flatten_input(...args);
+  const flat = flatten(...args);
   let endpoints = [];
   if (typeof flat[0] === "number") {
     endpoints = flat;
@@ -251,7 +251,7 @@ const setArrowPointsStraightOnly = function (shape, ...args) {
   const polys = ["svg-arrow-head", "svg-arrow-tail"]
     .map(c => children.filter(n => n.getAttribute("class") === c).shift());
 
-  const flat = flatten_input(...args);
+  const flat = flatten(...args);
   let endpoints = [];
   if (typeof flat[0] === "number") {
     endpoints = flat;

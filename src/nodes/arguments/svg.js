@@ -5,7 +5,7 @@
 import window from "../../environment/window";
 import { setViewBox } from "../../methods/viewBox";
 // import Events from "../../events/index";
-// import Globalize from "../../environment/globalize";
+// import Globalize from "./globalize";
 
 const ElementConstructor = (new window.DOMParser())
   .parseFromString("<div />", "text/xml").documentElement.constructor;

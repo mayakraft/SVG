@@ -579,32 +579,6 @@
     return stylesheet.call.apply(stylesheet, [this].concat(args));
   };
 
-  var is_iterable = function is_iterable(obj) {
-    return obj != null && typeof obj[Symbol.iterator] === "function";
-  };
-
-  var flatten_input = function flatten_input() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    switch (args.length) {
-      case undefined:
-      case 0:
-        return args;
-
-      case 1:
-        return is_iterable(args[0]) && typeof args[0] !== "string" ? flatten_input.apply(void 0, _toConsumableArray(args[0])) : [args[0]];
-
-      default:
-        return Array.from(args).map(function (a) {
-          return is_iterable(a) ? _toConsumableArray(flatten_input(a)) : a;
-        }).reduce(function (a, b) {
-          return a.concat(b);
-        }, []);
-    }
-  };
-
   var pathCommands = {
     m: "move",
     l: "line",
@@ -638,7 +612,7 @@
       args[_key - 2] = arguments[_key];
     }
 
-    var params = flatten_input(args).join(",");
+    var params = flatten(args).join(",");
     el.setAttribute("d", "".concat(getD(el)).concat(command).concat(params));
     return el;
   };
@@ -653,12 +627,39 @@
     };
   });
 
+  var ATTR = "transform";
+
+  var getTransform = function getTransform(element) {
+    var trans = element.getAttribute(ATTR);
+    return trans == null ? [] : trans.split(" ");
+  };
+
+  var transforms = {
+    clearTransforms: function clearTransforms(el) {
+      el.setAttribute(ATTR, "");
+      return el;
+    }
+  };
+  ["translate", "rotate", "scale"].forEach(function (key) {
+    transforms[key] = function (element) {
+      var transform = getTransform(element);
+
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      transform.push("".concat(key, "(").concat(args.join(", "), ")"));
+      element.setAttribute(ATTR, transform.join(" "));
+      return element;
+    };
+  });
+
   var setPoints = function setPoints(shape) {
     for (var _len = arguments.length, pointsArray = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       pointsArray[_key - 1] = arguments[_key];
     }
 
-    var flat = flatten_input.apply(void 0, pointsArray);
+    var flat = flatten.apply(void 0, pointsArray);
     var pointsString = "";
 
     if (typeof flat[0] === "number") {
@@ -689,7 +690,7 @@
       pointsArray[_key2 - 1] = arguments[_key2];
     }
 
-    var flat = flatten_input.apply(void 0, pointsArray);
+    var flat = flatten.apply(void 0, pointsArray);
     var points = [];
 
     if (typeof flat[0] === "number") {
@@ -735,7 +736,7 @@
       args[_key3 - 1] = arguments[_key3];
     }
 
-    var flat = flatten_input.apply(void 0, args);
+    var flat = flatten.apply(void 0, args);
 
     if (typeof flat[0] === "number") {
       if (flat[0] != null) {
@@ -792,6 +793,17 @@
       setTextContent: setTextContent
     }
   };
+  [NodeNames.text, NodeNames.drawings, NodeNames.group, NodeNames.svg].forEach(function (category) {
+    return category.forEach(function (node) {
+      if (nodeMethods[node] === undefined) {
+        nodeMethods[node] = {};
+      }
+
+      Object.keys(transforms).forEach(function (trans) {
+        nodeMethods[node][trans] = transforms[trans];
+      });
+    });
+  });
   var methods$2 = {};
   Object.keys(nodeMethods).forEach(function (nodeName) {
     methods$2[nodeName] = {};

@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import { flatten_input } from "../../environment/parsers";
+import flatten from "../arguments/flatten";
 
 // todo: curve is putting too many commas , , , , 
 // between everything
@@ -34,7 +34,7 @@ const getD = (el) => {
 };
 
 const appendPathItem = function (el, command, ...args) {
-  const params = flatten_input(args).join(",");
+  const params = flatten(args).join(",");
   el.setAttribute("d", `${getD(el)}${command}${params}`);
   return el;
 };
