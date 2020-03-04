@@ -1,7 +1,7 @@
-size(40, 25);
-rect(0, 0, getWidth(), getHeight()).fill("#329");
+svg.size(40, 25);
+svg.rect(0, 0, getWidth(), getHeight()).fill("#329");
 
-var layer = group()
+var layer = svg.g()
   .stroke("#76d")
   .strokeWidth("1%")
   .strokeLinecap("square")

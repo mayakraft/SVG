@@ -3,9 +3,10 @@
 <style>
 body{ margin:0; }
 </style>
+<body></body>
 <script type="text/javascript" src="../svg.js"></script>
 <script>
-SVG(window.innerWidth, window.innerHeight, function (tenPrint) {
+SVG(document.body, window.innerWidth, window.innerHeight, function (tenPrint) {
 	// window
 	var w = tenPrint.getWidth(), h = tenPrint.getHeight();
 	// character size. commodore 64 window contains 40x25 characters
@@ -15,10 +16,11 @@ SVG(window.innerWidth, window.innerHeight, function (tenPrint) {
 	// setup layers
 	var back = tenPrint.rect(0, 0, w, h);
 	back.setAttribute("fill", "#332698");
-	var layer = tenPrint.group();
-	var rows = [layer.group()]
+	var layer = tenPrint.g();
+	var rows = [layer.g()]
 	// draw a slash
-	tenPrint.animate = function () {
+	const animate = function () {
+	// tenPrint.animate = function () {
 		var row = rows[rows.length-1];
 		// 10 PRINT CHR$(205.5+RND(1)); : GOTO 10
 		row.line((Math.random()-0.5>0) ? [x, y+s, x+s, y] : [x, y, x+s, y+s])
@@ -29,7 +31,7 @@ SVG(window.innerWidth, window.innerHeight, function (tenPrint) {
 		if(x>w){
 			x=0;
 			y+=s;
-			rows.push(layer.group());
+			rows.push(layer.g());
 		}
 		// scroll page
 		if(y >= h+yt){ 
@@ -38,6 +40,8 @@ SVG(window.innerWidth, window.innerHeight, function (tenPrint) {
 			layer.removeChild(rows[0]);
 			rows.shift();
 		}
-	}
+		window.requestAnimationFrame(animate);
+	};
+	window.requestAnimationFrame(animate);
 });
 </script>

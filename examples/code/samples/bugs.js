@@ -1,8 +1,8 @@
-size(-1, -1, 2, 2);
-background("black", true);
+svg.size(-1, -1, 2, 2);
+svg.background("black", true);
 
-var lines = group().strokeWidth(0.003);
-var dots = group().fill("#ec3");
+var lines = svg.g().strokeWidth(0.003);
+var dots = svg.g().fill("#ec3");
 var i = [0, 1];
 var stroke = "#158";
 

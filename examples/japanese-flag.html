@@ -5,16 +5,17 @@ html, body{
   margin: 0;
   height: 100%;
   background-color: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+svg {
+  max-width: 100%;
+  max-height: 100%;
 }
 </style>
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
 window.onload = function () {
-  var flag = SVG(600, 400);
+  var flag = SVG(600, 400, document.body);
   flag.rect(0, 0, flag.getWidth(), flag.getHeight())
     .fill("white");
   flag.circle(flag.getWidth()/2, flag.getHeight()/2, flag.getHeight()*0.3)

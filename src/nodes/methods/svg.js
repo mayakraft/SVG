@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import window from "../../environment/window";
+import cdata from "../../environment/cdata";
 // import Controls from "../../events/controls";
 import { removeChildren } from "../../methods/DOM";
 import {
@@ -16,10 +16,6 @@ import {
 // throught 'this', every function is bound.
 
 const BACKGROUND_CLASS = "svg-background-rectangle";
-
-const cdata = (textContent) => (new window.DOMParser())
-  .parseFromString("<root></root>", "text/xml")
-  .createCDATASection(`${textContent}`);
 
 const getFrame = function (element) {
   const viewBox = getViewBox(element);

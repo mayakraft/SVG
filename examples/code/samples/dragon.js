@@ -1,5 +1,5 @@
-size(600, 600);
-background("white", true);
+svg.size(600, 600);
+svg.background("white", true);
 
 function dragon(x1, y1, x2, y2, turn, i) {
   if (i < 0) { return [[x1, y1], [x2, y2]]; }
@@ -12,14 +12,14 @@ function dragon(x1, y1, x2, y2, turn, i) {
 
 var attrs = { strokeLinecap: "square", fill: "none" };
 
-var x1 = getWidth() * 0.25;
-var y1 = getHeight() * 0.6;
-var x2 = getWidth() * 0.85;
-var y2 = getHeight() * 0.6;
+var x1 = svg.getWidth() * 0.25;
+var y1 = svg.getHeight() * 0.6;
+var x2 = svg.getWidth() * 0.85;
+var y2 = svg.getHeight() * 0.6;
 
-polyline(dragon(x1, y1, x2, y2, 1, random(1, 6)))
+svg.polyline(dragon(x1, y1, x2, y2, 1, random(1, 6)))
   .setAttributes(attrs).stroke("#e53").strokeWidth(27);
-polyline(dragon(x1, y1, x2, y2, 1, random(5, 9)))
+svg.polyline(dragon(x1, y1, x2, y2, 1, random(5, 9)))
   .setAttributes(attrs).stroke("#ec3").strokeWidth(7);
-polyline(dragon(x1, y1, x2, y2, 1, random(8, 11)))
+svg.polyline(dragon(x1, y1, x2, y2, 1, random(8, 11)))
   .setAttributes(attrs).stroke("#158").strokeWidth(4);

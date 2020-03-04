@@ -1,13 +1,13 @@
-size(800, 800);
+svg.size(800, 800);
 
-var back = group();
-var l1 = line().stroke("black");
-var l2 = line().stroke("black");
-var curve = path();
+var back = svg.g();
+var l1 = svg.line().stroke("black");
+var l2 = svg.line().stroke("black");
+var curve = svg.path();
 
-controls(4)
+svg.controls(4)
   .svg(function () { return SVG.circle(0, 0, getWidth() * 0.05).fill("#e53"); })
-  .position(function () { return [random(getWidth()), random(getHeight())]; })
+  .position(function () { return [random(svg.getWidth()), random(svg.getHeight())]; })
   .parent(back)
   .onChange(function () {
     l1.setPoints(this[0], this[1]);

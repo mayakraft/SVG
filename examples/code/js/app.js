@@ -8,25 +8,16 @@ document.addEventListener("DOMContentLoaded", function () {
   window.svg = svg;
   svg.setAttribute("class", "svg-code");
 
-  var questionButton = document.createElement("div");
-  questionButton.setAttribute("class", "question-button");
-  questionButton.setAttribute("title", "Help");
-  document.querySelector("#app").appendChild(questionButton);
-
-  var downloadButton = document.createElement("div");
-  downloadButton.setAttribute("class", "download-button");
-  downloadButton.setAttribute("title", "Download");
-  document.querySelector("#app").appendChild(downloadButton);
-
-  var shareButton = document.createElement("div");
-  shareButton.setAttribute("class", "share-button");
-  shareButton.setAttribute("title", "Share");
-  document.querySelector("#app").appendChild(shareButton);
-
-  var randomSketchButton = document.createElement("div");
-  randomSketchButton.setAttribute("class", "random-button");
-  randomSketchButton.setAttribute("title", "Load an example");
-  document.querySelector("#app").appendChild(randomSketchButton);
+  const buttons = [ { title: "Help", class: "question-button" },
+    { title: "Download", class: "download-button" },
+    { title: "Share", class: "share-button" },
+    { title: "Load an example", class: "random-button" },
+  ].map(function(el) {
+    var b = document.createElement("div");
+    Object.keys(el).forEach(function(key) { b.setAttribute(key, el[key]); });
+    document.querySelector("#app").appendChild(b);
+    return b;
+  });
 
   var shuffle = function shuffle(array) {
     for (var i = array.length - 1; i > 0; i -= 1) {
@@ -97,17 +88,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const welcomeText = `// ~ Welcome to coding with SVG ~
 // some commands to get started:
 
-// size(600, 600); // the viewBox size. default is 300x150
-// background("white"); // background color
+// svg.size(600, 600); // the viewBox size. default is 300x150
+// svg.background("white"); // background color
 
 // PRIMITIVES (there are many more!):
-// line(x1, y1, x2, y2).stroke("black");
-// circle(x, y, radius);
-// rect(x, y, width, height);
-// path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3);
+// svg.line(x1, y1, x2, y2).stroke("black");
+// svg.circle(x, y, radius);
+// svg.rect(x, y, width, height);
+// svg.path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3);
 
 // STYLE (function names are SVG attributes):
-// rect(10, 10, 280, 130).fill("#edb").stroke("sienna").strokeWidth(5);
+// svg.rect(10, 10, 280, 130).fill("#edb").stroke("sienna").strokeWidth(5);
 // the default style is BLACK FILL AND NO STROKE (lines are invisible!)
 
 // read more: https://svg.rabbitear.org/docs/
@@ -120,17 +111,14 @@ document.addEventListener("DOMContentLoaded", function () {
     queryCode.value = undefined;
   }
 
-
-  shareButton.onclick = function () {
-    var url = queryCode.makeURLWithQueryValue(app.editor.getValue());
-    navigator.clipboard.writeText(url).then(function () {
-      alert("✓ Shareable link copied to clipboard.");
-    }, function (err) {
-      return alert(err);
-    });
+  // help button
+  buttons[0].onclick = function () {
+    var win = window.open("//svg.rabbitear.org/docs/", "_blank");
+    win.focus();
   };
 
-  downloadButton.onclick = function () {
+  //download button
+  buttons[1].onclick = function () {
     // inject the code into a new section in the header
     var defs = svg.getElementsByTagName("defs");
     if (defs.length === 0) {
@@ -149,12 +137,18 @@ document.addEventListener("DOMContentLoaded", function () {
     svg.save();
   };
 
-  questionButton.onclick = function () {
-    var win = window.open("//svg.rabbitear.org/docs/", "_blank");
-    win.focus();
+  // share button
+  buttons[2].onclick = function () {
+    var url = queryCode.makeURLWithQueryValue(app.editor.getValue());
+    navigator.clipboard.writeText(url).then(function () {
+      alert("✓ Shareable link copied to clipboard.");
+    }, function (err) {
+      return alert(err);
+    });
   };
 
-  randomSketchButton.onclick = function () {
+  // random button
+  buttons[3].onclick = function () {
     if (examples.length === 0) {
       // first boot
       // loadAndRunExamples(function (examples) {
@@ -189,8 +183,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // }
 
       // remove any Timer functions. handlers will get cleaned up automatically
-      svg.freeze();
-      svg.clearTransforms();
+      // svg.freeze();
+      // svg.clearTransforms();
       svg.size(300, 150);
       svg.fps = 60;
     }

@@ -1,4 +1,4 @@
-size(100, 100);
+svg.size(100, 100);
 
 var pts = [];
 for (var i = 0; i < 8; i += 1) {
@@ -11,7 +11,7 @@ for (var i = 0; i < pts.length - 1; i += 1) {
   var rand2 = Math.random() < 0.5;
   var rand3 = Math.random() < 0.5;
 
-  arrow()
+  svg.arrow()
     .fill(color)
     .stroke(color)
     .strokeWidth(rand2 ? 1 : 4)

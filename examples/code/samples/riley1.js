@@ -1,11 +1,11 @@
-size(100, 100);
+svg.size(100, 100);
 
 var space = random(3, 6);
-var clip = clipPath();
+var clip = svg.clipPath();
 clip.rect(0, 0, 100, 100);
 
 for (var i = 0; i < (100 + space) / space; i += 1) {
-  let p = path()
+  let p = svg.path()
     .fill("none")
     .strokeWidth(space)
     .strokeLinecap("square")

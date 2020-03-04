@@ -139,11 +139,14 @@
   var ElementConstructor = new win.DOMParser().parseFromString("<div />", "text/xml").documentElement.constructor;
 
   var svgArguments = function svgArguments(element) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
     }
 
-    var numbers = args.filter(function (arg) {
+    var argsNoNull = args.filter(function (a) {
+      return a != null;
+    });
+    var numbers = argsNoNull.filter(function (arg) {
       return !isNaN(arg) && arg.constructor !== Array;
     });
 
@@ -155,7 +158,7 @@
         setViewBox(element, 0, 0, numbers[0], numbers[1]);
     }
 
-    var parent = args.filter(function (arg) {
+    var parent = argsNoNull.filter(function (arg) {
       return arg instanceof ElementConstructor;
     }).shift();
 
@@ -279,12 +282,80 @@
     return element;
   };
 
-  var constructor = function constructor(nodeName) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
+  var arcPath = function arcPath(x, y, radius, startAngle, endAngle) {
+
+    if (endAngle == null) {
+      return undefined;
+    }
+  };
+
+  var arcArguments = function arcArguments(a, b, c, d, e) {
+    return arcPath(a, b, c, d, e);
+  };
+
+  var wedgeArguments = function wedgeArguments(a, b, c, d, e) {
+    return arcPath(a, b, c, d, e);
+  };
+
+  var parabolaArguments = function parabolaArguments(x, y, width, height) {
+    var COUNT = 128;
+    var iter = Array.from(Array(COUNT + 1)).map(function (_, i) {
+      return (i - COUNT) / COUNT * 2 + 1;
+    });
+    var ptsX = iter.map(function (i) {
+      return x + (i + 1) * width * 0.5;
+    });
+    var ptsY = iter.map(function (i) {
+      return y + Math.pow(i, 2) * height;
+    });
+    return iter.map(function (_, i) {
+      return [ptsX[i], ptsY[i]];
+    });
+  };
+
+  var regularPolygonArguments = function regularPolygonArguments(cX, cY, radius, sides) {
+    var halfwedge = 2 * Math.PI / sides * 0.5;
+    var r = Math.cos(halfwedge) * radius;
+    return Array.from(Array(sides)).map(function (el, i) {
+      var a = -2 * Math.PI * i / sides + halfwedge;
+      var x = cX + r * Math.sin(a);
+      var y = cY + r * Math.cos(a);
+      return [x, y];
+    });
+  };
+
+  var roundRectArguments = function roundRectArguments(x, y, width, height) {
+    var cornerRadius = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+
+    if (cornerRadius > width / 2) {
+      cornerRadius = width / 2;
     }
 
-    return Args.apply(void 0, [win.document.createElementNS(NS, nodeName)].concat(args));
+    if (cornerRadius > height / 2) {
+      cornerRadius = height / 2;
+    }
+
+    var w = width - cornerRadius * 2;
+    var h = height - cornerRadius * 2;
+    var s = "A".concat(cornerRadius, " ").concat(cornerRadius, " 0 0 1");
+    return ["M".concat(x + (width - w) / 2), y, "h".concat(w), s, x + width, y + (height - h) / 2, "v".concat(h), s, x + width - cornerRadius, y + height, "h".concat(-w), s, x, y + height - cornerRadius, "v".concat(-h), s, x + cornerRadius, y].join(" ");
+  };
+
+  var nodes = {
+    names: {
+      arc: "path",
+      wedge: "path",
+      parabola: "polyline",
+      regularPolygon: "polygon",
+      roundRect: "path"
+    },
+    arguments: {
+      arc: arcArguments,
+      wedge: wedgeArguments,
+      parabola: parabolaArguments,
+      regularPolygon: regularPolygonArguments,
+      roundRect: roundRectArguments
+    }
   };
 
   var NodeNames = {
@@ -292,7 +363,7 @@
     childOfGradients: ["stop"],
     childOfFilter: ["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"],
     text: ["text"],
-    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"],
+    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect", "arc", "wedge", "parabola", "regularPolygon", "roundRect"],
     group: ["g"],
     nonVisible: ["marker", "symbol", "clipPath", "mask"],
     patterns: ["linearGradient", "radialGradient", "pattern"],
@@ -300,6 +371,34 @@
     header: ["desc", "filter", "metadata", "style", "script", "title", "view"],
     defs: ["defs"],
     svg: ["svg"]
+  };
+
+  var nodeNames = {};
+  var argsMethods = {};
+  Object.keys(NodeNames).forEach(function (key) {
+    return NodeNames[key].forEach(function (nodeName) {
+      nodeNames[nodeName] = nodeName;
+
+      argsMethods[nodeName] = function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        return args;
+      };
+    });
+  });
+  Object.keys(nodes.names).forEach(function (customName) {
+    nodeNames[customName] = nodes.names[customName];
+    argsMethods[customName] = nodes.arguments[customName];
+  });
+
+  var constructor = function constructor(nodeName) {
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    return Args.apply(void 0, [win.document.createElementNS(NS, nodeNames[nodeName])].concat(_toConsumableArray(argsMethods[nodeName].apply(argsMethods, args))));
   };
 
   var nodeChildren = {
@@ -363,11 +462,11 @@
     }, []);
   });
 
-  var BACKGROUND_CLASS = "svg-background-rectangle";
-
-  var cdata = function cdata(textContent) {
-    return new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
+  var cdata$1 = function cdata(textContent) {
+    return new window.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
   };
+
+  var BACKGROUND_CLASS = "svg-background-rectangle";
 
   var getFrame = function getFrame(element) {
     var viewBox = getViewBox(element);
@@ -446,7 +545,7 @@
     }
 
     styleSection.textContent = "";
-    styleSection.appendChild(cdata(textContent));
+    styleSection.appendChild(cdata$1(textContent));
     return styleSection;
   };
 
@@ -554,9 +653,144 @@
     };
   });
 
+  var setPoints = function setPoints(shape) {
+    for (var _len = arguments.length, pointsArray = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      pointsArray[_key - 1] = arguments[_key];
+    }
+
+    var flat = flatten_input.apply(void 0, pointsArray);
+    var pointsString = "";
+
+    if (typeof flat[0] === "number") {
+      pointsString = Array.from(Array(Math.floor(flat.length / 2))).reduce(function (a, b, i) {
+        return "".concat(a).concat(flat[i * 2], ",").concat(flat[i * 2 + 1], " ");
+      }, "");
+    }
+
+    if (_typeof(flat[0]) === "object") {
+      if (typeof flat[0].x === "number") {
+        pointsString = flat.reduce(function (prev, curr) {
+          return "".concat(prev).concat(curr.x, ",").concat(curr.y, " ");
+        }, "");
+      }
+
+      if (typeof flat[0][0] === "number") {
+        pointsString = flat.reduce(function (prev, curr) {
+          return "".concat(prev).concat(curr[0], ",").concat(curr[1], " ");
+        }, "");
+      }
+    }
+
+    shape.setAttributeNS(null, "points", pointsString);
+    return shape;
+  };
+  var setLinePoints = function setLinePoints(shape) {
+    for (var _len2 = arguments.length, pointsArray = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      pointsArray[_key2 - 1] = arguments[_key2];
+    }
+
+    var flat = flatten_input.apply(void 0, pointsArray);
+    var points = [];
+
+    if (typeof flat[0] === "number") {
+      points = flat;
+    }
+
+    if (_typeof(flat[0]) === "object") {
+      if (typeof flat[0].x === "number") {
+        points = flat.map(function (p) {
+          return [p[0], p[1]];
+        }).reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+
+      if (typeof flat[0][0] === "number") {
+        points = flat.reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+    }
+
+    if (points[0] != null) {
+      shape.setAttributeNS(null, "x1", points[0]);
+    }
+
+    if (points[1] != null) {
+      shape.setAttributeNS(null, "y1", points[1]);
+    }
+
+    if (points[2] != null) {
+      shape.setAttributeNS(null, "x2", points[2]);
+    }
+
+    if (points[3] != null) {
+      shape.setAttributeNS(null, "y2", points[3]);
+    }
+
+    return shape;
+  };
+  var setCenter = function setCenter(shape) {
+    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      args[_key3 - 1] = arguments[_key3];
+    }
+
+    var flat = flatten_input.apply(void 0, args);
+
+    if (typeof flat[0] === "number") {
+      if (flat[0] != null) {
+        shape.setAttributeNS(null, "cx", flat[0]);
+      }
+
+      if (flat[1] != null) {
+        shape.setAttributeNS(null, "cy", flat[1]);
+      }
+    }
+
+    if (typeof flat.x === "number") {
+      if (flat.x != null) {
+        shape.setAttributeNS(null, "cx", flat.x);
+      }
+
+      if (flat.y != null) {
+        shape.setAttributeNS(null, "cy", flat.y);
+      }
+    }
+
+    return shape;
+  };
+
+  var setRadius = function setRadius(el, r) {
+    el.setAttributeNS(null, "r", r);
+    return el;
+  };
+
+  var setTextContent = function setTextContent(el, text) {
+    el.textContent = "";
+    el.appendChild(cdata(text));
+    return el;
+  };
+
   var nodeMethods = {
     svg: methods,
-    path: methods$1
+    path: methods$1,
+    line: {
+      setPoints: setLinePoints
+    },
+    circle: {
+      setCenter: setCenter,
+      setRadius: setRadius,
+      radius: setRadius
+    },
+    polygon: {
+      setPoints: setPoints
+    },
+    polyline: {
+      setPoints: setPoints
+    },
+    style: {
+      setTextContent: setTextContent
+    }
   };
   var methods$2 = {};
   Object.keys(nodeMethods).forEach(function (nodeName) {
