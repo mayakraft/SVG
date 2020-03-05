@@ -11,9 +11,14 @@ const findCoordinates = function (...args) {
   if (numbers.length) {
     return numbers;
   }
-  const coords = args.filter(a => typeof a === "object" && typeof a.x === "number");
-  if (coords.length) {
-    return coords.map(el => [el.x, el.y]).reduce((a, b) => a.concat(b), []);
+  const objects = args.filter(a => typeof a === "object");
+  const coordsXY = objects.filter(a => typeof a.x === "number");
+  if (coordsXY.length) {
+    return coordsXY.map(el => [el.x, el.y]).reduce((a, b) => a.concat(b), []);
+  }
+  const coordsArray = objects.filter(a => typeof a[0] === "number");
+  if (coordsArray.length) {
+    return coordsArray.map(el => [el[0], el[1]]).reduce((a, b) => a.concat(b), []);
   }
   return [];
 };

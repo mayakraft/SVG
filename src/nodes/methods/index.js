@@ -6,18 +6,13 @@ import SVG from "./svg";
 import Path from "./path";
 import Transforms from "./transforms";
 import NodeNames from "../nodeNames";
+import * as Primitives from "./primitives";
 
-import {
-  setPoints,
-  setCenter,
-  setLinePoints,
-  setArc,
-  setEllipticalArc,
-  setBezier,
-  setArrowPoints
-} from "../../methods/geometry";
+// setArc,
+// setEllipticalArc,
+// setBezier,
+// setArrowPoints
 
-const setRadius = (el, r) => { el.setAttributeNS(null, "r", r); return el; };
 const setTextContent = (el, text) => {
   el.textContent = "";
   el.appendChild(cdata(text));
@@ -27,14 +22,14 @@ const setTextContent = (el, text) => {
 const nodeMethods = {
   svg: SVG,
   path: Path,
-  line: { setPoints: setLinePoints },
+  line: { setPoints: Primitives.setLinePoints },
   circle: {
-    setCenter: setCenter,
-    setRadius: setRadius,
-    radius: setRadius,
+    setCenter: Primitives.setCenter,
+    setRadius: Primitives.setRadius,
+    radius: Primitives.setRadius,
   },
-  polygon: { setPoints: setPoints },
-  polyline: { setPoints: setPoints },
+  polygon: { setPoints: Primitives.setPoints },
+  polyline: { setPoints: Primitives.setPoints },
   style: { setTextContent: setTextContent },
 };
 
