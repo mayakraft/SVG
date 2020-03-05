@@ -13,7 +13,6 @@ import window from "./window";
  * only works for browser! no node.
  * this attaches an SVG to the document, and binds member functions to the window
  */
-
 const bindSVGMethodsTo = function (svg, environment) {
   // bind all member methods of window.svg to the environment
   Object.getOwnPropertyNames(svg)
@@ -27,30 +26,11 @@ const bindSVGMethodsTo = function (svg, environment) {
     .forEach((key) => { environment[key] = window.SVG[key]; });
   // bind events
   // and other top level svg setters
-  Object.defineProperty(window, "mousePressed", {
-    set: (value) => { svg.mousePressed = value; },
-    get: () => svg.mousePressed
-  });
-  Object.defineProperty(window, "mouseReleased", {
-    set: (value) => { svg.mouseReleased = value; },
-    get: () => svg.mouseReleased
-  });
-  Object.defineProperty(window, "mouseMoved", {
-    set: (value) => { svg.mouseMoved = value; },
-    get: () => svg.mouseMoved
-  });
-  Object.defineProperty(window, "scroll", {
-    set: (value) => { svg.scroll = value; },
-    get: () => svg.scroll
-  });
-  Object.defineProperty(window, "animate", {
-    set: (value) => { svg.animate = value; },
-    get: () => svg.animate
-  });
-  Object.defineProperty(window, "fps", {
-    set: (value) => { svg.fps = value; },
-    get: () => svg.fps
-  });
+  ["mousePressed", "mouseReleased", "mouseMoved", "scroll", "animate", "fps"]
+    .forEach(key => Object.defineProperty(window, key, {
+      set: (value) => { svg[key] = value; },
+      get: () => svg[key]
+    }));
 };
 
 const globalize = function (svg, ...args) {

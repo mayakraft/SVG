@@ -85,7 +85,7 @@ export default {
     "defs",      // svg
   ],
   svg: [
-    "svg", // can contain drawings
+    "svg",
   ]
 };
 

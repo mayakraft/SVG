@@ -41,7 +41,6 @@ const toArray = function (nodeName, ...args) {
   return args;
 };
 
-
 const Args = function (element, ...args) {
   const nodeName = element.nodeName;
   switch (nodeName) {

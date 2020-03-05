@@ -11,13 +11,13 @@ for (var i = 0; i < (100 + space) / space; i += 1) {
     .strokeLinecap("square")
     .stroke(i % 2 === 0 ? "#000" : "#fff")
     .clipPath(clip)
-    .moveTo(i * space, 0);
+    .Move(i * space, 0);
 
   for (var j = 0; j < 10; j += 1) {
     var dir = (j % 2) ? 0.5 : -0.5;
     var controlA = [(i + dir) * space, (j + 0.333) * 10];
     var controlB = [(i + dir) * space, (j + 0.666) * 10];
     var end = [i * space, (j + 1) * 10];
-    p.curveTo(controlA, controlB, end);
+    p.Curve(controlA, controlB, end);
   }
 }

@@ -52,7 +52,7 @@ const goFetch = function (input, callback) {
 // try "filename.svg", "<svg>" text blob, already-parsed XML document tree
 const load = function (input, callback) {
   if (typeof input === "string" || input instanceof String) {
-    if (input.slice(file.length - 4, file.length) === ".svg") {
+    if (input.slice(input.length - 4, input.length) === ".svg") {
       return goFetch(input, callback);
     }
     const xml = (new window.DOMParser()).parseFromString(input, "text/xml");

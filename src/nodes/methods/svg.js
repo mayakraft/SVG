@@ -9,8 +9,8 @@ import {
   getViewBox,
   setViewBox
 } from "../../methods/viewBox";
-// import Load from "../../file/load";
-// import Save from "../../file/save";
+import Load from "../../file/load";
+import Save from "../../file/save";
 
 // i prevented circular dependency by passing a pointer to the constructor/prepare
 // throught 'this', every function is bound.
@@ -67,7 +67,6 @@ const findStyleSheet = function (element) {
 };
 
 const stylesheet = function (element, textContent) {
-  console.log("stylesheet", this, element, textContent)
   let styleSection = findStyleSheet(element);
   if (styleSection == null) {
     styleSection = this.Prepare(this.Constructor("style"));
@@ -109,12 +108,12 @@ methods.background = function (...args) { return background.call(this, ...args);
 methods.stylesheet = function (...args) { return stylesheet.call(this, ...args); }
 // methods.controls = (element, ...args) => Controls(element, ...args);
 
-// methods.save = Save;
-// methods.load = function (element, data, callback) {
-//   return Load(data, (svg, error) => {
-//     if (svg != null) { replaceWithSVG(element, svg); }
-//     if (callback != null) { callback(element, error); }
-//   });
-// };
+methods.save = Save;
+methods.load = function (element, data, callback) {
+  return Load(data, (svg, error) => {
+    if (svg != null) { replaceWithSVG(element, svg); }
+    if (callback != null) { callback(element, error); }
+  });
+};
 
 export default methods;

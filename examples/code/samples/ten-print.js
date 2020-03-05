@@ -1,5 +1,5 @@
 svg.size(40, 25);
-svg.rect(0, 0, getWidth(), getHeight()).fill("#329");
+svg.rect(0, 0, svg.getWidth(), svg.getHeight()).fill("#329");
 
 var layer = svg.g()
   .stroke("#76d")

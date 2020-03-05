@@ -11,7 +11,7 @@ const textArguments = function (element, ...args) {
   if (text) {
     element.innerHTML = text;
   }
-  if (point) {
+  if (point.length > 1) {
     ["x", "y"].forEach((key, i) => element.setAttribute(key, point[i]));
   }
   return element;
