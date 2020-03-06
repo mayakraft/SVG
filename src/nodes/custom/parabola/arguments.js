@@ -10,3 +10,5 @@ const parabolaArguments = (x, y, width, height) => {
   const ptsY = iter.map(i => y + (i ** 2) * height);
   return iter.map((_, i) => [ptsX[i], ptsY[i]]);
 };
+
+export default parabolaArguments;

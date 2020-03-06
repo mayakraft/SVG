@@ -10,9 +10,9 @@ const primitives = [
   "text",
   // "bezier",
   // "wedge",
-  // "arc",
-  // "parabola",
-  // "regularPolygon",
+  "arc",
+  "parabola",
+  "regularPolygon",
   // "arrow",
 ];
 

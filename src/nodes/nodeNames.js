@@ -48,11 +48,11 @@ export default {
     "polygon",
     "polyline",
     "rect",
-    // "arc",              // custom primitives
-    // "wedge",            // custom primitives
-    // "parabola",         // custom primitives
-    // "regularPolygon",   // custom primitives
-    // "roundRect",        // custom primitives
+    "arc",              // custom primitives
+    "wedge",            // custom primitives
+    "parabola",         // custom primitives
+    "regularPolygon",   // custom primitives
+    "roundRect",        // custom primitives
   ],
   group: [
     "g",  // can contain drawings

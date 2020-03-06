@@ -32,30 +32,30 @@ const done = (svg, callback) => {
   return svg;
 };
 
-const goFetch = function (input, callback) {
-  const promise = {};
-  fetch(input)
-    .then(response => response.text())
-    .then(str => (new window.DOMParser())
-      .parseFromString(str, "text/xml"))
-    .then((svgData) => {
-      const allSVGs = svgData.getElementsByTagName("svg");
-      if (allSVGs == null || allSVGs.length === 0) {
-        throw new Error("error, valid XML found, but no SVG element");
-      }
-      promise.svg = done(allSVGs[0], callback);
-    // }).catch((err) => callback(null, err));
-    });
-  return promise;
-};
+// const goFetch = function (input, callback) {
+//   const promise = {};
+//   fetch(input)
+//     .then(response => response.text())
+//     .then(str => (new window.DOMParser())
+//       .parseFromString(str, "text/xml"))
+//     .then((svgData) => {
+//       const allSVGs = svgData.getElementsByTagName("svg");
+//       if (allSVGs == null || allSVGs.length === 0) {
+//         throw new Error("error, valid XML found, but no SVG element");
+//       }
+//       promise.svg = done(allSVGs[0], callback);
+//     // }).catch((err) => callback(null, err));
+//     });
+//   return promise;
+// };
 
 // the SVG is returned, or given as the argument in the callback(svg, error)
 // try "filename.svg", "<svg>" text blob, already-parsed XML document tree
 const load = function (input, callback) {
   if (typeof input === K.string || input instanceof String) {
-    if (input.slice(input.length - 4, input.length) === ".svg") {
-      return goFetch(input, callback);
-    }
+    // if (input.slice(input.length - 4, input.length) === ".svg") {
+    //   return goFetch(input, callback);
+    // }
     const xml = (new window.DOMParser()).parseFromString(input, "text/xml");
     const parserErrors = xml.getElementsByTagName("parsererror");
     return (parserErrors.length === 0)

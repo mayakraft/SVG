@@ -1,3 +1,8 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
+// frequently-used words
 const keys = [
   "number",
   "object",
@@ -14,6 +19,7 @@ const keys = [
 ];
 
 const map = {};
+
 keys.forEach(key => map[key] = key);
 
 export default map;

@@ -317,7 +317,7 @@
     childOfGradients: ["stop"],
     childOfFilter: ["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"],
     text: ["text"],
-    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"],
+    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect", "arc", "wedge", "parabola", "regularPolygon", "roundRect"],
     group: ["g"],
     nonVisible: ["marker", "symbol", "clipPath", "mask"],
     patterns: ["linearGradient", "radialGradient", "pattern"],
@@ -403,6 +403,100 @@
     return new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
   };
 
+  var removeChildren = function removeChildren(parent) {
+    while (parent.lastChild) {
+      parent.removeChild(parent.lastChild);
+    }
+  };
+
+  function vkXML (text, step) {
+    var ar = text.replace(/>\s{0,}</g, "><").replace(/</g, "~::~<").replace(/\s*xmlns\:/g, "~::~xmlns:").split("~::~");
+    var len = ar.length;
+    var inComment = false;
+    var deep = 0;
+    var str = "";
+    var space = step != null && typeof step === "string" ? step : "\t";
+    var shift = ["\n"];
+
+    for (var si = 0; si < 100; si += 1) {
+      shift.push(shift[si] + space);
+    }
+
+    for (var ix = 0; ix < len; ix += 1) {
+      if (ar[ix].search(/<!/) > -1) {
+        str += shift[deep] + ar[ix];
+        inComment = true;
+
+        if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1 || ar[ix].search(/!DOCTYPE/) > -1) {
+          inComment = false;
+        }
+      } else if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1) {
+        str += ar[ix];
+        inComment = false;
+      } else if (/^<\w/.exec(ar[ix - 1]) && /^<\/\w/.exec(ar[ix]) && /^<[\w:\-\.\,]+/.exec(ar[ix - 1]) == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace("/", "")) {
+        str += ar[ix];
+
+        if (!inComment) {
+          deep -= 1;
+        }
+      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) === -1 && ar[ix].search(/\/>/) === -1) {
+        str = !inComment ? str += shift[deep++] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
+        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\//) > -1) {
+        str = !inComment ? str += shift[--deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/\/>/) > -1) {
+        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\?/) > -1) {
+        str += shift[deep] + ar[ix];
+      } else if (ar[ix].search(/xmlns\:/) > -1 || ar[ix].search(/xmlns\=/) > -1) {
+        str += shift[deep] + ar[ix];
+      } else {
+        str += ar[ix];
+      }
+    }
+
+    return str[0] === "\n" ? str.slice(1) : str;
+  }
+
+  var done = function done(svg, callback) {
+    if (callback != null) {
+      callback(svg);
+    }
+
+    return svg;
+  };
+
+  var load = function load(input, callback) {
+    if (_typeof(input) === map.string || input instanceof String) {
+      var xml = new win.DOMParser().parseFromString(input, "text/xml");
+      var parserErrors = xml.getElementsByTagName("parsererror");
+      return parserErrors.length === 0 ? done(xml.documentElement, callback) : parserErrors[0];
+    }
+
+    if (input instanceof win.Document) {
+      return done(input);
+    }
+  };
+
+  var SAVE_OPTIONS = function SAVE_OPTIONS() {
+    return {
+      output: map.string,
+      windowStyle: false,
+      filename: "image.svg"
+    };
+  };
+
+  var save = function save(svg, options) {
+    if (_typeof(options) !== map.object || options === null) {
+      options = SAVE_OPTIONS();
+    }
+
+    var source = new win.XMLSerializer().serializeToString(svg);
+    var formattedString = vkXML(source);
+    return options.output === "svg" ? svg : formattedString;
+  };
+
   var BACKGROUND_CLASS = "svg-background-rectangle";
 
   var getFrame = function getFrame(element) {
@@ -485,6 +579,20 @@
     return styleSection;
   };
 
+  var replaceWithSVG = function replaceWithSVG(oldSVG, newSVG) {
+    Array.from(oldSVG.attributes).forEach(function (attr) {
+      return oldSVG.removeAttribute(attr.name);
+    });
+    removeChildren(oldSVG);
+    Array.from(newSVG.childNodes).forEach(function (node) {
+      newSVG.removeChild(node);
+      oldSVG.appendChild(node);
+    });
+    Array.from(newSVG.attributes).forEach(function (attr) {
+      return oldSVG.setAttribute(attr.name, attr.value);
+    });
+  };
+
   var methods = {};
 
   methods.getWidth = function (element) {
@@ -513,6 +621,20 @@
     }
 
     return stylesheet.call.apply(stylesheet, [this].concat(args));
+  };
+
+  methods.save = save;
+
+  methods.load = function (element, data, callback) {
+    return load(data, function (svg, error) {
+      if (svg != null) {
+        replaceWithSVG(element, svg);
+      }
+
+      if (callback != null) {
+        callback(element, error);
+      }
+    });
   };
 
   var pathCommands = {

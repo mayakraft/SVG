@@ -2,10 +2,10 @@
  * SVG (c) Robby Kraft
  */
 
-import args from "../arguments";
+const arcArguments = (a, b, c, d, e) => arcPath(a, b, c, d, e, false);
 
 export default {
   name: "arc",
   tagName: "path",
-  arguments: args
+  arguments: arcArguments
 };

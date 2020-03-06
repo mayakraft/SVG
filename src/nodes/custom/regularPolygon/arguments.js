@@ -12,3 +12,5 @@ const regularPolygonArguments = (cX, cY, radius, sides) => {
     return [x, y];
   });
 };
+
+export default regularPolygonArguments;

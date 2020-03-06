@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import args from "../arguments";
+import args from "./arguments";
 
 export default {
   name: "arrow",

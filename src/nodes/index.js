@@ -8,6 +8,8 @@ import Prepare from "./prepare";
 
 const elements = {};
 
+// is there some way to inject the custom primitives in here?
+
 Object.keys(NodeNames).forEach(key => NodeNames[key]
   .forEach(nodeName => {
     elements[nodeName] = function (...args) {
