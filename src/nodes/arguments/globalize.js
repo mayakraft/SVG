@@ -3,6 +3,7 @@
  */
 
 import window from "./window";
+import K from "../../environment/keys";
 
 // const { SVG } = window;
 
@@ -16,10 +17,10 @@ import window from "./window";
 const bindSVGMethodsTo = function (svg, environment) {
   // bind all member methods of window.svg to the environment
   Object.getOwnPropertyNames(svg)
-    .filter(p => typeof svg[p] === "function")
+    .filter(p => typeof svg[p] === K.function)
     .forEach((name) => { environment[name] = svg[name].bind(svg); });
   // special case: SVG top level
-  const forbidden = ["svg", "style", "setPoints", "setArc", "setEllipticalArc", "setBezier"];
+  const forbidden = [K.svg, K.style, "setPoints", "setArc", "setEllipticalArc", "setBezier"];
   Object.keys(window.SVG)
     .filter(key => environment[key] === undefined)
     .filter(key => forbidden.indexOf(key) === -1)

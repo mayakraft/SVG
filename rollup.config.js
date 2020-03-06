@@ -38,7 +38,7 @@ module.exports = [{
       babelrc: false,
       presets: [["@babel/env", { modules: false }]],
     }),
-    minify({ mangle: { names: false } }),
+    minify(),
   ],
 },
 ];

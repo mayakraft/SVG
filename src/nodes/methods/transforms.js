@@ -2,22 +2,22 @@
  * SVG (c) Robby Kraft
  */
 
-const ATTR = "transform";
+import K from "../../environment/keys";
 
 const getTransform = (element) => {
-  const trans = element.getAttribute(ATTR);
+  const trans = element.getAttribute(K.transform);
   return (trans == null ? [] : trans.split(" "));
 };
 
 const transforms = {
-  clearTransforms: (el) => { el.setAttribute(ATTR, ""); return el; }
+  clearTransforms: (el) => { el.setAttribute(K.transform, ""); return el; }
 };
 
 ["translate", "rotate", "scale"].forEach(key => {
   transforms[key] = function (element, ...args) {
     const transform = getTransform(element);
     transform.push(`${key}(${args.join(", ")})`);
-    element.setAttribute(ATTR, transform.join(" "));
+    element.setAttribute(K.transform, transform.join(" "));
     return element;
   };
 });

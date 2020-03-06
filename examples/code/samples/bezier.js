@@ -12,5 +12,5 @@ svg.controls(4)
   .onChange(function () {
     l1.setPoints(this[0], this[1]);
     l2.setPoints(this[3], this[2]);
-    curve.clear().moveTo(this[0]).curveTo(this[1], this[2], this[3]);
+    curve.clear().move(this[0]).curve(this[1], this[2], this[3]);
   }, true);

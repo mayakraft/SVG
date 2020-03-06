@@ -6,13 +6,14 @@ import window from "../../environment/window";
 import { setViewBox } from "../../methods/viewBox";
 // import Events from "../../events/index";
 // import Globalize from "./globalize";
+import K from "../../environment/keys";
 
 const ElementConstructor = (new window.DOMParser())
   .parseFromString("<div />", "text/xml").documentElement.constructor;
 
 const findWindowBooleanParam = (...params) => params
-  .filter(arg => typeof arg === "object")
-  .filter(o => typeof o.window === "boolean")
+  .filter(arg => typeof arg === K.object)
+  .filter(o => typeof o.window === K.boolean)
   .reduce((a, b) => a.window || b.window, false);
 
 const svgArguments = function (element, ...args) {
@@ -24,7 +25,7 @@ const svgArguments = function (element, ...args) {
     default: break;
   }
   const parent = argsNoNull.filter(arg => arg instanceof ElementConstructor).shift();
-  if (parent != null && typeof parent.appendChild === "function") {
+  if (parent != null && typeof parent.appendChild === K.function) {
     parent.appendChild(element);
   }
   // Events(element);

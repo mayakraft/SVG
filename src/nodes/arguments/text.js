@@ -4,10 +4,11 @@
 
 import findCoordinates from "./coordinates";
 import flatten from "./flatten";
+import K from "../../environment/keys";
 
 const textArguments = function (element, ...args) {
   const point = findCoordinates(...flatten(...args));
-  const text = args.filter(a => typeof a === "string");
+  const text = args.filter(a => typeof a === K.string);
   if (text) {
     element.innerHTML = text;
   }

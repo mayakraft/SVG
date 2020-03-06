@@ -10,6 +10,8 @@ import {
   isNode,
   isWebWorker
 } from "../environment/detect";
+import K from "../environment/keys";
+
 
 const downloadInBrowser = function (filename, contentsAsString) {
   const blob = new window.Blob([contentsAsString], { type: "text/plain" });
@@ -43,7 +45,7 @@ const getPageCSS = function () {
 };
 
 const SAVE_OPTIONS = () => ({
-  output: "string",
+  output: K.string,
   windowStyle: false,
   filename: "image.svg"
 });
@@ -51,12 +53,12 @@ const SAVE_OPTIONS = () => ({
 // export const save = function (svg, filename = "image.svg", includeDOMCSS = false) {
 const save = function (svg, options) {
   // prepare options
-  if (typeof options === "string" || options instanceof String) {
+  if (typeof options === K.string || options instanceof String) {
     // expecting the user provided a filename instead of the options object
     const filename = options;
     options = SAVE_OPTIONS();
     options.filename = filename;
-  } else if (typeof options !== "object" || options === null) {
+  } else if (typeof options !== K.object || options === null) {
     options = SAVE_OPTIONS();
   } else {
     // user supplied object. make sure it has all the necessary keys.
@@ -67,7 +69,7 @@ const save = function (svg, options) {
   // save file
   if (options.windowStyle) {
     // include the CSS inside of <link> style sheets
-    const styleContainer = window.document.createElementNS(svgNS, "style");
+    const styleContainer = window.document.createElementNS(svgNS, K.style);
     styleContainer.setAttribute("type", "text/css");
     styleContainer.innerHTML = getPageCSS();
     svg.appendChild(styleContainer);

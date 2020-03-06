@@ -4,7 +4,7 @@
 
 /**
  * convert all user-supplied arguments into a flat array
- * to match the expected arguments ordered in "map"
+ * to match the expected arguments ordered in "attributes"
  */
 import window from "../../environment/window";
 import flatten from "./flatten";
@@ -14,16 +14,7 @@ import svgArguments from "./svg";
 import textArguments from "./text";
 import nonVisibleArguments from "./nonVisible";
 
-const map = {
-  line: ["x1", "y1", "x2", "y2"],
-  rect: ["x", "y", "width", "height"],
-  circle: ["cx", "cy", "r"],
-  ellipse: ["cx", "cy", "rx", "ry"],
-  polygon: ["points"],
-  polyline: ["points"],
-  path: ["d"],
-  clipPath: ["id"],
-};
+import attributes from "../attributes/attributes";
 
 const polyString = function (...numbers) {
   return Array.from(Array(Math.floor(numbers.length / 2)))
@@ -52,7 +43,7 @@ const Args = function (element, ...args) {
     case "marker": return nonVisibleArguments(element, ...args);
     default: break;
   }
-  const keys = map[nodeName];
+  const keys = attributes[nodeName];
   if (keys === undefined) { return element; }
   const values = toArray(nodeName, ...args);
   keys.forEach((key, i) => {

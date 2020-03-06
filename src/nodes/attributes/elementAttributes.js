@@ -8,7 +8,9 @@ import Attr from "./attributes";
 const elemAttr = { };
 
 // drawing elements
-N.drawings.forEach(key => { elemAttr[key] = [Attr.general]; });
+// takes care of <line>, <circle> type of defintions too, which won't usually
+// manifest as a setter because it's a SVGAnimatedLength
+N.drawings.forEach(key => { elemAttr[key] = [Attr[key], Attr.general]; });
 N.childOfFilter.forEach(key => { elemAttr[key] = [Attr.effects]; });
 N.childOfGradients.forEach(key => { elemAttr[key] = [Attr.gradient]; })
 N.childOfText.forEach(key => { elemAttr[key] = [Attr.general, Attr.text]; })

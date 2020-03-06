@@ -2,6 +2,8 @@
  * SVG (c) Robby Kraft
  */
 
+import K from "../environment/keys";
+
 export const removeChildren = function (parent) {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);
@@ -28,7 +30,7 @@ export const setAttributes = function (element, attributes) {
 };
 
 const getClassList = function (xmlNode) {
-  const currentClass = xmlNode.getAttribute("class");
+  const currentClass = xmlNode.getAttribute(K.class);
   return (currentClass == null
     ? []
     : currentClass.split(" ").filter(s => s !== ""));
@@ -41,7 +43,7 @@ export const addClass = function (xmlNode, newClass) {
   const classes = getClassList(xmlNode)
     .filter(c => c !== newClass);
   classes.push(newClass);
-  xmlNode.setAttributeNS(null, "class", classes.join(" "));
+  xmlNode.setAttributeNS(null, K.class, classes.join(" "));
   return xmlNode;
 };
 
@@ -51,16 +53,16 @@ export const removeClass = function (xmlNode, removedClass) {
   }
   const classes = getClassList(xmlNode)
     .filter(c => c !== removedClass);
-  xmlNode.setAttributeNS(null, "class", classes.join(" "));
+  xmlNode.setAttributeNS(null, K.class, classes.join(" "));
   return xmlNode;
 };
 
 export const setClass = function (xmlNode, className) {
-  xmlNode.setAttributeNS(null, "class", className);
+  xmlNode.setAttributeNS(null, K.class, className);
   return xmlNode;
 };
 
 export const setID = function (xmlNode, idName) {
-  xmlNode.setAttributeNS(null, "id", idName);
+  xmlNode.setAttributeNS(null, K.id, idName);
   return xmlNode;
 };

@@ -2,14 +2,16 @@
  * SVG (c) Robby Kraft
  */
 
-const isBrowser = typeof window !== "undefined"
-  && typeof window.document !== "undefined";
+import K from "./keys";
 
-const isNode = typeof process !== "undefined"
+const isBrowser = typeof window !== K.undefined
+  && typeof window.document !== K.undefined;
+
+const isNode = typeof process !== K.undefined
   && process.versions != null
   && process.versions.node != null;
 
-const isWebWorker = typeof self === "object"
+const isWebWorker = typeof self === K.object
   && self.constructor
   && self.constructor.name === "DedicatedWorkerGlobalScope";
 

@@ -1,8 +1,6 @@
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
-
-const lineAttr = ["x1", "y1", "x2", "y2"];
-const circleAttr = ["cx", "cy"];
+import attributes from "../attributes/attributes";
 
 // const pointType = el => {
 //   if (typeof el === "number") { return "number"; }
@@ -26,8 +24,8 @@ export const setPoints = function (el, ...args) {
 };
 
 export const setLinePoints = function (el, ...args) {
-  coordinates(...flatten(...args)).slice(0, lineAttr.length)
-    .forEach((n, i) => el.setAttribute(lineAttr[i], n));
+  coordinates(...flatten(...args)).slice(0, 4)
+    .forEach((n, i) => el.setAttribute(attributes.line[i], n));
   return el;
 };
 
@@ -37,7 +35,35 @@ export const setRadius = (el, r) => {
 };
 
 export const setCenter = function (el, ...args) {
-  coordinates(...flatten(...args)).slice(0, circleAttr.length)
-    .forEach((n, i) => el.setAttribute(circleAttr[i], n));
+  coordinates(...flatten(...args)).slice(0, 2)
+    .forEach((n, i) => el.setAttribute(attributes.circle[i], n));
   return el;
 };
+
+
+// export const setArrowPoints = function (el, ...args) {
+//   const children = Array.from(el.childNodes);
+//   const path = children.filter(node => node.tagName === "path").shift();
+//   const polys = ["svg-arrow-head", "svg-arrow-tail"]
+//     .map(c => children.filter(n => n.getAttribute("class") === c).shift());
+
+//   // draw
+//   // if straight or curved
+//   path.setAttribute("d", buildArrow(...args));
+
+//   if (o.head.visible) {
+//     polys[0].removeAttribute("display");
+//     setPoints(polys[0], headPolyPts);
+//   } else {
+//     polys[0].setAttribute("display", "none");
+//   }
+
+//   if (o.tail.visible) {
+//     polys[1].removeAttribute("display");
+//     setPoints(polys[1], tailPolyPts);
+//   } else {
+//     polys[1].setAttribute("display", "none");
+//   }
+//   return el;
+// };
+

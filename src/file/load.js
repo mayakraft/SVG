@@ -10,6 +10,7 @@ import {
   isNode,
   isWebWorker
 } from "../environment/detect";
+import K from "../environment/keys";
 
 // const parseCSSText = function (styleContent) {
 //   const styleElement = document.createElement("style");
@@ -51,7 +52,7 @@ const goFetch = function (input, callback) {
 // the SVG is returned, or given as the argument in the callback(svg, error)
 // try "filename.svg", "<svg>" text blob, already-parsed XML document tree
 const load = function (input, callback) {
-  if (typeof input === "string" || input instanceof String) {
+  if (typeof input === K.string || input instanceof String) {
     if (input.slice(input.length - 4, input.length) === ".svg") {
       return goFetch(input, callback);
     }

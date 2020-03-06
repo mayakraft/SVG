@@ -137,6 +137,7 @@ export default {
     "writing-mode",
   ],
   clipPath: [
+    "id",
     "clip-rule", // use with clipPath
   ],
   marker: [
@@ -166,7 +167,21 @@ export default {
     "fr", // <radialGradient>
     "fx", // <radialGradient>
     "fy", // <radialGradient>
-  ]
+  ],
+  // the order of indices matter
+  line: ["x1", "y1", "x2", "y2"],
+  rect: ["x", "y", "width", "height"],
+  circle: ["cx", "cy", "r"],
+  ellipse: ["cx", "cy", "rx", "ry"],
+  polygon: ["points"],
+  polyline: ["points"],
+  path: ["d"],
+  // custom primitives
+  // arc,
+  // wedge,            // custom primitives
+  // parabola,         // custom primitives
+  // regularPolygon,   // custom primitives
+  // roundRect,        // custom primitives
 };
 
 const unused = [

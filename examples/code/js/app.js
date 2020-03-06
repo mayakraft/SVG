@@ -86,25 +86,32 @@ document.addEventListener("DOMContentLoaded", function () {
     // });
     // blank screen
     const welcomeText = `// ~ Welcome to coding with SVG ~
-// some commands to get started:
+// some method names to get started:
 
-// svg.size(600, 600); // the viewBox size. default is 300x150
-// svg.background("white"); // background color
+// line (x1, y1, x2, y2)
+// circle (x, y, radius);
+// rect (x, y, width, height);
+// path()
+//   .moveTo(x, y)
+//   .lineTo(x, y)
+//   .curveTo(cx1, cy1, cx2, cy2, x, y);
 
-// PRIMITIVES (there are many more!):
-// svg.line(x1, y1, x2, y2).stroke("black");
-// svg.circle(x, y, radius);
-// svg.rect(x, y, width, height);
-// svg.path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3);
+// <line> is invisible, append it with .stroke("black");
 
-// STYLE (function names are SVG attributes):
-// svg.rect(10, 10, 280, 130).fill("#edb").stroke("sienna").strokeWidth(5);
-// the default style is BLACK FILL AND NO STROKE (lines are invisible!)
+// style is method-chained, camel-case of the svg attribute
+// rect(10, 10, 280, 130)
+//   .fill("#edb")
+//   .stroke("sienna")
+//   .strokeWidth(5);
+
+svg.size(600, 600);
+svg.background("transparent");
 
 // read more: https://svg.rabbitear.org/docs/
-// or roll the dice for an example!
+// roll the dice for an example!
 
 `;
+
     app.injectCode(welcomeText);
   } else {
     app.injectCode(bootQueryValue);

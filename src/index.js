@@ -7,14 +7,15 @@ import constructor from "./nodes/constructor";
 import prepare from "./nodes/prepare";
 import window from "./environment/window";
 import NS from "./environment/namespace";
+import K from "./environment/keys";
 
 const initialize = function (svg, ...args) {
-  args.filter(arg => typeof arg === "function")
+  args.filter(arg => typeof arg === K.function)
     .forEach(func => func.call(svg, svg));
 };
 
 const SVG = function (...args) {
-  const svg = prepare(constructor("svg", ...args));
+  const svg = prepare(constructor(K.svg, ...args));
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
     window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...args));

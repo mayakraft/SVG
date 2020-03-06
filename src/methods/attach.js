@@ -8,6 +8,8 @@ import * as ViewBox from "./viewBox";
 import * as Transform from "./transform";
 import * as Path from "../elements/path";
 import { setArrowPoints } from "./geometry";
+import K from "../environment/keys";
+
 
 export const attachStyleMethods = function (element) {
   element.appendTo = arg => DOM.appendTo(element, arg);
@@ -27,12 +29,12 @@ export const attachAppendableMethods = function (element, methods) {
 
 export const attachArrowMethods = function (element) {
   element.head = (options) => {
-    if (typeof options === "object") {
+    if (typeof options === K.object) {
       Object.assign(element.options.head, options);
       if (options.visible === undefined) {
         element.options.head.visible = true;
       }
-    } else if (typeof options === "boolean") {
+    } else if (typeof options === K.boolean) {
       element.options.head.visible = options;
     } else if (options == null) {
       element.options.head.visible = true;
@@ -41,13 +43,13 @@ export const attachArrowMethods = function (element) {
     return element;
   };
   element.tail = (options) => {
-    if (typeof options === "object") {
+    if (typeof options === K.object) {
       Object.assign(element.options.tail, options);
       if (options.visible === undefined) {
         element.options.tail.visible = true;
       }
       element.options.tail.visible = true;
-    } else if (typeof options === "boolean") {
+    } else if (typeof options === K.boolean) {
       element.options.tail.visible = options;
     } else if (options == null) {
       element.options.tail.visible = true;
@@ -128,13 +130,13 @@ export const attachClipMaskMakers = function (element, primitives) {
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
 const findIdURL = function (arg) {
   if (arg == null) { return undefined; }
-  if (typeof arg === "string") {
+  if (typeof arg === K.string) {
     return arg.slice(0, 3) === "url"
       ? arg
       : `url(#${arg})`;
   }
   if (arg.getAttribute != null) {
-    const idString = arg.getAttribute("id");
+    const idString = arg.getAttribute(K.id);
     return `url(#${idString})`;
   }
   return "url(#)";

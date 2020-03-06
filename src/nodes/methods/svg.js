@@ -3,14 +3,15 @@
  */
 
 import cdata from "../../environment/cdata";
+import K from "../../environment/keys";
 // import Controls from "../../events/controls";
 import { removeChildren } from "../../methods/DOM";
 import {
   getViewBox,
   setViewBox
 } from "../../methods/viewBox";
-import Load from "../../file/load";
-import Save from "../../file/save";
+// import Load from "../../file/load";
+// import Save from "../../file/save";
 
 // i prevented circular dependency by passing a pointer to the constructor/prepare
 // throught 'this', every function is bound.
@@ -22,7 +23,7 @@ const getFrame = function (element) {
   if (viewBox !== undefined) {
     return viewBox;
   }
-  if (typeof element.getBoundingClientRect === "function") {
+  if (typeof element.getBoundingClientRect === K.function) {
     const rr = element.getBoundingClientRect();
     return [rr.x, rr.y, rr.width, rr.height];
   }
@@ -33,7 +34,7 @@ const getFrame = function (element) {
 // "size" refers viewbox whenever possible
 // size on the DOM, the "width" attribute, you can handle it yourself
 const setSize = function (element, ...a) {
-  const args = a.filter(t => typeof t === "number");
+  const args = a.filter(t => typeof t === K.number);
   switch (args.length) {
     case 2: setViewBox(element, 0, 0, ...args); break;
     case 4: setViewBox(element, ...args); break;
@@ -50,11 +51,11 @@ const background = function (element, color, paintOverflow = false) {
     }
   }
   let backRect = Array.from(element.childNodes)
-    .filter(child => child.getAttribute("class") === BACKGROUND_CLASS)
+    .filter(child => child.getAttribute(K.class) === BACKGROUND_CLASS)
     .shift();
   if (backRect == null) {
     backRect = this.Prepare(this.Constructor("rect", ...getFrame(element)));
-    backRect.setAttribute("class", BACKGROUND_CLASS);
+    backRect.setAttribute(K.class, BACKGROUND_CLASS);
     element.insertBefore(backRect, element.firstChild);
   }
   backRect.setAttribute("fill", color);
@@ -62,14 +63,14 @@ const background = function (element, color, paintOverflow = false) {
 };
 
 const findStyleSheet = function (element) {
-  const styles = element.getElementsByTagName("style");
+  const styles = element.getElementsByTagName(K.style);
   return styles.length === 0 ? undefined : styles[0];
 };
 
 const stylesheet = function (element, textContent) {
   let styleSection = findStyleSheet(element);
   if (styleSection == null) {
-    styleSection = this.Prepare(this.Constructor("style"));
+    styleSection = this.Prepare(this.Constructor(K.style));
     element.insertBefore(styleSection, element.firstChild);
   }
   styleSection.textContent = ""; 
@@ -108,12 +109,12 @@ methods.background = function (...args) { return background.call(this, ...args);
 methods.stylesheet = function (...args) { return stylesheet.call(this, ...args); }
 // methods.controls = (element, ...args) => Controls(element, ...args);
 
-methods.save = Save;
-methods.load = function (element, data, callback) {
-  return Load(data, (svg, error) => {
-    if (svg != null) { replaceWithSVG(element, svg); }
-    if (callback != null) { callback(element, error); }
-  });
-};
+// methods.save = Save;
+// methods.load = function (element, data, callback) {
+//   return Load(data, (svg, error) => {
+//     if (svg != null) { replaceWithSVG(element, svg); }
+//     if (callback != null) { callback(element, error); }
+//   });
+// };
 
 export default methods;

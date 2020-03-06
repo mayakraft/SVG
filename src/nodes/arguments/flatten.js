@@ -2,8 +2,10 @@
  * SVG (c) Robby Kraft
  */
 
+import K from "../../environment/keys";
+
 const isIterable = function (obj) {
-  return obj != null && typeof obj[Symbol.iterator] === "function";
+  return obj != null && typeof obj[Symbol.iterator] === K.function;
 };
 
 const flatten = function (...args) {
@@ -11,7 +13,7 @@ const flatten = function (...args) {
     case undefined:
     case 0: return args;
     // only if its an array (is iterable) and NOT a string
-    case 1: return isIterable(args[0]) && typeof args[0] !== "string"
+    case 1: return isIterable(args[0]) && typeof args[0] !== K.string
       ? flatten(...args[0])
       : [args[0]];
     default:
