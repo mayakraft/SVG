@@ -14,15 +14,14 @@ import svgArguments from "./svg";
 import textArguments from "./text";
 import nonVisibleArguments from "./nonVisible";
 
-import attributes from "../attributes/attributes";
+import attributes from "../attributes";
 
-const polyString = function (...numbers) {
-  return Array.from(Array(Math.floor(numbers.length / 2)))
-    .map((_, i) => `${numbers[i*2+0]},${numbers[i*2+1]}`)
-    .join(" ");
-};
+const polyString = (...numbers) => Array
+  .from(Array(Math.floor(numbers.length / 2)))
+  .map((_, i) => `${numbers[i*2+0]},${numbers[i*2+1]}`)
+  .join(" ");
 
-const toArray = function (nodeName, ...args) {
+const toArray = (nodeName, ...args) => {
   switch (nodeName) {
     case "line": return findCoordinates(...flatten(...args));
     case "polyline":
@@ -32,7 +31,7 @@ const toArray = function (nodeName, ...args) {
   return args;
 };
 
-const Args = function (element, ...args) {
+export default (element, ...args) => {
   const nodeName = element.nodeName;
   switch (nodeName) {
     case "svg": return svgArguments(element, ...args);
@@ -53,5 +52,3 @@ const Args = function (element, ...args) {
   });
   return element;
 };
-
-export default Args;

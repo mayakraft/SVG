@@ -8,12 +8,6 @@ const primitives = [
   "polygon",
   "polyline",
   "text",
-  // "bezier",
-  // "wedge",
-  "arc",
-  "parabola",
-  "regularPolygon",
-  // "arrow",
 ];
 
 const groupLevel = ["g"];
@@ -32,6 +26,15 @@ const rootLevel = [
   // "mask",
 ];
 
+const customPrimitives = [
+  "bezier",
+  "wedge",
+  "arc",
+  "parabola",
+  "regularPolygon",
+  "arrow",
+];
+
 test("svg and group", () => {
   const svg = SVG();
   primitives.forEach(p => expect(typeof svg[p]).toBe("function"));
@@ -48,3 +51,5 @@ test("svg and group", () => {
   // groupLevel.forEach(g => expect(typeof defs[g]).toBe("function"));
   // defsLevel.forEach(r => expect(typeof defs[r]).toBe("function"));
 });
+
+

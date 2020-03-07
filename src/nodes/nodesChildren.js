@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import N from "./nodeNames";
+import N from "./nodes";
 
 const nodeChildren = {
   // removed non visible

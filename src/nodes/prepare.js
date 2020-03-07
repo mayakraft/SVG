@@ -3,10 +3,10 @@
  */
 
 import svgNS from "../environment/namespace";
-import NodeChildren from "./nodeChildren";
+import NodeChildren from "./nodesChildren";
 import Constructor from "./constructor";
-import ElementAttr from "./attributes/elementAttributes";
-import Methods from "./methods/index";
+import ElementAttr from "./attributesElements";
+import AttributeMethods from "./attributes/index";
 import K from "../environment/keys";
 
 const Attributes = {
@@ -25,8 +25,8 @@ const toCamel = s => s.replace(/([-_][a-z])/ig, $1 => $1
   .replace("_", ""));
 
 const prepare = function (element) {
-  Methods.Prepare = prepare;
-  Methods.Constructor = Constructor;
+  AttributeMethods.Prepare = prepare;
+  AttributeMethods.Constructor = Constructor;
 
   const nodeName = element.nodeName;
   // assign necessary attributes to this element
@@ -35,10 +35,10 @@ const prepare = function (element) {
       .forEach(key => element.setAttribute(key, Attributes[nodeName][key]));
   }
   // assign any custom methods specific to each node type
-  if (typeof Methods[nodeName] === K.object && Methods[nodeName] !== null) {
-    Object.keys(Methods[nodeName]).forEach(methodName => {
+  if (typeof AttributeMethods[nodeName] === K.object && AttributeMethods[nodeName] !== null) {
+    Object.keys(AttributeMethods[nodeName]).forEach(methodName => {
       Object.defineProperty(element, methodName, {
-        value: (...args) => Methods[nodeName][methodName](element, ...args)
+        value: (...args) => AttributeMethods[nodeName][methodName](element, ...args)
       });
     });
   }

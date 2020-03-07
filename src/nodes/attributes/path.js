@@ -24,20 +24,22 @@ Object.keys(pathCommands).forEach(key => {
   pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
 });
 
-const methods = { };
-methods.clear = (el) => { el.setAttribute("d", ""); return el; }
-
 // 🍆
 const getD = (el) => {
   const attr = el.getAttribute("d");
   return (attr == null) ? "" : attr;
 };
 
+// todo: curve is putting too many commas , , , , 
+// between everything
 const appendPathItem = function (el, command, ...args) {
   const params = flatten(args).join(",");
   el.setAttribute("d", `${getD(el)}${command}${params}`);
   return el;
 };
+
+const methods = { };
+methods.clear = (el) => { el.setAttribute("d", ""); return el; }
 
 Object.keys(pathCommands).forEach(key => {
   methods[pathCommands[key]] = (el, ...args) => appendPathItem(el, key, ...args);

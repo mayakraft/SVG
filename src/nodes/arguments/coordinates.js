@@ -5,24 +5,20 @@
 import K from "../../environment/keys";
 
 /**
- * for best results, call this having already called flatten()
+ * use flatten() everytime you call this!
+ * it's necessary the entries sit at the top level of ...args
  * findCoordinates(...flatten(...args));
  */
-const findCoordinates = function (...args) {
+export default (...args) => {
   const numbers = args.filter(a => typeof a === K.number);
   if (numbers.length) {
     return numbers;
   }
   const objects = args.filter(a => typeof a === K.object);
-  const coordsXY = objects.filter(a => typeof a.x === K.number);
-  if (coordsXY.length) {
-    return coordsXY.map(el => [el.x, el.y]).reduce((a, b) => a.concat(b), []);
-  }
-  const coordsArray = objects.filter(a => typeof a[0] === K.number);
-  if (coordsArray.length) {
-    return coordsArray.map(el => [el[0], el[1]]).reduce((a, b) => a.concat(b), []);
-  }
-  return [];
+  const map = objects.map(el => {
+    if (typeof el.x === K.number) return [el.x, el.y];
+    if (typeof el[0] === K.number) return [el[0], el[1]];
+    return undefined;
+  });
+  return map.filter(a => a !== undefined).reduce((a, b) => a.concat(b), []);
 };
-
-export default findCoordinates;

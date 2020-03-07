@@ -5,11 +5,11 @@
 import cdata from "../../environment/cdata";
 import K from "../../environment/keys";
 // import Controls from "../../events/controls";
-import { removeChildren } from "../../methods/DOM";
+import DOM from "../dom/dom";
 import {
   getViewBox,
   setViewBox
-} from "../../methods/viewBox";
+} from "../view/viewBox";
 import Load from "../../file/load";
 import Save from "../../file/save";
 
@@ -30,18 +30,6 @@ const getFrame = function (element) {
   return Array(4).fill(undefined);
 };
 
-// set the viewbox size
-// "size" refers viewbox whenever possible
-// size on the DOM, the "width" attribute, you can handle it yourself
-const setSize = function (element, ...a) {
-  const args = a.filter(t => typeof t === K.number);
-  switch (args.length) {
-    case 2: setViewBox(element, 0, 0, ...args); break;
-    case 4: setViewBox(element, ...args); break;
-    default: break;
-  }
-  return element;
-};
 
 const background = function (element, color, paintOverflow = false) {
   if (paintOverflow === true) {
@@ -79,16 +67,13 @@ const stylesheet = function (element, textContent) {
 };
 
 const replaceWithSVG = function (oldSVG, newSVG) {
+  if (newSVG == null) { return; }
   // Part 1: reset old SVG
-  // #1 clear attributes
+  // a. clear attributes
   Array.from(oldSVG.attributes)
     .forEach(attr => oldSVG.removeAttribute(attr.name));
-  // #2 clear contents
-  removeChildren(oldSVG);
-  // #3 add back important attributes, if they don't exist
-  // let blankSVG = svg();
-  // console.log(Array.from(blankSVG.attributes));
-
+  // b. clear contents
+  DOM.removeChildren(oldSVG);
   // Part 2: copy contents over
   Array.from(newSVG.childNodes).forEach((node) => {
     newSVG.removeChild(node);
@@ -98,10 +83,10 @@ const replaceWithSVG = function (oldSVG, newSVG) {
     .forEach(attr => oldSVG.setAttribute(attr.name, attr.value));
 };
 
-
 // these will end up as methods on the <svg> nodes
 const methods = { };
 
+/*
 methods.getWidth = function (element) { return getFrame(element)[2]; }
 methods.getHeight = function (element) { return getFrame(element)[3]; }
 methods.size = function (...args) { return setSize(...args); }
@@ -110,11 +95,13 @@ methods.stylesheet = function (...args) { return stylesheet.call(this, ...args);
 // methods.controls = (element, ...args) => Controls(element, ...args);
 
 methods.save = Save;
-methods.load = function (element, data, callback) {
-  return Load(data, (svg, error) => {
-    if (svg != null) { replaceWithSVG(element, svg); }
-    if (callback != null) { callback(element, error); }
-  });
-};
+methods.load = (element, ...args) => replaceWithSVG(element, Load(...args));
+// methods.load = function (element, data, callback) {
+//   return Load(data, (svg, error) => {
+//     if (svg != null) { replaceWithSVG(element, svg); }
+//     if (callback != null) { callback(element, error); }
+//   });
+// };
+*/
 
 export default methods;

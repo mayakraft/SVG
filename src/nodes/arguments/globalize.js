@@ -34,7 +34,7 @@ const bindSVGMethodsTo = function (svg, environment) {
     }));
 };
 
-const globalize = function (svg, ...args) {
+export default (svg, ...args) => {
   let element = svg;
   if (element == null) {
     element = window.SVG(...args);
@@ -43,5 +43,3 @@ const globalize = function (svg, ...args) {
   bindSVGMethodsTo(element, window);
   return element;
 };
-
-export default globalize;

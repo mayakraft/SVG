@@ -3,7 +3,7 @@
  */
 
 import window from "../../environment/window";
-import { setViewBox } from "../../methods/viewBox";
+import { setViewBox } from "../view/viewBox";
 // import Events from "../../events/index";
 // import Globalize from "./globalize";
 import K from "../../environment/keys";
@@ -16,7 +16,7 @@ const findWindowBooleanParam = (...params) => params
   .filter(o => typeof o.window === K.boolean)
   .reduce((a, b) => a.window || b.window, false);
 
-const svgArguments = function (element, ...args) {
+export default function (element, ...args) {
   const argsNoNull = args.filter(a => a != null);
   const numbers = argsNoNull.filter(arg => !isNaN(arg) && arg.constructor !== Array);
   switch (numbers.length) {
@@ -31,8 +31,6 @@ const svgArguments = function (element, ...args) {
   // Events(element);
   return element;
 };
-
-export default svgArguments;
 
 
   // // initialize requires a loaded DOM to append

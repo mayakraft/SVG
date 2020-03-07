@@ -3,14 +3,14 @@
  */
 
 import Constructor from "./constructor";
-import NodeNames from "./nodeNames";
+import Nodes from "./nodes";
 import Prepare from "./prepare";
 
 const elements = {};
 
 // is there some way to inject the custom primitives in here?
 
-Object.keys(NodeNames).forEach(key => NodeNames[key]
+Object.keys(Nodes).forEach(key => Nodes[key]
   .forEach(nodeName => {
     elements[nodeName] = function (...args) {
       return Prepare(Constructor(nodeName, ...args));

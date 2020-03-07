@@ -6,12 +6,12 @@ import window from "../environment/window";
 import svgNS from "../environment/namespace";
 import Args from "./arguments/index";
 // import CustomNodes from "./custom/index";
-import NodeNames from "./nodeNames";
+import Nodes from "./nodes";
 
 const nodeNames = {};
 const argsMethods = {};
 
-Object.keys(NodeNames).forEach(key => NodeNames[key].forEach(nodeName => {
+Object.keys(Nodes).forEach(key => Nodes[key].forEach(nodeName => {
   nodeNames[nodeName] = nodeName;
   argsMethods[nodeName] = (...args) => args;
 }));

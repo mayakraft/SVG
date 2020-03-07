@@ -97,7 +97,7 @@
     }
   };
 
-  var findCoordinates = function findCoordinates() {
+  var coordinates = (function () {
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
@@ -113,40 +113,19 @@
     var objects = args.filter(function (a) {
       return _typeof(a) === map.object;
     });
-    var coordsXY = objects.filter(function (a) {
-      return _typeof(a.x) === map.number;
+    var map$1 = objects.map(function (el) {
+      if (_typeof(el.x) === map.number) return [el.x, el.y];
+      if (_typeof(el[0]) === map.number) return [el[0], el[1]];
+      return undefined;
     });
+    return map$1.filter(function (a) {
+      return a !== undefined;
+    }).reduce(function (a, b) {
+      return a.concat(b);
+    }, []);
+  });
 
-    if (coordsXY.length) {
-      return coordsXY.map(function (el) {
-        return [el.x, el.y];
-      }).reduce(function (a, b) {
-        return a.concat(b);
-      }, []);
-    }
-
-    var coordsArray = objects.filter(function (a) {
-      return _typeof(a[0]) === map.number;
-    });
-
-    if (coordsArray.length) {
-      return coordsArray.map(function (el) {
-        return [el[0], el[1]];
-      }).reduce(function (a, b) {
-        return a.concat(b);
-      }, []);
-    }
-
-    return [];
-  };
-
-  var getViewBox = function getViewBox(svg) {
-    var vb = svg.getAttribute("viewBox");
-    return vb == null ? undefined : vb.split(" ").map(function (n) {
-      return parseFloat(n);
-    });
-  };
-  var setViewBox = function setViewBox(svg, x, y, width, height) {
+  var setViewBox$1 = function setViewBox(svg, x, y, width, height) {
     var padding = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
     var scale = 1.0;
     var d = width / scale - width;
@@ -159,7 +138,7 @@
 
   var ElementConstructor = new win.DOMParser().parseFromString("<div />", "text/xml").documentElement.constructor;
 
-  var svgArguments = function svgArguments(element) {
+  function svgArguments (element) {
     for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
       args[_key2 - 1] = arguments[_key2];
     }
@@ -173,10 +152,10 @@
 
     switch (numbers.length) {
       case 4:
-        setViewBox(element, numbers[0], numbers[1], numbers[2], numbers[3]);
+        setViewBox$1(element, numbers[0], numbers[1], numbers[2], numbers[3]);
 
       case 2:
-        setViewBox(element, 0, 0, numbers[0], numbers[1]);
+        setViewBox$1(element, 0, 0, numbers[0], numbers[1]);
     }
 
     var parent = argsNoNull.filter(function (arg) {
@@ -188,36 +167,33 @@
     }
 
     return element;
-  };
+  }
 
-  var textArguments = function textArguments(element) {
+  var keys$1 = ["x", "y"];
+  var textArguments = (function (element) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
 
-    var point = findCoordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)));
+    coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))).slice(0, 2).forEach(function (p, i) {
+      return element.setAttribute(keys$1[i], p);
+    });
     var text = args.filter(function (a) {
       return _typeof(a) === map.string;
-    });
+    }).shift();
 
     if (text) {
       element.innerHTML = text;
     }
 
-    if (point.length > 1) {
-      ["x", "y"].forEach(function (key, i) {
-        return element.setAttribute(key, point[i]);
-      });
-    }
-
     return element;
-  };
+  });
 
   var UUID = function UUID() {
     return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
   };
 
-  var nonVisibleArguments = function nonVisibleArguments(element) {
+  var nonVisibleArguments = (function (element) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
@@ -227,7 +203,7 @@
     }).shift();
     element.setAttribute(map.id, idString != null ? idString : UUID());
     return element;
-  };
+  });
 
   var attributes = {
     general: ["color", "color-interpolation", "cursor", "direction", "display", "fill", "fill-opacity", "fill-rule", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "image-rendering", "letter-spacing", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "opacity", "overflow", "paint-order", "pointer-events", "preserveAspectRatio", "shape-rendering", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "tabindex", "transform-origin", "user-select", "vector-effect", "visibility"],
@@ -266,17 +242,17 @@
 
     switch (nodeName) {
       case "line":
-        return findCoordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)));
+        return coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)));
 
       case "polyline":
       case "polygon":
-        return [polyString.apply(void 0, _toConsumableArray(findCoordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)))))];
+        return [polyString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)))))];
     }
 
     return args;
   };
 
-  var Args = function Args(element) {
+  var Args = (function (element) {
     var nodeName = element.nodeName;
 
     for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
@@ -310,14 +286,14 @@
       }
     });
     return element;
-  };
+  });
 
-  var NodeNames = {
+  var Nodes = {
     childOfText: ["textPath", "tspan"],
     childOfGradients: ["stop"],
     childOfFilter: ["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"],
     text: ["text"],
-    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect", "arc", "wedge", "parabola", "regularPolygon", "roundRect"],
+    drawings: ["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"],
     group: ["g"],
     nonVisible: ["marker", "symbol", "clipPath", "mask"],
     patterns: ["linearGradient", "radialGradient", "pattern"],
@@ -329,8 +305,8 @@
 
   var nodeNames = {};
   var argsMethods = {};
-  Object.keys(NodeNames).forEach(function (key) {
-    return NodeNames[key].forEach(function (nodeName) {
+  Object.keys(Nodes).forEach(function (key) {
+    return Nodes[key].forEach(function (nodeName) {
       nodeNames[nodeName] = nodeName;
 
       argsMethods[nodeName] = function () {
@@ -352,17 +328,17 @@
   };
 
   var nodeChildren = {
-    svg: [NodeNames.svg, NodeNames.defs, NodeNames.header, NodeNames.nonVisible, NodeNames.patterns, NodeNames.group, NodeNames.drawings, NodeNames.text],
-    defs: [NodeNames.header, NodeNames.patterns, NodeNames.nonVisible],
-    filter: [NodeNames.childOfFilter],
-    marker: [NodeNames.group, NodeNames.drawings, NodeNames.text],
-    symbol: [NodeNames.group, NodeNames.drawings, NodeNames.text],
-    clipPath: [NodeNames.group, NodeNames.drawings, NodeNames.text],
-    mask: [NodeNames.group, NodeNames.drawings, NodeNames.text],
-    g: [NodeNames.group, NodeNames.drawings, NodeNames.text],
-    text: [NodeNames.childOfText],
-    linearGradient: [NodeNames.childOfGradients],
-    radialGradient: [NodeNames.childOfGradients]
+    svg: [Nodes.svg, Nodes.defs, Nodes.header, Nodes.nonVisible, Nodes.patterns, Nodes.group, Nodes.drawings, Nodes.text],
+    defs: [Nodes.header, Nodes.patterns, Nodes.nonVisible],
+    filter: [Nodes.childOfFilter],
+    marker: [Nodes.group, Nodes.drawings, Nodes.text],
+    symbol: [Nodes.group, Nodes.drawings, Nodes.text],
+    clipPath: [Nodes.group, Nodes.drawings, Nodes.text],
+    mask: [Nodes.group, Nodes.drawings, Nodes.text],
+    g: [Nodes.group, Nodes.drawings, Nodes.text],
+    text: [Nodes.childOfText],
+    linearGradient: [Nodes.childOfGradients],
+    radialGradient: [Nodes.childOfGradients]
   };
   Object.keys(nodeChildren).forEach(function (key) {
     nodeChildren[key] = nodeChildren[key].reduce(function (a, b) {
@@ -371,17 +347,17 @@
   });
 
   var elemAttr = {};
-  NodeNames.drawings.forEach(function (key) {
-    elemAttr[key] = [attributes[key], attributes.general];
-  });
-  NodeNames.childOfFilter.forEach(function (key) {
+  Nodes.childOfFilter.forEach(function (key) {
     elemAttr[key] = [attributes.effects];
   });
-  NodeNames.childOfGradients.forEach(function (key) {
+  Nodes.childOfGradients.forEach(function (key) {
     elemAttr[key] = [attributes.gradient];
   });
-  NodeNames.childOfText.forEach(function (key) {
+  Nodes.childOfText.forEach(function (key) {
     elemAttr[key] = [attributes.general, attributes.text];
+  });
+  Nodes.drawings.forEach(function (key) {
+    elemAttr[key] = [attributes.general, attributes[key] !== undefined ? attributes[key] : []];
   });
   elemAttr.svg = [attributes.general];
   elemAttr.defs = [attributes.general];
@@ -399,243 +375,20 @@
     }, []);
   });
 
-  var cdata$1 = function cdata(textContent) {
-    return new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
-  };
-
-  var removeChildren = function removeChildren(parent) {
-    while (parent.lastChild) {
-      parent.removeChild(parent.lastChild);
-    }
-  };
-
-  function vkXML (text, step) {
-    var ar = text.replace(/>\s{0,}</g, "><").replace(/</g, "~::~<").replace(/\s*xmlns\:/g, "~::~xmlns:").split("~::~");
-    var len = ar.length;
-    var inComment = false;
-    var deep = 0;
-    var str = "";
-    var space = step != null && typeof step === "string" ? step : "\t";
-    var shift = ["\n"];
-
-    for (var si = 0; si < 100; si += 1) {
-      shift.push(shift[si] + space);
-    }
-
-    for (var ix = 0; ix < len; ix += 1) {
-      if (ar[ix].search(/<!/) > -1) {
-        str += shift[deep] + ar[ix];
-        inComment = true;
-
-        if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1 || ar[ix].search(/!DOCTYPE/) > -1) {
-          inComment = false;
-        }
-      } else if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1) {
-        str += ar[ix];
-        inComment = false;
-      } else if (/^<\w/.exec(ar[ix - 1]) && /^<\/\w/.exec(ar[ix]) && /^<[\w:\-\.\,]+/.exec(ar[ix - 1]) == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace("/", "")) {
-        str += ar[ix];
-
-        if (!inComment) {
-          deep -= 1;
-        }
-      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) === -1 && ar[ix].search(/\/>/) === -1) {
-        str = !inComment ? str += shift[deep++] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
-        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/<\//) > -1) {
-        str = !inComment ? str += shift[--deep] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/\/>/) > -1) {
-        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
-      } else if (ar[ix].search(/<\?/) > -1) {
-        str += shift[deep] + ar[ix];
-      } else if (ar[ix].search(/xmlns\:/) > -1 || ar[ix].search(/xmlns\=/) > -1) {
-        str += shift[deep] + ar[ix];
-      } else {
-        str += ar[ix];
+  var DOM = {
+    removeChildren: function removeChildren(element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
       }
-    }
-
-    return str[0] === "\n" ? str.slice(1) : str;
-  }
-
-  var done = function done(svg, callback) {
-    if (callback != null) {
-      callback(svg);
-    }
-
-    return svg;
-  };
-
-  var load = function load(input, callback) {
-    if (_typeof(input) === map.string || input instanceof String) {
-      var xml = new win.DOMParser().parseFromString(input, "text/xml");
-      var parserErrors = xml.getElementsByTagName("parsererror");
-      return parserErrors.length === 0 ? done(xml.documentElement, callback) : parserErrors[0];
-    }
-
-    if (input instanceof win.Document) {
-      return done(input);
-    }
-  };
-
-  var SAVE_OPTIONS = function SAVE_OPTIONS() {
-    return {
-      output: map.string,
-      windowStyle: false,
-      filename: "image.svg"
-    };
-  };
-
-  var save = function save(svg, options) {
-    if (_typeof(options) !== map.object || options === null) {
-      options = SAVE_OPTIONS();
-    }
-
-    var source = new win.XMLSerializer().serializeToString(svg);
-    var formattedString = vkXML(source);
-    return options.output === "svg" ? svg : formattedString;
-  };
-
-  var BACKGROUND_CLASS = "svg-background-rectangle";
-
-  var getFrame = function getFrame(element) {
-    var viewBox = getViewBox(element);
-
-    if (viewBox !== undefined) {
-      return viewBox;
-    }
-
-    if (_typeof(element.getBoundingClientRect) === map["function"]) {
-      var rr = element.getBoundingClientRect();
-      return [rr.x, rr.y, rr.width, rr.height];
-    }
-
-    return Array(4).fill(undefined);
-  };
-
-  var setSize = function setSize(element) {
-    for (var _len = arguments.length, a = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      a[_key - 1] = arguments[_key];
-    }
-
-    var args = a.filter(function (t) {
-      return _typeof(t) === map.number;
-    });
-
-    switch (args.length) {
-      case 2:
-        setViewBox.apply(void 0, [element, 0, 0].concat(_toConsumableArray(args)));
-        break;
-
-      case 4:
-        setViewBox.apply(void 0, [element].concat(_toConsumableArray(args)));
-        break;
-    }
-
-    return element;
-  };
-
-  var background = function background(element, color) {
-    var paintOverflow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-    if (paintOverflow === true) {
-      var parent = element.parentElement;
-
+    },
+    appendTo: function appendTo(element, parent) {
       if (parent != null) {
-        parent.setAttribute("background-color", color);
+        parent.appendChild(element);
       }
     }
-
-    var backRect = Array.from(element.childNodes).filter(function (child) {
-      return child.getAttribute(map["class"]) === BACKGROUND_CLASS;
-    }).shift();
-
-    if (backRect == null) {
-      backRect = this.Prepare(this.Constructor.apply(this, ["rect"].concat(_toConsumableArray(getFrame(element)))));
-      backRect.setAttribute(map["class"], BACKGROUND_CLASS);
-      element.insertBefore(backRect, element.firstChild);
-    }
-
-    backRect.setAttribute("fill", color);
-    return backRect;
-  };
-
-  var findStyleSheet = function findStyleSheet(element) {
-    var styles = element.getElementsByTagName(map.style);
-    return styles.length === 0 ? undefined : styles[0];
-  };
-
-  var stylesheet = function stylesheet(element, textContent) {
-    var styleSection = findStyleSheet(element);
-
-    if (styleSection == null) {
-      styleSection = this.Prepare(this.Constructor(map.style));
-      element.insertBefore(styleSection, element.firstChild);
-    }
-
-    styleSection.textContent = "";
-    styleSection.appendChild(cdata$1(textContent));
-    return styleSection;
-  };
-
-  var replaceWithSVG = function replaceWithSVG(oldSVG, newSVG) {
-    Array.from(oldSVG.attributes).forEach(function (attr) {
-      return oldSVG.removeAttribute(attr.name);
-    });
-    removeChildren(oldSVG);
-    Array.from(newSVG.childNodes).forEach(function (node) {
-      newSVG.removeChild(node);
-      oldSVG.appendChild(node);
-    });
-    Array.from(newSVG.attributes).forEach(function (attr) {
-      return oldSVG.setAttribute(attr.name, attr.value);
-    });
   };
 
   var methods = {};
-
-  methods.getWidth = function (element) {
-    return getFrame(element)[2];
-  };
-
-  methods.getHeight = function (element) {
-    return getFrame(element)[3];
-  };
-
-  methods.size = function () {
-    return setSize.apply(void 0, arguments);
-  };
-
-  methods.background = function () {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-
-    return background.call.apply(background, [this].concat(args));
-  };
-
-  methods.stylesheet = function () {
-    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
-    }
-
-    return stylesheet.call.apply(stylesheet, [this].concat(args));
-  };
-
-  methods.save = save;
-
-  methods.load = function (element, data, callback) {
-    return load(data, function (svg, error) {
-      if (svg != null) {
-        replaceWithSVG(element, svg);
-      }
-
-      if (callback != null) {
-        callback(element, error);
-      }
-    });
-  };
 
   var pathCommands = {
     m: "move",
@@ -653,12 +406,6 @@
     var s = pathCommands[key];
     pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
   });
-  var methods$1 = {};
-
-  methods$1.clear = function (el) {
-    el.setAttribute("d", "");
-    return el;
-  };
 
   var getD = function getD(el) {
     var attr = el.getAttribute("d");
@@ -672,6 +419,13 @@
 
     var params = flatten(args).join(",");
     el.setAttribute("d", "".concat(getD(el)).concat(command).concat(params));
+    return el;
+  };
+
+  var methods$1 = {};
+
+  methods$1.clear = function (el) {
+    el.setAttribute("d", "");
     return el;
   };
 
@@ -725,29 +479,32 @@
       args[_key2 - 1] = arguments[_key2];
     }
 
-    el.setAttribute("d", pointsString.apply(void 0, _toConsumableArray(findCoordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))))));
+    el.setAttribute("d", pointsString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))))));
     return el;
   };
+
   var setLinePoints = function setLinePoints(el) {
     for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
       args[_key3 - 1] = arguments[_key3];
     }
 
-    findCoordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))).slice(0, 4).forEach(function (n, i) {
+    coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))).slice(0, 4).forEach(function (n, i) {
       return el.setAttribute(attributes.line[i], n);
     });
     return el;
   };
+
   var setRadius = function setRadius(el, r) {
     el.setAttribute("r", r);
     return el;
   };
+
   var setCenter = function setCenter(el) {
     for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
       args[_key4 - 1] = arguments[_key4];
     }
 
-    findCoordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))).slice(0, 2).forEach(function (n, i) {
+    coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))).slice(0, 2).forEach(function (n, i) {
       return el.setAttribute(attributes.circle[i], n);
     });
     return el;
@@ -759,9 +516,32 @@
     return el;
   };
 
-  var nodeMethods = {
-    svg: methods,
-    path: methods$1,
+  var setSize = function setSize(element) {
+    for (var _len5 = arguments.length, a = new Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+      a[_key5 - 1] = arguments[_key5];
+    }
+
+    var args = a.filter(function (t) {
+      return _typeof(t) === K.number;
+    });
+
+    switch (args.length) {
+      case 2:
+        setViewBox.apply(void 0, [element, 0, 0].concat(_toConsumableArray(args)));
+        break;
+
+      case 4:
+        setViewBox.apply(void 0, [element].concat(_toConsumableArray(args)));
+        break;
+    }
+
+    return element;
+  };
+
+  var Set = {
+    svg: {
+      setSize: setSize
+    },
     line: {
       setPoints: setLinePoints
     },
@@ -780,14 +560,42 @@
       setTextContent: setTextContent
     }
   };
-  [NodeNames.text, NodeNames.drawings, NodeNames.group, NodeNames.svg].forEach(function (category) {
-    return category.forEach(function (node) {
-      if (nodeMethods[node] === undefined) {
-        nodeMethods[node] = {};
-      }
 
+  var nodeMethods = {
+    svg: methods,
+    path: methods$1
+  };
+
+  var makeExist = function makeExist(obj, key) {
+    if (obj[key] === undefined) {
+      obj[key] = {};
+    }
+  };
+
+  Object.keys(Set).forEach(function (nodeName) {
+    makeExist(nodeMethods, nodeName);
+    Object.assign(nodeMethods[nodeName], Set[nodeName]);
+  });
+  [Nodes.text, Nodes.drawings, Nodes.group, Nodes.svg].forEach(function (category) {
+    return category.forEach(function (node) {
+      makeExist(nodeMethods, node);
       Object.keys(transforms).forEach(function (trans) {
         nodeMethods[node][trans] = transforms[trans];
+      });
+    });
+  });
+  [Nodes.text, Nodes.drawings, Nodes.group, Nodes.svg, Nodes.patterns, Nodes.nonVisible, Nodes.header, Nodes.defs].forEach(function (category) {
+    return category.forEach(function (node) {
+      makeExist(nodeMethods, node);
+      Object.keys(DOM).forEach(function (methodName) {
+        nodeMethods[node][methodName] = function (el) {
+          for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            args[_key - 1] = arguments[_key];
+          }
+
+          DOM[methodName].apply(DOM, [el].concat(args));
+          return el;
+        };
       });
     });
   });
@@ -798,8 +606,8 @@
       methods$2[nodeName][method] = function (el) {
         var _nodeMethods$nodeName;
 
-        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          args[_key - 1] = arguments[_key];
+        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+          args[_key2 - 1] = arguments[_key2];
         }
 
         return (_nodeMethods$nodeName = nodeMethods[nodeName][method]).call.apply(_nodeMethods$nodeName, [methods$2, el].concat(args));
@@ -838,13 +646,13 @@
       Object.keys(methods$2[nodeName]).forEach(function (methodName) {
         Object.defineProperty(element, methodName, {
           value: function value() {
-            var _Methods$nodeName;
+            var _AttributeMethods$nod;
 
             for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
               args[_key] = arguments[_key];
             }
 
-            return (_Methods$nodeName = methods$2[nodeName])[methodName].apply(_Methods$nodeName, [element].concat(args));
+            return (_AttributeMethods$nod = methods$2[nodeName])[methodName].apply(_AttributeMethods$nod, [element].concat(args));
           }
         });
       });
@@ -892,8 +700,8 @@
   };
 
   var elements = {};
-  Object.keys(NodeNames).forEach(function (key) {
-    return NodeNames[key].forEach(function (nodeName) {
+  Object.keys(Nodes).forEach(function (key) {
+    return Nodes[key].forEach(function (nodeName) {
       elements[nodeName] = function () {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];

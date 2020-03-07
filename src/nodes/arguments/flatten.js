@@ -4,11 +4,11 @@
 
 import K from "../../environment/keys";
 
-const isIterable = function (obj) {
+const isIterable = (obj) => {
   return obj != null && typeof obj[Symbol.iterator] === K.function;
 };
 
-const flatten = function (...args) {
+const flatten = (...args) => {
   switch (args.length) {
     case undefined:
     case 0: return args;

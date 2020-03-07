@@ -6,16 +6,14 @@ import findCoordinates from "./coordinates";
 import flatten from "./flatten";
 import K from "../../environment/keys";
 
-const textArguments = function (element, ...args) {
-  const point = findCoordinates(...flatten(...args));
-  const text = args.filter(a => typeof a === K.string);
+const keys = ["x", "y"];
+
+export default (element, ...args) => {
+  findCoordinates(...flatten(...args)).slice(0, 2)
+    .forEach((p, i) => element.setAttribute(keys[i], p));
+  const text = args.filter(a => typeof a === K.string).shift();
   if (text) {
     element.innerHTML = text;
   }
-  if (point.length > 1) {
-    ["x", "y"].forEach((key, i) => element.setAttribute(key, point[i]));
-  }
   return element;
 };
-
-export default textArguments;

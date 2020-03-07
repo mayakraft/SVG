@@ -2,18 +2,23 @@
  * SVG (c) Robby Kraft
  */
 
-import N from "../nodeNames";
+/**
+ * sort elements into each array
+ */
+import N from "./nodes";
 import Attr from "./attributes";
 
 const elemAttr = { };
 
+N.childOfFilter.forEach(key => { elemAttr[key] = [Attr.effects]; });
+N.childOfGradients.forEach(key => { elemAttr[key] = [Attr.gradient]; });
+N.childOfText.forEach(key => { elemAttr[key] = [Attr.general, Attr.text]; });
 // drawing elements
 // takes care of <line>, <circle> type of defintions too, which won't usually
 // manifest as a setter because it's a SVGAnimatedLength
-N.drawings.forEach(key => { elemAttr[key] = [Attr[key], Attr.general]; });
-N.childOfFilter.forEach(key => { elemAttr[key] = [Attr.effects]; });
-N.childOfGradients.forEach(key => { elemAttr[key] = [Attr.gradient]; })
-N.childOfText.forEach(key => { elemAttr[key] = [Attr.general, Attr.text]; })
+N.drawings.forEach(key => {
+  elemAttr[key] = [Attr.general, Attr[key] !== undefined ? Attr[key] : []];
+});
 
 elemAttr.svg = [Attr.general];
 
