@@ -8,6 +8,7 @@ import Transforms from "../view/transforms";
 import NodeNames from "../nodes";
 import Set from "./setters";
 import DOM from "../dom/dom";
+import Debug from "../../environment/debug";
 
 const nodeMethods = {
   svg: SVG,
@@ -53,5 +54,7 @@ Object.keys(nodeMethods).forEach(nodeName => {
     methods[nodeName][method] = (el, ...args) => nodeMethods[nodeName][method].call(methods, el, ...args);
   });
 });
+
+Debug.log(methods);
 
 export default methods;

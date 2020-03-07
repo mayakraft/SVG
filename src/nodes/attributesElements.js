@@ -7,6 +7,7 @@
  */
 import N from "./nodes";
 import Attr from "./attributes";
+import Debug from "../environment/debug";
 
 const elemAttr = { };
 
@@ -48,5 +49,7 @@ elemAttr.radialGradient = [Attr.gradient, Attr.radialGradient];
 Object.keys(elemAttr).forEach(key => {
   elemAttr[key] = elemAttr[key].reduce((a, b) => a.concat(b), []);
 });
+
+Debug.log(elemAttr);
 
 export default elemAttr;

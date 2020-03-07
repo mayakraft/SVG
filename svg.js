@@ -40,14 +40,14 @@
   }
 
   var keys = ["number", "object", "transform", "class", "style", "function", "string", "undefined", "boolean", "path", "svg", "id"];
-  var map = {};
+  var Keys = {};
   keys.forEach(function (key) {
-    return map[key] = key;
+    return Keys[key] = key;
   });
 
-  var isBrowser = (typeof window === "undefined" ? "undefined" : _typeof(window)) !== map.undefined && _typeof(window.document) !== map.undefined;
-  var isNode = (typeof process === "undefined" ? "undefined" : _typeof(process)) !== map.undefined && process.versions != null && process.versions.node != null;
-  var isWebWorker = (typeof self === "undefined" ? "undefined" : _typeof(self)) === map.object && self.constructor && self.constructor.name === "DedicatedWorkerGlobalScope";
+  var isBrowser = (typeof window === "undefined" ? "undefined" : _typeof(window)) !== Keys.undefined && _typeof(window.document) !== Keys.undefined;
+  var isNode = (typeof process === "undefined" ? "undefined" : _typeof(process)) !== Keys.undefined && process.versions != null && process.versions.node != null;
+  var isWebWorker = (typeof self === "undefined" ? "undefined" : _typeof(self)) === Keys.object && self.constructor && self.constructor.name === "DedicatedWorkerGlobalScope";
 
   var htmlString = "<!DOCTYPE html><title> </title>";
 
@@ -72,7 +72,7 @@
   var NS = "http://www.w3.org/2000/svg";
 
   var isIterable = function isIterable(obj) {
-    return obj != null && _typeof(obj[Symbol.iterator]) === map["function"];
+    return obj != null && _typeof(obj[Symbol.iterator]) === Keys["function"];
   };
 
   var flatten = function flatten() {
@@ -86,7 +86,7 @@
         return args;
 
       case 1:
-        return isIterable(args[0]) && _typeof(args[0]) !== map.string ? flatten.apply(void 0, _toConsumableArray(args[0])) : [args[0]];
+        return isIterable(args[0]) && _typeof(args[0]) !== Keys.string ? flatten.apply(void 0, _toConsumableArray(args[0])) : [args[0]];
 
       default:
         return Array.from(args).map(function (a) {
@@ -102,30 +102,22 @@
       args[_key] = arguments[_key];
     }
 
-    var numbers = args.filter(function (a) {
-      return _typeof(a) === map.number;
-    });
-
-    if (numbers.length) {
-      return numbers;
-    }
-
-    var objects = args.filter(function (a) {
-      return _typeof(a) === map.object;
-    });
-    var map$1 = objects.map(function (el) {
-      if (_typeof(el.x) === map.number) return [el.x, el.y];
-      if (_typeof(el[0]) === map.number) return [el[0], el[1]];
+    return args.filter(function (a) {
+      return _typeof(a) === Keys.number;
+    }).concat(args.filter(function (a) {
+      return _typeof(a) === Keys.object;
+    }).map(function (el) {
+      if (_typeof(el.x) === Keys.number) return [el.x, el.y];
+      if (_typeof(el[0]) === Keys.number) return [el[0], el[1]];
       return undefined;
-    });
-    return map$1.filter(function (a) {
+    }).filter(function (a) {
       return a !== undefined;
     }).reduce(function (a, b) {
       return a.concat(b);
-    }, []);
+    }, []));
   });
 
-  var setViewBox$1 = function setViewBox(svg, x, y, width, height) {
+  var setViewBox = function setViewBox(svg, x, y, width, height) {
     var padding = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
     var scale = 1.0;
     var d = width / scale - width;
@@ -152,17 +144,17 @@
 
     switch (numbers.length) {
       case 4:
-        setViewBox$1(element, numbers[0], numbers[1], numbers[2], numbers[3]);
+        setViewBox(element, numbers[0], numbers[1], numbers[2], numbers[3]);
 
       case 2:
-        setViewBox$1(element, 0, 0, numbers[0], numbers[1]);
+        setViewBox(element, 0, 0, numbers[0], numbers[1]);
     }
 
     var parent = argsNoNull.filter(function (arg) {
       return arg instanceof ElementConstructor;
     }).shift();
 
-    if (parent != null && _typeof(parent.appendChild) === map["function"]) {
+    if (parent != null && _typeof(parent.appendChild) === Keys["function"]) {
       parent.appendChild(element);
     }
 
@@ -179,7 +171,7 @@
       return element.setAttribute(keys$1[i], p);
     });
     var text = args.filter(function (a) {
-      return _typeof(a) === map.string;
+      return _typeof(a) === Keys.string;
     }).shift();
 
     if (text) {
@@ -199,9 +191,9 @@
     }
 
     var idString = args.filter(function (a) {
-      return _typeof(a) === map.string || a instanceof String;
+      return _typeof(a) === Keys.string || a instanceof String;
     }).shift();
-    element.setAttribute(map.id, idString != null ? idString : UUID());
+    element.setAttribute(Keys.id, idString != null ? idString : UUID());
     return element;
   });
 
@@ -303,6 +295,10 @@
     svg: ["svg"]
   };
 
+  var Debug = {
+    log: function log() {}
+  };
+
   var nodeNames = {};
   var argsMethods = {};
   Object.keys(Nodes).forEach(function (key) {
@@ -318,6 +314,8 @@
       };
     });
   });
+  Debug.log(nodeNames);
+  Debug.log(argsMethods);
 
   var constructor = function constructor(nodeName) {
     for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
@@ -374,6 +372,7 @@
       return a.concat(b);
     }, []);
   });
+  Debug.log(elemAttr);
 
   var DOM = {
     removeChildren: function removeChildren(element) {
@@ -440,13 +439,13 @@
   });
 
   var getTransform = function getTransform(element) {
-    var trans = element.getAttribute(map.transform);
+    var trans = element.getAttribute(Keys.transform);
     return trans == null ? [] : trans.split(" ");
   };
 
   var transforms = {
     clearTransforms: function clearTransforms(el) {
-      el.setAttribute(map.transform, "");
+      el.setAttribute(Keys.transform, "");
       return el;
     }
   };
@@ -459,7 +458,7 @@
       }
 
       transform.push("".concat(key, "(").concat(args.join(", "), ")"));
-      element.setAttribute(map.transform, transform.join(" "));
+      element.setAttribute(Keys.transform, transform.join(" "));
       return element;
     };
   });
@@ -516,22 +515,20 @@
     return el;
   };
 
-  var setSize = function setSize(element) {
-    for (var _len5 = arguments.length, a = new Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
-      a[_key5 - 1] = arguments[_key5];
+  var size = function size(element) {
+    for (var _len5 = arguments.length, args = new Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+      args[_key5 - 1] = arguments[_key5];
     }
 
-    var args = a.filter(function (t) {
-      return _typeof(t) === K.number;
-    });
+    var numbers = coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)));
 
-    switch (args.length) {
+    switch (numbers.length) {
       case 2:
-        setViewBox.apply(void 0, [element, 0, 0].concat(_toConsumableArray(args)));
+        setViewBox.apply(void 0, [element, 0, 0].concat(_toConsumableArray(numbers)));
         break;
 
       case 4:
-        setViewBox.apply(void 0, [element].concat(_toConsumableArray(args)));
+        setViewBox.apply(void 0, [element].concat(_toConsumableArray(numbers)));
         break;
     }
 
@@ -540,7 +537,7 @@
 
   var Set = {
     svg: {
-      setSize: setSize
+      size: size
     },
     line: {
       setPoints: setLinePoints
@@ -614,6 +611,7 @@
       };
     });
   });
+  Debug.log(methods$2);
 
   var Attributes = {
     svg: {
@@ -636,13 +634,13 @@
     methods$2.Constructor = constructor;
     var nodeName = element.nodeName;
 
-    if (_typeof(Attributes[nodeName]) === map.object && Attributes[nodeName] !== null) {
+    if (_typeof(Attributes[nodeName]) === Keys.object && Attributes[nodeName] !== null) {
       Object.keys(Attributes[nodeName]).forEach(function (key) {
         return element.setAttribute(key, Attributes[nodeName][key]);
       });
     }
 
-    if (_typeof(methods$2[nodeName]) === map.object && methods$2[nodeName] !== null) {
+    if (_typeof(methods$2[nodeName]) === Keys.object && methods$2[nodeName] !== null) {
       Object.keys(methods$2[nodeName]).forEach(function (methodName) {
         Object.defineProperty(element, methodName, {
           value: function value() {
@@ -658,7 +656,7 @@
       });
     }
 
-    if (_typeof(nodeChildren[nodeName]) === map.object && nodeChildren[nodeName] !== null) {
+    if (_typeof(nodeChildren[nodeName]) === Keys.object && nodeChildren[nodeName] !== null) {
       nodeChildren[nodeName].forEach(function (childTag) {
         Object.defineProperty(element, childTag, {
           value: function value() {
@@ -674,7 +672,7 @@
       });
     }
 
-    if (_typeof(elemAttr[nodeName]) === map.object && elemAttr[nodeName] !== null) {
+    if (_typeof(elemAttr[nodeName]) === Keys.object && elemAttr[nodeName] !== null) {
       elemAttr[nodeName].map(function (attribute) {
         return {
           a: attribute,
@@ -711,6 +709,7 @@
       };
     });
   });
+  Debug.log(elements);
 
   var initialize = function initialize(svg) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -718,7 +717,7 @@
     }
 
     args.filter(function (arg) {
-      return _typeof(arg) === map["function"];
+      return _typeof(arg) === Keys["function"];
     }).forEach(function (func) {
       return func.call(svg, svg);
     });
@@ -729,7 +728,7 @@
       args[_key2] = arguments[_key2];
     }
 
-    var svg = prepare(constructor.apply(void 0, [map.svg].concat(args)));
+    var svg = prepare(constructor.apply(void 0, [Keys.svg].concat(args)));
 
     if (win.document.readyState === "loading") {
       win.document.addEventListener("DOMContentLoaded", function () {

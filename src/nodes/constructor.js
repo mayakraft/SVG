@@ -7,6 +7,7 @@ import svgNS from "../environment/namespace";
 import Args from "./arguments/index";
 // import CustomNodes from "./custom/index";
 import Nodes from "./nodes";
+import Debug from "../environment/debug";
 
 const nodeNames = {};
 const argsMethods = {};
@@ -20,6 +21,9 @@ Object.keys(Nodes).forEach(key => Nodes[key].forEach(nodeName => {
 //   nodeNames[key] = CustomNodes[key].tagName;
 //   argsMethods[key] = CustomNodes[key].arguments;
 // })
+
+Debug.log(nodeNames);
+Debug.log(argsMethods);
 
 const constructor = function (nodeName, ...args) {
   return Args(

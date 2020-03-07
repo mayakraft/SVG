@@ -5,6 +5,7 @@
 import Constructor from "./constructor";
 import Nodes from "./nodes";
 import Prepare from "./prepare";
+import Debug from "../environment/debug";
 
 const elements = {};
 
@@ -16,6 +17,8 @@ Object.keys(Nodes).forEach(key => Nodes[key]
       return Prepare(Constructor(nodeName, ...args));
     }
   }));
+
+Debug.log(elements);
 
 // the placeholder constructor. create any element type in the SVG namespace
 // const createElement = function (tagName) {

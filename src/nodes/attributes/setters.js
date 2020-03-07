@@ -1,6 +1,7 @@
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
 import attributes from "../attributes";
+import { setViewBox } from "../view/viewBox";
 
 // const pointType = el => {
 //   if (typeof el === "number") { return "number"; }
@@ -49,11 +50,11 @@ const setTextContent = (el, text) => {
 // set the viewbox size
 // "size" refers viewbox whenever possible
 // size on the DOM, the "width" attribute, you can handle it yourself
-const setSize = function (element, ...a) {
-  const args = a.filter(t => typeof t === K.number);
-  switch (args.length) {
-    case 2: setViewBox(element, 0, 0, ...args); break;
-    case 4: setViewBox(element, ...args); break;
+const size = (element, ...args) => {
+  const numbers = coordinates(...flatten(...args));
+  switch (numbers.length) {
+    case 2: setViewBox(element, 0, 0, ...numbers); break;
+    case 4: setViewBox(element, ...numbers); break;
     default: break;
   }
   return element;
@@ -61,7 +62,7 @@ const setSize = function (element, ...a) {
 
 export default {
   svg: {
-    setSize: setSize,
+    size: size,
   },
   line: {
     setPoints: setLinePoints

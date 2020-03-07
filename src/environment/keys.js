@@ -18,8 +18,8 @@ const keys = [
   "id",
 ];
 
-const map = {};
+const Keys = {};
 
-keys.forEach(key => map[key] = key);
+keys.forEach(key => Keys[key] = key);
 
-export default map;
+export default Keys;
