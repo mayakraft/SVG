@@ -8,7 +8,7 @@
  */
 import window from "../../environment/window";
 import flatten from "./flatten";
-import findCoordinates from "./coordinates";
+import coordinates from "./coordinates";
 
 import svgArguments from "./svg";
 import textArguments from "./text";
@@ -23,9 +23,9 @@ const polyString = (...numbers) => Array
 
 const toArray = (nodeName, ...args) => {
   switch (nodeName) {
-    case "line": return findCoordinates(...flatten(...args));
+    case "line": return coordinates(...flatten(...args));
     case "polyline":
-    case "polygon": return [polyString(...findCoordinates(...flatten(...args)))];
+    case "polygon": return [polyString(...coordinates(...flatten(...args)))];
     default: break;
   }
   return args;

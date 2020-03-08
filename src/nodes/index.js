@@ -2,10 +2,10 @@
  * SVG (c) Robby Kraft
  */
 
+import Debug from "../environment/debug";
 import Constructor from "./constructor";
 import Nodes from "./nodes";
 import Prepare from "./prepare";
-import Debug from "../environment/debug";
 
 const elements = {};
 

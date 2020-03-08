@@ -4,23 +4,19 @@
 
 import K from "../../environment/keys";
 
-const getTransform = (element) => {
-  const trans = element.getAttribute(K.transform);
-  return (trans == null ? [] : trans.split(" "));
-};
-
 const transforms = {
-  clearTransforms: (el) => { el.setAttribute(K.transform, ""); return el; }
+  clearTransform: (el) => { el.removeAttribute(K.transform); return el; }
 };
 
-["translate", "rotate", "scale"].forEach(key => {
+["translate", "rotate", "scale", "matrix"].forEach(key => {
   transforms[key] = function (element, ...args) {
-    const transform = getTransform(element);
-    transform.push(`${key}(${args.join(", ")})`);
-    element.setAttribute(K.transform, transform.join(" "));
+    element.setAttribute(K.transform, [
+        element.getAttribute(K.transform),
+        `${key}(${args.join(" ")})`
+      ].filter(a => a != null).join(" ")
+    );
     return element;
   };
 });
 
 export default transforms;
-

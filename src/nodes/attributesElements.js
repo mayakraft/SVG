@@ -5,28 +5,36 @@
 /**
  * sort elements into each array
  */
+import Debug from "../environment/debug";
 import N from "./nodes";
 import Attr from "./attributes";
-import Debug from "../environment/debug";
 
 const elemAttr = { };
 
-N.childOfFilter.forEach(key => { elemAttr[key] = [Attr.effects]; });
-N.childOfGradients.forEach(key => { elemAttr[key] = [Attr.gradient]; });
-N.childOfText.forEach(key => { elemAttr[key] = [Attr.general, Attr.text]; });
+const gen = [Attr.general];
+const genText = gen.concat([Attr.text]);
+const eff = [Attr.effects];
+const grad = [Attr.gradient];
+
+// childOfFilter, childOfGradients, childOfText
+N.cF.forEach(key => { elemAttr[key] = eff; });
+N.cG.forEach(key => { elemAttr[key] = grad; });
+N.cT.forEach(key => { elemAttr[key] = genText; });
 // drawing elements
 // takes care of <line>, <circle> type of defintions too, which won't usually
 // manifest as a setter because it's a SVGAnimatedLength
-N.drawings.forEach(key => {
-  elemAttr[key] = [Attr.general, Attr[key] !== undefined ? Attr[key] : []];
+// visible drawings
+
+N.v.forEach(key => {
+  elemAttr[key] = gen.concat(Attr[key] !== undefined ? [Attr[key]] : []);
 });
 
-elemAttr.svg = [Attr.general];
+elemAttr.svg = gen;
 
 // NON VISIBLE
-elemAttr.defs = [Attr.general];
+elemAttr.defs = gen;
 // elemAttr.desc: [],
-elemAttr.filter = [Attr.effects];
+elemAttr.filter = eff;
 // elemAttr.metadata: [],
 // elemAttr.style: [cdata], // ability to create a cdata
 // elemAttr.script: [],
@@ -39,12 +47,12 @@ elemAttr.clipPath = [Attr.clipPath];
 elemAttr.pattern = [Attr.pattern];
 
 // VISIBLE
-elemAttr.g = [Attr.general];
+elemAttr.g = gen;
 // text
-elemAttr.text = [Attr.general, Attr.text];
+elemAttr.text = genText;
 // gradients
-elemAttr.linearGradient = [Attr.gradient, Attr.linearGradient];
-elemAttr.radialGradient = [Attr.gradient, Attr.radialGradient];
+elemAttr.linearGradient = grad.concat([Attr.linearGradient]);
+elemAttr.radialGradient = grad.concat([Attr.radialGradient]);
 
 Object.keys(elemAttr).forEach(key => {
   elemAttr[key] = elemAttr[key].reduce((a, b) => a.concat(b), []);

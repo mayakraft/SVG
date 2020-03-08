@@ -2,6 +2,8 @@
  * SVG (c) Robby Kraft
  */
 
+import vkXML from "../../../include/vkbeautify-xml";
+import window from "../../environment/window";
 import cdata from "../../environment/cdata";
 import K from "../../environment/keys";
 // import Controls from "../../events/controls";
@@ -12,11 +14,21 @@ import {
 } from "../view/viewBox";
 import Load from "../../file/load";
 import Save from "../../file/save";
+import flatten from "../arguments/flatten";
+import coordinates from "../arguments/coordinates";
 
-// i prevented circular dependency by passing a pointer to the constructor/prepare
-// throught 'this', every function is bound.
-
-const BACKGROUND_CLASS = "svg-background-rectangle";
+// set the viewbox size
+// "size" refers viewbox whenever possible
+// size on the DOM, the "width" attribute, you can handle it yourself
+const size = (element, a, b, c, d) => {
+  const numbers = coordinates(...flatten(a, b, c, d));
+  switch (numbers.length) {
+    case 2: setViewBox(element, 0, 0, ...numbers); break;
+    case 4: setViewBox(element, ...numbers); break;
+    default: break;
+  }
+  return element;
+};
 
 const getFrame = function (element) {
   const viewBox = getViewBox(element);
@@ -30,20 +42,18 @@ const getFrame = function (element) {
   return Array(4).fill(undefined);
 };
 
+const bgClass = "svg-background-rectangle";
 
-const background = function (element, color, paintOverflow = false) {
-  if (paintOverflow === true) {
-    const parent = element.parentElement;
-    if (parent != null) {
-      parent.setAttribute("background-color", color);
-    }
-  }
+// i prevented circular dependency by passing a pointer to the constructor/prepare
+// throught 'this', every function is bound.
+
+const background = function (element, color) {
   let backRect = Array.from(element.childNodes)
-    .filter(child => child.getAttribute(K.class) === BACKGROUND_CLASS)
+    .filter(child => child.getAttribute(K.class) === bgClass)
     .shift();
   if (backRect == null) {
     backRect = this.Prepare(this.Constructor("rect", ...getFrame(element)));
-    backRect.setAttribute(K.class, BACKGROUND_CLASS);
+    backRect.setAttribute(K.class, bgClass);
     element.insertBefore(backRect, element.firstChild);
   }
   backRect.setAttribute("fill", color);
@@ -66,42 +76,73 @@ const stylesheet = function (element, textContent) {
   return styleSection;
 };
 
-const replaceWithSVG = function (oldSVG, newSVG) {
-  if (newSVG == null) { return; }
-  // Part 1: reset old SVG
-  // a. clear attributes
-  Array.from(oldSVG.attributes)
-    .forEach(attr => oldSVG.removeAttribute(attr.name));
-  // b. clear contents
-  DOM.removeChildren(oldSVG);
-  // Part 2: copy contents over
-  Array.from(newSVG.childNodes).forEach((node) => {
-    newSVG.removeChild(node);
-    oldSVG.appendChild(node);
+const clear = function (element) {
+  Array.from(element.attributes)
+    .filter(a => a !== "xmlns")
+    .forEach(attr => element.removeAttribute(attr.name));
+  DOM.removeChildren(element);
+};
+
+const assignSVG = function (target, source) {
+  if (source == null) { return; }
+  clear(target);
+  Array.from(source.childNodes).forEach((node) => {
+    source.removeChild(node);
+    target.appendChild(node);
   });
-  Array.from(newSVG.attributes)
-    .forEach(attr => oldSVG.setAttribute(attr.name, attr.value));
+  Array.from(source.attributes)
+    .forEach(attr => target.setAttribute(attr.name, attr.value));
+};
+
+
+const done = (svg, callback) => {
+  if (callback != null) { callback(svg); }
+  return svg;
+};
+
+const load = function (input, callback) {
+  if (typeof input === K.string || input instanceof String) {
+    const xml = (new window.DOMParser()).parseFromString(input, "text/xml");
+    const parserErrors = xml.getElementsByTagName("parsererror");
+    return (parserErrors.length === 0)
+      ? done(xml.documentElement, callback)
+      : parserErrors[0];
+  }
+  if (input.childNodes != null) {
+    return done(input, callback);
+  }
 };
 
 // these will end up as methods on the <svg> nodes
-const methods = { };
+const svg = {
+  clear: clear,
+  size: size,
+  background: background,
+  getWidth: el => getFrame(el)[2],
+  getHeight: el => getFrame(el)[3],
+  stylesheet: function (text) { return stylesheet.call(this, text); },
+  save: (el, options = {}) => (options.output === "svg"
+    ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
+  load: (el, data, callback) => assignSVG(el, load(data, callback))
+};
+
 
 /*
-methods.getWidth = function (element) { return getFrame(element)[2]; }
-methods.getHeight = function (element) { return getFrame(element)[3]; }
-methods.size = function (...args) { return setSize(...args); }
-methods.background = function (...args) { return background.call(this, ...args); }
-methods.stylesheet = function (...args) { return stylesheet.call(this, ...args); }
-// methods.controls = (element, ...args) => Controls(element, ...args);
+svg.getWidth = function (element) { return getFrame(element)[2]; }
+svg.getHeight = function (element) { return getFrame(element)[3]; }
+svg.size = function (...args) { return setSize(...args); }
+svg.background = function (...args) { return background.call(this, ...args); }
+svg.stylesheet = function (...args) { return stylesheet.call(this, ...args); }
+// svg.controls = (element, ...args) => Controls(element, ...args);
 
-methods.save = Save;
-methods.load = (element, ...args) => replaceWithSVG(element, Load(...args));
-// methods.load = function (element, data, callback) {
+svg.save = Save;
+svg.load = (element, ...args) => assignSVG(element, Load(...args));
+// svg.load = function (element, data, callback) {
 //   return Load(data, (svg, error) => {
-//     if (svg != null) { replaceWithSVG(element, svg); }
+//     if (svg != null) { assignSVG(element, svg); }
 //     if (callback != null) { callback(element, error); }
 //   });
 // };
 */
 
-export default methods;
+export default svg;

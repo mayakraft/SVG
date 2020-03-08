@@ -2,12 +2,12 @@
  * SVG (c) Robby Kraft
  */
 
+import Debug from "../environment/debug";
 import window from "../environment/window";
 import svgNS from "../environment/namespace";
 import Args from "./arguments/index";
 // import CustomNodes from "./custom/index";
 import Nodes from "./nodes";
-import Debug from "../environment/debug";
 
 const nodeNames = {};
 const argsMethods = {};

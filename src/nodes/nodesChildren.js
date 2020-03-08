@@ -4,27 +4,30 @@
 
 import N from "./nodes";
 
+const headerStuff = [N.h, N.p, N.i];
+const drawingShapes = [N.g, N.v, N.t];
+
 const nodeChildren = {
   // removed non visible
-  svg: [N.svg, N.defs, N.header, N.nonVisible, N.patterns, N.group, N.drawings, N.text],
+  svg: [N.s, N.d].concat(headerStuff).concat(drawingShapes),
   // NON VISIBLE
-  defs: [N.header, N.patterns, N.nonVisible],
+  defs: headerStuff,
   // desc: [],
-  filter: [N.childOfFilter],
+  filter: [N.cF],
   // metadata: [],
   // style: [],
   // script: [],
   // title: [],
   // view: [],
-  marker: [N.group, N.drawings, N.text],
-  symbol: [N.group, N.drawings, N.text],
-  clipPath: [N.group, N.drawings, N.text],
-  mask: [N.group, N.drawings, N.text],
+  marker: drawingShapes,
+  symbol: drawingShapes,
+  clipPath: drawingShapes,
+  mask: drawingShapes,
   // VISIBLE
-  g: [N.group, N.drawings, N.text],
-  text: [N.childOfText],
-  linearGradient: [N.childOfGradients],
-  radialGradient: [N.childOfGradients]
+  g: drawingShapes,
+  text: [N.cT],
+  linearGradient: [N.cG],
+  radialGradient: [N.cG]
 };
 
 Object.keys(nodeChildren).forEach(key => {

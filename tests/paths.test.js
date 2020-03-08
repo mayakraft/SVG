@@ -3,13 +3,17 @@ const SVG = require("../svg");
 test("path", () => {
   const p = SVG.path();
   p.Move(20, 20);
-  expect(p.getAttribute("d")).toBe("M20,20");
+  expect(p.getAttribute("d")).toBe("M20 20");
   p.line(50, 50);
-  expect(p.getAttribute("d")).toBe("M20,20l50,50");
+  expect(p.getAttribute("d")).toBe("M20 20l50 50");
   p.vertical(30);
-  expect(p.getAttribute("d")).toBe("M20,20l50,50v30");
+  expect(p.getAttribute("d")).toBe("M20 20l50 50v30");
   p.Curve(50, 0, 0, 50, 10, 10);
-  expect(p.getAttribute("d")).toBe("M20,20l50,50v30C50,0,0,50,10,10");
+  expect(p.getAttribute("d")).toBe("M20 20l50 50v30C50 0 0 50 10 10");
+  p.clear();
+  // specification around getAttribute when it doesn't exist is "" or null
+  const clearedD = p.getAttribute("d");
+  expect(clearedD === "" || clearedD === null).toBe(true);
 })
 
 // test("bezier", () => {

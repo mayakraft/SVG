@@ -3,14 +3,64 @@
  */
 
 export default {
-  childOfText: [
+  s: [  // svg
+    "svg",
+  ],
+  d: [  // defs
+    "defs",      // can only be inside svg
+  ],
+  h: [  // header
+    "desc",      // anywhere, usually top level SVG, or <defs>
+    "filter",    // anywhere, usually top level SVG, or <defs>
+    "metadata",  // anywhere, usually top level SVG, or <defs>
+    "style",     // anywhere, usually top level SVG, or <defs>
+    "script",    // anywhere, usually top level SVG, or <defs>
+    "title",     // anywhere, usually top level SVG, or <defs>
+    "view",      // anywhere.  use attrs ‘viewBox’, ‘preserveAspectRatio’, ‘zoomAndPan’
+  ],
+  c: [  // cdata
+    "cdata",
+  ],
+  g: [  // group
+    "g",  // can contain drawings
+  ],
+  v: [  // visible (drawing)
+    "circle",
+    "ellipse",
+    "line",
+    "path",
+    "polygon",
+    "polyline",
+    "rect",
+    // "arc",              // custom primitives
+    // "wedge",            // custom primitives
+    // "parabola",         // custom primitives
+    // "regularPolygon",   // custom primitives
+    // "roundRect",        // custom primitives
+  ],
+  t: [  // text
+    "text",
+  ],
+  // can contain drawings
+  i: [  // invisible
+    "marker",    // anywhere, usually top level SVG, or <defs>
+    "symbol",    // anywhere, usually top level SVG, or <defs>
+    "clipPath",  // anywhere, usually top level SVG, or <defs>
+    "mask",      // anywhere, usually top level SVG, or <defs>
+  ],
+  p: [  // patterns
+    "linearGradient", // <defs>
+    "radialGradient", // <defs>
+    "pattern",        // <defs>
+  ],
+  cT: [ // children of text
     "textPath",   // <text>  path and href attributes
     "tspan",      // <text>
   ],
-  childOfGradients: [
+  cG: [  // children of gradients
     "stop",           // <linearGradient> <radialGrandient>
   ],
-  childOfFilter: [
+  cF: [  // children of filter
     "feBlend",             // <filter>
     "feColorMatrix",       // <filter>
     "feComponentTransfer", // <filter>
@@ -37,56 +87,6 @@ export default {
     "feTile",              // <filter>
     "feTurbulence",        // <filter>
   ],
-  text: [
-    "text",
-  ],
-  drawings: [
-    "circle",
-    "ellipse",
-    "line",
-    "path",
-    "polygon",
-    "polyline",
-    "rect",
-    // "arc",              // custom primitives
-    // "wedge",            // custom primitives
-    // "parabola",         // custom primitives
-    // "regularPolygon",   // custom primitives
-    // "roundRect",        // custom primitives
-  ],
-  group: [
-    "g",  // can contain drawings
-  ],
-  // can contain drawings
-  nonVisible: [
-    "marker",    // anywhere, usually top level SVG, or <defs>
-    "symbol",    // anywhere, usually top level SVG, or <defs>
-    "clipPath",  // anywhere, usually top level SVG, or <defs>
-    "mask",      // anywhere, usually top level SVG, or <defs>
-  ],
-  patterns: [
-    "linearGradient", // <defs>
-    "radialGradient", // <defs>
-    "pattern",        // <defs>
-  ],
-  cdata: [
-    "cdata",
-  ],
-  header: [
-    "desc",      // anywhere, usually top level SVG, or <defs>
-    "filter",    // anywhere, usually top level SVG, or <defs>
-    "metadata",  // anywhere, usually top level SVG, or <defs>
-    "style",     // anywhere, usually top level SVG, or <defs>
-    "script",    // anywhere, usually top level SVG, or <defs>
-    "title",     // anywhere, usually top level SVG, or <defs>
-    "view",      // anywhere.  use attrs ‘viewBox’, ‘preserveAspectRatio’, ‘zoomAndPan’
-  ],
-  defs: [
-    "defs",      // svg
-  ],
-  svg: [
-    "svg",
-  ]
 };
 
 

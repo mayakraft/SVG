@@ -6,15 +6,15 @@ import K from "../environment/keys";
 
 export const attachClipMaskMakers = function (element, primitives) {
   if (element.clipPath === undefined) {
-    element.clipPath = (...args) => {
-      const c = primitives.clipPath(...args);
+    element.clipPath = (_) => {
+      const c = primitives.clipPath(_);
       element.appendChild(c);
       return c;
     };
   }
   if (element.mask === undefined) {
-    element.mask = (...args) => {
-      const m = primitives.mask(...args);
+    element.mask = (_) => {
+      const m = primitives.mask(_);
       element.appendChild(m);
       return m;
     };
