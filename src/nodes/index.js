@@ -10,9 +10,7 @@ const elements = {};
 
 Object.keys(Nodes).forEach(key => Nodes[key]
   .forEach(nodeName => {
-    elements[nodeName] = function (...args) {
-      return Constructor(nodeName, ...args);
-    }
+    elements[nodeName] = (...args) => Constructor(nodeName, ...args);
   }));
 
 Debug.log(elements);

@@ -2,32 +2,35 @@
  * SVG (c) Robby Kraft
  */
 
-import vkXML from "../../../include/vkbeautify-xml";
-import window from "../../environment/window";
-import cdata from "../../environment/cdata";
-import K from "../../environment/keys";
+import vkXML from "../../include/vkbeautify-xml";
+import window from "../environment/window";
+import cdata from "../environment/cdata";
+import K from "../environment/keys";
 // import Controls from "../../events/controls";
-import DOM from "../dom/dom";
-import {
-  getViewBox,
-  setViewBox
-} from "../view/viewBox";
-import Load from "../../file/load";
-import Save from "../../file/save";
+import DOM from "./dom";
+import Load from "../file/load";
+import Save from "../file/save";
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
+
+import viewBoxString from "../arguments/viewBox";
 
 // set the viewbox size
 // "size" refers viewbox whenever possible
 // size on the DOM, the "width" attribute, you can handle it yourself
-const size = (element, a, b, c, d) => {
-  const numbers = coordinates(...flatten(a, b, c, d));
-  switch (numbers.length) {
-    case 2: setViewBox(element, 0, 0, ...numbers); break;
-    case 4: setViewBox(element, ...numbers); break;
-    default: break;
+const size = (element, ...args) => {
+  const viewBox = viewBoxString(...args);
+  if (viewBox) {
+    element.setAttribute("viewBox", viewBox);
   }
   return element;
+};
+
+const getViewBox = function (svg) {
+  const vb = svg.getAttribute("viewBox");
+  return (vb == null
+    ? undefined
+    : vb.split(" ").map(n => parseFloat(n)));
 };
 
 const getFrame = function (element) {
@@ -39,7 +42,8 @@ const getFrame = function (element) {
     const rr = element.getBoundingClientRect();
     return [rr.x, rr.y, rr.width, rr.height];
   }
-  return Array(4).fill(undefined);
+  // return Array(4).fill(undefined);
+  return [];
 };
 
 const bgClass = "svg-background-rectangle";
@@ -121,9 +125,9 @@ const svg = {
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
   stylesheet: function (text) { return stylesheet.call(this, text); },
-  save: (el, options = {}) => (options.output === "svg"
-    ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
-  load: (el, data, callback) => assignSVG(el, load(data, callback)),
+  // save: (el, options = {}) => (options.output === "svg"
+  //   ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
+  // load: (el, data, callback) => assignSVG(el, load(data, callback)),
 };
 
 

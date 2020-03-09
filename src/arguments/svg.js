@@ -2,34 +2,27 @@
  * SVG (c) Robby Kraft
  */
 
-import window from "../../environment/window";
-import { setViewBox } from "../view/viewBox";
+import window from "../environment/window";
 // import Events from "../../events/index";
-// import Globalize from "./globalize";
-import K from "../../environment/keys";
+// import Globalize from "../environment/globalize";
+import K from "../environment/keys";
 
 const ElementConstructor = (new window.DOMParser())
   .parseFromString("<div />", "text/xml").documentElement.constructor;
 
-const findWindowBooleanParam = (...params) => params
-  .filter(arg => typeof arg === K.object)
-  .filter(o => typeof o.window === K.boolean)
-  .reduce((a, b) => a.window || b.window, false);
+// const findWindowBooleanParam = (...params) => params
+//   .filter(arg => typeof arg === K.object)
+//   .filter(o => typeof o.window === K.boolean)
+//   .reduce((a, b) => a.window || b.window, false);
 
 export default function (element, ...args) {
-  const argsNoNull = args.filter(a => a != null);
-  const numbers = argsNoNull.filter(arg => !isNaN(arg) && arg.constructor !== Array);
-  switch (numbers.length) {
-    case 4: setViewBox(element, numbers[0], numbers[1], numbers[2], numbers[3]);
-    case 2: setViewBox(element, 0, 0, numbers[0], numbers[1]);
-    default: break;
-  }
-  const parent = argsNoNull.filter(arg => arg instanceof ElementConstructor).shift();
+  const parent = args.filter(a => a != null)
+    .filter(arg => arg instanceof ElementConstructor)
+    .shift();
   if (parent != null && typeof parent.appendChild === K.function) {
     parent.appendChild(element);
   }
   // Events(element);
-  return element;
 };
 
 

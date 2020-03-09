@@ -2,13 +2,13 @@
  * SVG (c) Robby Kraft
  */
 
-import Debug from "../../environment/debug";
-import Transforms from "../view/transforms";
-import Nodes from "../nodes";
+import Debug from "../environment/debug";
+import Nodes from "../nodes/nodes";
+import DOM from "./dom";
 import Setters from "./setters";
-import CustomSetters from "./custom";
-import DOM from "../dom/dom";
 import ClipMask from "./clipMask";
+import Transforms from "./transforms";
+import CustomSetters from "./custom";
 
 // import TouchEvents from "../events/touch";
 

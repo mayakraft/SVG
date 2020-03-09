@@ -3,7 +3,7 @@
  */
 
 import window from "./window";
-import K from "../../environment/keys";
+import K from "./environment/keys";
 
 // const { SVG } = window;
 

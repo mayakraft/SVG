@@ -1,6 +1,7 @@
 const SVG = require("../svg");
 
 test("transforms", () => {
+  let svg = SVG();
   let l = svg.line(0, 0, 400, 400)
     .translate("20 100")
     .rotate(45)
@@ -11,9 +12,11 @@ test("transforms", () => {
 });
 
 test("clear transform", () => {
+  let svg = SVG();
   let l = svg.line(0, 0, 400, 400)
     .rotate(45)
     .translate(50, 50)
     .clearTransform();
-  expect(l.getAttribute("transform")).toBe(null);
+  const transform = l.getAttribute("transform");
+  expect(transform == null || transform === "").toBe(true);
 });

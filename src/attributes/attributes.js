@@ -3,7 +3,7 @@
  */
 
 export default {
-  general: [
+  presentation: [
     "color",
     "color-interpolation",
     "cursor", // mouse cursor
@@ -117,12 +117,18 @@ export default {
     "yChannelSelector",
   ],
   text: [
+    "x",   // <text>
+    "y",   // <text>
+    "dx",  // <text>
+    "dy",  // <text>
     "alignment-baseline", // specifies how a text alignts vertically
     "baseline-shift",
     "dominant-baseline",
+    "lengthAdjust",  // <text>
     "method", // for <textPath> only
     "overline-position",
     "overline-thickness",
+    "rotate",  // rotates each individual glyph
     "spacing",
     "startOffset", // <textPath>
     "strikethrough-position",
@@ -130,17 +136,20 @@ export default {
     "text-anchor",
     "text-decoration",
     "text-rendering",
-    "textLength",
+    "textLength",   // <text>
     "underline-position",
     "underline-thickness",
     "word-spacing",
     "writing-mode",
   ],
+  mask: ["id"],
+  symbol: ["id"],
   clipPath: [
     "id",
     "clip-rule", // use with clipPath
   ],
   marker: [
+    "id",
     "refX", // <marker>
     "refY", // <marker>
   ],
@@ -169,6 +178,7 @@ export default {
     "fy", // <radialGradient>
   ],
   // the order of indices matter
+  svg: ["viewBox"],
   line: ["x1", "y1", "x2", "y2"],
   rect: ["x", "y", "width", "height"],
   circle: ["cx", "cy", "r"],

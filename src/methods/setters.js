@@ -4,7 +4,7 @@
 
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
-import attributes from "../attributes";
+import attributes from "../attributes/attributes";
 
 const pointsString = (...points) => {
   return Array.from(Array(Math.floor(points.length / 2)))

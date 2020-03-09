@@ -4,6 +4,7 @@
 
 import K from "./keys";
 
+// compare to undefined, the string
 const isBrowser = typeof window !== K.undefined
   && typeof window.document !== K.undefined;
 

@@ -3,8 +3,7 @@
  */
 
 import Nodes from "./nodes/index";
-import constructor from "./nodes/constructor";
-import prepare from "./nodes/prepare";
+import Constructor from "./nodes/constructor";
 import window from "./environment/window";
 import NS from "./environment/namespace";
 import K from "./environment/keys";
@@ -15,7 +14,7 @@ const initialize = function (svg, ...args) {
 };
 
 const SVG = function (...args) {
-  const svg = prepare(constructor(K.svg, ...args));
+  const svg = Constructor(K.svg, ...args);
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
     window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...args));

@@ -3,7 +3,7 @@
  */
 
 import K from "../../../environment/keys";
-import flatten from "../../arguments/flatten";
+import flatten from "../../../arguments/flatten";
 
 const arrowArguments = function (...args) {
   const flat = flatten(...args);

@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import K from "../../environment/keys";
+import K from "../environment/keys";
 
 /**
  * this will extract coordinates from a set of inputs

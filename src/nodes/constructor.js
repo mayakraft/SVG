@@ -2,13 +2,13 @@
  * SVG (c) Robby Kraft
  */
 
+import Args from "../arguments/index";
 import Debug from "../environment/debug";
 import window from "../environment/window";
 import svgNS from "../environment/namespace";
-import Args from "./arguments/index";
 import CustomNodes from "./custom/index";
 import Nodes from "./nodes";
-import Prepare from "./prepare";
+import Methods from "../methods";
 
 const nodeNames = {};
 const argsMethods = {};
@@ -27,7 +27,7 @@ Debug.log(nodeNames);
 Debug.log(argsMethods);
 
 const constructor = function (nodeName, ...args) {
-  return Prepare(
+  return Methods(
     Args(
       window.document.createElementNS(svgNS, nodeNames[nodeName]),
       ...argsMethods[nodeName](...args)
@@ -35,6 +35,6 @@ const constructor = function (nodeName, ...args) {
   );
 };
 
-Prepare.Constructor = constructor;
+Methods.Constructor = constructor;
 
 export default constructor;

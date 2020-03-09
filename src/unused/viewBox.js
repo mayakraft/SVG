@@ -2,6 +2,8 @@
  * SVG (c) Robby Kraft
  */
 
+import viewBoxString from "../arguments/viewBox";
+
 const vB = "viewBox"
 
 export const getViewBox = function (svg) {
@@ -12,17 +14,8 @@ export const getViewBox = function (svg) {
 };
 
 export const setViewBox = function (svg, x, y, width, height, padding) {
-  if (padding == null) { padding = 0; }
-  const scale = 1.0;
-  const d = (width / scale) - width;
-  const X = (x - d) - padding;
-  const Y = (y - d) - padding;
-  const W = (width + d * 2) + padding * 2;
-  const H = (height + d * 2) + padding * 2;
-  svg.setAttributeNS(null, vB, [X, Y, W, H].join(" "));
+  svg.setAttributeNS(null, vB, viewBoxString(x, y, width, height, padding));
 };
-
-// t=function(a,b,c,e,f,g){null==g&&(g=0);var h=e/1-e,d=b-h-g,i=c-h-g,j=e+2*h+2*g,k=f+2*h+2*g;a.setAttributeNS(null,"viewBox",[d,i,j,k].join(" "))}
 
 const setDefaultViewBox = function (svg) {
   const size = svg.getBoundingClientRect();

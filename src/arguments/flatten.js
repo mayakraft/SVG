@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import K from "../../environment/keys";
+import K from "../environment/keys";
 
 const isIterable = (obj) => {
   return obj != null && typeof obj[Symbol.iterator] === K.function;

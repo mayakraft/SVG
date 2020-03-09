@@ -16,6 +16,7 @@ const pathCommands = {
   t: "smoothQuadCurve",
   z: "close"
 };
+
 Object.keys(pathCommands).forEach(key => {
   const s = pathCommands[key];
   pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);

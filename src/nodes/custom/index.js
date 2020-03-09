@@ -19,11 +19,14 @@ import Arrow from "./arrow/index";
 
 const nodes = {};
 
-[Arc, Wedge, Parabola, RegularPolygon, RoundRect, Arrow].forEach(custom => {
-  nodes[custom.name] = {
-    tagName: custom.tagName,
-    arguments: custom.arguments,
-  };
-});
+// to remove custom nodes from the library:
+// comment out this block below and rebuild
+
+// [Arc, Wedge, Parabola, RegularPolygon, RoundRect, Arrow].forEach(custom => {
+//   nodes[custom.name] = {
+//     tagName: custom.tagName,
+//     arguments: custom.arguments,
+//   };
+// });
 
 export default nodes;

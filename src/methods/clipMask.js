@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import K from "../../environment/keys";
+import K from "../environment/keys";
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
 const findIdURL = function (arg) {
