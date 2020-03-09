@@ -8,6 +8,9 @@ import Nodes from "../nodes";
 import Setters from "./setters";
 import CustomSetters from "./custom";
 import DOM from "../dom/dom";
+import ClipMask from "./clipMask";
+
+// import TouchEvents from "../events/touch";
 
 const makeExist = (obj, key) => {
   if (obj[key] === undefined) { obj[key] = {}; }
@@ -42,6 +45,25 @@ Object.keys(CustomSetters).forEach(nodeName => {
     });
   }));
 
+// clipPath and Mask as attaching onto the object.
+[Nodes.t, Nodes.v, Nodes.g].forEach(category => category.forEach(node => {
+  Object.keys(ClipMask).forEach(method => {
+    nodeMethods[node][method] = (el, ...args) => {
+      ClipMask[method](el, ...args);
+      return el;
+    }
+  });
+}));
+
+const toKebab = string => string
+  .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+  .replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2")
+  .toLowerCase();
+
+const setAttributes = (el, attrs) => {
+  Object.keys(attrs).forEach(key => el.setAttribute(toKebab(key), attrs[key]));
+  return el;
+};
 
 // DOM methods, appendChild, removeChildren...
 // text, drawings, group, svg, patterns, invisible, header, defs
@@ -54,6 +76,7 @@ Object.keys(CustomSetters).forEach(nodeName => {
         return el;
       }
     });
+    nodeMethods[node].setAttributes = setAttributes;
   }));
 
 // build the export object

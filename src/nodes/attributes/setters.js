@@ -13,7 +13,7 @@ const pointsString = (...points) => {
 
 const polys = {
   setPoints: {
-    a: attributes.polyline.shift(),
+    a: attributes.polyline.slice(0,1),
     f: (...args) => pointsString(...coordinates(...flatten(...args)))
   }
 };

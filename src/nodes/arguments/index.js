@@ -7,6 +7,8 @@
  * to match the expected arguments ordered in "attributes"
  */
 import window from "../../environment/window";
+import svgNS from "../../environment/namespace";
+import K from "../../environment/keys";
 import flatten from "./flatten";
 import coordinates from "./coordinates";
 
@@ -15,6 +17,16 @@ import textArguments from "./text";
 import nonVisibleArguments from "./nonVisible";
 
 import attributes from "../attributes";
+
+const RequiredAttributes = {
+  svg: {
+    version: "1.1",
+    xmlns: svgNS,
+  },
+  style: {
+    type: "text/css"
+  }
+};
 
 const polyString = (...numbers) => Array
   .from(Array(Math.floor(numbers.length / 2)))
@@ -33,6 +45,13 @@ const toArray = (nodeName, ...args) => {
 
 export default (element, ...args) => {
   const nodeName = element.nodeName;
+
+  // assign necessary attributes to this element
+  if (typeof RequiredAttributes[nodeName] === K.object && RequiredAttributes[nodeName] !== null) {
+    Object.keys(RequiredAttributes[nodeName])
+      .forEach(key => element.setAttribute(key, RequiredAttributes[nodeName][key]));
+  }
+
   switch (nodeName) {
     case "svg": return svgArguments(element, ...args);
     case "text": return textArguments(element, ...args);

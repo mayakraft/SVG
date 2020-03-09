@@ -52,7 +52,7 @@ const background = function (element, color) {
     .filter(child => child.getAttribute(K.class) === bgClass)
     .shift();
   if (backRect == null) {
-    backRect = this.Prepare(this.Constructor("rect", ...getFrame(element)));
+    backRect = this.Constructor("rect", ...getFrame(element));
     backRect.setAttribute(K.class, bgClass);
     element.insertBefore(backRect, element.firstChild);
   }
@@ -68,7 +68,7 @@ const findStyleSheet = function (element) {
 const stylesheet = function (element, textContent) {
   let styleSection = findStyleSheet(element);
   if (styleSection == null) {
-    styleSection = this.Prepare(this.Constructor(K.style));
+    styleSection = this.Constructor(K.style);
     element.insertBefore(styleSection, element.firstChild);
   }
   styleSection.textContent = ""; 
@@ -123,7 +123,7 @@ const svg = {
   stylesheet: function (text) { return stylesheet.call(this, text); },
   save: (el, options = {}) => (options.output === "svg"
     ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
-  load: (el, data, callback) => assignSVG(el, load(data, callback))
+  load: (el, data, callback) => assignSVG(el, load(data, callback)),
 };
 
 

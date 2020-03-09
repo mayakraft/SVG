@@ -3,6 +3,6 @@
  */
 
 export default {
-  log: () => {},
-  // log: (...args) => console.log(...args)
+  // log: () => {},
+  log: (...args) => console.log(...args)
 };

@@ -5,16 +5,13 @@
 import Debug from "../environment/debug";
 import Constructor from "./constructor";
 import Nodes from "./nodes";
-import Prepare from "./prepare";
 
 const elements = {};
-
-// is there some way to inject the custom primitives in here?
 
 Object.keys(Nodes).forEach(key => Nodes[key]
   .forEach(nodeName => {
     elements[nodeName] = function (...args) {
-      return Prepare(Constructor(nodeName, ...args));
+      return Constructor(nodeName, ...args);
     }
   }));
 

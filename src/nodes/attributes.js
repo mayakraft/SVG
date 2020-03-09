@@ -176,12 +176,6 @@ export default {
   polygon: ["points"],
   polyline: ["points"],
   path: ["d"],
-  // custom primitives
-  // arc,
-  // wedge,            // custom primitives
-  // parabola,         // custom primitives
-  // regularPolygon,   // custom primitives
-  // roundRect,        // custom primitives
 };
 
 const unused = [

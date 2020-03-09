@@ -4,26 +4,28 @@
 
 import { convertToViewBox } from "../methods/viewBox";
 
+const setPoint = (object, name, point = [0, 0]) => {
+  object[name] = [point[0], point[1]];
+  object[name].x = point[0];
+  object[name].y = point[1];
+}
+
 const Pointer = function (node) {
   const pointer = Object.create(null);
 
   Object.assign(pointer, {
     isPressed: false, // is the finger pressing, or is the mouse button down?
-    position: [0, 0], // the current position of the mouse [x,y]
-    pressed: [0, 0], //  the location of the beginning of this press
-    drag: [0, 0], //     vector, displacement from start to now
-    previous: [0, 0], //     on mouseMoved, the previous location
     x: 0, //
     y: 0 //              -- x and y, copy of position data
   });
-
-  [pointer.position.x, pointer.position.y] = [0, 0];
-  [pointer.pressed.x, pointer.pressed.y] = [0, 0];
-  [pointer.drag.x, pointer.drag.y] = [0, 0];
-  [pointer.previous.x, pointer.previous.y] = [0, 0];
+  ["position",  // the current position of the mouse [x,y]
+   "pressed",   // the location of the beginning of this press
+   "drag",      // vector, displacement from start to now
+   "previous"]  // on mouseMoved, the previous location
+    .forEach(name => setPoint(pointer, name));
 
   // deep copy mouse object
-  const copyPointer = function () {
+  const export = () => {
     const m = pointer.position.slice();
     // if a property is an object it's an array. we can .slice()
     Object.keys(pointer)
@@ -40,19 +42,10 @@ const Pointer = function (node) {
   */
 
   // clientX and clientY are from the browser event data
-  const setPosition = function (clientX, clientY) {
-    pointer.position = convertToViewBox(node, clientX, clientY);
-    [pointer.x, pointer.y] = pointer.position;
-  };
-  const updateDrag = function () {
-    // counting on didMove to have just been called
-    // using pointer.position instead of calling convertToViewBox again
-    pointer.drag = [
-      pointer.position[0] - pointer.pressed[0],
-      pointer.position[1] - pointer.pressed[1]
-    ];
-    [pointer.drag.x, pointer.drag.y] = pointer.drag;
-  };
+  const setPosition = (clientX, clientY) => setPoint(pointer, "position", convertToViewBox(node, clientX, clientY));
+  // counting on didMove to have just been called
+  // using pointer.position instead of calling convertToViewBox again
+  const updateDrag = () => setPoint(pointer, "drag", [pointer.position[0] - pointer.pressed[0], pointer.position[1] - pointer.pressed[1]]);
 
   /**
    * public modifiers
@@ -86,7 +79,7 @@ const Pointer = function (node) {
 
   Object.defineProperty(thisPointer, "release", { value: release });
   Object.defineProperty(thisPointer, "move", { value: move });
-  Object.defineProperty(thisPointer, "get", { value: copyPointer });
+  Object.defineProperty(thisPointer, "get", { value: export });
   return thisPointer;
 };
 

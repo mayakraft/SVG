@@ -2,36 +2,37 @@
  * SVG (c) Robby Kraft
  */
 
+import Debug from "../environment/debug";
 import N from "./nodes";
+import Custom from "./custom/index";
+
+// arc, parabola, regularPolygon, arrow...
+const customPrimitives = Object.keys(Custom);
 
 const headerStuff = [N.h, N.p, N.i];
-const drawingShapes = [N.g, N.v, N.t];
+const drawingShapes = [N.g, N.v, N.t, customPrimitives];
 
-const nodeChildren = {
-  // removed non visible
+const folders = {
+  // VISIBLE
   svg: [N.s, N.d].concat(headerStuff).concat(drawingShapes),
+  g: drawingShapes,
+  text: [N.cT],
+  linearGradient: [N.cG],
+  radialGradient: [N.cG],
   // NON VISIBLE
   defs: headerStuff,
-  // desc: [],
   filter: [N.cF],
-  // metadata: [],
-  // style: [],
-  // script: [],
-  // title: [],
-  // view: [],
   marker: drawingShapes,
   symbol: drawingShapes,
   clipPath: drawingShapes,
   mask: drawingShapes,
-  // VISIBLE
-  g: drawingShapes,
-  text: [N.cT],
-  linearGradient: [N.cG],
-  radialGradient: [N.cG]
 };
 
-Object.keys(nodeChildren).forEach(key => {
-  nodeChildren[key] = nodeChildren[key].reduce((a, b) => a.concat(b), []);
+const nodesAndChildren = {};
+Object.keys(folders).forEach(key => {
+  nodesAndChildren[key] = folders[key].reduce((a, b) => a.concat(b), []);
 });
 
-export default nodeChildren;
+Debug.log(nodesAndChildren);
+
+export default nodesAndChildren;
