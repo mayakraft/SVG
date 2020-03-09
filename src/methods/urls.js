@@ -3,6 +3,8 @@
  */
 
 import K from "../environment/keys";
+import Nodes from "../nodes/nodes";
+import Case from "../arguments/case";
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
 const findIdURL = function (arg) {
@@ -19,7 +21,16 @@ const findIdURL = function (arg) {
   return "";
 };
 
-export default {
-  clipPath: (el, parent) => el.setAttribute("clip-path", findIdURL(parent)),
-  mask: (el, parent) => el.setAttribute("mask", findIdURL(parent))
-};
+const methods = {};
+
+["clip-path",
+  "mask",
+  "symbol",
+  "marker-end",
+  "marker-mid",
+  "marker-start",
+].forEach(attr => {
+  methods[Case.toCamel(attr)] = (element, parent) => element.setAttribute(attr, findIdURL(parent));
+});
+
+export default methods;

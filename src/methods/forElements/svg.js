@@ -2,18 +2,18 @@
  * SVG (c) Robby Kraft
  */
 
-import vkXML from "../../include/vkbeautify-xml";
-import window from "../environment/window";
-import cdata from "../environment/cdata";
-import K from "../environment/keys";
+import vkXML from "../../../include/vkbeautify-xml";
+import window from "../../environment/window";
+import cdata from "../../environment/cdata";
+import K from "../../environment/keys";
 // import Controls from "../../events/controls";
-import DOM from "./dom";
-import Load from "../file/load";
-import Save from "../file/save";
-import flatten from "../arguments/flatten";
-import coordinates from "../arguments/coordinates";
+import DOM from "../dom";
+import Load from "../../file/load";
+import Save from "../../file/save";
+import flatten from "../../arguments/flatten";
+import coordinates from "../../arguments/coordinates";
 
-import viewBoxString from "../arguments/viewBox";
+import viewBoxString from "../../arguments/viewBox";
 
 // set the viewbox size
 // "size" refers viewbox whenever possible
@@ -125,9 +125,10 @@ const svg = {
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
   stylesheet: function (text) { return stylesheet.call(this, text); },
-  // save: (el, options = {}) => (options.output === "svg"
+  save: (el, options = {}) => (options.output === "svg"
   //   ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
-  // load: (el, data, callback) => assignSVG(el, load(data, callback)),
+    ? el : (new window.XMLSerializer()).serializeToString(el)),
+  load: (el, data, callback) => assignSVG(el, load(data, callback)),
 };
 
 

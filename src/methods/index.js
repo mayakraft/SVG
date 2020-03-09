@@ -3,12 +3,17 @@
  */
 
 import Debug from "../environment/debug";
+import Case from "../arguments/case";
 import Nodes from "../nodes/nodes";
-import DOM from "./dom";
-import Setters from "./setters";
-import ClipMask from "./clipMask";
+// categories
+import AttributeSetters from "./forAttributes/attributeSetters";
 import Transforms from "./transforms";
-import CustomSetters from "./custom";
+import URLs from "./urls";
+import DOM from "./dom";
+// specific to nodes
+import svg from "./forElements/svg";
+import path from "./forElements/path";
+import style from "./forElements/style";
 
 // import TouchEvents from "../events/touch";
 
@@ -16,98 +21,82 @@ const makeExist = (obj, key) => {
   if (obj[key] === undefined) { obj[key] = {}; }
 };
 
-const nodeMethods = {};
+// the most uniquely-defined methods
+const nodeMethods = {
+  svg: svg,
+  path: path,
+  style: style,
+};
 
 // build a master lookup table, relating an element's attribute to a setter
 //   circle: {
-//     stroke: function () { ... },
 //     fill: function () { ... },
 //   },
 //   svg: {
 //     size: function () { ... },
 //   }
 
-// the most uniquely-defined methods
-// 
-Object.keys(CustomSetters).forEach(nodeName => {
-  makeExist(nodeMethods, nodeName);
-  Object.assign(nodeMethods[nodeName], CustomSetters[nodeName]);
-});
-
-
-// transforms "translate", "rotate"...
-// all visible element types: text, visible drawings, group, svg
-[Nodes.t, Nodes.v, Nodes.g, Nodes.s]
-  .forEach(category => category.forEach(node => {
-    makeExist(nodeMethods, node);
-    Object.keys(Transforms).forEach(trans => {
-      nodeMethods[node][trans] = Transforms[trans];
-    });
-  }));
-
-// clipPath and Mask as attaching onto the object.
-[Nodes.t, Nodes.v, Nodes.g].forEach(category => category.forEach(node => {
-  Object.keys(ClipMask).forEach(method => {
-    nodeMethods[node][method] = (el, ...args) => {
-      ClipMask[method](el, ...args);
-      return el;
-    }
+const applyMethodsToNode = (methods, node) => {
+  makeExist(nodeMethods, node);
+  Object.keys(methods).forEach(method => {
+    nodeMethods[node][method] = methods[method];
   });
-}));
-
-const toKebab = string => string
-  .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-  .replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2")
-  .toLowerCase();
-
-const setAttributes = (el, attrs) => {
-  Object.keys(attrs).forEach(key => el.setAttribute(toKebab(key), attrs[key]));
-  return el;
 };
 
+const applyMethodsToGroup = (methods, groups) => groups
+  .forEach(category => category
+    .forEach(node => applyMethodsToNode(methods, node)));
+
+const t_v_g = [Nodes.t, Nodes.v, Nodes.g];
+const most = t_v_g.concat([Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d]);
+// transforms "translate", "rotate"...
+applyMethodsToGroup(Transforms, t_v_g.concat([Nodes.s]));
+// clipPath, mask, symbol, markers as attaching onto the object.
+applyMethodsToGroup(URLs, t_v_g);
 // DOM methods, appendChild, removeChildren...
-// text, drawings, group, svg, patterns, invisible, header, defs
-[Nodes.t, Nodes.v, Nodes.g, Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d]
-  .forEach(category => category.forEach(node => {
-    makeExist(nodeMethods, node);
-    Object.keys(DOM).forEach(methodName => {
-      nodeMethods[node][methodName] = (el, ...args) => {
-        DOM[methodName](el, ...args);
-        return el;
-      }
-    });
-    nodeMethods[node].setAttributes = setAttributes;
-  }));
+applyMethodsToGroup(DOM, most);
+// setAttributes()
+applyMethodsToGroup({
+  setAttributes: (el, attrs) => Object.keys(attrs)
+    .forEach(key => el.setAttribute(Case.toKebab(key), attrs[key]))},
+  most);
+
+Object.keys(AttributeSetters)
+  .forEach(nodeName => applyMethodsToNode(AttributeSetters[nodeName], nodeName));
 
 // build the export object
 const methods = {};
 
-Object.keys(Setters).forEach(nodeName => {
-  makeExist(methods, nodeName);
-  Object.keys(Setters[nodeName]).forEach(method => {
-    const s = Setters[nodeName][method];
-    // handle attribute(s) setters differently
-    if (s.a !== undefined) {
-      methods[nodeName][method] = (el, ...args) => {
-        el.setAttribute(s.a, s.f(...args));
-        return el;
-      }
-    }
-    if (s.b !== undefined) {
-      methods[nodeName][method] = (el, ...args) => {
-        s.f(...args).forEach((v, i) => el.setAttribute(s.b[i], v));
-        return el;
-      }
-    }
-  });
-});
+// the attributes and the name of the setters are not the same
+// Object.keys(AttributeSetters).forEach(nodeName => {
+//   makeExist(methods, nodeName);
+//   Object.keys(AttributeSetters[nodeName])
+//     .filter(method => AttributeSetters[nodeName][method].attr !== undefined)
+//     .forEach(method => {
+//       methods[nodeName][method] = (el, ...args) => {
+//         el.setAttribute(AttributeSetters[nodeName][method].attr, AttributeSetters[nodeName][method].f(...args));
+//         return el;
+//       }
+//     });
+//   Object.keys(AttributeSetters[nodeName])
+//     .filter(method => AttributeSetters[nodeName][method].attrs !== undefined)
+//     .forEach(method => {
+//       methods[nodeName][method] = (el, ...args) => {
+//         AttributeSetters[nodeName][method].f(...args)
+//           .forEach((v, i) => el.setAttribute(AttributeSetters[nodeName][method].attrs[i], v));
+//         return el;
+//       }
+//     });
+// });
 
+// assigning methods to "this" to pass the Constructor back up the chain.
 Object.keys(nodeMethods).forEach(nodeName => {
   makeExist(methods, nodeName);
   Object.keys(nodeMethods[nodeName])
     .filter(method => methods[nodeName][method] === undefined)
     .forEach(method => {
-      methods[nodeName][method] = (el, ...args) => nodeMethods[nodeName][method].call(methods, el, ...args);
+      // always return something. if method has no return, return the element
+      methods[nodeName][method] = (el, ...args) => nodeMethods[nodeName][method].call(methods, el, ...args) || el;
     });
 });
 

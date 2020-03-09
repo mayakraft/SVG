@@ -21,12 +21,6 @@ export default {
     "font-weight",
     "image-rendering", // provides a hint to the browser about how to make speed vs. quality tradeoffs as it performs image processing
     "letter-spacing",
-    "marker-end",  // marker like arrowhead
-    "marker-mid",  // marker like arrowhead
-    "marker-start",  // marker like arrowhead
-    "markerHeight",  // marker like arrowhead
-    "markerUnits",  // marker like arrowhead
-    "markerWidth",  // marker like arrowhead
     "opacity",
     "overflow",
     "paint-order",
@@ -150,8 +144,11 @@ export default {
   ],
   marker: [
     "id",
-    "refX", // <marker>
-    "refY", // <marker>
+    "refX",
+    "refY",
+    "markerHeight",
+    "markerUnits",
+    "markerWidth",
   ],
   pattern: [
     "patternContentUnits", // only <pattern>
@@ -190,6 +187,9 @@ export default {
 
 const unused = [
   // specific to various elements
+  "marker-end",  // assign to <marker>
+  "marker-mid",  // assign to <marker>
+  "marker-start",  // assign to <marker>
   "media", // for <style> only. @media
   "stop-color",  // <stop>
   "stop-opacity", // <stop>

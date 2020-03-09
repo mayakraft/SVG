@@ -149,14 +149,14 @@
   });
 
   var attributes = {
-    presentation: ["color", "color-interpolation", "cursor", "direction", "display", "fill", "fill-opacity", "fill-rule", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "image-rendering", "letter-spacing", "marker-end", "marker-mid", "marker-start", "markerHeight", "markerUnits", "markerWidth", "opacity", "overflow", "paint-order", "pointer-events", "preserveAspectRatio", "shape-rendering", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "tabindex", "transform-origin", "user-select", "vector-effect", "visibility"],
+    presentation: ["color", "color-interpolation", "cursor", "direction", "display", "fill", "fill-opacity", "fill-rule", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "image-rendering", "letter-spacing", "opacity", "overflow", "paint-order", "pointer-events", "preserveAspectRatio", "shape-rendering", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "tabindex", "transform-origin", "user-select", "vector-effect", "visibility"],
     animation: ["accumulate", "additive", "attributeName", "begin", "by", "calcMode", "dur", "end", "from", "keyPoints", "keySplines", "keyTimes", "max", "min", "repeatCount", "repeatDur", "restart", "to", "values"],
     effects: ["azimuth", "baseFrequency", "bias", "color-interpolation-filters", "diffuseConstant", "divisor", "edgeMode", "elevation", "exponent", "filter", "filterRes", "filterUnits", "flood-color", "flood-opacity", "in", "in2", "intercept", "k1", "k2", "k3", "k4", "kernelMatrix", "lighting-color", "limitingConeAngle", "mode", "numOctaves", "operator", "order", "pointsAtX", "pointsAtY", "pointsAtZ", "preserveAlpha", "primitiveUnits", "radius", "result", "seed", "specularConstant", "specularExponent", "stdDeviation", "stitchTiles", "surfaceScale", "targetX", "targetY", "type", "xChannelSelector", "yChannelSelector"],
     text: ["x", "y", "dx", "dy", "alignment-baseline", "baseline-shift", "dominant-baseline", "lengthAdjust", "method", "overline-position", "overline-thickness", "rotate", "spacing", "startOffset", "strikethrough-position", "strikethrough-thickness", "text-anchor", "text-decoration", "text-rendering", "textLength", "underline-position", "underline-thickness", "word-spacing", "writing-mode"],
     mask: ["id"],
     symbol: ["id"],
     clipPath: ["id", "clip-rule"],
-    marker: ["id", "refX", "refY"],
+    marker: ["id", "refX", "refY", "markerHeight", "markerUnits", "markerWidth"],
     pattern: ["patternContentUnits", "patternTransform", "patternUnits"],
     gradient: ["gradientTransform", "gradientUnits", "spreadMethod"],
     linearGradient: ["x1", "x2", "y1", "y2"],
@@ -372,16 +372,14 @@
   });
   Debug.log(elemAttr);
 
-  var DOM = {
-    removeChildren: function removeChildren(element) {
-      while (element.lastChild) {
-        element.removeChild(element.lastChild);
-      }
+  var Case = {
+    toCamel: function toCamel(s) {
+      return s.replace(/([-_][a-z])/ig, function ($1) {
+        return $1.toUpperCase().replace("-", "").replace("_", "");
+      });
     },
-    appendTo: function appendTo(element, parent) {
-      if (parent != null) {
-        parent.appendChild(element);
-      }
+    toKebab: function toKebab(s) {
+      return s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
     }
   };
 
@@ -397,16 +395,16 @@
 
   var polys = {
     setPoints: {
-      a: attributes.polyline.slice(0, 1),
+      attr: attributes.polyline.slice(0, 1),
       f: function f() {
         return pointsString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))));
       }
     }
   };
-  var Setters = {
+  var AttributeSetters = {
     line: {
       setPoints: {
-        b: attributes.line,
+        attrs: attributes.line,
         f: function f(a, b, c, d) {
           return coordinates.apply(void 0, _toConsumableArray(flatten(a, b, c, d))).slice(0, 4);
         }
@@ -416,25 +414,80 @@
     polygon: polys,
     circle: {
       setRadius: {
-        a: "r",
+        attr: "r",
         f: function f(r) {
           return r;
         }
       },
       radius: {
-        a: "r",
+        attr: "r",
         f: function f(r) {
           return r;
         }
       },
       setCenter: {
-        b: attributes.circle.slice(0, 2),
+        attrs: attributes.circle.slice(0, 2),
         f: function f(a, b) {
           return coordinates.apply(void 0, _toConsumableArray(flatten(a, b))).slice(0, 2);
         }
       }
     }
   };
+  var methods = {};
+  Object.keys(AttributeSetters).forEach(function (nodeName) {
+    methods[nodeName] = {};
+    Object.keys(AttributeSetters[nodeName]).filter(function (method) {
+      return AttributeSetters[nodeName][method].attr !== undefined;
+    }).forEach(function (method) {
+      methods[nodeName][method] = function (el) {
+        var _AttributeSetters$nod;
+
+        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+          args[_key2 - 1] = arguments[_key2];
+        }
+
+        return el.setAttribute(AttributeSetters[nodeName][method].attr, (_AttributeSetters$nod = AttributeSetters[nodeName][method]).f.apply(_AttributeSetters$nod, args));
+      };
+    });
+    Object.keys(AttributeSetters[nodeName]).filter(function (method) {
+      return AttributeSetters[nodeName][method].attrs !== undefined;
+    }).forEach(function (method) {
+      methods[nodeName][method] = function (el) {
+        var _AttributeSetters$nod2;
+
+        for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+          args[_key3 - 1] = arguments[_key3];
+        }
+
+        return (_AttributeSetters$nod2 = AttributeSetters[nodeName][method]).f.apply(_AttributeSetters$nod2, args).forEach(function (v, i) {
+          return el.setAttribute(AttributeSetters[nodeName][method].attrs[i], v);
+        });
+      };
+    });
+  });
+
+  var getAttr = function getAttr(element) {
+    var t = element.getAttribute(Keys.transform);
+    return t == null || t === "" ? undefined : t;
+  };
+
+  var methods$1 = {
+    clearTransform: function clearTransform(el) {
+      el.removeAttribute(Keys.transform);
+      return el;
+    }
+  };
+  ["translate", "rotate", "scale", "matrix"].forEach(function (key) {
+    methods$1[key] = function (element) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return element.setAttribute(Keys.transform, [getAttr(element), "".concat(key, "(").concat(args.join(" "), ")")].filter(function (a) {
+        return a !== undefined;
+      }).join(" "));
+    };
+  });
 
   var findIdURL = function findIdURL(arg) {
     if (arg == null) {
@@ -453,38 +506,25 @@
     return "";
   };
 
-  var ClipMask = {
-    clipPath: function clipPath(el, parent) {
-      return el.setAttribute("clip-path", findIdURL(parent));
-    },
-    mask: function mask(el, parent) {
-      return el.setAttribute("mask", findIdURL(parent));
-    }
-  };
-
-  var getAttr = function getAttr(element) {
-    var t = element.getAttribute(Keys.transform);
-    return t == null || t === "" ? undefined : t;
-  };
-
-  var transforms = {
-    clearTransform: function clearTransform(el) {
-      el.removeAttribute(Keys.transform);
-      return el;
-    }
-  };
-  ["translate", "rotate", "scale", "matrix"].forEach(function (key) {
-    transforms[key] = function (element) {
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      element.setAttribute(Keys.transform, [getAttr(element), "".concat(key, "(").concat(args.join(" "), ")")].filter(function (a) {
-        return a !== undefined;
-      }).join(" "));
-      return element;
+  var methods$2 = {};
+  ["clip-path", "mask", "symbol", "marker-end", "marker-mid", "marker-start"].forEach(function (attr) {
+    methods$2[Case.toCamel(attr)] = function (element, parent) {
+      return element.setAttribute(attr, findIdURL(parent));
     };
   });
+
+  var DOM = {
+    removeChildren: function removeChildren(element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    },
+    appendTo: function appendTo(element, parent) {
+      if (parent != null) {
+        parent.appendChild(element);
+      }
+    }
+  };
 
   var cdata = function cdata(textContent) {
     return new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
@@ -570,6 +610,41 @@
     DOM.removeChildren(element);
   };
 
+  var assignSVG = function assignSVG(target, source) {
+    if (source == null) {
+      return;
+    }
+
+    clear(target);
+    Array.from(source.childNodes).forEach(function (node) {
+      source.removeChild(node);
+      target.appendChild(node);
+    });
+    Array.from(source.attributes).forEach(function (attr) {
+      return target.setAttribute(attr.name, attr.value);
+    });
+  };
+
+  var done = function done(svg, callback) {
+    if (callback != null) {
+      callback(svg);
+    }
+
+    return svg;
+  };
+
+  var _load = function load(input, callback) {
+    if (_typeof(input) === Keys.string || input instanceof String) {
+      var xml = new win.DOMParser().parseFromString(input, "text/xml");
+      var parserErrors = xml.getElementsByTagName("parsererror");
+      return parserErrors.length === 0 ? done(xml.documentElement, callback) : parserErrors[0];
+    }
+
+    if (input.childNodes != null) {
+      return done(input, callback);
+    }
+  };
+
   var svg = {
     clear: clear,
     size: size,
@@ -582,6 +657,13 @@
     },
     stylesheet: function stylesheet(text) {
       return _stylesheet.call(this, text);
+    },
+    save: function save(el) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      return options.output === "svg" ? el : new win.XMLSerializer().serializeToString(el);
+    },
+    load: function load(el, data, callback) {
+      return assignSVG(el, _load(data, callback));
     }
   };
 
@@ -617,15 +699,15 @@
     return el;
   };
 
-  var methods = {};
+  var methods$3 = {};
 
-  methods.clear = function (el) {
+  methods$3.clear = function (el) {
     el.removeAttribute("d");
     return el;
   };
 
   Object.keys(pathCommands).forEach(function (key) {
-    methods[pathCommands[key]] = function (el) {
+    methods$3[pathCommands[key]] = function (el) {
       for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
       }
@@ -642,121 +724,66 @@
     }
   };
 
-  var CustomSetters = {
-    svg: svg,
-    path: methods,
-    style: style
-  };
-
   var makeExist = function makeExist(obj, key) {
     if (obj[key] === undefined) {
       obj[key] = {};
     }
   };
 
-  var nodeMethods = {};
-  Object.keys(CustomSetters).forEach(function (nodeName) {
-    makeExist(nodeMethods, nodeName);
-    Object.assign(nodeMethods[nodeName], CustomSetters[nodeName]);
-  });
-  [Nodes.t, Nodes.v, Nodes.g, Nodes.s].forEach(function (category) {
-    return category.forEach(function (node) {
-      makeExist(nodeMethods, node);
-      Object.keys(transforms).forEach(function (trans) {
-        nodeMethods[node][trans] = transforms[trans];
-      });
-    });
-  });
-  [Nodes.t, Nodes.v, Nodes.g].forEach(function (category) {
-    return category.forEach(function (node) {
-      Object.keys(ClipMask).forEach(function (method) {
-        nodeMethods[node][method] = function (el) {
-          for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            args[_key - 1] = arguments[_key];
-          }
-
-          ClipMask[method].apply(ClipMask, [el].concat(args));
-          return el;
-        };
-      });
-    });
-  });
-
-  var toKebab = function toKebab(string) {
-    return string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
+  var nodeMethods = {
+    svg: svg,
+    path: methods$3,
+    style: style
   };
 
-  var setAttributes = function setAttributes(el, attrs) {
-    Object.keys(attrs).forEach(function (key) {
-      return el.setAttribute(toKebab(key), attrs[key]);
+  var applyMethodsToNode = function applyMethodsToNode(methods, node) {
+    makeExist(nodeMethods, node);
+    Object.keys(methods).forEach(function (method) {
+      nodeMethods[node][method] = methods[method];
     });
-    return el;
   };
 
-  [Nodes.t, Nodes.v, Nodes.g, Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d].forEach(function (category) {
-    return category.forEach(function (node) {
-      makeExist(nodeMethods, node);
-      Object.keys(DOM).forEach(function (methodName) {
-        nodeMethods[node][methodName] = function (el) {
-          for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-            args[_key2 - 1] = arguments[_key2];
-          }
-
-          DOM[methodName].apply(DOM, [el].concat(args));
-          return el;
-        };
+  var applyMethodsToGroup = function applyMethodsToGroup(methods, groups) {
+    return groups.forEach(function (category) {
+      return category.forEach(function (node) {
+        return applyMethodsToNode(methods, node);
       });
-      nodeMethods[node].setAttributes = setAttributes;
     });
+  };
+
+  var t_v_g = [Nodes.t, Nodes.v, Nodes.g];
+  var most = t_v_g.concat([Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d]);
+  applyMethodsToGroup(methods$1, t_v_g.concat([Nodes.s]));
+  applyMethodsToGroup(methods$2, t_v_g);
+  applyMethodsToGroup(DOM, most);
+  applyMethodsToGroup({
+    setAttributes: function setAttributes(el, attrs) {
+      return Object.keys(attrs).forEach(function (key) {
+        return el.setAttribute(Case.toKebab(key), attrs[key]);
+      });
+    }
+  }, most);
+  Object.keys(methods).forEach(function (nodeName) {
+    return applyMethodsToNode(methods[nodeName], nodeName);
   });
-  var methods$1 = {};
-  Object.keys(Setters).forEach(function (nodeName) {
-    makeExist(methods$1, nodeName);
-    Object.keys(Setters[nodeName]).forEach(function (method) {
-      var s = Setters[nodeName][method];
-
-      if (s.a !== undefined) {
-        methods$1[nodeName][method] = function (el) {
-          for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-            args[_key3 - 1] = arguments[_key3];
-          }
-
-          el.setAttribute(s.a, s.f.apply(s, args));
-          return el;
-        };
-      }
-
-      if (s.b !== undefined) {
-        methods$1[nodeName][method] = function (el) {
-          for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-            args[_key4 - 1] = arguments[_key4];
-          }
-
-          s.f.apply(s, args).forEach(function (v, i) {
-            return el.setAttribute(s.b[i], v);
-          });
-          return el;
-        };
-      }
-    });
-  });
+  var methods$4 = {};
   Object.keys(nodeMethods).forEach(function (nodeName) {
-    makeExist(methods$1, nodeName);
+    makeExist(methods$4, nodeName);
     Object.keys(nodeMethods[nodeName]).filter(function (method) {
-      return methods$1[nodeName][method] === undefined;
+      return methods$4[nodeName][method] === undefined;
     }).forEach(function (method) {
-      methods$1[nodeName][method] = function (el) {
+      methods$4[nodeName][method] = function (el) {
         var _nodeMethods$nodeName;
 
-        for (var _len5 = arguments.length, args = new Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
-          args[_key5 - 1] = arguments[_key5];
+        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
         }
 
-        return (_nodeMethods$nodeName = nodeMethods[nodeName][method]).call.apply(_nodeMethods$nodeName, [methods$1, el].concat(args));
+        return (_nodeMethods$nodeName = nodeMethods[nodeName][method]).call.apply(_nodeMethods$nodeName, [methods$4, el].concat(args)) || el;
       };
     });
   });
-  Debug.log(methods$1);
+  Debug.log(methods$4);
 
   var makeExist$1 = function makeExist(obj, key) {
     if (obj[key] === undefined) {
@@ -764,17 +791,11 @@
     }
   };
 
-  var toCamel = function toCamel(s) {
-    return s.replace(/([-_][a-z])/ig, function ($1) {
-      return $1.toUpperCase().replace("-", "").replace("_", "");
-    });
-  };
-
   var AttrNodeFunc = {};
   Object.keys(elemAttr).forEach(function (nodeName) {
     makeExist$1(AttrNodeFunc, nodeName);
     elemAttr[nodeName].forEach(function (attribute) {
-      AttrNodeFunc[nodeName][toCamel(attribute)] = function (element) {
+      AttrNodeFunc[nodeName][Case.toCamel(attribute)] = function (element) {
         for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
           args[_key - 1] = arguments[_key];
         }
@@ -798,13 +819,13 @@
       };
     });
   });
-  Object.keys(methods$1).forEach(function (nodeName) {
+  Object.keys(methods$4).forEach(function (nodeName) {
     makeExist$1(AttrNodeFunc, nodeName);
-    Object.assign(AttrNodeFunc[nodeName], methods$1[nodeName]);
+    Object.assign(AttrNodeFunc[nodeName], methods$4[nodeName]);
   });
 
   var Methods = function Methods(element) {
-    methods$1.Constructor = Methods.Constructor;
+    methods$4.Constructor = Methods.Constructor;
     var nodeName = element.nodeName;
 
     if (_typeof(AttrNodeFunc[nodeName]) === Keys.object && AttrNodeFunc[nodeName] !== null) {
@@ -828,7 +849,7 @@
     return element;
   };
 
-  Debug.log("attribute node functions", AttrNodeFunc);
+  Debug.log(AttrNodeFunc);
 
   var nodeNames = {};
   var argsMethods = {};

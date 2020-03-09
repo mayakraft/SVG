@@ -9,19 +9,16 @@ const getAttr = (element) => {
   return (t == null || t === "") ? undefined : t;
 }
 
-const transforms = {
+const methods = {
   clearTransform: (el) => { el.removeAttribute(K.transform); return el; }
 };
 
 ["translate", "rotate", "scale", "matrix"].forEach(key => {
-  transforms[key] = function (element, ...args) {
-    element.setAttribute(K.transform, [
-        getAttr(element),
-        `${key}(${args.join(" ")})`
-      ].filter(a => a !== undefined).join(" ")
-    );
-    return element;
-  };
+  methods[key] = (element, ...args) => element.setAttribute(
+    K.transform,
+    [getAttr(element), `${key}(${args.join(" ")})`]
+      .filter(a => a !== undefined)
+      .join(" "));
 });
 
-export default transforms;
+export default methods;

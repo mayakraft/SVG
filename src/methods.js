@@ -6,16 +6,12 @@ import NodeChildren from "./nodes/nodesChildren";
 import Debug from "./environment/debug";
 import AttrElem from "./attributes/attributesElements";
 import AttributeMethods from "./methods/index";
+import Case from "./arguments/case";
 import K from "./environment/keys";
 
 const makeExist = (obj, key) => {
   if (obj[key] === undefined) { obj[key] = {}; }
 };
-
-const toCamel = s => s.replace(/([-_][a-z])/ig, $1 => $1
-  .toUpperCase()
-  .replace("-", "")
-  .replace("_", ""));
 
 // build this on load
 const AttrNodeFunc = {};
@@ -24,7 +20,7 @@ const AttrNodeFunc = {};
 Object.keys(AttrElem).forEach(nodeName => {
   makeExist(AttrNodeFunc, nodeName);
   AttrElem[nodeName].forEach(attribute => {
-    AttrNodeFunc[nodeName][toCamel(attribute)] = (element, ...args) => {
+    AttrNodeFunc[nodeName][Case.toCamel(attribute)] = (element, ...args) => {
       element.setAttribute(attribute, ...args);
       return element;
     }});
@@ -62,6 +58,6 @@ const Methods = function (element) {
   return element;
 };
 
-Debug.log("attribute node functions", AttrNodeFunc);
+Debug.log(AttrNodeFunc);
 
 export default Methods;

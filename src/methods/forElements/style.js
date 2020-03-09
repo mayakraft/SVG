@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import cdata from "../environment/cdata";
+import cdata from "../../environment/cdata";
 
 export default {
   setTextContent: (el, text) => {

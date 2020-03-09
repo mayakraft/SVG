@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import flatten from "../arguments/flatten";
+import flatten from "../../arguments/flatten";
 
 const pathCommands = {
   m: "move",
