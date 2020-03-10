@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <title>SVG example: random walker</title>
 <style>body{margin:0}</style>
+<body></body>
 <script type="text/javascript" src="../svg.js"></script>
 <script>
 
-var walker = SVG(window.innerWidth, window.innerHeight);
+var walker = SVG(document.body, window.innerWidth, window.innerHeight);
 var polyline = walker.polyline().fill("none").stroke("black")
 
 var pen = [
@@ -13,11 +14,15 @@ var pen = [
 ];
 var points = [];
 
-walker.animate = function (event) {
+const animate = function () {
   pen[0] += Math.random() * 20 - 10;
   pen[1] += Math.random() * 20 - 10;
   points.push([...pen]);
+  if (points.length > 1000) { points.shift(); }
   polyline.setPoints(points);
-}
+  window.requestAnimationFrame(animate);
+};
+window.requestAnimationFrame(animate);
+
 
 </script>

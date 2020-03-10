@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <title>SVG example: introduction</title>
 <style>body{margin:0}</style>
+<body></body>
 <script type="text/javascript" src="../svg.js"></script>
 <script>
-SVG(window.innerWidth, window.innerHeight, function (svg) {
+
+SVG(document.body, window.innerWidth, window.innerHeight, function (svg) {
+
   var aspect = window.innerWidth / window.innerHeight;
   svg.size(400 * aspect, 400);
-  svg.fps = 30;
+  // svg.fps = 30;
   svg.background("black", true);
 
   var tail = Math.random() * 130 + 20;
   var joints = Math.random() * 6 + 4;
-  var lines = svg.group().fill("none");
+  var lines = svg.g().fill("none");
   var pts = [];
 
   var Particle = function () {
@@ -36,15 +39,29 @@ SVG(window.innerWidth, window.innerHeight, function (svg) {
     pts.push(Particle());
   }
 
-  svg.animate = function (event) {
+  let frame = 0;
+  const animate = function (event) {
     for (var i = 0; i < joints; i += 1) { pts[i].update(); }
     var points = pts.map(function(p) { return p.p; });
     lines.polygon(points)
-      .stroke("hsl(" + (event.frame % 360) + ", 100%, 50%)");
+      .stroke("hsl(" + (frame % 360) + ", 100%, 50%)");
     while (lines.childNodes.length > tail) {
       lines.removeChild(lines.childNodes[0]);
     }
+    frame += 1;
+    window.requestAnimationFrame(animate);
   };
+  window.requestAnimationFrame(animate);
+
+  // svg.animate = function (event) {
+  //   for (var i = 0; i < joints; i += 1) { pts[i].update(); }
+  //   var points = pts.map(function(p) { return p.p; });
+  //   lines.polygon(points)
+  //     .stroke("hsl(" + (event.frame % 360) + ", 100%, 50%)");
+  //   while (lines.childNodes.length > tail) {
+  //     lines.removeChild(lines.childNodes[0]);
+  //   }
+  // };
 
 });
 </script>

@@ -3,7 +3,9 @@
 <style>body{margin:0}</style>
 <script type="text/javascript" src="../svg.js"></script>
 <script>
+
 SVG(window.innerWidth, window.innerHeight, function (svg) {
+  document.body.appendChild(svg);
   svg.size(1, 1);
   svg.background("#edb", true);
 
@@ -17,7 +19,15 @@ SVG(window.innerWidth, window.innerHeight, function (svg) {
   maskB.rect(-1, -1, 3, 3).fill("white");
   maskB.polygon(points).fill("black").fillRule("evenodd");
 
-  svg.circle(Math.random(), Math.random(), 0.5).fill("black").mask(maskA);
-  svg.circle(Math.random(), Math.random(), 0.5).fill("#e53").mask(maskB);
+  // svg.circle(Math.random(), Math.random(), 0.5).fill("black").mask(maskA);
+  // svg.circle(Math.random(), Math.random(), 0.5).fill("#e53").mask(maskB);
+  var circles = [
+    svg.circle(Math.random(), Math.random(), 0.5).fill("black"),
+    svg.circle(Math.random(), Math.random(), 0.5).fill("#e53")
+  ];
+  var masks = [maskA, maskB];
+  circles.forEach((circle, i) => {
+    circle.setAttribute("mask", "url(#" + masks[i].getAttribute("id") + ")");
+  });
 });
 </script>
