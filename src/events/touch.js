@@ -2,32 +2,40 @@
  * SVG (c) Robby Kraft
  */
 
-// import Pointer from "./pointer";
-import { convertToViewBox } from "../view/viewBox";
+import Case from "../arguments/case";
 
-const categories = {
-  move: [
-    "mousemove",
-    "touchmove"
-  ],
-  press: [
-    "mousedown",
-    "touchstart",
-    // "mouseover",
-  ],
-  release: [
-    "mouseup",
-    "touchend",
-    // "mouseleave",
-    // "touchcancel",
-  ]
+const convertToViewBox = function (svg, x, y) {
+  const pt = svg.createSVGPoint();
+  pt.x = x;
+  pt.y = y;
+  const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+  return [svgPoint.x, svgPoint.y];
 };
 
+const categories = {
+  move: ["mousemove", "touchmove"],
+  press: ["mousedown", "touchstart"], // "mouseover",
+  release: ["mouseup", "touchend"]    // "mouseleave", "touchcancel",
+};
+
+const handlerNames = Object.values(categories)
+  .reduce((a,b) => a.concat(b), []);
+
+const off = (node, handlers) => handlerNames.forEach(handlerName => {
+  handlers[handlerName].forEach(func => node.removeEventListener(handlerName, func));
+  handlers[handlerName] = [];
+});
+
+const defGet = (obj, prop, value) => Object.defineProperty(obj, prop, {
+  get: () => value,
+  enumerable: true
+});
+
 const TouchEvents = function (node) {
-  // const pointer = Pointer(node);
-  // const pointer = [0, 0];
   // todo, more pointers for multiple screen touches
 
+  let startPoint = [];
+  // hold onto all handlers. to be able to turn them off
   const handlers = [];
   Object.keys(categories).forEach((key) => {
     categories[key].forEach((handler) => {
@@ -35,141 +43,48 @@ const TouchEvents = function (node) {
     });
   });
 
-  const clear = () => {
-    Object.keys(handlers).forEach(key => handlers[key]
-      .forEach(f => node.removeEventListener(key, f)));
-    Object.keys(handlers).forEach((key) => {
-      handlers[key] = [];
-    });
+  const removeHandler = (category) => {
+    categories[category].forEach(handlerName => {
+      handlers[handlerName].forEach(func => node.removeEventListener(handlerName, func));
+    })
   };
 
+  // add more properties depending on the type of handler
+  const categoryUpdate = {
+    press: () => {},
+    release: () => {},
+    move: (e, viewPoint) => {
+      if (e.buttons > 0 && startPoint[0] === undefined) {
+        startPoint = viewPoint;
+      } else if(e.buttons === 0 && startPoint[0] !== undefined) {
+        startPoint = [];
+      }
+      ["startX", "startY"].forEach((prop, i) => defGet(e, prop, startPoint[i]));
+    }
+  };
+
+  // assign handlers for onMove, onPress, onRelease
   Object.keys(categories).forEach(category => {
-    const propName = "on" + category.charAt(0).toUpperCase() + category.slice(1);
+    const propName = "on" + Case.capitalized(category);
     Object.defineProperty(node, propName, {
-      set: (handler) => {
-        categories[category].forEach(handlerName => {
-          const handlerFunc = (e) => {
-            Object.defineProperty(e, "x", { get: () => "view x", enumerable: true });
-            Object.defineProperty(e, "y", { get: () => "view y", enumerable: true });
-            handler(e);
-          };
-          handlers[handlerName].push(handlerFunc);
-          node.addEventListener(handlerName, handlerFunc);
-        });
-      },
+      set: (handler) => (handler == null)
+        ? removeHandler(category)
+        : categories[category].forEach(handlerName => {
+            const handlerFunc = (e) => {
+              const pointer = e.touches != null ? e.touches[0] : e;
+              const viewPoint = convertToViewBox(node, pointer.clientX, pointer.clientY); // e.target
+              ["x", "y"].forEach((prop, i) => defGet(e, prop, viewPoint[i]));
+              categoryUpdate[category](e, viewPoint);
+              handler(e);
+            };
+            handlers[handlerName].push(handlerFunc);
+            node.addEventListener(handlerName, handlerFunc);
+          }),
       enumerable: true
     });
   });
 
+  Object.defineProperty(node, "off", { value: () => off(node, handlers) });
 };
-
-  // const onMouseMove = (handler, event) => {
-  //   event.preventDefault();
-  //   const e = pointer
-  //     .move(event.clientX, event.clientY, event.buttons > 0)
-  //     .get();
-  //   handler(e);
-  //   return e;
-  // };
-  // const onTouchMove = (handler, event) => {
-  //   event.preventDefault();
-  //   const e = pointer
-  //     .move(event.touches[0].clientX, event.touches[0].clientY, true)
-  //     .get();
-  //   handler(e);
-  //   return e;
-  // };
-  // const onMouseDown = (handler, event) => {
-  //   event.preventDefault();
-  //   const e = pointer
-  //     .move(event.clientX, event.clientY, true)
-  //     .get();
-  //   handler(e);
-  //   return e;
-  // };
-  // const onTouchStart = (handler, event) => {
-  //   event.preventDefault();
-  //   const e = pointer
-  //     .move(event.touches[0].clientX, event.touches[0].clientY, true)
-  //     .get();
-  //   handler(e);
-  //   return e;
-  // };
-  // const onEnd = (handler, event) => {
-  //   event.preventDefault();
-  //   const e = pointer.release().get();
-  //   handler(e);
-  //   return e;
-  // };
-
-  // const onScroll = function (handler, event) {
-  //   const e = {
-  //     deltaX: event.deltaX,
-  //     deltaY: event.deltaY,
-  //     deltaZ: event.deltaZ,
-  //   };
-  //   e.position = convertToViewBox(node, event.clientX, event.clientY);
-  //   [e.x, e.y] = e.position;
-  //   event.preventDefault();
-  //   handler(e);
-  //   return e;
-  // };
-
-  // Object.defineProperty(node, "mouse", {
-  //   get: () => pointer.get(),
-  //   enumerable: true
-  // });
-  // Object.defineProperty(node, "onMove", {
-  //   set: (handler) => {
-  //     const mouseFunc = event => onMouseMove(handler, event);
-  //     const touchFunc = event => onTouchMove(handler, event);
-  //     handlers.mousemove.push(mouseFunc);
-  //     handlers.touchmove.push(mouseFunc);
-  //     node.addEventListener("mousemove", mouseFunc);
-  //     node.addEventListener("touchmove", touchFunc);
-  //   },
-  //   enumerable: true
-  // });
-  // Object.defineProperty(node, "onPress", {
-  //   set: (handler) => {
-  //     const mouseFunc = event => onMouseDown(handler, event);
-  //     const touchFunc = event => onTouchStart(handler, event);
-  //     handlers.mousedown.push(mouseFunc);
-  //     handlers.touchstart.push(touchFunc);
-  //     node.addEventListener("mousedown", mouseFunc);
-  //     node.addEventListener("touchstart", touchFunc);
-  //     // additional
-  //     // const mouseOverFunc = event => onMouseDown(handler, event);
-  //     // handlers.mouseover.push(mouseOverFunc);
-  //     // node.addEventListener("mouseover", mouseOverFunc);
-  //   },
-  //   enumerable: true
-  // });
-  // Object.defineProperty(node, "onRelease", {
-  //   set: (handler) => {
-  //     const mouseFunc = event => onEnd(handler, event);
-  //     const touchFunc = event => onEnd(handler, event);
-  //     handlers.mouseup.push(mouseFunc);
-  //     handlers.touchend.push(touchFunc);
-  //     node.addEventListener("mouseup", mouseFunc);
-  //     node.addEventListener("touchend", touchFunc);
-  //     // additional
-  //     // const mouseLeaveFunc = event => onEnd(handler, event);
-  //     // const touchCancelFunc = event => onEnd(handler, event);
-  //     // handlers.mouseleave.push(mouseLeaveFunc);
-  //     // handlers.touchcancel.push(touchCancelFunc);
-  //     // node.addEventListener("mouseleave", mouseLeaveFunc);
-  //     // node.addEventListener("touchcancel", touchCancelFunc);
-  //   },
-  //   enumerable: true
-  // });
-  // Object.defineProperty(node, "scroll", {
-  //   set: (handler) => {
-  //     const scrollFunc = event => onScroll(handler, event);
-  //     handlers.mouseup.push(scrollFunc);
-  //     node.addEventListener("scroll", scrollFunc);
-  //   },
-  //   enumerable: true
-  // });
 
 export default TouchEvents;

@@ -37,7 +37,6 @@ const AttributeSetters = {
   },
 };
 
-
 const methods = {};
 
 Object.keys(AttributeSetters).forEach(nodeName => {

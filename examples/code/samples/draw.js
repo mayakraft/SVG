@@ -7,8 +7,8 @@ var p = svg.polygon()
   .fill("#e53")
   .stroke("#158");
 
-svg.mouseMoved = function (mouse) {
-  points.push(mouse);
+svg.onMove = function (mouse) {
+  points.push([mouse.x, mouse.y]);
   if (points.length > 100) { points.shift(); }
   p.setPoints(points);
 };

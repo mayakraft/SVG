@@ -380,6 +380,9 @@
     },
     toKebab: function toKebab(s) {
       return s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
+    },
+    capitalized: function capitalized(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
     }
   };
 
@@ -610,41 +613,6 @@
     DOM.removeChildren(element);
   };
 
-  var assignSVG = function assignSVG(target, source) {
-    if (source == null) {
-      return;
-    }
-
-    clear(target);
-    Array.from(source.childNodes).forEach(function (node) {
-      source.removeChild(node);
-      target.appendChild(node);
-    });
-    Array.from(source.attributes).forEach(function (attr) {
-      return target.setAttribute(attr.name, attr.value);
-    });
-  };
-
-  var done = function done(svg, callback) {
-    if (callback != null) {
-      callback(svg);
-    }
-
-    return svg;
-  };
-
-  var _load = function load(input, callback) {
-    if (_typeof(input) === Keys.string || input instanceof String) {
-      var xml = new win.DOMParser().parseFromString(input, "text/xml");
-      var parserErrors = xml.getElementsByTagName("parsererror");
-      return parserErrors.length === 0 ? done(xml.documentElement, callback) : parserErrors[0];
-    }
-
-    if (input.childNodes != null) {
-      return done(input, callback);
-    }
-  };
-
   var svg = {
     clear: clear,
     size: size,
@@ -657,13 +625,6 @@
     },
     stylesheet: function stylesheet(text) {
       return _stylesheet.call(this, text);
-    },
-    save: function save(el) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return options.output === "svg" ? el : new win.XMLSerializer().serializeToString(el);
-    },
-    load: function load(el, data, callback) {
-      return assignSVG(el, _load(data, callback));
     }
   };
 
@@ -897,6 +858,102 @@
   });
   Debug.log(elements);
 
+  var convertToViewBox = function convertToViewBox(svg, x, y) {
+    var pt = svg.createSVGPoint();
+    pt.x = x;
+    pt.y = y;
+    var svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return [svgPoint.x, svgPoint.y];
+  };
+
+  var categories = {
+    move: ["mousemove", "touchmove"],
+    press: ["mousedown", "touchstart"],
+    release: ["mouseup", "touchend"]
+  };
+  var handlerNames = Object.values(categories).reduce(function (a, b) {
+    return a.concat(b);
+  }, []);
+
+  var off = function off(node, handlers) {
+    return handlerNames.forEach(function (handlerName) {
+      handlers[handlerName].forEach(function (func) {
+        return node.removeEventListener(handlerName, func);
+      });
+      handlers[handlerName] = [];
+    });
+  };
+
+  var defGet = function defGet(obj, prop, value) {
+    return Object.defineProperty(obj, prop, {
+      get: function get() {
+        return value;
+      },
+      enumerable: true
+    });
+  };
+
+  var TouchEvents = function TouchEvents(node) {
+    var startPoint = [];
+    var handlers = [];
+    Object.keys(categories).forEach(function (key) {
+      categories[key].forEach(function (handler) {
+        handlers[handler] = [];
+      });
+    });
+
+    var removeHandler = function removeHandler(category) {
+      categories[category].forEach(function (handlerName) {
+        handlers[handlerName].forEach(function (func) {
+          return node.removeEventListener(handlerName, func);
+        });
+      });
+    };
+
+    var categoryUpdate = {
+      press: function press() {},
+      release: function release() {},
+      move: function move(e, viewPoint) {
+        if (e.buttons > 0 && startPoint[0] === undefined) {
+          startPoint = viewPoint;
+        } else if (e.buttons === 0 && startPoint[0] !== undefined) {
+          startPoint = [];
+        }
+
+        ["startX", "startY"].forEach(function (prop, i) {
+          return defGet(e, prop, startPoint[i]);
+        });
+      }
+    };
+    Object.keys(categories).forEach(function (category) {
+      var propName = "on" + Case.capitalized(category);
+      Object.defineProperty(node, propName, {
+        set: function set(handler) {
+          return handler == null ? removeHandler(category) : categories[category].forEach(function (handlerName) {
+            var handlerFunc = function handlerFunc(e) {
+              var pointer = e.touches != null ? e.touches[0] : e;
+              var viewPoint = convertToViewBox(node, pointer.clientX, pointer.clientY);
+              ["x", "y"].forEach(function (prop, i) {
+                return defGet(e, prop, viewPoint[i]);
+              });
+              categoryUpdate[category](e, viewPoint);
+              handler(e);
+            };
+
+            handlers[handlerName].push(handlerFunc);
+            node.addEventListener(handlerName, handlerFunc);
+          });
+        },
+        enumerable: true
+      });
+    });
+    Object.defineProperty(node, "off", {
+      value: function value() {
+        return off(node, handlers);
+      }
+    });
+  };
+
   var initialize = function initialize(svg) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
@@ -915,6 +972,7 @@
     }
 
     var svg = constructor.apply(void 0, [Keys.svg].concat(args));
+    TouchEvents(svg);
 
     if (win.document.readyState === "loading") {
       win.document.addEventListener("DOMContentLoaded", function () {

@@ -48,9 +48,8 @@ const getFrame = function (element) {
 
 const bgClass = "svg-background-rectangle";
 
-// i prevented circular dependency by passing a pointer to the constructor/prepare
-// throught 'this', every function is bound.
-
+// i prevented circular dependency by passing a pointer to Constructor through 'this'
+// every function is bound
 const background = function (element, color) {
   let backRect = Array.from(element.childNodes)
     .filter(child => child.getAttribute(K.class) === bgClass)
@@ -125,10 +124,10 @@ const svg = {
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
   stylesheet: function (text) { return stylesheet.call(this, text); },
-  save: (el, options = {}) => (options.output === "svg"
-  //   ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
-    ? el : (new window.XMLSerializer()).serializeToString(el)),
-  load: (el, data, callback) => assignSVG(el, load(data, callback)),
+  // save: (el, options = {}) => (options.output === "svg"
+  // //   ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
+  //   ? el : (new window.XMLSerializer()).serializeToString(el)),
+  // load: (el, data, callback) => assignSVG(el, load(data, callback)),
 };
 
 

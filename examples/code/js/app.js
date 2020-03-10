@@ -192,8 +192,9 @@ svg.background("transparent");
       // remove any Timer functions. handlers will get cleaned up automatically
       // svg.freeze();
       // svg.clearTransforms();
+      svg.off();
       svg.size(300, 150);
-      svg.fps = 60;
+      // svg.fps = 60;
     }
   };
 

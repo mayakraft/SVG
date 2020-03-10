@@ -22,8 +22,7 @@ Object.keys(pathCommands).forEach(key => {
   pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
 });
 
-// 🍆
-const getD = (el) => {
+const getD = (el) => { // 🍆
   const attr = el.getAttribute("d");
   return (attr == null) ? "" : attr;
 };
