@@ -22,11 +22,14 @@ const nodes = {};
 // to remove custom nodes from the library:
 // comment out this block below and rebuild
 
-// [Arc, Wedge, Parabola, RegularPolygon, RoundRect, Arrow].forEach(custom => {
-//   nodes[custom.name] = {
-//     tagName: custom.tagName,
-//     arguments: custom.arguments,
-//   };
-// });
+[Arc, Wedge, Parabola, RegularPolygon, RoundRect,
+// Arrow
+].forEach(custom => {
+  nodes[custom.name] = {
+    tagName: custom.tagName,
+    arguments: custom.arguments,
+    methods: custom.methods,
+  };
+});
 
 export default nodes;

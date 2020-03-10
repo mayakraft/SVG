@@ -17,6 +17,7 @@ import svgArguments from "./svg";
 import textArguments from "./text";
 
 import attributes from "../attributes/attributes";
+import UUID from "./uuid";
 
 import viewBox from "./viewBox";
 
@@ -34,8 +35,6 @@ const polyString = (...numbers) => Array
   .from(Array(Math.floor(numbers.length / 2)))
   .map((_, i) => `${numbers[i*2+0]},${numbers[i*2+1]}`)
   .join(" ");
-
-const UUID = () => Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
 
 const makeIDString = (...args) => args
   .filter(a => typeof a === K.string || a instanceof String)

@@ -2,6 +2,11 @@
  * SVG (c) Robby Kraft
  */
 
+const distance = (a, b) => [0, 1]
+  .map(i => a[i] - b[i])
+  .map(e => e ** 2)
+  .reduce((a, b) => a + b, 0);
+
 const controlPoint = function (parent, options = {}) {
   const position = [0, 0]; // initialize below
   let selected = false;
@@ -61,16 +66,12 @@ const controlPoint = function (parent, options = {}) {
     }
   };
   const onMouseUp = () => { selected = false; };
-  const distance = mouse => ([0, 1]
-    .map(i => mouse[i] - position[i])
-    .map(e => e ** 2)
-    .reduce((a, b) => a + b, 0));
 
   position.delegate = undefined; // to be set
   position.setPosition = setPosition;
   position.onMouseMove = onMouseMove;
   position.onMouseUp = onMouseUp;
-  position.distance = distance;
+  position.distance = (mouse) => distance(mouse, position);
   Object.defineProperty(position, "x", {
     get: () => position[0],
     set: (newValue) => { position[0] = newValue; }
@@ -124,7 +125,7 @@ const controls = function (svg, number, options) {
   const mousePressedHandler = function (mouse) {
     if (!(points.length > 0)) { return; }
     selected = points
-      .map((p, i) => ({ i, d: p.distance(mouse) }))
+      .map((p, i) => ({ i, d: distance(p, [mouse.x, mouse.y]) }))
       .sort((a, b) => a.d - b.d)
       .shift()
       .i;
@@ -138,9 +139,9 @@ const controls = function (svg, number, options) {
     selected = undefined;
   };
 
-  svg.mousePressed = mousePressedHandler;
-  svg.mouseMoved = mouseMovedHandler;
-  svg.mouseReleased = mouseReleasedHandler;
+  svg.onPress = mousePressedHandler;
+  svg.onMove = mouseMovedHandler;
+  svg.onRelease = mouseReleasedHandler;
   // svg.addEventListener("touchcancel", touchUpHandler, false);
 
   Object.defineProperty(points, "selectedIndex", { get: () => selected });

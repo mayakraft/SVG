@@ -193,6 +193,7 @@ svg.background("transparent");
       // svg.freeze();
       // svg.clearTransforms();
       svg.off();
+      svg.stop();
       svg.size(300, 150);
       // svg.fps = 60;
     }

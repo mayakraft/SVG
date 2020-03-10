@@ -16,7 +16,7 @@ var pies = [
   svg.wedge().fill("#158")
 ];
 
-animate = function (time) {
+svg.play = function (time) {
   var d = new Date();
   var s = (d.getSeconds() + d.getMilliseconds() / 1000) / 60;
   var m = d.getMinutes() / 60;

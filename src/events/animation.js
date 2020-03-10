@@ -2,34 +2,45 @@
  * SVG (c) Robby Kraft
  */
 
-const Animation = function (node) {
+import UUID from "../arguments/uuid";
 
-  Object.keys(categories).forEach((key) => {
-    categories[key].forEach((handler) => {
-      handlers[handler] = [];
-    });
+const Animation = function (element) {
+
+  let start;
+  const handlers = {};
+  let frame = 0;
+
+  const removeHandlers = () => {
+    Object.keys(handlers)
+      .forEach(uuid => delete handlers[uuid]);
+    // handlers = {};
+    start = undefined;
+    frame = 0;
+  }
+
+  Object.defineProperty(element, "play", {
+    set: (handler) => {
+      removeHandlers();
+      if (handler == null) { return; }
+      const uuid = UUID();
+      const handlerFunc = (e) => {
+        if (!start) {
+          start = e;
+        }
+        const progress = (e - start) * 0.001;
+        handler({time: progress, frame: frame});
+        // prepare next frame
+        frame += 1;
+        if (handlers[uuid]) {
+          window.requestAnimationFrame(handlers[uuid]);
+        }
+      };
+      handlers[uuid] = handlerFunc;
+      window.requestAnimationFrame(handlers[uuid]);
+    },
+    enumerable: true
   });
-
-  const removeHandler = (category) => {
-    categories[category].forEach(handlerName => {
-      handlers[handlerName].forEach(func => node.removeEventListener(handlerName, func));
-    })
-  };
-
-  // add more properties depending on the type of handler
-  const categoryUpdate = {
-    press: () => {},
-    release: () => {},
-    move: (e, viewPoint) => {
-      if (e.buttons > 0 && startPoint[0] === undefined) {
-        startPoint = viewPoint;
-      } else if(e.buttons === 0 && startPoint[0] !== undefined) {
-        startPoint = [];
-      }
-      ["startX", "startY"].forEach((prop, i) => defGet(e, prop, startPoint[i]));
-    }
-  };
-
+  Object.defineProperty(element, "stop", { value: removeHandlers, enumerable: true });
 };
 
 export default Animation;

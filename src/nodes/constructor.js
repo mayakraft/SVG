@@ -18,10 +18,12 @@ Object.keys(Nodes).forEach(key => Nodes[key].forEach(nodeName => {
   argsMethods[nodeName] = (...args) => args;
 }));
 
+// custom nodes
 Object.keys(CustomNodes).forEach(key => {
   nodeNames[key] = CustomNodes[key].tagName;
   argsMethods[key] = CustomNodes[key].arguments;
 });
+Methods.prepareCustomNodes(CustomNodes);
 
 Debug.log(nodeNames);
 Debug.log(argsMethods);
@@ -31,7 +33,7 @@ const constructor = function (nodeName, ...args) {
     Args(
       window.document.createElementNS(svgNS, nodeNames[nodeName]),
       ...argsMethods[nodeName](...args)
-    )
+    ), nodeName
   );
 };
 

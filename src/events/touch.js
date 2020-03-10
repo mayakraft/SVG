@@ -21,8 +21,8 @@ const categories = {
 const handlerNames = Object.values(categories)
   .reduce((a,b) => a.concat(b), []);
 
-const off = (node, handlers) => handlerNames.forEach(handlerName => {
-  handlers[handlerName].forEach(func => node.removeEventListener(handlerName, func));
+const off = (element, handlers) => handlerNames.forEach(handlerName => {
+  handlers[handlerName].forEach(func => element.removeEventListener(handlerName, func));
   handlers[handlerName] = [];
 });
 
@@ -31,7 +31,7 @@ const defGet = (obj, prop, value) => Object.defineProperty(obj, prop, {
   enumerable: true
 });
 
-const TouchEvents = function (node) {
+const TouchEvents = function (element) {
   // todo, more pointers for multiple screen touches
 
   let startPoint = [];
@@ -45,7 +45,7 @@ const TouchEvents = function (node) {
 
   const removeHandler = (category) => {
     categories[category].forEach(handlerName => {
-      handlers[handlerName].forEach(func => node.removeEventListener(handlerName, func));
+      handlers[handlerName].forEach(func => element.removeEventListener(handlerName, func));
     })
   };
 
@@ -66,25 +66,25 @@ const TouchEvents = function (node) {
   // assign handlers for onMove, onPress, onRelease
   Object.keys(categories).forEach(category => {
     const propName = "on" + Case.capitalized(category);
-    Object.defineProperty(node, propName, {
+    Object.defineProperty(element, propName, {
       set: (handler) => (handler == null)
         ? removeHandler(category)
         : categories[category].forEach(handlerName => {
             const handlerFunc = (e) => {
               const pointer = e.touches != null ? e.touches[0] : e;
-              const viewPoint = convertToViewBox(node, pointer.clientX, pointer.clientY); // e.target
+              const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY); // e.target
               ["x", "y"].forEach((prop, i) => defGet(e, prop, viewPoint[i]));
               categoryUpdate[category](e, viewPoint);
               handler(e);
             };
             handlers[handlerName].push(handlerFunc);
-            node.addEventListener(handlerName, handlerFunc);
+            element.addEventListener(handlerName, handlerFunc);
           }),
       enumerable: true
     });
   });
 
-  Object.defineProperty(node, "off", { value: () => off(node, handlers) });
+  Object.defineProperty(element, "off", { value: () => off(element, handlers) });
 };
 
 export default TouchEvents;

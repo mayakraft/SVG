@@ -43,9 +43,9 @@ Object.keys(AttributeMethods).forEach(nodeName => {
   Object.assign(AttrNodeFunc[nodeName], AttributeMethods[nodeName]);
 });
 
-const Methods = function (element) {
+const Methods = function (element, name) {
   AttributeMethods.Constructor = Methods.Constructor;
-  const nodeName = element.nodeName;
+  const nodeName = name !== undefined ? name : element.nodeName;
   if (typeof AttrNodeFunc[nodeName] === K.object && AttrNodeFunc[nodeName] !== null) {
     Object.keys(AttrNodeFunc[nodeName])
       .filter(attr => element[attr] == null)
@@ -59,5 +59,14 @@ const Methods = function (element) {
 };
 
 Debug.log(AttrNodeFunc);
+
+// called by through protocol. this re-inserts custom node method definitions
+Methods.prepareCustomNodes = (CustomNodes) => Object.keys(CustomNodes)
+  .forEach(node => {
+    makeExist(AttrNodeFunc, node);
+    Object.assign(AttrNodeFunc[node],
+      AttrNodeFunc[CustomNodes[node].tagName],
+      CustomNodes[node].methods);
+  });
 
 export default Methods;

@@ -6,7 +6,7 @@ var dots = svg.g().fill("#ec3");
 var i = [0, 1];
 var stroke = "#158";
 
-animate = function (e) {
+svg.play = function (e) {
   if (!randomInt(25)) {
     i[0] = randomInt(4);
     i[1] = randomInt(4);
