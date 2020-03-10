@@ -58,6 +58,9 @@ const sortArgs = (nodeName, ...args) => {
 };
 
 export default (element, ...args) => {
+  //
+  // todo: figure out the difference between arc and curve why arguments are comign in differently
+  //
   const nodeName = element.nodeName;
 
   // required attributes for elements like <svg>, <style>

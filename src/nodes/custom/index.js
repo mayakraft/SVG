@@ -16,13 +16,14 @@ import Parabola from "./parabola/index";
 import RegularPolygon from "./regularPolygon/index";
 import RoundRect from "./roundRect/index";
 import Arrow from "./arrow/index";
+import Curve from "./curve/index";
 
 const nodes = {};
 
 // to remove custom nodes from the library:
 // comment out this block below and rebuild
 
-[Arc, Wedge, Parabola, RegularPolygon, RoundRect,
+[Arc, Wedge, Parabola, RegularPolygon, RoundRect, Curve
 // Arrow
 ].forEach(custom => {
   nodes[custom.name] = {
