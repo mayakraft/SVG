@@ -1,9 +1,12 @@
-import K from "../../../environment/keys";
+/**
+ * SVG (c) Robby Kraft
+ */
 
+import K from "../../../environment/keys";
 
 export const setArrowPoints = function (el, ...args) {
   const children = Array.from(el.childNodes);
-  const path = children.filter(node => node.tagName === "path").shift();
+  const path = children.filter(node => node.nodeName === "path").shift();
   const polys = ["svg-arrow-head", "svg-arrow-tail"]
     .map(c => children.filter(n => n.getAttribute("class") === c).shift());
 
@@ -27,44 +30,45 @@ export const setArrowPoints = function (el, ...args) {
   return el;
 };
 
-export const attachArrowMethods = function (element) {
-  element.head = (options) => {
-    if (typeof options === K.object) {
-      Object.assign(element.options.head, options);
-      if (options.visible === undefined) {
-        element.options.head.visible = true;
-      }
-    } else if (typeof options === K.boolean) {
-      element.options.head.visible = options;
-    } else if (options == null) {
+export const head = (element, options) => {
+  if (typeof options === K.object) {
+    Object.assign(element.options.head, options);
+    if (options.visible === undefined) {
       element.options.head.visible = true;
     }
-    setArrowPoints(element);
-    return element;
-  };
-  element.tail = (options) => {
-    if (typeof options === K.object) {
-      Object.assign(element.options.tail, options);
-      if (options.visible === undefined) {
-        element.options.tail.visible = true;
-      }
-      element.options.tail.visible = true;
-    } else if (typeof options === K.boolean) {
-      element.options.tail.visible = options;
-    } else if (options == null) {
+  } else if (typeof options === K.boolean) {
+    element.options.head.visible = options;
+  } else if (options == null) {
+    element.options.head.visible = true;
+  }
+  setArrowPoints(element);
+  return element;
+};
+
+export const tail = (element, options) => {
+  if (typeof options === K.object) {
+    Object.assign(element.options.tail, options);
+    if (options.visible === undefined) {
       element.options.tail.visible = true;
     }
-    setArrowPoints(element);
-    return element;
-  };
-  element.curve = (amount) => {
-    element.options.curve = amount;
-    setArrowPoints(element);
-    return element;
-  };
-  element.pinch = (amount) => {
-    element.options.pinch = amount;
-    setArrowPoints(element);
-    return element;
-  };
+    element.options.tail.visible = true;
+  } else if (typeof options === K.boolean) {
+    element.options.tail.visible = options;
+  } else if (options == null) {
+    element.options.tail.visible = true;
+  }
+  setArrowPoints(element);
+  return element;
+};
+
+export const curve = (element, amount) => {
+  element.options.curve = amount;
+  setArrowPoints(element);
+  return element;
+};
+
+export const pinch = (element, amount) => {
+  element.options.pinch = amount;
+  setArrowPoints(element);
+  return element;
 };

@@ -1,7 +1,7 @@
 svg.size(512, 512);
 svg.stroke("black");
 
-var SEGMENTS = 80;
+var SEGMENTS = 50;
 var w = svg.getWidth() / SEGMENTS * 0.5;
 var h = svg.getHeight() / SEGMENTS * 0.5;
 

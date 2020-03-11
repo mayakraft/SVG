@@ -75,7 +75,7 @@ group()
 defs()
 clipPath()
 mask()
-createElement(tagName) // create any element under the svg namespace
+createElement(nodeName) // create any element under the svg namespace
 ```
 
 geometry primitives

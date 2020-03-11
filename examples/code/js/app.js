@@ -41,7 +41,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "draw.js",
     "mask.js",
     "parabola.js",
+    "polygon.js",
     "riley1.js",
+    "star.js",
     "ten-print.js",
   ];
   shuffle(exampleFilenames);
@@ -85,33 +87,9 @@ document.addEventListener("DOMContentLoaded", function () {
     //   return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
     // });
     // blank screen
-    const welcomeText = `// ~ Welcome to coding with SVG ~
-// some method names to get started:
-
-// line (x1, y1, x2, y2)
-// circle (x, y, radius);
-// rect (x, y, width, height);
-// path()
-//   .moveTo(x, y)
-//   .lineTo(x, y)
-//   .curveTo(cx1, cy1, cx2, cy2, x, y);
-
-// <line> is invisible, append it with .stroke("black");
-
-// style is method-chained, camel-case of the svg attribute
-// rect(10, 10, 280, 130)
-//   .fill("#edb")
-//   .stroke("sienna")
-//   .strokeWidth(5);
-
-svg.size(600, 600);
-svg.background("transparent");
-
-// read more: https://svg.rabbitear.org/docs/
-// roll the dice for an example!
-
-`;
-
+    // var randSize = Math.pow(2, Math.floor(Math.random()*8)+4);
+    var randSize = 100;
+    var welcomeText = "svg.size("+randSize+", "+randSize+");\nsvg.background('transparent');\n\n// svg.play = function (t) {\n//   svg.removeChildren();\n//   svg.circle(50 + 50*Math.sin(t.time), 50, 50);\n// };\n";
     app.injectCode(welcomeText);
   } else {
     app.injectCode(bootQueryValue);

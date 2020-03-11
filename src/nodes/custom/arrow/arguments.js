@@ -106,7 +106,7 @@ const arrowArguments = function (...args) {
     [headArc[0] + headVector[0] * o.head.height, headArc[1] + headVector[1] * o.head.height]
   ];
 
-  return `M${tailArc[0]},${tailArc[1]}C${tailControl[0]},${tailControl[1]},${headControl[0]},${headControl[1]},${headArc[0]},${headArc[1]}`;
+  return [`M${tailArc[0]},${tailArc[1]}C${tailControl[0]},${tailControl[1]},${headControl[0]},${headControl[1]},${headArc[0]},${headArc[1]}`];
 };
 
 export default arrowArguments;

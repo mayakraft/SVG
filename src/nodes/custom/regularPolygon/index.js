@@ -6,6 +6,7 @@ import args from "./arguments";
 
 export default {
   name: "regularPolygon",
-  tagName: "polygon",
+  nodeName: "polygon",
+  attributes: ["points"],
   arguments: args
 };

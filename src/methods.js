@@ -43,9 +43,10 @@ Object.keys(AttributeMethods).forEach(nodeName => {
   Object.assign(AttrNodeFunc[nodeName], AttributeMethods[nodeName]);
 });
 
-const Methods = function (element, name) {
+// nodeName can be custom shapes too like "arrow"
+const Methods = function (nodeName, element) {
   AttributeMethods.Constructor = Methods.Constructor;
-  const nodeName = name !== undefined ? name : element.nodeName;
+  // const nodeName = name !== undefined ? name : element.nodeName;
   if (typeof AttrNodeFunc[nodeName] === K.object && AttrNodeFunc[nodeName] !== null) {
     Object.keys(AttrNodeFunc[nodeName])
       .filter(attr => element[attr] == null)
@@ -65,7 +66,7 @@ Methods.prepareCustomNodes = (CustomNodes) => Object.keys(CustomNodes)
   .forEach(node => {
     makeExist(AttrNodeFunc, node);
     Object.assign(AttrNodeFunc[node],
-      AttrNodeFunc[CustomNodes[node].tagName],
+      AttrNodeFunc[CustomNodes[node].nodeName],
       CustomNodes[node].methods);
   });
 

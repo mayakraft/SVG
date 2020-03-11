@@ -1,19 +1,19 @@
 svg.size(-1, -1, 2, 2);
-svg.background("white", true);
-var radius = svg.getWidth() * 0.333;
+svg.background("#888", true);
+var radius = svg.getWidth() * 0.48;
 
 for (var i = 0; i < 12; i += 1) {
-  svg.text((i + 11) % 12 + 1)
-    .fontFamily("Palatino, Georgia, Times New Roman")
-    .fontSize(svg.getWidth() / 12)
+  svg.text(String((i + 11) % 12 + 1))
+    .fontFamily("Times New Roman")
+    .fontSize(svg.getWidth() / 8)
     .textAnchor("middle")
-    .setAttribute("style", "transform: rotate("+(i*30)+"deg) translate(0, -"+radius*1.05+"px)");
+    .setAttribute("style", "transform: rotate("+(i*30)+"deg) translate(0, -"+radius*0.75+"px)");
 }
 
 var pies = [
-  svg.wedge().fill("white"),
-  svg.wedge().fill("#e53"),
-  svg.wedge().fill("#158")
+  svg.wedge().fill("#0008"),
+  svg.wedge().fill("transparent"),
+  svg.wedge().fill("#fff8")
 ];
 
 svg.play = function (time) {

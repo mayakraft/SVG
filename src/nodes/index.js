@@ -16,8 +16,8 @@ Object.keys(Nodes).forEach(key => Nodes[key]
 Debug.log(elements);
 
 // the placeholder constructor. create any element type in the SVG namespace
-// const createElement = function (tagName) {
-//   return window.document.createElementNS(svgNS, tagName);
+// const createElement = function (nodeName) {
+//   return window.document.createElementNS(svgNS, nodeName);
 // };
 
 export default elements;
