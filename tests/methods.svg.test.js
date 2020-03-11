@@ -32,7 +32,7 @@ test("svg export", () => {
   const expectedString = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="0" x2="300" y2="150" stroke="black" stroke-width="5"/></svg>`;
   expect(asString).toBe(expectedString);
   expect(asSvg.childNodes.length).toBe(1);
-  expect(asSvg.childNodes[0].tagName).toBe("line");
+  expect(asSvg.childNodes[0].nodeName).toBe("line");
 });
 
 

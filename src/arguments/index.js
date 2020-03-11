@@ -31,6 +31,11 @@ const RequiredAttributes = {
   }
 };
 
+const Initializers = {
+  text: textArguments,
+  svg: svgArguments
+}
+
 const polyString = (...numbers) => Array
   .from(Array(Math.floor(numbers.length / 2)))
   .map((_, i) => `${numbers[i*2+0]},${numbers[i*2+1]}`)
@@ -41,23 +46,38 @@ const makeIDString = (...args) => args
   .shift() || UUID();
 
 // sort incoming arguments to match the order of attributes in the master list
-const sortArgs = (nodeName, ...args) => {
-  switch (nodeName) {
-    case "svg": return [viewBox(...args)].filter(a => a !== undefined);
-    case "text": return coordinates(...flatten(...args)).slice(0, 2);
-    case "line": return coordinates(...flatten(...args));
-    case "polyline":
-    case "polygon": return [polyString(...coordinates(...flatten(...args)))];
-    case "mask":
-    case "clipPath":
-    case "symbol":
-    case "marker": return [makeIDString(...args)];
-    default: break;
-  }
-  return args;
+// const sortArgs = (nodeName, ...args) => {
+//   switch (nodeName) {
+//     case "svg": return [viewBox(...args)].filter(a => a !== undefined);
+//     case "text": return coordinates(...flatten(...args)).slice(0, 2);
+//     case "line": return coordinates(...flatten(...args));
+//     case "polyline":
+//     case "polygon": return [polyString(...coordinates(...flatten(...args)))];
+//     case "mask":
+//     case "clipPath":
+//     case "symbol":
+//     case "marker": return [makeIDString(...args)];
+//     default: break;
+//   }
+//   return args;
+// };
+
+const ArgsShuffle = {
+  svg: (...args) => [viewBox(...args)].filter(a => a !== undefined),
+  text: (...args) => coordinates(...flatten(...args)).slice(0, 2),
+  line: (...args) => coordinates(...flatten(...args)),
+  polyline: (...args) => [polyString(...coordinates(...flatten(...args)))],
+  polygon: (...args) => [polyString(...coordinates(...flatten(...args)))],
+  mask: (...args) => [makeIDString(...args)],
+  clipPath: (...args) => [makeIDString(...args)],
+  symbol: (...args) => [makeIDString(...args)],
+  marker: (...args) => [makeIDString(...args)],
 };
 
-export default (element, ...args) => {
+const passthrough = (...a) => a;
+
+// nodeName can be custom shapes too like "arrow"
+const Arguments = (primitiveName, element, ...args) => {
   //
   // todo: figure out the difference between arc and curve why arguments are comign in differently
   //
@@ -70,19 +90,42 @@ export default (element, ...args) => {
   }
   // custom initializers for anything that ISN'T an attribute=value pair.
   // for example: append the SVG to a parent.
-  switch (nodeName) {
-    case "svg": svgArguments(element, ...args); break;
-    case "text": textArguments(element, ...args); break;
-    default: break;
+  if (Initializers[primitiveName] !== undefined) {
+    Initializers[primitiveName](element, ...args);
   }
 
+  const attrElem = (attributes[primitiveName] !== undefined) ? primitiveName : nodeName;
   // set attribute=value pair, if they exist, and if the user supplied arguments
-  const keys = attributes[nodeName];
+  const keys = attributes[attrElem];
   if (keys === undefined) { return element; }
-  sortArgs(nodeName, ...args).forEach((v, i) => {
+  const func = ArgsShuffle[attrElem] || passthrough;
+  func(...args).forEach((v, i) => {
     if (keys[i] != null) {
       element.setAttribute(keys[i], v);
     }
-  })
+  });
   return element;
 };
+
+Arguments.prepareCustomNodes = CustomNodes => {
+
+  Object.keys(CustomNodes)
+    .filter(name => CustomNodes[name].attributes !== undefined)
+    .forEach(name => {
+      attributes[name] = CustomNodes[name].attributes;
+    });
+
+  Object.keys(CustomNodes)
+    .filter(name => CustomNodes[name].arguments !== undefined)
+    .forEach(name => {
+      ArgsShuffle[name] = CustomNodes[name].arguments;
+    });
+
+  Object.keys(CustomNodes)
+    .filter(name => CustomNodes[name].init !== undefined)
+    .forEach(name => {
+      Initializers[name] = CustomNodes[name].init;
+    });
+};
+
+export default Arguments;

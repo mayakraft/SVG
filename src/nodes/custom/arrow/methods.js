@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import K from "../../../environment/keys";
 
 export const setArrowPoints = function (el, ...args) {

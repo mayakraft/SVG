@@ -1,3 +1,4 @@
+// there are two masks that are inverses of one another wrt. black and white
 svg.size(1, 1);
 svg.background("#edb", true);
 

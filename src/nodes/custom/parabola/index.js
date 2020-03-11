@@ -6,6 +6,7 @@ import args from "./arguments";
 
 export default {
   name: "parabola",
-  tagName: "polyline",
+  nodeName: "polyline",
+  attributes: ["points"],
   arguments: args
 };

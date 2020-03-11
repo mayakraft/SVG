@@ -12,4 +12,8 @@ const parabolaArguments = (x, y, width, height) => Array
     y + (i ** 2) * height
   ]);
 
-export default parabolaArguments;
+const parabolaPathString = (x, y, width, height) => [
+  parabolaArguments(x, y, width, height).map(a => `${a[0]},${a[1]}`).join(" ")
+];
+
+export default parabolaPathString;

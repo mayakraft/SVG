@@ -1,6 +1,11 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import K from "../../../environment/keys";
 import Args from "./arguments";
 
+// use regex to match , or space
 const getEndpoints = (element) => {
   const d = element.getAttribute("d");
   if (d == null || d === "") { return []; }
@@ -14,7 +19,7 @@ const getEndpoints = (element) => {
 //   const params = coordinates(...flatten(...args))
 // }
 
-export const curve = (element, amount) => {
+export const arc = (element, amount) => {
   element.setAttribute("d", Args(...getEndpoints(element), amount));
   return element;
 };

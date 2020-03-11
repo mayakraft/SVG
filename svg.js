@@ -172,6 +172,10 @@
       type: "text/css"
     }
   };
+  var Initializers = {
+    text: textArguments,
+    svg: svgArguments
+  };
   var polyString = function polyString() {
     for (var _len = arguments.length, numbers = new Array(_len), _key = 0; _key < _len; _key++) {
       numbers[_key] = arguments[_key];
@@ -188,59 +192,86 @@
       return _typeof(a) === Keys.string || a instanceof String;
     }).shift() || UUID();
   };
-  var sortArgs = function sortArgs(nodeName) {
-    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-      args[_key3 - 1] = arguments[_key3];
+  var ArgsShuffle = {
+    svg: function svg() {
+      return [viewBoxString$1.apply(void 0, arguments)].filter(function (a) {
+        return a !== undefined;
+      });
+    },
+    text: function text() {
+      return coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments))).slice(0, 2);
+    },
+    line: function line() {
+      return coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)));
+    },
+    polyline: function polyline() {
+      return [polyString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))))];
+    },
+    polygon: function polygon() {
+      return [polyString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))))];
+    },
+    mask: function mask() {
+      return [makeIDString.apply(void 0, arguments)];
+    },
+    clipPath: function clipPath() {
+      return [makeIDString.apply(void 0, arguments)];
+    },
+    symbol: function symbol() {
+      return [makeIDString.apply(void 0, arguments)];
+    },
+    marker: function marker() {
+      return [makeIDString.apply(void 0, arguments)];
     }
-    switch (nodeName) {
-      case "svg":
-        return [viewBoxString$1.apply(void 0, args)].filter(function (a) {
-          return a !== undefined;
-        });
-      case "text":
-        return coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args))).slice(0, 2);
-      case "line":
-        return coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)));
-      case "polyline":
-      case "polygon":
-        return [polyString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, args)))))];
-      case "mask":
-      case "clipPath":
-      case "symbol":
-      case "marker":
-        return [makeIDString.apply(void 0, args)];
-    }
-    return args;
   };
-  var Args = (function (element) {
+  var passthrough = function passthrough() {
+    for (var _len3 = arguments.length, a = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      a[_key3] = arguments[_key3];
+    }
+    return a;
+  };
+  var Arguments = function Arguments(primitiveName, element) {
     var nodeName = element.nodeName;
     if (_typeof(RequiredAttributes[nodeName]) === Keys.object && RequiredAttributes[nodeName] !== null) {
       Object.keys(RequiredAttributes[nodeName]).forEach(function (key) {
         return element.setAttribute(key, RequiredAttributes[nodeName][key]);
       });
     }
-    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-      args[_key4 - 1] = arguments[_key4];
+    for (var _len4 = arguments.length, args = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+      args[_key4 - 2] = arguments[_key4];
     }
-    switch (nodeName) {
-      case "svg":
-        svgArguments.apply(void 0, [element].concat(args));
-        break;
-      case "text":
-        textArguments.apply(void 0, [element].concat(args));
-        break;
+    if (Initializers[primitiveName] !== undefined) {
+      Initializers[primitiveName].apply(Initializers, [element].concat(args));
     }
-    var keys = attributes[nodeName];
+    var attrElem = attributes[primitiveName] !== undefined ? primitiveName : nodeName;
+    var keys = attributes[attrElem];
     if (keys === undefined) {
       return element;
     }
-    sortArgs.apply(void 0, [nodeName].concat(args)).forEach(function (v, i) {
+    var func = ArgsShuffle[attrElem] || passthrough;
+    func.apply(void 0, args).forEach(function (v, i) {
       if (keys[i] != null) {
         element.setAttribute(keys[i], v);
       }
     });
     return element;
-  });
+  };
+  Arguments.prepareCustomNodes = function (CustomNodes) {
+    Object.keys(CustomNodes).filter(function (name) {
+      return CustomNodes[name].attributes !== undefined;
+    }).forEach(function (name) {
+      attributes[name] = CustomNodes[name].attributes;
+    });
+    Object.keys(CustomNodes).filter(function (name) {
+      return CustomNodes[name].arguments !== undefined;
+    }).forEach(function (name) {
+      ArgsShuffle[name] = CustomNodes[name].arguments;
+    });
+    Object.keys(CustomNodes).filter(function (name) {
+      return CustomNodes[name].init !== undefined;
+    }).forEach(function (name) {
+      Initializers[name] = CustomNodes[name].init;
+    });
+  };
   var vec = function vec(a, d) {
     return [Math.cos(a) * d, Math.sin(a) * d];
   };
@@ -263,11 +294,12 @@
     return d;
   };
   var arcArguments = function arcArguments(a, b, c, d, e) {
-    return arcPath(a, b, c, d, e, false);
+    return [arcPath(a, b, c, d, e, false)];
   };
   var Arc = {
     name: "arc",
-    tagName: "path",
+    nodeName: "path",
+    attributes: ["d"],
     arguments: arcArguments,
     methods: {
       setArc: function setArc(el) {
@@ -279,12 +311,13 @@
     }
   };
   var wedgeArguments = function wedgeArguments(a, b, c, d, e) {
-    return arcPath(a, b, c, d, e, true);
+    return [arcPath(a, b, c, d, e, true)];
   };
   var Wedge = {
     name: "wedge",
-    tagName: "path",
+    nodeName: "path",
     arguments: wedgeArguments,
+    attributes: ["d"],
     methods: {
       setArc: function setArc(el) {
         for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -302,10 +335,16 @@
       return [x + (i + 1) * width * 0.5, y + Math.pow(i, 2) * height];
     });
   };
+  var parabolaPathString = function parabolaPathString(x, y, width, height) {
+    return [parabolaArguments(x, y, width, height).map(function (a) {
+      return "".concat(a[0], ",").concat(a[1]);
+    }).join(" ")];
+  };
   var Parabola = {
     name: "parabola",
-    tagName: "polyline",
-    arguments: parabolaArguments
+    nodeName: "polyline",
+    attributes: ["points"],
+    arguments: parabolaPathString
   };
   var regularPolygonArguments = function regularPolygonArguments(cX, cY, radius, sides) {
     var halfwedge = 2 * Math.PI / sides * 0.5;
@@ -317,10 +356,16 @@
       return [x, y];
     });
   };
+  var polygonPathString = function polygonPathString(cX, cY, radius, sides) {
+    return [regularPolygonArguments(cX, cY, radius, sides).map(function (a) {
+      return "".concat(a[0], ",").concat(a[1]);
+    }).join(" ")];
+  };
   var RegularPolygon = {
     name: "regularPolygon",
-    tagName: "polygon",
-    arguments: regularPolygonArguments
+    nodeName: "polygon",
+    attributes: ["points"],
+    arguments: polygonPathString
   };
   var roundRectArguments = function roundRectArguments(x, y, width, height) {
     var cornerRadius = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
@@ -337,8 +382,159 @@
   };
   var RoundRect = {
     name: "roundRect",
-    tagName: "path",
+    nodeName: "path",
+    attributes: ["d"],
     arguments: roundRectArguments
+  };
+  var arrowArguments = function arrowArguments() {
+    var flat = flatten.apply(void 0, arguments);
+    var endpoints = [];
+    if (_typeof(flat[0]) === Keys.number) {
+      endpoints = flat;
+    }
+    if (_typeof(flat[0]) === Keys.object) {
+      if (_typeof(flat[0].x) === Keys.number) {
+        endpoints = flat.map(function (p) {
+          return [p[0], p[1]];
+        }).reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+      if (_typeof(flat[0][0]) === Keys.number) {
+        endpoints = flat.reduce(function (a, b) {
+          return a.concat(b);
+        }, []);
+      }
+    }
+    if (!endpoints.length && shape.endpoints != null) {
+      endpoints = shape.endpoints;
+    }
+    if (!endpoints.length) {
+      return "";
+    }
+    shape.endpoints = endpoints;
+    var o = shape.options;
+    var tailPt = [endpoints[0], endpoints[1]];
+    var headPt = [endpoints[2], endpoints[3]];
+    var vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+    var midpoint = [tailPt[0] + vector[0] / 2, tailPt[1] + vector[1] / 2];
+    var len = Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+    var minLength = (o.tail.visible ? (1 + o.tail.padding) * o.tail.height * 2.5 : 0) + (o.head.visible ? (1 + o.head.padding) * o.head.height * 2.5 : 0);
+    if (len < minLength) {
+      var minVec = len === 0 ? [minLength, 0] : [vector[0] / len * minLength, vector[1] / len * minLength];
+      tailPt = [midpoint[0] - minVec[0] * 0.5, midpoint[1] - minVec[1] * 0.5];
+      headPt = [midpoint[0] + minVec[0] * 0.5, midpoint[1] + minVec[1] * 0.5];
+      vector = [headPt[0] - tailPt[0], headPt[1] - tailPt[1]];
+    }
+    var perpendicular = [vector[1], -vector[0]];
+    var bezPoint = [midpoint[0] + perpendicular[0] * o.curve, midpoint[1] + perpendicular[1] * o.curve];
+    var bezTail = [bezPoint[0] - tailPt[0], bezPoint[1] - tailPt[1]];
+    var bezHead = [bezPoint[0] - headPt[0], bezPoint[1] - headPt[1]];
+    var bezTailLen = Math.sqrt(Math.pow(bezTail[0], 2) + Math.pow(bezTail[1], 2));
+    var bezHeadLen = Math.sqrt(Math.pow(bezHead[0], 2) + Math.pow(bezHead[1], 2));
+    var bezTailNorm = bezTailLen === 0 ? bezTail : [bezTail[0] / bezTailLen, bezTail[1] / bezTailLen];
+    var bezHeadNorm = bezTailLen === 0 ? bezHead : [bezHead[0] / bezHeadLen, bezHead[1] / bezHeadLen];
+    var tailVector = [-bezTailNorm[0], -bezTailNorm[1]];
+    var headVector = [-bezHeadNorm[0], -bezHeadNorm[1]];
+    var tailNormal = [tailVector[1], -tailVector[0]];
+    var headNormal = [headVector[1], -headVector[0]];
+    var tailArc = [tailPt[0] + bezTailNorm[0] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding), tailPt[1] + bezTailNorm[1] * o.tail.height * ((o.tail.visible ? 1 : 0) + o.tail.padding)];
+    var headArc = [headPt[0] + bezHeadNorm[0] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding), headPt[1] + bezHeadNorm[1] * o.head.height * ((o.head.visible ? 1 : 0) + o.head.padding)];
+    vector = [headArc[0] - tailArc[0], headArc[1] - tailArc[1]];
+    perpendicular = [vector[1], -vector[0]];
+    midpoint = [tailArc[0] + vector[0] / 2, tailArc[1] + vector[1] / 2];
+    bezPoint = [midpoint[0] + perpendicular[0] * o.curve, midpoint[1] + perpendicular[1] * o.curve];
+    var tailControl = [tailArc[0] + (bezPoint[0] - tailArc[0]) * o.pinch, tailArc[1] + (bezPoint[1] - tailArc[1]) * o.pinch];
+    var headControl = [headArc[0] + (bezPoint[0] - headArc[0]) * o.pinch, headArc[1] + (bezPoint[1] - headArc[1]) * o.pinch];
+    var tailPolyPts = [[tailArc[0] + tailNormal[0] * -o.tail.width, tailArc[1] + tailNormal[1] * -o.tail.width], [tailArc[0] + tailNormal[0] * o.tail.width, tailArc[1] + tailNormal[1] * o.tail.width], [tailArc[0] + tailVector[0] * o.tail.height, tailArc[1] + tailVector[1] * o.tail.height]];
+    var headPolyPts = [[headArc[0] + headNormal[0] * -o.head.width, headArc[1] + headNormal[1] * -o.head.width], [headArc[0] + headNormal[0] * o.head.width, headArc[1] + headNormal[1] * o.head.width], [headArc[0] + headVector[0] * o.head.height, headArc[1] + headVector[1] * o.head.height]];
+    return ["M".concat(tailArc[0], ",").concat(tailArc[1], "C").concat(tailControl[0], ",").concat(tailControl[1], ",").concat(headControl[0], ",").concat(headControl[1], ",").concat(headArc[0], ",").concat(headArc[1])];
+  };
+  var setArrowPoints = function setArrowPoints(el) {
+    var children = Array.from(el.childNodes);
+    var path = children.filter(function (node) {
+      return node.nodeName === "path";
+    }).shift();
+    var polys = ["svg-arrow-head", "svg-arrow-tail"].map(function (c) {
+      return children.filter(function (n) {
+        return n.getAttribute("class") === c;
+      }).shift();
+    });
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+    path.setAttribute("d", buildArrow.apply(void 0, args));
+    if (o.head.visible) {
+      polys[0].removeAttribute("display");
+      setPoints(polys[0], headPolyPts);
+    } else {
+      polys[0].setAttribute("display", "none");
+    }
+    if (o.tail.visible) {
+      polys[1].removeAttribute("display");
+      setPoints(polys[1], tailPolyPts);
+    } else {
+      polys[1].setAttribute("display", "none");
+    }
+    return el;
+  };
+  var head = function head(element, options) {
+    if (_typeof(options) === Keys.object) {
+      Object.assign(element.options.head, options);
+      if (options.visible === undefined) {
+        element.options.head.visible = true;
+      }
+    } else if (_typeof(options) === Keys["boolean"]) {
+      element.options.head.visible = options;
+    } else if (options == null) {
+      element.options.head.visible = true;
+    }
+    setArrowPoints(element);
+    return element;
+  };
+  var tail = function tail(element, options) {
+    if (_typeof(options) === Keys.object) {
+      Object.assign(element.options.tail, options);
+      if (options.visible === undefined) {
+        element.options.tail.visible = true;
+      }
+      element.options.tail.visible = true;
+    } else if (_typeof(options) === Keys["boolean"]) {
+      element.options.tail.visible = options;
+    } else if (options == null) {
+      element.options.tail.visible = true;
+    }
+    setArrowPoints(element);
+    return element;
+  };
+  var curve = function curve(element, amount) {
+    element.options.curve = amount;
+    setArrowPoints(element);
+    return element;
+  };
+  var pinch = function pinch(element, amount) {
+    element.options.pinch = amount;
+    setArrowPoints(element);
+    return element;
+  };
+  var methods = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    setArrowPoints: setArrowPoints,
+    head: head,
+    tail: tail,
+    curve: curve,
+    pinch: pinch
+  });
+  var init = function init(element) {
+    console.log("running arrow init");
+  };
+  var Arrow = {
+    name: "arrow",
+    nodeName: "g",
+    attributes: ["d"],
+    arguments: arrowArguments,
+    methods: methods,
+    init: init
   };
   var add = function add(a, b) {
     return [a[0] + b[0], a[1] + b[1]];
@@ -378,27 +574,25 @@
       });
     });
   };
-  var curve = function curve(element, amount) {
+  var arc = function arc(element, amount) {
     element.setAttribute("d", curveArguments.apply(void 0, _toConsumableArray(getEndpoints(element)).concat([amount])));
     return element;
   };
-  var methods = /*#__PURE__*/Object.freeze({
+  var methods$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    curve: curve
+    arc: arc
   });
   var Curve = {
     name: "curve",
-    tagName: "path",
+    nodeName: "path",
+    attributes: ["d"],
     arguments: curveArguments,
-    methods: methods
+    methods: methods$1
   };
   var nodes = {};
-  [Arc, Wedge, Parabola, RegularPolygon, RoundRect, Curve].forEach(function (custom) {
-    nodes[custom.name] = {
-      tagName: custom.tagName,
-      arguments: custom.arguments,
-      methods: custom.methods
-    };
+  [Arc, Wedge, Parabola, RegularPolygon, RoundRect, Curve, Arrow].forEach(function (custom) {
+    nodes[custom.name] = custom;
+    delete nodes[custom.name].name;
   });
   var Nodes = {
     s: ["svg"],
@@ -531,13 +725,13 @@
       }
     }
   };
-  var methods$1 = {};
+  var methods$2 = {};
   Object.keys(AttributeSetters).forEach(function (nodeName) {
-    methods$1[nodeName] = {};
+    methods$2[nodeName] = {};
     Object.keys(AttributeSetters[nodeName]).filter(function (method) {
       return AttributeSetters[nodeName][method].attr !== undefined;
     }).forEach(function (method) {
-      methods$1[nodeName][method] = function (el) {
+      methods$2[nodeName][method] = function (el) {
         var _AttributeSetters$nod;
         for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
           args[_key2 - 1] = arguments[_key2];
@@ -548,7 +742,7 @@
     Object.keys(AttributeSetters[nodeName]).filter(function (method) {
       return AttributeSetters[nodeName][method].attrs !== undefined;
     }).forEach(function (method) {
-      methods$1[nodeName][method] = function (el) {
+      methods$2[nodeName][method] = function (el) {
         var _AttributeSetters$nod2;
         for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
           args[_key3 - 1] = arguments[_key3];
@@ -563,14 +757,14 @@
     var t = element.getAttribute(Keys.transform);
     return t == null || t === "" ? undefined : t;
   };
-  var methods$2 = {
+  var methods$3 = {
     clearTransform: function clearTransform(el) {
       el.removeAttribute(Keys.transform);
       return el;
     }
   };
   ["translate", "rotate", "scale", "matrix"].forEach(function (key) {
-    methods$2[key] = function (element) {
+    methods$3[key] = function (element) {
       for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
@@ -592,9 +786,9 @@
     }
     return "";
   };
-  var methods$3 = {};
+  var methods$4 = {};
   ["clip-path", "mask", "symbol", "marker-end", "marker-mid", "marker-start"].forEach(function (attr) {
-    methods$3[Case.toCamel(attr)] = function (element, parent) {
+    methods$4[Case.toCamel(attr)] = function (element, parent) {
       return element.setAttribute(attr, findIdURL(parent));
     };
   });
@@ -753,13 +947,13 @@
     el.setAttribute("d", "".concat(getD(el)).concat(command).concat(params));
     return el;
   };
-  var methods$4 = {};
-  methods$4.clear = function (el) {
+  var methods$5 = {};
+  methods$5.clear = function (el) {
     el.removeAttribute("d");
     return el;
   };
   Object.keys(pathCommands).forEach(function (key) {
-    methods$4[pathCommands[key]] = function (el) {
+    methods$5[pathCommands[key]] = function (el) {
       for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
       }
@@ -780,7 +974,7 @@
   };
   var nodeMethods = {
     svg: svg,
-    path: methods$4,
+    path: methods$5,
     style: style
   };
   var applyMethodsToNode = function applyMethodsToNode(methods, node) {
@@ -798,8 +992,8 @@
   };
   var t_v_g = [Nodes.t, Nodes.v, Nodes.g];
   var most = t_v_g.concat([Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d]);
-  applyMethodsToGroup(methods$2, t_v_g.concat([Nodes.s]));
-  applyMethodsToGroup(methods$3, t_v_g);
+  applyMethodsToGroup(methods$3, t_v_g.concat([Nodes.s]));
+  applyMethodsToGroup(methods$4, t_v_g);
   applyMethodsToGroup(DOM, most);
   applyMethodsToGroup({
     setAttributes: function setAttributes(el, attrs) {
@@ -808,25 +1002,25 @@
       });
     }
   }, most);
-  Object.keys(methods$1).forEach(function (nodeName) {
-    return applyMethodsToNode(methods$1[nodeName], nodeName);
+  Object.keys(methods$2).forEach(function (nodeName) {
+    return applyMethodsToNode(methods$2[nodeName], nodeName);
   });
-  var methods$5 = {};
+  var methods$6 = {};
   Object.keys(nodeMethods).forEach(function (nodeName) {
-    makeExist(methods$5, nodeName);
+    makeExist(methods$6, nodeName);
     Object.keys(nodeMethods[nodeName]).filter(function (method) {
-      return methods$5[nodeName][method] === undefined;
+      return methods$6[nodeName][method] === undefined;
     }).forEach(function (method) {
-      methods$5[nodeName][method] = function (el) {
+      methods$6[nodeName][method] = function (el) {
         var _nodeMethods$nodeName;
         for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
           args[_key - 1] = arguments[_key];
         }
-        return (_nodeMethods$nodeName = nodeMethods[nodeName][method]).call.apply(_nodeMethods$nodeName, [methods$5, el].concat(args)) || el;
+        return (_nodeMethods$nodeName = nodeMethods[nodeName][method]).call.apply(_nodeMethods$nodeName, [methods$6, el].concat(args)) || el;
       };
     });
   });
-  Debug.log(methods$5);
+  Debug.log(methods$6);
   var makeExist$1 = function makeExist(obj, key) {
     if (obj[key] === undefined) {
       obj[key] = {};
@@ -858,13 +1052,12 @@
       };
     });
   });
-  Object.keys(methods$5).forEach(function (nodeName) {
+  Object.keys(methods$6).forEach(function (nodeName) {
     makeExist$1(AttrNodeFunc, nodeName);
-    Object.assign(AttrNodeFunc[nodeName], methods$5[nodeName]);
+    Object.assign(AttrNodeFunc[nodeName], methods$6[nodeName]);
   });
-  var Methods = function Methods(element, name) {
-    methods$5.Constructor = Methods.Constructor;
-    var nodeName = name !== undefined ? name : element.nodeName;
+  var Methods = function Methods(nodeName, element) {
+    methods$6.Constructor = Methods.Constructor;
     if (_typeof(AttrNodeFunc[nodeName]) === Keys.object && AttrNodeFunc[nodeName] !== null) {
       Object.keys(AttrNodeFunc[nodeName]).filter(function (attr) {
         return element[attr] == null;
@@ -886,34 +1079,26 @@
   Methods.prepareCustomNodes = function (CustomNodes) {
     return Object.keys(CustomNodes).forEach(function (node) {
       makeExist$1(AttrNodeFunc, node);
-      Object.assign(AttrNodeFunc[node], AttrNodeFunc[CustomNodes[node].tagName], CustomNodes[node].methods);
+      Object.assign(AttrNodeFunc[node], AttrNodeFunc[CustomNodes[node].nodeName], CustomNodes[node].methods);
     });
   };
   var nodeNames = {};
-  var argsMethods = {};
   Object.keys(Nodes).forEach(function (key) {
     return Nodes[key].forEach(function (nodeName) {
       nodeNames[nodeName] = nodeName;
-      argsMethods[nodeName] = function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-        return args;
-      };
     });
   });
   Object.keys(nodes).forEach(function (key) {
-    nodeNames[key] = nodes[key].tagName;
-    argsMethods[key] = nodes[key].arguments;
+    nodeNames[key] = nodes[key].nodeName;
   });
+  Arguments.prepareCustomNodes(nodes);
   Methods.prepareCustomNodes(nodes);
   Debug.log(nodeNames);
-  Debug.log(argsMethods);
   var constructor = function constructor(nodeName) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
     }
-    return Methods(Args.apply(void 0, [win.document.createElementNS(NS, nodeNames[nodeName])].concat(_toConsumableArray(argsMethods[nodeName].apply(argsMethods, args)))), nodeName);
+    return Methods(nodeName, Arguments.apply(void 0, [nodeName, win.document.createElementNS(NS, nodeNames[nodeName])].concat(args)));
   };
   Methods.Constructor = constructor;
   var elements = {};

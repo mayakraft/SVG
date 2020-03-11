@@ -4,10 +4,13 @@
 
 import args from "./arguments";
 import * as methods from "./methods";
+import init from "./init";
 
 export default {
   name: "arrow",
-  tagName: "g",
+  nodeName: "g",
+  attributes: ["d"],
   arguments: args,  // one function
-  methods: methods  // object of functions
+  methods: methods,  // object of functions
+  init: init,
 };

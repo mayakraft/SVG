@@ -4,12 +4,13 @@
 
 import arcPath from "../arc/arcPath";
 
-const wedgeArguments = (a, b, c, d, e) => arcPath(a, b, c, d, e, true);
+const wedgeArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, true)];
 
 export default {
   name: "wedge",
-  tagName: "path",
+  nodeName: "path",
   arguments: wedgeArguments,
+  attributes: ["d"],
   methods: {
     setArc: (el, ...args) => el.setAttribute("d", wedgeArguments(...args)),
   }

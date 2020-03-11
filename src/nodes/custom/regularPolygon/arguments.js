@@ -13,4 +13,9 @@ const regularPolygonArguments = (cX, cY, radius, sides) => {
   });
 };
 
-export default regularPolygonArguments;
+const polygonPathString = (cX, cY, radius, sides) => [
+  regularPolygonArguments(cX, cY, radius, sides)
+    .map(a => `${a[0]},${a[1]}`).join(" ")
+];
+
+export default polygonPathString;

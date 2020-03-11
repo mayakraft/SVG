@@ -1,3 +1,6 @@
+/**
+ * SVG (c) Robby Kraft
+ */
 
 export const arrow = function (...args) {
   const shape = window.document.createElementNS(svgNS, "g");

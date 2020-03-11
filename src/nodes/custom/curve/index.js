@@ -7,7 +7,8 @@ import * as methods from "./methods";
 
 export default {
   name: "curve",
-  tagName: "path",
+  nodeName: "path",
+  attributes: ["d"],
   arguments: args,  // one function
   methods: methods  // object of functions
 };
