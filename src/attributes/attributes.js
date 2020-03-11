@@ -144,11 +144,12 @@ export default {
   ],
   marker: [
     "id",
-    "refX",
-    "refY",
     "markerHeight",
     "markerUnits",
     "markerWidth",
+    "orient",
+    "refX",
+    "refY",
   ],
   pattern: [
     "patternContentUnits", // only <pattern>

@@ -14,6 +14,7 @@ import DOM from "./dom";
 import svg from "./forElements/svg";
 import path from "./forElements/path";
 import style from "./forElements/style";
+import marker from "./forElements/marker";
 // import TouchEvents from "../events/touch";
 
 const makeExist = (obj, key) => {
@@ -32,6 +33,7 @@ const nodeMethods = {
   svg: svg,
   path: path,
   style: style,
+  marker: marker,
 };
 
 const applyMethodsToNode = (methods, node) => {

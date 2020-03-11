@@ -16,6 +16,10 @@ const viewBoxString = function (x, y, width, height, padding) {
   return [X, Y, W, H].join(" ");
 }
 
+/**
+ * this will attempt to match a set of viewbox parameters
+ * undefined, if it cannot build a string
+ */
 export default (...args) => {
   const numbers = coordinates(...flatten(...args));
   if (numbers.length === 2) { numbers.unshift(0, 0); }
