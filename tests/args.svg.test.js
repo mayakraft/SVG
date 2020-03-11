@@ -2,6 +2,10 @@ const SVG = require("../svg");
 const { DOMParser } = require("xmldom");
 
 test("argument parsing, svg", () => {
+  const svg0 = SVG();
+  const vb0 = svg0.getAttribute("viewBox");
+  expect(vb0 == null || vb0 === "").toBe(true);
+
   const svg1 = SVG(400, 500);
   expect(svg1.getAttribute("viewBox")).toBe("0 0 400 500");
 

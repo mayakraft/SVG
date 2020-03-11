@@ -13,25 +13,7 @@ import Save from "../../file/save";
 import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 
-import viewBoxString from "../../arguments/viewBox";
-
-// set the viewbox size
-// "size" refers viewbox whenever possible
-// size on the DOM, the "width" attribute, you can handle it yourself
-const size = (element, ...args) => {
-  const viewBox = viewBoxString(...args);
-  if (viewBox) {
-    element.setAttribute("viewBox", viewBox);
-  }
-  return element;
-};
-
-const getViewBox = function (svg) {
-  const vb = svg.getAttribute("viewBox");
-  return (vb == null
-    ? undefined
-    : vb.split(" ").map(n => parseFloat(n)));
-};
+import { getViewBox, setViewBox } from "../viewBox";
 
 const getFrame = function (element) {
   const viewBox = getViewBox(element);
@@ -116,10 +98,15 @@ const load = function (input, callback) {
   }
 };
 
+// set the viewbox size
+// "size" refers viewbox whenever possible
+// size on the DOM, the "width" attribute, you can handle it yourself
+
 // these will end up as methods on the <svg> nodes
 const svg = {
   clear: clear,
-  size: size,
+  size: setViewBox,
+  // setViewBox: setViewBox,
   background: background,
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],

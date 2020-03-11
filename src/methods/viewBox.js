@@ -4,25 +4,27 @@
 
 import viewBoxString from "../arguments/viewBox";
 
-const vB = "viewBox"
+const vB = "viewBox";
 
-export const getViewBox = function (svg) {
-  const vb = svg.getAttribute(vB);
+export const setViewBox = (element, ...args) => {
+  // are they giving us pre-formatted string, or a list of numbers
+  const viewBox = args.length === 1 && typeof args[0] === "string"
+    ? args[0]
+    : viewBoxString(...args);
+  if (viewBox) {
+    element.setAttribute(vB, viewBox);
+  }
+  return element;
+};
+
+export const getViewBox = function (element) {
+  const vb = element.getAttribute(vB);
   return (vb == null
     ? undefined
     : vb.split(" ").map(n => parseFloat(n)));
 };
 
-export const setViewBox = function (svg, x, y, width, height, padding) {
-  svg.setAttributeNS(null, vB, viewBoxString(x, y, width, height, padding));
-};
-
-const setDefaultViewBox = function (svg) {
-  const size = svg.getBoundingClientRect();
-  const width = (size.width === 0 ? 640 : size.width);
-  const height = (size.height === 0 ? 480 : size.height);
-  setViewBox(svg, 0, 0, width, height);
-};
+/*
 
 export const convertToViewBox = function (svg, x, y) {
   const pt = svg.createSVGPoint();
@@ -68,3 +70,5 @@ export const scaleViewBox = function (svg, scale, origin_x = 0, origin_y = 0) {
     new_bot_right.x - new_top_left.x,
     new_bot_right.y - new_top_left.y);
 };
+
+*/

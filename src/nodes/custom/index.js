@@ -23,7 +23,8 @@ const nodes = {};
 // to remove custom nodes from the library:
 // comment out this block below and rebuild
 
-[Arc, Wedge, Parabola, RegularPolygon, RoundRect, Curve, Arrow
+[Arc, Wedge, Parabola, RegularPolygon, RoundRect, Curve,
+// Arrow
 ].forEach(custom => {
   nodes[custom.name] = custom;
   delete nodes[custom.name].name;
