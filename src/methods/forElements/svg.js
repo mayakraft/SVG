@@ -79,7 +79,6 @@ const assignSVG = function (target, source) {
     .forEach(attr => target.setAttribute(attr.name, attr.value));
 };
 
-
 const done = (svg, callback) => {
   if (callback != null) { callback(svg); }
   return svg;
@@ -111,9 +110,10 @@ const svg = {
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
   stylesheet: function (text) { return stylesheet.call(this, text); },
-  save: (el, options = {}) => (options.output === "svg"
-  //   ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
-    ? el : (new window.XMLSerializer()).serializeToString(el)),
+  // save: (el, options = {}) => (options.output === "svg"
+  // //   ? el : vkXML((new window.XMLSerializer()).serializeToString(el))),
+  //   ? el : (new window.XMLSerializer()).serializeToString(el)),
+  save: Save,
   load: (el, data, callback) => assignSVG(el, load(data, callback)),
 };
 

@@ -1,5 +1,5 @@
 svg.size(50, 60);
-svg.background("white", true);
+svg.background("white");
 
 svg.rect(0, 0, 50, 30).fill("steelblue");
 svg.rect(0, 30, 50, 30).fill("peru");

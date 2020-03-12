@@ -424,13 +424,13 @@
       });
     });
   };
-  var arc = function arc(element, amount) {
+  var bend = function bend(element, amount) {
     element.setAttribute("d", curveArguments.apply(void 0, _toConsumableArray(getEndpoints(element)).concat([amount])));
     return element;
   };
   var methods = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    arc: arc
+    bend: bend
   });
   var Curve = {
     name: "curve",
@@ -657,6 +657,33 @@
   var cdata = function cdata(textContent) {
     return new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
   };
+  var downloadInBrowser = function downloadInBrowser(filename, contentsAsString) {
+    var blob = new win.Blob([contentsAsString], {
+      type: "text/plain"
+    });
+    var a = win.document.createElement("a");
+    a.setAttribute("href", win.URL.createObjectURL(blob));
+    a.setAttribute("download", filename);
+    win.document.body.appendChild(a);
+    a.click();
+    win.document.body.removeChild(a);
+  };
+  var SAVE_OPTIONS = function SAVE_OPTIONS() {
+    return {
+      output: Keys.string,
+      windowStyle: false,
+      filename: "image.svg"
+    };
+  };
+  var save = function save(svg, options) {
+    options = Object.assign(SAVE_OPTIONS(), options);
+    var source = new win.XMLSerializer().serializeToString(svg);
+    var formattedString = source;
+    if (isBrowser && !isNode) {
+      downloadInBrowser(options.filename, formattedString);
+    }
+    return options.output === "svg" ? svg : formattedString;
+  };
   var vB = "viewBox";
   var setViewBox = function setViewBox(element) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -673,6 +700,13 @@
     return vb == null ? undefined : vb.split(" ").map(function (n) {
       return parseFloat(n);
     });
+  };
+  var convertToViewBox = function convertToViewBox(svg, x, y) {
+    var pt = svg.createSVGPoint();
+    pt.x = x;
+    pt.y = y;
+    var svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return [svgPoint.x, svgPoint.y];
   };
   var getFrame = function getFrame(element) {
     var viewBox = getViewBox(element);
@@ -762,10 +796,7 @@
     stylesheet: function stylesheet(text) {
       return _stylesheet.call(this, text);
     },
-    save: function save(el) {
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return options.output === "svg" ? el : new win.XMLSerializer().serializeToString(el);
-    },
+    save: save,
     load: function load(el, data, callback) {
       return assignSVG(el, _load(data, callback));
     }
@@ -782,26 +813,65 @@
     t: "smoothQuadCurve",
     z: "close"
   };
+  var expectedArguments = {
+    m: 2,
+    l: 2,
+    v: 1,
+    h: 1,
+    a: 7,
+    c: 6,
+    s: 4,
+    q: 4,
+    t: 2,
+    z: 0
+  };
   Object.keys(pathCommands).forEach(function (key) {
     var s = pathCommands[key];
     pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
+    expectedArguments[key.toUpperCase()] = expectedArguments[key];
   });
   var getD = function getD(el) {
     var attr = el.getAttribute("d");
     return attr == null ? "" : attr;
   };
   var appendPathItem = function appendPathItem(el, command) {
+    var _console;
     for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
       args[_key - 2] = arguments[_key];
     }
+    (_console = console).log.apply(_console, ["append", command].concat(args));
     var params = flatten.apply(void 0, args).join(" ");
     el.setAttribute("d", "".concat(getD(el)).concat(command).concat(params));
     return el;
   };
-  var methods$4 = {};
-  methods$4.clear = function (el) {
-    el.removeAttribute("d");
-    return el;
+  var parsePathCommand = function parsePathCommand(string) {
+    var letter = string.match(/[a-z]/ig).shift();
+    var numberString = string.match(/[^a-z]*/ig).filter(function (a) {
+      return a !== "";
+    }).shift();
+    var numbers = (numberString != null ? numberString.split(/(,| )/) : []).map(function (a) {
+      return parseFloat(a);
+    }).filter(function (a) {
+      return !isNaN(a);
+    }).slice(0, expectedArguments[letter] || 0);
+    return {
+      name: pathCommands[letter],
+      letter: letter,
+      numbers: numbers
+    };
+  };
+  var getCommands = function getCommands(element) {
+    return getD(element).match(/[a-z][^a-z]*/ig).map(function (a) {
+      return parsePathCommand(a);
+    });
+  };
+  var methods$4 = {
+    command: appendPathItem,
+    clear: function clear(el) {
+      el.removeAttribute("d");
+      return el;
+    },
+    instructions: getCommands
   };
   Object.keys(pathCommands).forEach(function (key) {
     methods$4[pathCommands[key]] = function (el) {
@@ -811,6 +881,7 @@
       return appendPathItem.apply(void 0, [el, key].concat(args));
     };
   });
+  console.log(methods$4);
   var style = {
     setTextContent: function setTextContent(el, text) {
       el.textContent = "";
@@ -969,13 +1040,6 @@
     });
   });
   Debug.log(elements);
-  var convertToViewBox = function convertToViewBox(svg, x, y) {
-    var pt = svg.createSVGPoint();
-    pt.x = x;
-    pt.y = y;
-    var svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
-    return [svgPoint.x, svgPoint.y];
-  };
   var categories = {
     move: ["mousemove", "touchmove"],
     press: ["mousedown", "touchstart"],
@@ -992,7 +1056,7 @@
       handlers[handlerName] = [];
     });
   };
-  var defGet = function defGet(obj, prop, value) {
+  var defineGetter = function defineGetter(obj, prop, value) {
     return Object.defineProperty(obj, prop, {
       get: function get() {
         return value;
@@ -1025,7 +1089,7 @@
           startPoint = [];
         }
         ["startX", "startY"].forEach(function (prop, i) {
-          return defGet(e, prop, startPoint[i]);
+          return defineGetter(e, prop, startPoint[i]);
         });
       }
     };
@@ -1038,7 +1102,7 @@
               var pointer = e.touches != null ? e.touches[0] : e;
               var viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY);
               ["x", "y"].forEach(function (prop, i) {
-                return defGet(e, prop, viewPoint[i]);
+                return defineGetter(e, prop, viewPoint[i]);
               });
               categoryUpdate[category](e, viewPoint);
               handler(e);
@@ -1060,7 +1124,9 @@
     var start;
     var handlers = {};
     var frame = 0;
+    var requestId;
     var removeHandlers = function removeHandlers() {
+      win.cancelAnimationFrame(requestId);
       Object.keys(handlers).forEach(function (uuid) {
         return delete handlers[uuid];
       });
@@ -1085,11 +1151,11 @@
           });
           frame += 1;
           if (handlers[uuid]) {
-            window.requestAnimationFrame(handlers[uuid]);
+            requestId = win.requestAnimationFrame(handlers[uuid]);
           }
         };
         handlers[uuid] = handlerFunc;
-        window.requestAnimationFrame(handlers[uuid]);
+        requestId = win.requestAnimationFrame(handlers[uuid]);
       },
       enumerable: true
     });
@@ -1098,7 +1164,7 @@
       enumerable: true
     });
   };
-  var distance = function distance(a, b) {
+  var distanceSq = function distanceSq(a, b) {
     return [0, 1].map(function (i) {
       return a[i] - b[i];
     }).map(function (e) {
@@ -1173,7 +1239,7 @@
     position.onMouseMove = onMouseMove;
     position.onMouseUp = onMouseUp;
     position.distance = function (mouse) {
-      return distance(mouse, position);
+      return Math.sqrt(distanceSq(mouse, position));
     };
     Object.defineProperty(position, "x", {
       get: function get() {
@@ -1245,7 +1311,7 @@
       selected = points.map(function (p, i) {
         return {
           i: i,
-          d: distance(p, [mouse.x, mouse.y])
+          d: distanceSq(p, [mouse.x, mouse.y])
         };
       }).sort(function (a, b) {
         return a.d - b.d;

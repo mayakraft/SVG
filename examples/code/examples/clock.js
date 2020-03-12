@@ -1,5 +1,5 @@
 svg.size(-1, -1, 2, 2);
-svg.background("#888", true);
+svg.background("#888");
 var radius = svg.getWidth() * 0.48;
 
 for (var i = 0; i < 12; i += 1) {

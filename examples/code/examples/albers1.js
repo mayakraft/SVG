@@ -1,5 +1,5 @@
 svg.size(90, 90);
-svg.background("#9590c0", true);
+svg.background("#9590c0");
 
 var g = svg.g().translate(35, 15);
 var style = { fill: "#2c266d", opacity: 0.4 };
