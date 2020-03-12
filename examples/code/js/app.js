@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "bugs.js",
     "clock.js",
     "conics.js",
+    "curves.js",
     "dragon.js",
     "draw.js",
     "mask.js",
@@ -53,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var loadExamples = function loadExamples(callback) {
     exampleFilenames.forEach(function (file, i) {
       var iteration = i;
-      fetch("samples/" + file).then(function (data) {
+      fetch("examples/" + file).then(function (data) {
         return data.text();
       }).then(function (result) {
         examples.push(result);

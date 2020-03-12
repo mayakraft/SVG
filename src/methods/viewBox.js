@@ -24,19 +24,15 @@ export const getViewBox = function (element) {
     : vb.split(" ").map(n => parseFloat(n)));
 };
 
-/*
-
 export const convertToViewBox = function (svg, x, y) {
   const pt = svg.createSVGPoint();
   pt.x = x;
   pt.y = y;
   const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
-  const array = [svgPoint.x, svgPoint.y];
-  array.x = svgPoint.x;
-  array.y = svgPoint.y;
-  return array;
+  return [svgPoint.x, svgPoint.y];
 };
 
+/*
 export const translateViewBox = function (svg, dx, dy) {
   const viewBox = getViewBox(svg);
   if (viewBox == null) {

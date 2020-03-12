@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import vkXML from "../../include/vkbeautify-xml";
+// import vkXML from "../../include/vkbeautify-xml";
 import svgNS from "../environment/namespace";
 import window from "../environment/window";
 import {
@@ -13,15 +13,15 @@ import {
 import K from "../environment/keys";
 
 
-// const downloadInBrowser = function (filename, contentsAsString) {
-//   const blob = new window.Blob([contentsAsString], { type: "text/plain" });
-//   const a = window.document.createElement("a");
-//   a.setAttribute("href", window.URL.createObjectURL(blob));
-//   a.setAttribute("download", filename);
-//   window.document.body.appendChild(a);
-//   a.click();
-//   window.document.body.removeChild(a);
-// };
+const downloadInBrowser = function (filename, contentsAsString) {
+  const blob = new window.Blob([contentsAsString], { type: "text/plain" });
+  const a = window.document.createElement("a");
+  a.setAttribute("href", window.URL.createObjectURL(blob));
+  a.setAttribute("download", filename);
+  window.document.body.appendChild(a);
+  a.click();
+  window.document.body.removeChild(a);
+};
 
 // const getPageCSS = function () {
 //   const css = [];
@@ -52,6 +52,7 @@ const SAVE_OPTIONS = () => ({
 
 // export const save = function (svg, filename = "image.svg", includeDOMCSS = false) {
 const save = function (svg, options) {
+  options = Object.assign(SAVE_OPTIONS(), options);
   // // prepare options
   // if (typeof options === K.string || options instanceof String) {
   //   // expecting the user provided a filename instead of the options object
@@ -59,9 +60,6 @@ const save = function (svg, options) {
   //   options = SAVE_OPTIONS();
   //   options.filename = filename;
   // } else
-  if (typeof options !== K.object || options === null) {
-   options = SAVE_OPTIONS();
-  }
   // else {
   //   // user supplied object. make sure it has all the necessary keys.
   //   const newOptions = SAVE_OPTIONS();
@@ -77,10 +75,11 @@ const save = function (svg, options) {
   //   svg.appendChild(styleContainer);
   // }
   const source = (new window.XMLSerializer()).serializeToString(svg);
-  const formattedString = vkXML(source);
-  // if (isBrowser && !isNode) {
-  //   downloadInBrowser(options.filename, formattedString);
-  // }
+  // const formattedString = vkXML(source);
+  const formattedString = source;
+  if (isBrowser && !isNode) {
+    downloadInBrowser(options.filename, formattedString);
+  }
   return (options.output === "svg" ? svg : formattedString);
   // return formattedString;
 };

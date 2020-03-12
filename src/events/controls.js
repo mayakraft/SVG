@@ -2,7 +2,8 @@
  * SVG (c) Robby Kraft
  */
 
-const distance = (a, b) => [0, 1]
+// const distanceSq = (a, b) => Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2);
+const distanceSq = (a, b) => [0, 1]
   .map(i => a[i] - b[i])
   .map(e => e ** 2)
   .reduce((a, b) => a + b, 0);
@@ -71,7 +72,7 @@ const controlPoint = function (parent, options = {}) {
   position.setPosition = setPosition;
   position.onMouseMove = onMouseMove;
   position.onMouseUp = onMouseUp;
-  position.distance = (mouse) => distance(mouse, position);
+  position.distance = (mouse) => Math.sqrt(distanceSq(mouse, position));
   Object.defineProperty(position, "x", {
     get: () => position[0],
     set: (newValue) => { position[0] = newValue; }
@@ -125,7 +126,7 @@ const controls = function (svg, number, options) {
   const mousePressedHandler = function (mouse) {
     if (!(points.length > 0)) { return; }
     selected = points
-      .map((p, i) => ({ i, d: distance(p, [mouse.x, mouse.y]) }))
+      .map((p, i) => ({ i, d: distanceSq(p, [mouse.x, mouse.y]) }))
       .sort((a, b) => a.d - b.d)
       .shift()
       .i;
