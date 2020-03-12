@@ -45,29 +45,60 @@ const getD = (el) => { // 🍆
 
 // todo: would be great if for arguments > 2 it alternated space and comma
 const appendPathItem = function (el, command, ...args) {
-  console.log("append", command, ...args);
   const params = flatten(...args).join(" ");
   el.setAttribute("d", `${getD(el)}${command}${params}`);
   return el;
 };
 
-const parsePathCommand = (string) => {
-  const letter = string.match(/[a-z]/ig).shift();
-  const numberString = string.match(/[^a-z]*/ig).filter(a => a !== "").shift();
-  const numbers = (numberString != null ? numberString.split(/(,| )/) : [])
-    .map(a => parseFloat(a))
-    .filter(a => !isNaN(a))
-    .slice(0, expectedArguments[letter] || 0);
-  return {
-    name: pathCommands[letter],
-    letter,
-    numbers,
+// const parsePathCommand = (string) => {
+//   const letter = string.match(/[a-z]/ig).shift();
+//   const numberString = string.match(/[^a-z]*/ig).filter(a => a !== "").shift();
+//   const numbers = (numberString != null ? numberString.split(/(,| )/) : [])
+//     .map(a => parseFloat(a))
+//     .filter(a => !isNaN(a))
+//     .slice(0, expectedArguments[letter] || 0);
+//   return {
+//     name: pathCommands[letter],
+//     letter,
+//     numbers,
+//   };
+// };
+
+var markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
+var digitRegEx = /-?[0-9]*\.?\d+/g;
+
+const parsePathCommands = function (str) {
+  // Ulric Wilfred
+  const results = []; 
+  let match;
+  while ((match = markerRegEx.exec(str)) !== null) {
+    results.push(match);
   };
+  return results.map(match => ({
+    letter: str[match.index],
+    index: match.index
+  }))
+  .reduceRight((all, cur) => {
+    const chunk = str.substring(cur.index, all.length ? all[all.length - 1].index : str.length);
+    return all.concat([
+       { letter: cur.letter, 
+       index: cur.index, 
+       chunk: (chunk.length > 0) ? chunk.substr(1, chunk.length - 1) : chunk }
+    ]);
+  }, [])
+  .reverse()
+  .map((command) => {
+    const values = command.chunk.match(digitRegEx);
+    return {
+      command: pathCommands[command.letter],
+      letter: command.letter,
+      values: values ? values.map(parseFloat) : []
+    };
+  });
 };
 
 const getCommands = (element) => {
-  return getD(element).match(/[a-z][^a-z]*/ig)
-    .map(a => parsePathCommand(a));
+  return parsePathCommands(getD(element));
 };
 
 const methods = {
@@ -79,7 +110,5 @@ const methods = {
 Object.keys(pathCommands).forEach(key => {
   methods[pathCommands[key]] = (el, ...args) => appendPathItem(el, key, ...args);
 });
-
-console.log(methods);
 
 export default methods;

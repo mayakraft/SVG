@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-// import vkXML from "../../include/vkbeautify-xml";
+import vkXML from "../../include/vkbeautify-xml";
 import svgNS from "../environment/namespace";
 import window from "../environment/window";
 import {
@@ -75,8 +75,8 @@ const save = function (svg, options) {
   //   svg.appendChild(styleContainer);
   // }
   const source = (new window.XMLSerializer()).serializeToString(svg);
-  // const formattedString = vkXML(source);
-  const formattedString = source;
+  const formattedString = vkXML(source);
+  // const formattedString = source;
   if (isBrowser && !isNode) {
     downloadInBrowser(options.filename, formattedString);
   }
