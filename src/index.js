@@ -20,7 +20,7 @@ const SVG = function (...args) {
   const svg = Constructor(K.svg, ...args);
   Touch(svg);
   Animation(svg);
-  svg.controls = (...args) => Controls.call(svg, svg, ...args);
+  Controls(svg);
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
     window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...args));

@@ -6,6 +6,8 @@
 }(this, (function () { 'use strict';
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -40,7 +42,11 @@
   }
 
   var Debug = {
-    log: function log() {}
+    log: function log() {
+      var _console;
+
+      return (_console = console).log.apply(_console, arguments);
+    }
   };
 
   var keys = ["number", "object", "transform", "class", "style", "function", "string", "undefined", "boolean", "path", "svg", "id"];
@@ -175,7 +181,7 @@
     return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
   });
 
-  var viewBoxString = function viewBoxString(x, y, width, height, padding) {
+  var viewBoxValue = function viewBoxValue(x, y, width, height, padding) {
     if (padding == null) {
       padding = 0;
     }
@@ -189,15 +195,15 @@
     return [X, Y, W, H].join(" ");
   };
 
-  var viewBoxString$1 = (function () {
-    var numbers = coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)));
+  function viewBoxString () {
+    var numbers = coordinates.apply(void 0, _toConsumableArray(flatten(arguments)));
 
     if (numbers.length === 2) {
       numbers.unshift(0, 0);
     }
 
-    return numbers.length === 4 ? viewBoxString.apply(void 0, _toConsumableArray(numbers)) : undefined;
-  });
+    return numbers.length === 4 ? viewBoxValue.apply(void 0, _toConsumableArray(numbers)) : undefined;
+  }
 
   var RequiredAttributes = {
     svg: {
@@ -214,28 +220,29 @@
   };
 
   var polyString = function polyString() {
-    for (var _len = arguments.length, numbers = new Array(_len), _key = 0; _key < _len; _key++) {
-      numbers[_key] = arguments[_key];
-    }
-
-    return Array.from(Array(Math.floor(numbers.length / 2))).map(function (_, i) {
-      return "".concat(numbers[i * 2 + 0], ",").concat(numbers[i * 2 + 1]);
+    var _arguments = arguments;
+    return Array.from(Array(Math.floor(arguments.length / 2))).map(function (_, i) {
+      return "".concat(_arguments[i * 2 + 0], ",").concat(_arguments[i * 2 + 1]);
     }).join(" ");
   };
 
   var makeIDString = function makeIDString() {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-
-    return args.filter(function (a) {
+    return Array.from(arguments).filter(function (a) {
       return _typeof(a) === Keys.string || a instanceof String;
     }).shift() || UUID();
   };
 
+  var polys = function polys() {
+    return [polyString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))))];
+  };
+
+  var masks = function masks() {
+    return [makeIDString.apply(void 0, arguments)];
+  };
+
   var ArgsShuffle = {
     svg: function svg() {
-      return [viewBoxString$1.apply(void 0, arguments)].filter(function (a) {
+      return [viewBoxString.apply(void 0, arguments)].filter(function (a) {
         return a !== undefined;
       });
     },
@@ -245,32 +252,16 @@
     line: function line() {
       return coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)));
     },
-    polyline: function polyline() {
-      return [polyString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))))];
-    },
-    polygon: function polygon() {
-      return [polyString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))))];
-    },
-    mask: function mask() {
-      return [makeIDString.apply(void 0, arguments)];
-    },
-    clipPath: function clipPath() {
-      return [makeIDString.apply(void 0, arguments)];
-    },
-    symbol: function symbol() {
-      return [makeIDString.apply(void 0, arguments)];
-    },
-    marker: function marker() {
-      return [makeIDString.apply(void 0, arguments)];
-    }
+    polyline: polys,
+    polygon: polys,
+    mask: masks,
+    clipPath: masks,
+    symbol: masks,
+    marker: masks
   };
 
   var passthrough = function passthrough() {
-    for (var _len3 = arguments.length, a = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      a[_key3] = arguments[_key3];
-    }
-
-    return a;
+    return Array.from(arguments);
   };
 
   var Arguments = function Arguments(primitiveName, element) {
@@ -282,8 +273,8 @@
       });
     }
 
-    for (var _len4 = arguments.length, args = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-      args[_key4 - 2] = arguments[_key4];
+    for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+      args[_key - 2] = arguments[_key];
     }
 
     if (Initializers[primitiveName] !== undefined) {
@@ -528,7 +519,7 @@
   };
 
   var nodes = {};
-  [Arc, Wedge, Parabola, RegularPolygon, RoundRect, Curve].forEach(function (custom) {
+  [Arc, Curve, Parabola, RegularPolygon, RoundRect, Wedge].forEach(function (custom) {
     nodes[custom.name] = custom;
     delete nodes[custom.name].name;
   });
@@ -606,163 +597,6 @@
   });
   Debug.log(elemAttr);
 
-  var Case = {
-    toCamel: function toCamel(s) {
-      return s.replace(/([-_][a-z])/ig, function ($1) {
-        return $1.toUpperCase().replace("-", "").replace("_", "");
-      });
-    },
-    toKebab: function toKebab(s) {
-      return s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
-    },
-    capitalized: function capitalized(s) {
-      return s.charAt(0).toUpperCase() + s.slice(1);
-    }
-  };
-
-  var pointsString = function pointsString() {
-    for (var _len = arguments.length, points = new Array(_len), _key = 0; _key < _len; _key++) {
-      points[_key] = arguments[_key];
-    }
-
-    return Array.from(Array(Math.floor(points.length / 2))).map(function (_, i) {
-      return "".concat(points[i * 2], ",").concat(points[i * 2 + 1]);
-    }).join(" ");
-  };
-
-  var polys = {
-    setPoints: {
-      attr: attributes.polyline.slice(0, 1),
-      f: function f() {
-        return pointsString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))));
-      }
-    }
-  };
-  var AttributeSetters = {
-    line: {
-      setPoints: {
-        attrs: attributes.line,
-        f: function f(a, b, c, d) {
-          return coordinates.apply(void 0, _toConsumableArray(flatten(a, b, c, d))).slice(0, 4);
-        }
-      }
-    },
-    polyline: polys,
-    polygon: polys,
-    circle: {
-      setRadius: {
-        attr: "r",
-        f: function f(r) {
-          return r;
-        }
-      },
-      radius: {
-        attr: "r",
-        f: function f(r) {
-          return r;
-        }
-      },
-      setCenter: {
-        attrs: attributes.circle.slice(0, 2),
-        f: function f(a, b) {
-          return coordinates.apply(void 0, _toConsumableArray(flatten(a, b))).slice(0, 2);
-        }
-      }
-    }
-  };
-  var methods$1 = {};
-  Object.keys(AttributeSetters).forEach(function (nodeName) {
-    methods$1[nodeName] = {};
-    Object.keys(AttributeSetters[nodeName]).filter(function (method) {
-      return AttributeSetters[nodeName][method].attr !== undefined;
-    }).forEach(function (method) {
-      methods$1[nodeName][method] = function (el) {
-        var _AttributeSetters$nod;
-
-        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-          args[_key2 - 1] = arguments[_key2];
-        }
-
-        return el.setAttribute(AttributeSetters[nodeName][method].attr, (_AttributeSetters$nod = AttributeSetters[nodeName][method]).f.apply(_AttributeSetters$nod, args));
-      };
-    });
-    Object.keys(AttributeSetters[nodeName]).filter(function (method) {
-      return AttributeSetters[nodeName][method].attrs !== undefined;
-    }).forEach(function (method) {
-      methods$1[nodeName][method] = function (el) {
-        var _AttributeSetters$nod2;
-
-        for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-          args[_key3 - 1] = arguments[_key3];
-        }
-
-        return (_AttributeSetters$nod2 = AttributeSetters[nodeName][method]).f.apply(_AttributeSetters$nod2, args).forEach(function (v, i) {
-          return el.setAttribute(AttributeSetters[nodeName][method].attrs[i], v);
-        });
-      };
-    });
-  });
-
-  var getAttr = function getAttr(element) {
-    var t = element.getAttribute(Keys.transform);
-    return t == null || t === "" ? undefined : t;
-  };
-
-  var methods$2 = {
-    clearTransform: function clearTransform(el) {
-      el.removeAttribute(Keys.transform);
-      return el;
-    }
-  };
-  ["translate", "rotate", "scale", "matrix"].forEach(function (key) {
-    methods$2[key] = function (element) {
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      return element.setAttribute(Keys.transform, [getAttr(element), "".concat(key, "(").concat(args.join(" "), ")")].filter(function (a) {
-        return a !== undefined;
-      }).join(" "));
-    };
-  });
-
-  var findIdURL = function findIdURL(arg) {
-    if (arg == null) {
-      return "";
-    }
-
-    if (_typeof(arg) === Keys.string) {
-      return arg.slice(0, 3) === "url" ? arg : "url(#".concat(arg, ")");
-    }
-
-    if (arg.getAttribute != null) {
-      var idString = arg.getAttribute(Keys.id);
-      return "url(#".concat(idString, ")");
-    }
-
-    return "";
-  };
-
-  var methods$3 = {};
-  ["clip-path", "mask", "symbol", "marker-end", "marker-mid", "marker-start"].forEach(function (attr) {
-    methods$3[Case.toCamel(attr)] = function (element, parent) {
-      return element.setAttribute(attr, findIdURL(parent));
-    };
-  });
-
-  var DOM = {
-    removeChildren: function removeChildren(element) {
-      while (element.lastChild) {
-        element.removeChild(element.lastChild);
-      }
-    },
-    appendTo: function appendTo(element, parent) {
-      if (parent != null) {
-        parent.appendChild(element);
-      }
-    }
-  };
-
   function vkXML (text, step) {
     var ar = text.replace(/>\s{0,}</g, "><").replace(/</g, "~::~<").replace(/\s*xmlns\:/g, "~::~xmlns:").split("~::~");
     var len = ar.length;
@@ -817,6 +651,65 @@
     return new win.DOMParser().parseFromString("<root></root>", "text/xml").createCDATASection("".concat(textContent));
   };
 
+  var Case = {
+    toCamel: function toCamel(s) {
+      return s.replace(/([-_][a-z])/ig, function ($1) {
+        return $1.toUpperCase().replace("-", "").replace("_", "");
+      });
+    },
+    toKebab: function toKebab(s) {
+      return s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2").toLowerCase();
+    },
+    capitalized: function capitalized(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+  };
+
+  var DOM = {
+    removeChildren: function removeChildren(element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    },
+    appendTo: function appendTo(element, parent) {
+      if (parent != null) {
+        parent.appendChild(element);
+      }
+    },
+    setAttributes: function setAttributes(element, attrs) {
+      return Object.keys(attrs).forEach(function (key) {
+        return element.setAttribute(Case.toKebab(key), attrs[key]);
+      });
+    }
+  };
+
+  var parse = function parse(string) {
+    return new win.DOMParser().parseFromString(string, "text/xml");
+  };
+
+  var checkParseError = function checkParseError(xml) {
+    var parserErrors = xml.getElementsByTagName("parsererror");
+
+    if (parserErrors.length > 0) {
+      throw new Error(parserErrors[0]);
+    }
+
+    return xml.documentElement;
+  };
+  var sync = function sync(input) {
+    if (_typeof(input) === Keys.string || input instanceof String) {
+      try {
+        return checkParseError(parse(input));
+      } catch (error) {
+        return error;
+      }
+    }
+
+    if (input.childNodes != null) {
+      return input;
+    }
+  };
+
   var downloadInBrowser = function downloadInBrowser(filename, contentsAsString) {
     var blob = new win.Blob([contentsAsString], {
       type: "text/plain"
@@ -855,7 +748,7 @@
       args[_key - 1] = arguments[_key];
     }
 
-    var viewBox = args.length === 1 && typeof args[0] === "string" ? args[0] : viewBoxString$1.apply(void 0, args);
+    var viewBox = args.length === 1 && typeof args[0] === "string" ? args[0] : viewBoxString.apply(void 0, args);
 
     if (viewBox) {
       element.setAttribute(vB, viewBox);
@@ -936,7 +829,7 @@
     DOM.removeChildren(element);
   };
 
-  var assignSVG = function assignSVG(target, source) {
+  var replaceSVG = function replaceSVG(target, source) {
     if (source == null) {
       return;
     }
@@ -951,42 +844,25 @@
     });
   };
 
-  var done = function done(svg, callback) {
-    if (callback != null) {
-      callback(svg);
-    }
-
-    return svg;
-  };
-
-  var _load = function load(input, callback) {
-    if (_typeof(input) === Keys.string || input instanceof String) {
-      var xml = new win.DOMParser().parseFromString(input, "text/xml");
-      var parserErrors = xml.getElementsByTagName("parsererror");
-      return parserErrors.length === 0 ? done(xml.documentElement, callback) : parserErrors[0];
-    }
-
-    if (input.childNodes != null) {
-      return done(input, callback);
-    }
-  };
-
   var svg = {
-    clear: clear,
-    size: setViewBox,
-    background: background,
-    getWidth: function getWidth(el) {
-      return getFrame(el)[2];
-    },
-    getHeight: function getHeight(el) {
-      return getFrame(el)[3];
-    },
-    stylesheet: function stylesheet(text) {
-      return _stylesheet.call(this, text);
-    },
-    save: save,
-    load: function load(el, data, callback) {
-      return assignSVG(el, _load(data, callback));
+    svg: {
+      clear: clear,
+      size: setViewBox,
+      setViewBox: setViewBox,
+      background: background,
+      getWidth: function getWidth(el) {
+        return getFrame(el)[2];
+      },
+      getHeight: function getHeight(el) {
+        return getFrame(el)[3];
+      },
+      stylesheet: function stylesheet(text) {
+        return _stylesheet.call(this, text);
+      },
+      load: function load(el, data, callback) {
+        return replaceSVG(el, sync(data));
+      },
+      save: save
     }
   };
 
@@ -1002,22 +878,9 @@
     t: "smoothQuadCurve",
     z: "close"
   };
-  var expectedArguments = {
-    m: 2,
-    l: 2,
-    v: 1,
-    h: 1,
-    a: 7,
-    c: 6,
-    s: 4,
-    q: 4,
-    t: 2,
-    z: 0
-  };
   Object.keys(pathCommands).forEach(function (key) {
     var s = pathCommands[key];
     pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
-    expectedArguments[key.toUpperCase()] = expectedArguments[key];
   });
 
   var getD = function getD(el) {
@@ -1071,7 +934,7 @@
     return parsePathCommands(getD(element));
   };
 
-  var methods$4 = {
+  var methods$1 = {
     command: appendPathItem,
     clear: function clear(el) {
       el.removeAttribute("d");
@@ -1080,7 +943,7 @@
     instructions: getCommands
   };
   Object.keys(pathCommands).forEach(function (key) {
-    methods$4[pathCommands[key]] = function (el) {
+    methods$1[pathCommands[key]] = function (el) {
       for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
       }
@@ -1088,19 +951,153 @@
       return appendPathItem.apply(void 0, [el, key].concat(args));
     };
   });
+  var path = {
+    path: methods$1
+  };
 
   var style = {
-    setTextContent: function setTextContent(el, text) {
-      el.textContent = "";
-      el.appendChild(cdata(text));
-      return el;
+    style: {
+      setTextContent: function setTextContent(el, text) {
+        el.textContent = "";
+        el.appendChild(cdata(text));
+      }
     }
   };
 
-  var methods$5 = {
-    size: setViewBox,
-    setViewBox: setViewBox
+  var marker = {
+    marker: {
+      size: setViewBox,
+      setViewBox: setViewBox
+    }
   };
+
+  var pointsString = function pointsString() {
+    var _arguments = arguments;
+    return Array.from(Array(Math.floor(arguments.length / 2))).map(function (_, i) {
+      return "".concat(_arguments[i * 2], ",").concat(_arguments[i * 2 + 1]);
+    }).join(" ");
+  };
+
+  var polys$1 = {
+    setPoints: {
+      attr: attributes.polyline.slice(0, 1),
+      f: function f() {
+        return pointsString.apply(void 0, _toConsumableArray(coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments)))));
+      }
+    }
+  };
+  var AttributeSetters = {
+    line: {
+      setPoints: {
+        attrs: attributes.line,
+        f: function f(a, b, c, d) {
+          return coordinates.apply(void 0, _toConsumableArray(flatten(a, b, c, d))).slice(0, 4);
+        }
+      }
+    },
+    polyline: polys$1,
+    polygon: polys$1,
+    circle: {
+      setRadius: {
+        attr: "r",
+        f: function f(r) {
+          return r;
+        }
+      },
+      radius: {
+        attr: "r",
+        f: function f(r) {
+          return r;
+        }
+      },
+      setCenter: {
+        attrs: attributes.circle.slice(0, 2),
+        f: function f(a, b) {
+          return coordinates.apply(void 0, _toConsumableArray(flatten(a, b))).slice(0, 2);
+        }
+      }
+    }
+  };
+  var methods$2 = {};
+  Object.keys(AttributeSetters).forEach(function (nodeName) {
+    methods$2[nodeName] = {};
+    Object.keys(AttributeSetters[nodeName]).filter(function (method) {
+      return AttributeSetters[nodeName][method].attr !== undefined;
+    }).forEach(function (method) {
+      methods$2[nodeName][method] = function (el) {
+        var _AttributeSetters$nod;
+
+        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
+
+        return el.setAttribute(AttributeSetters[nodeName][method].attr, (_AttributeSetters$nod = AttributeSetters[nodeName][method]).f.apply(_AttributeSetters$nod, args));
+      };
+    });
+    Object.keys(AttributeSetters[nodeName]).filter(function (method) {
+      return AttributeSetters[nodeName][method].attrs !== undefined;
+    }).forEach(function (method) {
+      methods$2[nodeName][method] = function (el) {
+        var _AttributeSetters$nod2;
+
+        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+          args[_key2 - 1] = arguments[_key2];
+        }
+
+        return (_AttributeSetters$nod2 = AttributeSetters[nodeName][method]).f.apply(_AttributeSetters$nod2, args).forEach(function (v, i) {
+          return el.setAttribute(AttributeSetters[nodeName][method].attrs[i], v);
+        });
+      };
+    });
+  });
+  Debug.log("presentation attrs", methods$2);
+
+  var getAttr = function getAttr(element) {
+    var t = element.getAttribute(Keys.transform);
+    return t == null || t === "" ? undefined : t;
+  };
+
+  var methods$3 = {
+    clearTransform: function clearTransform(el) {
+      el.removeAttribute(Keys.transform);
+      return el;
+    }
+  };
+  ["translate", "rotate", "scale", "matrix"].forEach(function (key) {
+    methods$3[key] = function (element) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return element.setAttribute(Keys.transform, [getAttr(element), "".concat(key, "(").concat(args.join(" "), ")")].filter(function (a) {
+        return a !== undefined;
+      }).join(" "));
+    };
+  });
+
+  var findIdURL = function findIdURL(arg) {
+    if (arg == null) {
+      return "";
+    }
+
+    if (_typeof(arg) === Keys.string) {
+      return arg.slice(0, 3) === "url" ? arg : "url(#".concat(arg, ")");
+    }
+
+    if (arg.getAttribute != null) {
+      var idString = arg.getAttribute(Keys.id);
+      return "url(#".concat(idString, ")");
+    }
+
+    return "";
+  };
+
+  var methods$4 = {};
+  ["clip-path", "mask", "symbol", "marker-end", "marker-mid", "marker-start"].forEach(function (attr) {
+    methods$4[Case.toCamel(attr)] = function (element, parent) {
+      return element.setAttribute(attr, findIdURL(parent));
+    };
+  });
 
   var makeExist = function makeExist(obj, key) {
     if (obj[key] === undefined) {
@@ -1108,61 +1105,44 @@
     }
   };
 
-  var nodeMethods = {
-    svg: svg,
-    path: methods$4,
-    style: style,
-    marker: methods$5
+  var assignKey = function assignKey(target, key, source) {
+    makeExist(target, key);
+    Object.assign(target[key], source);
   };
 
-  var applyMethodsToNode = function applyMethodsToNode(methods, node) {
-    makeExist(nodeMethods, node);
-    Object.keys(methods).forEach(function (method) {
-      nodeMethods[node][method] = methods[method];
+  var assignKeys = function assignKeys(target, keys, source) {
+    return keys.forEach(function (key) {
+      return assignKey(target, key, source);
     });
   };
 
-  var applyMethodsToGroup = function applyMethodsToGroup(methods, groups) {
-    return groups.forEach(function (category) {
-      return category.forEach(function (node) {
-        return applyMethodsToNode(methods, node);
-      });
+  var methods$5 = {};
+  [svg, path, style, marker, methods$2].forEach(function (obj) {
+    return Object.keys(obj).forEach(function (key) {
+      return assignKey(methods$5, key, obj[key]);
     });
-  };
-
-  var t_v_g = [Nodes.t, Nodes.v, Nodes.g];
-  var most = t_v_g.concat([Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d]);
-  applyMethodsToGroup(methods$2, t_v_g.concat([Nodes.s]));
-  applyMethodsToGroup(methods$3, t_v_g);
-  applyMethodsToGroup(DOM, most);
-  applyMethodsToGroup({
-    setAttributes: function setAttributes(el, attrs) {
-      return Object.keys(attrs).forEach(function (key) {
-        return el.setAttribute(Case.toKebab(key), attrs[key]);
-      });
-    }
-  }, most);
-  Object.keys(methods$1).forEach(function (nodeName) {
-    return applyMethodsToNode(methods$1[nodeName], nodeName);
   });
-  var methods$6 = {};
-  Object.keys(nodeMethods).forEach(function (nodeName) {
-    makeExist(methods$6, nodeName);
-    Object.keys(nodeMethods[nodeName]).filter(function (method) {
-      return methods$6[nodeName][method] === undefined;
-    }).forEach(function (method) {
-      methods$6[nodeName][method] = function (el) {
-        var _nodeMethods$nodeName;
+  assignKeys(methods$5, flatten(Nodes.t, Nodes.v, Nodes.g, Nodes.s), methods$3);
+  assignKeys(methods$5, flatten(Nodes.t, Nodes.v, Nodes.g), methods$4);
+  assignKeys(methods$5, flatten(Nodes.t, Nodes.v, Nodes.g, Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d), DOM);
+  Object.keys(Presentation).forEach(function (nodeName) {
+    return assignKey(methods$5, nodeName, Presentation[nodeName]);
+  });
+  var bound = {};
+  Object.keys(methods$5).forEach(function (nodeName) {
+    bound[nodeName] = {};
+    Object.keys(methods$5[nodeName]).forEach(function (method) {
+      bound[nodeName][method] = function (el) {
+        var _methods$nodeName$met;
 
         for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
           args[_key - 1] = arguments[_key];
         }
 
-        return (_nodeMethods$nodeName = nodeMethods[nodeName][method]).call.apply(_nodeMethods$nodeName, [methods$6, el].concat(args)) || el;
+        return (_methods$nodeName$met = methods$5[nodeName][method]).call.apply(_methods$nodeName$met, [bound, el].concat(args)) || el;
       };
     });
   });
-  Debug.log(methods$6);
 
   var makeExist$1 = function makeExist(obj, key) {
     if (obj[key] === undefined) {
@@ -1198,13 +1178,13 @@
       };
     });
   });
-  Object.keys(methods$6).forEach(function (nodeName) {
+  Object.keys(bound).forEach(function (nodeName) {
     makeExist$1(AttrNodeFunc, nodeName);
-    Object.assign(AttrNodeFunc[nodeName], methods$6[nodeName]);
+    Object.assign(AttrNodeFunc[nodeName], bound[nodeName]);
   });
 
   var Methods = function Methods(nodeName, element) {
-    methods$6.Constructor = Methods.Constructor;
+    bound.Constructor = Methods.Constructor;
 
     if (_typeof(AttrNodeFunc[nodeName]) === Keys.object && AttrNodeFunc[nodeName] !== null) {
       Object.keys(AttrNodeFunc[nodeName]).filter(function (attr) {
@@ -1214,11 +1194,7 @@
           value: function value() {
             var _AttrNodeFunc$nodeNam;
 
-            for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-              args[_key3] = arguments[_key3];
-            }
-
-            return (_AttrNodeFunc$nodeNam = AttrNodeFunc[nodeName])[attr].apply(_AttrNodeFunc$nodeNam, [element].concat(args));
+            return (_AttrNodeFunc$nodeNam = AttrNodeFunc[nodeName])[attr].apply(_AttrNodeFunc$nodeNam, [element].concat(Array.prototype.slice.call(arguments)));
           }
         });
       });
@@ -1424,21 +1400,38 @@
     }, 0);
   };
 
+  var removeFromParent = function removeFromParent(svg) {
+    return svg && svg.parentNode ? svg.parentNode.removeChild(svg) : undefined;
+  };
+
+  var possiblePositionAttributes = [["cx", "cy"], ["x", "y"]];
+
   var controlPoint = function controlPoint(parent) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var position = [0, 0];
-    var selected = false;
-    var svg;
+    var cp = {
+      selected: false,
+      svg: undefined,
+      updatePosition: function updatePosition(input) {
+        return input;
+      }
+    };
 
     var updateSVG = function updateSVG() {
-      if (svg != null) {
-        if (svg.parentNode == null) {
-          parent.appendChild(svg);
-        }
-
-        svg.setAttribute("cx", position[0]);
-        svg.setAttribute("cy", position[1]);
+      if (!cp.svg) {
+        return;
       }
+
+      if (!cp.svg.parentNode) {
+        parent.appendChild(cp.svg);
+      }
+
+      possiblePositionAttributes.filter(function (coords) {
+        return cp.svg[coords[0]] != null;
+      }).forEach(function (coords) {
+        return coords.forEach(function (attr, i) {
+          cp.svg.setAttribute(attr, position[i]);
+        });
+      });
     };
 
     var proxy = new Proxy(position, {
@@ -1450,103 +1443,55 @@
     });
 
     var setPosition = function setPosition() {
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      if (args.length === 0) {
-        return;
-      }
-
-      var root = _typeof(args[0]);
-
-      if (root === "number") {
-        position[0] = args[0];
-        position[1] = args[1];
-        updateSVG();
-      }
-
-      if (root === "object") {
-        if (typeof args[0][0] === "number") {
-          position[0] = args[0][0];
-          position[1] = args[0][1];
-          updateSVG();
-        } else if (typeof args[0].x === "number") {
-          position[0] = args[0].x;
-          position[1] = args[0].y;
-          updateSVG();
-        }
-      }
+      coordinates.apply(void 0, _toConsumableArray(flatten.apply(void 0, arguments))).forEach(function (n, i) {
+        position[i] = n;
+      });
+      updateSVG();
 
       if (typeof position.delegate === "function") {
         position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
       }
     };
 
-    setPosition(options.position);
-
-    var updatePosition = function updatePosition(input) {
-      return input;
-    };
-
-    var onMouseMove = function onMouseMove(mouse) {
-      if (selected) {
-        setPosition(updatePosition(mouse));
-      }
-    };
-
-    var onMouseUp = function onMouseUp() {
-      selected = false;
-    };
-
     position.delegate = undefined;
     position.setPosition = setPosition;
-    position.onMouseMove = onMouseMove;
-    position.onMouseUp = onMouseUp;
+
+    position.onMouseMove = function (mouse) {
+      return cp.selected ? setPosition(cp.updatePosition(mouse)) : undefined;
+    };
+
+    position.onMouseUp = function () {
+      cp.selected = false;
+    };
 
     position.distance = function (mouse) {
       return Math.sqrt(distanceSq(mouse, position));
     };
 
-    Object.defineProperty(position, "x", {
-      get: function get() {
-        return position[0];
-      },
-      set: function set(newValue) {
-        position[0] = newValue;
-      }
+    ["x", "y"].forEach(function (prop, i) {
+      return Object.defineProperty(position, prop, {
+        get: function get() {
+          return position[i];
+        },
+        set: function set(v) {
+          position[i] = v;
+        }
+      });
     });
-    Object.defineProperty(position, "y", {
-      get: function get() {
-        return position[1];
-      },
-      set: function set(newValue) {
-        position[1] = newValue;
-      }
-    });
-    Object.defineProperty(position, "svg", {
-      get: function get() {
-        return svg;
-      },
-      set: function set(newSVG) {
-        svg = newSVG;
-      }
-    });
-    Object.defineProperty(position, "positionDidUpdate", {
-      set: function set(method) {
-        updatePosition = method;
-      }
-    });
-    Object.defineProperty(position, "selected", {
-      set: function set(value) {
-        selected = value;
-      }
+    ["svg", "updatePosition", "selected"].forEach(function (key) {
+      Object.defineProperty(position, key, {
+        get: function get() {
+          return cp[key];
+        },
+        set: function set(v) {
+          cp[key] = v;
+        }
+      });
     });
     Object.defineProperty(position, "remove", {
       value: function value() {
-        if (svg != null) {
-          svg.parentNode.removeChild(svg);
-        }
+        removeFromParent(cp.svg);
+        position.delegate = undefined;
       }
     });
     return proxy;
@@ -1556,18 +1501,11 @@
     var selected;
     var delegate;
     var points = Array.from(Array(number)).map(function () {
-      return controlPoint(svg, options);
-    });
-    points.forEach(function (pt, i) {
-      if (_typeof(options) === "object" && typeof options.position === "function") {
-        pt.setPosition(options.position(i));
-      }
+      return controlPoint(svg);
     });
 
     var protocol = function protocol(point) {
-      if (typeof delegate === "function") {
-        delegate.call(points, points, point);
-      }
+      return typeof delegate === "function" ? delegate.call(points, points, point) : undefined;
     };
 
     points.forEach(function (p) {
@@ -1619,7 +1557,7 @@
     });
     Object.defineProperty(points, "add", {
       value: function value(opt) {
-        points.push(controlPoint(svg, opt));
+        points.push(controlPoint(svg));
       }
     });
 
@@ -1629,37 +1567,34 @@
       }
     };
 
-    points.onChange = function (func, runOnceAtStart) {
-      if (typeof func === "function") {
+    var functionalMethods = {
+      onChange: function onChange(func, runOnceAtStart) {
         delegate = func;
 
         if (runOnceAtStart === true) {
           func.call(points, points, undefined);
         }
-      }
-
-      return points;
-    };
-
-    points.position = function (func) {
-      if (typeof func === "function") {
-        points.forEach(function (p, i) {
+      },
+      position: function position(func) {
+        return points.forEach(function (p, i) {
           return p.setPosition(func.call(points, i));
         });
-      }
-
-      return points;
-    };
-
-    points.svg = function (func) {
-      if (typeof func === "function") {
-        points.forEach(function (p, i) {
+      },
+      svg: function svg(func) {
+        return points.forEach(function (p, i) {
           p.svg = func.call(points, i);
         });
       }
-
-      return points;
     };
+    Object.keys(functionalMethods).forEach(function (key) {
+      points[key] = function () {
+        if (typeof arguments[0] === "function") {
+          functionalMethods[key].apply(functionalMethods, arguments);
+        }
+
+        return points;
+      };
+    });
 
     points.parent = function (parent) {
       if (parent != null && parent.appendChild != null) {
@@ -1672,6 +1607,16 @@
     };
 
     return points;
+  };
+
+  var applyControlsToSVG = function applyControlsToSVG(svg) {
+    svg.controls = function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return controls.call.apply(controls, [svg, svg].concat(args));
+    };
   };
 
   var initialize = function initialize(svg) {
@@ -1694,14 +1639,7 @@
     var svg = constructor.apply(void 0, [Keys.svg].concat(args));
     TouchEvents(svg);
     Animation(svg);
-
-    svg.controls = function () {
-      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-        args[_key3] = arguments[_key3];
-      }
-
-      return controls.call.apply(controls, [svg, svg].concat(args));
-    };
+    applyControlsToSVG(svg);
 
     if (win.document.readyState === "loading") {
       win.document.addEventListener("DOMContentLoaded", function () {

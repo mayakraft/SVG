@@ -2,82 +2,66 @@
  * SVG (c) Robby Kraft
  */
 
+import N from "../nodes/nodes";
 import Debug from "../environment/debug";
-import Case from "../arguments/case";
-import Nodes from "../nodes/nodes";
-// categories
-import AttributeSetters from "./forAttributes/attributeSetters";
-import Transforms from "./transforms";
-import URLs from "./urls";
-import DOM from "./dom";
+import flatten from "../arguments/flatten";
 // specific to nodes
-import svg from "./forElements/svg";
-import path from "./forElements/path";
-import style from "./forElements/style";
-import marker from "./forElements/marker";
-// import TouchEvents from "../events/touch";
+import svg from "./targetingElements/svg";
+import path from "./targetingElements/path";
+import style from "./targetingElements/style";
+import marker from "./targetingElements/marker";
+import presentation from "./targetingElements/presentation";
+// specific to no one node
+import classId from "./manyElements/classId";
+import DOM from "./manyElements/dom";
+import Transforms from "./manyElements/transforms";
+import URLs from "./manyElements/urls";
+import * as ViewBox from "./manyElements/viewBox";
 
 const makeExist = (obj, key) => {
   if (obj[key] === undefined) { obj[key] = {}; }
 };
 
-// build a master lookup table, relating an element's attribute to a setter
-//   circle: {
-//     fill: function () { ... },
-//   },
-//   svg: {
-//     size: function () { ... },
-//   }
-const nodeMethods = {
-  // the most uniquely-behaving element methods
-  svg: svg,
-  path: path,
-  style: style,
-  marker: marker,
+const assignKey = (target, key, source) => {
+  makeExist(target, key);
+  Object.assign(target[key], source);
 };
 
-const applyMethodsToNode = (methods, node) => {
-  makeExist(nodeMethods, node);
-  Object.keys(methods).forEach(method => {
-    nodeMethods[node][method] = methods[method];
-  });
-};
+const assignKeys = (target, keys, source) => keys
+  .forEach(key => assignKey(target, key, source));
 
-const applyMethodsToGroup = (methods, groups) => groups
-  .forEach(category => category
-    .forEach(node => applyMethodsToNode(methods, node)));
-
-const t_v_g = [Nodes.t, Nodes.v, Nodes.g];
-const most = t_v_g.concat([Nodes.s, Nodes.p, Nodes.i, Nodes.h, Nodes.d]);
-// transforms "translate", "rotate"...
-applyMethodsToGroup(Transforms, t_v_g.concat([Nodes.s]));
-// clipPath, mask, symbol, markers as attaching onto the object.
-applyMethodsToGroup(URLs, t_v_g);
-// DOM methods, appendChild, removeChildren...
-applyMethodsToGroup(DOM, most);
-// setAttributes()
-applyMethodsToGroup({
-  setAttributes: (el, attrs) => Object.keys(attrs)
-    .forEach(key => el.setAttribute(Case.toKebab(key), attrs[key]))},
-  most);
-
-Object.keys(AttributeSetters)
-  .forEach(nodeName => applyMethodsToNode(AttributeSetters[nodeName], nodeName));
-
-// build the export object
+// assuming these don't overlap in keys, we can init this object this way
 const methods = {};
 
-// assigning methods to "this" to pass the Constructor back up the chain.
-Object.keys(nodeMethods).forEach(nodeName => {
-  makeExist(methods, nodeName);
-  Object.keys(nodeMethods[nodeName])
-    .filter(method => methods[nodeName][method] === undefined)
-    .forEach(method => {
-      // always return something. if method has no return, return the element
-      methods[nodeName][method] = (el, ...args) => nodeMethods[nodeName][method].call(methods, el, ...args) || el;
-    });
+[svg, path, style, marker, presentation]
+  .forEach(obj => Object.keys(obj)
+    .forEach(key => assignKey(methods, key, obj[key])));
+
+assignKeys(methods, flatten(N.t, N.v, N.g, N.s), Transforms);
+assignKeys(methods, flatten(N.t, N.v, N.g), URLs);
+assignKeys(methods, flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), DOM);
+
+// these are
+Object.keys(Presentation)
+  .forEach(nodeName => assignKey(methods, nodeName, Presentation[nodeName]));
+
+const bound = {};
+// // assigning bound to "this" to pass the Constructor back up the chain.
+Object.keys(methods).forEach(nodeName => {
+  bound[nodeName] = {};
+  Object.keys(methods[nodeName]).forEach(method => {
+    bound[nodeName][method] = (el, ...args) => methods[nodeName][method].call(bound, el, ...args) || el;
+  });
 });
 
-Debug.log(methods);
+export default bound;
 
-export default methods;
+// export a master lookup table, a node type and its methods
+// {
+//  svg: {clear: ƒ, size: ƒ, setViewBox: ƒ, background: ƒ, …}
+//  path: {command: ƒ, clear: ƒ, instructions: ƒ, move: ƒ, …}
+//  style: {setTextContent: ƒ, removeChildren: ƒ, appendTo: ƒ, …}
+//  marker: {size: ƒ, setViewBox: ƒ, removeChildren: ƒ, …}
+//  text: {clearTransform: ƒ, translate: ƒ, rotate: ƒ, …}
+//  …
+// }

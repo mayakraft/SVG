@@ -3,7 +3,7 @@
  */
 
 import Case from "../arguments/case";
-import { convertToViewBox } from "../methods/viewBox";
+import { convertToViewBox } from "../methods/manyElements/viewBox";
 
 const categories = {
   move: ["mousemove", "touchmove"],
@@ -66,6 +66,7 @@ const TouchEvents = function (element) {
             const handlerFunc = (e) => {
               const pointer = e.touches != null ? e.touches[0] : e;
               const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY); // e.target
+              // todo: might need a check against overwriting properties that already exist
               ["x", "y"].forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
               categoryUpdate[category](e, viewPoint);
               handler(e);

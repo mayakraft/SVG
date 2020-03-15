@@ -28,8 +28,10 @@ All drawing primitives can be created as children of this new instance.
 
 ```javascript
 svg.rect(x, y, width, height)
-svg.path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3)
+svg.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)
 ```
+
+Capitalized path commands relate to the capitalized (path commands in the spec)[https://www.w3.org/TR/SVG/paths.html#PathData], they are absolutely positioned, lowercase is relative.
 
 A **group** is one container-type element that can also be used to create primitives or more groups. Groups are used to manage layer order.
 

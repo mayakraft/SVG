@@ -10,6 +10,7 @@
  * 2. hook up the new primitive inside this file
  * 3. add the name to the list of drawing inside "nodeNames.js"
  */
+
 import Arc from "./arc/index";
 import Wedge from "./wedge/index";
 import Parabola from "./parabola/index";
@@ -20,11 +21,9 @@ import Curve from "./curve/index";
 
 const nodes = {};
 
-// to remove custom nodes from the library:
-// comment out this block below and rebuild
+// to remove custom nodes from the library, comment out below:
 
-[Arc, Wedge, Parabola, RegularPolygon, RoundRect, Curve,
-// Arrow
+[Arc, Curve, Parabola, RegularPolygon, RoundRect, Wedge, // Arrow
 ].forEach(custom => {
   nodes[custom.name] = custom;
   delete nodes[custom.name].name;

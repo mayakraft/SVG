@@ -17,25 +17,24 @@ const pathCommands = {
   z: "close"
 };
 
-
-const expectedArguments = {
-  m: 2,
-  l: 2,
-  v: 1,
-  h: 1,
-  a: 7, // or 14
-  c: 6,
-  s: 4,
-  q: 4,
-  t: 2,
-  z: 0,
-};
+// const expectedArguments = {
+//   m: 2,
+//   l: 2,
+//   v: 1,
+//   h: 1,
+//   a: 7, // or 14
+//   c: 6,
+//   s: 4,
+//   q: 4,
+//   t: 2,
+//   z: 0,
+// };
 
 // make capitalized copies of each command
 Object.keys(pathCommands).forEach(key => {
   const s = pathCommands[key];
   pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
-  expectedArguments[key.toUpperCase()] = expectedArguments[key];
+  // expectedArguments[key.toUpperCase()] = expectedArguments[key];
 });
 
 const getD = (el) => { // 🍆
@@ -111,4 +110,6 @@ Object.keys(pathCommands).forEach(key => {
   methods[pathCommands[key]] = (el, ...args) => appendPathItem(el, key, ...args);
 });
 
-export default methods;
+export default {
+  path: methods
+};

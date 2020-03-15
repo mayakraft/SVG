@@ -51,9 +51,9 @@ const Methods = function (nodeName, element) {
     Object.keys(AttrNodeFunc[nodeName])
       .filter(attr => element[attr] == null)
       .forEach(attr => {
-        Object.defineProperty(element, attr, {
-          value: (...args) => AttrNodeFunc[nodeName][attr](element, ...args)
-        });
+        Object.defineProperty(element, attr, { value: function () {
+          return AttrNodeFunc[nodeName][attr](element, ...arguments);
+        }});
       });
   }
   return element;

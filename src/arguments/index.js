@@ -36,14 +36,18 @@ const Initializers = {
   svg: svgArguments
 }
 
-const polyString = (...numbers) => Array
-  .from(Array(Math.floor(numbers.length / 2)))
-  .map((_, i) => `${numbers[i*2+0]},${numbers[i*2+1]}`)
-  .join(" ");
+const polyString = function () {
+  return Array
+    .from(Array(Math.floor(arguments.length / 2)))
+    .map((_, i) => `${arguments[i*2+0]},${arguments[i*2+1]}`)
+    .join(" ");
+}
 
-const makeIDString = (...args) => args
-  .filter(a => typeof a === K.string || a instanceof String)
-  .shift() || UUID();
+const makeIDString = function () {
+  return Array.from(arguments)
+    .filter(a => typeof a === K.string || a instanceof String)
+    .shift() || UUID();
+}
 
 // sort incoming arguments to match the order of attributes in the master list
 // const sortArgs = (nodeName, ...args) => {
@@ -62,19 +66,23 @@ const makeIDString = (...args) => args
 //   return args;
 // };
 
+const polys = (...args) => [polyString(...coordinates(...flatten(...args)))];
+const masks = (...args) => [makeIDString(...args)];
+
 const ArgsShuffle = {
   svg: (...args) => [viewBox(...args)].filter(a => a !== undefined),
   text: (...args) => coordinates(...flatten(...args)).slice(0, 2),
   line: (...args) => coordinates(...flatten(...args)),
-  polyline: (...args) => [polyString(...coordinates(...flatten(...args)))],
-  polygon: (...args) => [polyString(...coordinates(...flatten(...args)))],
-  mask: (...args) => [makeIDString(...args)],
-  clipPath: (...args) => [makeIDString(...args)],
-  symbol: (...args) => [makeIDString(...args)],
-  marker: (...args) => [makeIDString(...args)],
+  polyline: polys,
+  polygon: polys,
+  mask: masks,
+  clipPath: masks,
+  symbol: masks,
+  marker: masks,
 };
 
-const passthrough = (...a) => a;
+// const passthrough = function () { return arguments; };
+const passthrough = function () { return Array.from(arguments); }
 
 // nodeName can be custom shapes too like "arrow"
 const Arguments = (primitiveName, element, ...args) => {
@@ -108,7 +116,6 @@ const Arguments = (primitiveName, element, ...args) => {
 };
 
 Arguments.prepareCustomNodes = CustomNodes => {
-
   Object.keys(CustomNodes)
     .filter(name => CustomNodes[name].attributes !== undefined)
     .forEach(name => {

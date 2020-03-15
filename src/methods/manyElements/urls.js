@@ -2,9 +2,9 @@
  * SVG (c) Robby Kraft
  */
 
-import K from "../environment/keys";
-import Nodes from "../nodes/nodes";
-import Case from "../arguments/case";
+import K from "../../environment/keys";
+import Nodes from "../../nodes/nodes";
+import Case from "../../arguments/case";
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
 const findIdURL = function (arg) {
@@ -23,6 +23,8 @@ const findIdURL = function (arg) {
 
 const methods = {};
 
+// these do not represent the nodes that these methods are applied to
+// every node gets these attribute-setting method (pointing to a mask)
 ["clip-path",
   "mask",
   "symbol",
