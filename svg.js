@@ -22,11 +22,7 @@
   }
 
   var Debug = {
-    log: function log() {
-      var _console;
-
-      return (_console = console).log.apply(_console, arguments);
-    }
+    log: function log() {}
   };
 
   var keys = ["number", "object", "transform", "class", "style", "function", "string", "undefined", "boolean", "path", "svg", "id"];
