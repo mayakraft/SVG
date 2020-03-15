@@ -4,7 +4,7 @@
 
 import NodeChildren from "./nodes/nodesChildren";
 import Debug from "./environment/debug";
-import AttrElem from "./attributes/attributesElements";
+import Attributes from "./attributes/index";
 import AttributeMethods from "./methods/index";
 import Case from "./arguments/case";
 import K from "./environment/keys";
@@ -17,9 +17,9 @@ const makeExist = (obj, key) => {
 const AttrNodeFunc = {};
 
 // camelCase functional style attribute setters, like .stroke() .strokeWidth()
-Object.keys(AttrElem).forEach(nodeName => {
+Object.keys(Attributes).forEach(nodeName => {
   makeExist(AttrNodeFunc, nodeName);
-  AttrElem[nodeName].forEach(attribute => {
+  Attributes[nodeName].forEach(attribute => {
     AttrNodeFunc[nodeName][Case.toCamel(attribute)] = (element, ...args) => {
       element.setAttribute(attribute, ...args);
       return element;

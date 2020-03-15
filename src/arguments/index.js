@@ -13,13 +13,13 @@ import K from "../environment/keys";
 import flatten from "./flatten";
 import coordinates from "./coordinates";
 
-import svgArguments from "./svg";
-import textArguments from "./text";
+// import svgArguments from "./svg";
+// import textArguments from "./text";
 
-import attributes from "../attributes/attributes";
-import UUID from "./uuid";
+// import attributes from "../attributes/attributes";
+// import UUID from "./uuid";
 
-import viewBox from "./viewBox";
+// import viewBox from "./viewBox";
 
 const RequiredAttributes = {
   svg: {
@@ -32,8 +32,8 @@ const RequiredAttributes = {
 };
 
 const Initializers = {
-  text: textArguments,
-  svg: svgArguments
+  // text: textArguments,
+  // svg: svgArguments
 }
 
 const polyString = function () {
@@ -49,36 +49,19 @@ const makeIDString = function () {
     .shift() || UUID();
 }
 
-// sort incoming arguments to match the order of attributes in the master list
-// const sortArgs = (nodeName, ...args) => {
-//   switch (nodeName) {
-//     case "svg": return [viewBox(...args)].filter(a => a !== undefined);
-//     case "text": return coordinates(...flatten(...args)).slice(0, 2);
-//     case "line": return coordinates(...flatten(...args));
-//     case "polyline":
-//     case "polygon": return [polyString(...coordinates(...flatten(...args)))];
-//     case "mask":
-//     case "clipPath":
-//     case "symbol":
-//     case "marker": return [makeIDString(...args)];
-//     default: break;
-//   }
-//   return args;
-// };
-
 const polys = (...args) => [polyString(...coordinates(...flatten(...args)))];
 const masks = (...args) => [makeIDString(...args)];
 
 const ArgsShuffle = {
-  svg: (...args) => [viewBox(...args)].filter(a => a !== undefined),
-  text: (...args) => coordinates(...flatten(...args)).slice(0, 2),
-  line: (...args) => coordinates(...flatten(...args)),
-  polyline: polys,
-  polygon: polys,
-  mask: masks,
-  clipPath: masks,
-  symbol: masks,
-  marker: masks,
+  // svg: (...args) => [viewBox(...args)].filter(a => a !== undefined),
+  // text: (...args) => coordinates(...flatten(...args)).slice(0, 2),
+  // line: (...args) => coordinates(...flatten(...args)),
+  // polyline: polys,
+  // polygon: polys,
+  // mask: masks,
+  // clipPath: masks,
+  // symbol: masks,
+  // marker: masks,
 };
 
 // const passthrough = function () { return arguments; };
@@ -102,16 +85,16 @@ const Arguments = (primitiveName, element, ...args) => {
     Initializers[primitiveName](element, ...args);
   }
 
-  const attrElem = (attributes[primitiveName] !== undefined) ? primitiveName : nodeName;
-  // set attribute=value pair, if they exist, and if the user supplied arguments
-  const keys = attributes[attrElem];
-  if (keys === undefined) { return element; }
-  const func = ArgsShuffle[attrElem] || passthrough;
-  func(...args).forEach((v, i) => {
-    if (keys[i] != null) {
-      element.setAttribute(keys[i], v);
-    }
-  });
+  // const attrElem = (attributes[primitiveName] !== undefined) ? primitiveName : nodeName;
+  // // set attribute=value pair, if they exist, and if the user supplied arguments
+  // const keys = attributes[attrElem];
+  // if (keys === undefined) { return element; }
+  // const func = ArgsShuffle[attrElem] || passthrough;
+  // func(...args).forEach((v, i) => {
+  //   if (keys[i] != null) {
+  //     element.setAttribute(keys[i], v);
+  //   }
+  // });
   return element;
 };
 
