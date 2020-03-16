@@ -13,10 +13,12 @@ import K from "../environment/keys";
 import flatten from "./flatten";
 import coordinates from "./coordinates";
 
+import line from "../nodes/spec/line/index";
+
 // import svgArguments from "./svg";
 // import textArguments from "./text";
 
-// import attributes from "../attributes/attributes";
+import attributes from "../attributes/index";
 // import UUID from "./uuid";
 
 // import viewBox from "./viewBox";
@@ -64,6 +66,13 @@ const ArgsShuffle = {
   // marker: masks,
 };
 
+const ArgumentByNode = {
+
+};
+ArgumentByNode.line = line.arguments;
+
+console.log(ArgumentByNode);
+
 // const passthrough = function () { return arguments; };
 const passthrough = function () { return Array.from(arguments); }
 
@@ -83,6 +92,16 @@ const Arguments = (primitiveName, element, ...args) => {
   // for example: append the SVG to a parent.
   if (Initializers[primitiveName] !== undefined) {
     Initializers[primitiveName](element, ...args);
+  }
+
+  // const func = ArgsShuffle[attrElem] || passthrough;
+  const func = ArgumentByNode[primitiveName];
+  if (typeof func === "function") {
+    func(...args).forEach((v, i) => {
+      if (attributes[primitiveName][i] != null) {
+        element.setAttribute(attributes[primitiveName][i], v);
+      }
+    });
   }
 
   // const attrElem = (attributes[primitiveName] !== undefined) ? primitiveName : nodeName;

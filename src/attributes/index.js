@@ -12,16 +12,13 @@ Object.values(N)
   .filter(nodeName => SingleElements[nodeName] === undefined)
   .forEach(nodeName => { SingleElements[nodeName] = []; });
 
-const map = [
-  [["svg", "defs", "g"], ManyElements.presentation],
+[ [["svg", "defs", "g"].concat(N.v), ManyElements.presentation],
   [["filter"], ManyElements.effects],
   [["text"], ManyElements.text],
   [N.cF, ManyElements.effects],
   [N.cG, ManyElements.gradient],
   [N.cT, ManyElements.text],
-]
-
-map.forEach(pair => pair[0].forEach(key => {
+].forEach(pair => pair[0].forEach(key => {
   SingleElements[key] = SingleElements[key].concat(pair[1]);
 }));
 
