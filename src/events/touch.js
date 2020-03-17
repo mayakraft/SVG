@@ -3,7 +3,7 @@
  */
 
 import Case from "../arguments/case";
-import { convertToViewBox } from "../methods/manyElements/viewBox";
+import { convertToViewBox } from "../methods/viewBox";
 
 const categories = {
   move: ["mousemove", "touchmove"],

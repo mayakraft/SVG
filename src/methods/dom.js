@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import Case from "../../arguments/case";
+import Case from "../arguments/case";
 
 export default {
   removeChildren: (element) => {

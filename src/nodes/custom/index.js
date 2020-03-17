@@ -21,6 +21,11 @@ import Curve from "./curve/index";
 
 const nodes = {};
 
+Object.assign(nodes,
+  // Arc, Wedge, Parabola, RegularPolygon,
+  // RoundRect, Arrow, Curve
+);
+
 // to remove custom nodes from the library, comment out below:
 
 // [Arc, Curve, Parabola, RegularPolygon, RoundRect, Wedge, // Arrow

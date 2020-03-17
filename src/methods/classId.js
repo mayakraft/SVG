@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import K from "../../environment/keys";
+import K from "../environment/keys";
 
 const getClassList = (element) => {
   if (element == null) { return []; }

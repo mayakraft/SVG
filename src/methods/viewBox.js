@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-import viewBoxString from "../../arguments/viewBox";
+import viewBoxString from "../arguments/viewBox";
 
 const vB = "viewBox";
 

@@ -1,3 +1,9 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
+// this object will be completed with all remaining nodeName keys
+// with an empty array value
 export default {
   // the order of indices matter
   svg: ["viewBox"],

@@ -1,12 +1,12 @@
-/**
- * SVG (c) Robby Kraft
- */
+// /**
+//  * SVG (c) Robby Kraft
+//  */
 
-import { setViewBox } from "../manyElements/viewBox";
+// import { setViewBox } from "../manyElements/viewBox";
 
-export default {
-  marker: {
-    size: setViewBox,
-    setViewBox: setViewBox
-  }
-};
+// export default {
+//   marker: {
+//     size: setViewBox,
+//     setViewBox: setViewBox
+//   }
+// };

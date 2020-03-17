@@ -6,9 +6,10 @@ import args from "./arguments";
 import * as methods from "./methods";
 
 export default {
-  name: "curve",
-  nodeName: "path",
-  attributes: ["d"],
-  arguments: args,  // one function
-  methods: methods  // object of functions
+  curve: {
+    nodeName: "path",
+    attributes: ["d"],
+    args: args,  // one function
+    methods: methods  // object of functions
+  }
 };
