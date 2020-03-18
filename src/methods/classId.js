@@ -27,7 +27,7 @@ export default {
   setClass: (element, className) => {
     element.setAttributeNS(null, K.class, className);
   },
-  setID: (element, idName) => {
+  setId: (element, idName) => {
     element.setAttributeNS(null, K.id, idName);
   }
 };

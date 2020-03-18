@@ -14,8 +14,18 @@ const polyString = function () {
 
 const polys = (...args) => [polyString(...coordinates(...flatten(...args)))];
 
+const setPoints = (element, ...args) => {
+  element.setAttribute("points", polys(...args)[0]);
+  return element;
+};
+
 export default {
+  polyline: {
+    args: polys,
+    methods: { setPoints }
+  },
   polygon: {
     args: polys,
+    methods: { setPoints }
   }
 };

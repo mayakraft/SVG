@@ -7,9 +7,9 @@ import Constructor from "./nodes/constructor";
 import window from "./environment/window";
 import NS from "./environment/namespace";
 import K from "./environment/keys";
-import Touch from "./events/touch";
-import Animation from "./events/animation";
-import Controls from "./events/controls";
+// import Touch from "./events/touch";
+// import Animation from "./events/animation";
+// import Controls from "./events/controls";
 
 const initialize = function (svg, ...args) {
   args.filter(arg => typeof arg === K.function)
@@ -18,9 +18,9 @@ const initialize = function (svg, ...args) {
 
 const SVG = function () {
   const svg = Constructor(K.svg, ...arguments);
-  Touch(svg);
-  Animation(svg);
-  Controls(svg);
+  // Touch(svg);
+  // Animation(svg);
+  // Controls(svg);
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
     window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...arguments));

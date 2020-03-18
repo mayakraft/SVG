@@ -17,11 +17,10 @@ Object.values(N)
   [N.cT.concat("text"), ManyElements.text], // todo: should we include "svg" here?
   [N.cF, ManyElements.effects],
   [N.cG, ManyElements.gradient],
-  // [N.cT, ManyElements.text],
 ].forEach(pair => pair[0].forEach(key => {
   NodeAttributes[key] = NodeAttributes[key].concat(pair[1]);
 }));
 
-Debug.log("NodeAttributes", NodeAttributes);
+Debug.log(NodeAttributes);
 
 export default NodeAttributes;

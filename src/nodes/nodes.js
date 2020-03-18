@@ -3,7 +3,7 @@
  */
 
 import Debug from "../environment/debug";
-import NodeList from "./nodeNames";
+import N from "./nodeNames";
 import Spec from "./spec/index";
 import CustomNodes from "./custom/index";
 
@@ -15,25 +15,24 @@ import classId from "../methods/classId";
 import DOM from "../methods/dom";
 import Transforms from "../methods/transforms";
 import URLs from "../methods/urls";
-import * as ViewBox from "../methods/viewBox";
 
 const Nodes = {};
 
-// assuming custom nodes are drawing-type, make them known to the library
-NodeList.v.push(...Object.keys(CustomNodes));
-// assuming custom nodes are drawing-type, append presentation attributes
-Object.keys(CustomNodes).forEach(node => {
-  CustomNodes[node].attributes = (CustomNodes[node].attributes === undefined
-    ? [...ManyElements.presentation]
-    : CustomNodes[node].attributes.concat(ManyElements.presentation));
-});
-// incorporate custom nodes as if they are drawing primitives.
-Object.assign(Nodes, Spec, CustomNodes);
+// // assuming custom nodes are drawing-type, make them known to the library
+// N.v.push(...Object.keys(CustomNodes));
+// // assuming custom nodes are drawing-type, append presentation attributes
+// Object.keys(CustomNodes).forEach(node => {
+//   CustomNodes[node].attributes = (CustomNodes[node].attributes === undefined
+//     ? [...ManyElements.presentation]
+//     : CustomNodes[node].attributes.concat(ManyElements.presentation));
+// });
+// // incorporate custom nodes as if they are drawing primitives.
+// Object.assign(Nodes, Spec, CustomNodes);
 
 // in most cases the key === value. "line": "line"
 // except custom shapes: "regularPolygon": "polygon"
-Object.keys(NodeList)
-  .forEach(key => NodeList[key]
+Object.keys(N)
+  .forEach(key => N[key]
     .filter(nodeName => Nodes[nodeName] === undefined)
     .forEach(nodeName => {
       Nodes[nodeName] = {};
@@ -62,10 +61,10 @@ const assign = (groups, Methods) => {
     }));
 };
 
-const N = NodeList;
-assign(flatten(N.v, N.g, N.s), Transforms);
-assign(flatten(N.t, N.v, N.g), URLs);
-assign(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), DOM);
+// assign(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), classId);
+// assign(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), DOM);
+// assign(flatten(N.v, N.g, N.s), Transforms);
+// assign(flatten(N.t, N.v, N.g), URLs);
 
 Debug.log(Nodes);
 

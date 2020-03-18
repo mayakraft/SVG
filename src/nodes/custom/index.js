@@ -22,15 +22,15 @@ import Curve from "./curve/index";
 const nodes = {};
 
 Object.assign(nodes,
-  // to include/exclude nodes from this library
-  // comment out nodes below, rebuild
-  Arc,
-  Wedge,
-  Parabola,
-  RegularPolygon,
-  RoundRect,
-  Arrow,
-  Curve
+  // // to include/exclude nodes from this library
+  // // comment out nodes below, rebuild
+  // Arc,
+  // Wedge,
+  // Parabola,
+  // RegularPolygon,
+  // RoundRect,
+  // Arrow,
+  // Curve
 );
 
 export default nodes;
