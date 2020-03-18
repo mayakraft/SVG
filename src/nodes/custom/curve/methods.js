@@ -19,7 +19,11 @@ const getEndpoints = (element) => {
 //   const params = coordinates(...flatten(...args))
 // }
 
-export const bend = (element, amount) => {
+const bend = (element, amount) => {
   element.setAttribute("d", Args(...getEndpoints(element), amount));
   return element;
+};
+
+export default {
+  bend
 };

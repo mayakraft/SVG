@@ -2,120 +2,71 @@
  * SVG (c) Robby Kraft
  */
 
-export default {
-  s: [  // svg
-    "svg",
-  ],
-  d: [  // defs
-    "defs",      // can only be inside svg
-  ],
-  h: [  // header
-    "desc",      // anywhere, usually top level SVG, or <defs>
-    "filter",    // anywhere, usually top level SVG, or <defs>
-    "metadata",  // anywhere, usually top level SVG, or <defs>
-    "style",     // anywhere, usually top level SVG, or <defs>
-    "script",    // anywhere, usually top level SVG, or <defs>
-    "title",     // anywhere, usually top level SVG, or <defs>
-    "view",      // anywhere.  use attrs ‘viewBox’, ‘preserveAspectRatio’, ‘zoomAndPan’
-  ],
-  c: [  // cdata
-    "cdata",
-  ],
-  g: [  // group
-    "g",  // can contain drawings
-  ],
-  v: [  // visible (drawing)
-    "circle",
-    "ellipse",
-    "line",
-    "path",
-    "polygon",
-    "polyline",
-    "rect",
-  ],
-  t: [  // text
-    "text",
-  ],
-  // can contain drawings
-  i: [  // invisible
-    "marker",    // anywhere, usually top level SVG, or <defs>
-    "symbol",    // anywhere, usually top level SVG, or <defs>
-    "clipPath",  // anywhere, usually top level SVG, or <defs>
-    "mask",      // anywhere, usually top level SVG, or <defs>
-  ],
-  p: [  // patterns
-    "linearGradient", // <defs>
-    "radialGradient", // <defs>
-    "pattern",        // <defs>
-  ],
-  cT: [ // children of text
-    "textPath",   // <text>  path and href attributes
-    "tspan",      // <text>
-  ],
-  cG: [  // children of gradients
-    "stop",           // <linearGradient> <radialGrandient>
-  ],
-  cF: [  // children of filter
-    "feBlend",             // <filter>
-    "feColorMatrix",       // <filter>
-    "feComponentTransfer", // <filter>
-    "feComposite",         // <filter>
-    "feConvolveMatrix",    // <filter>
-    "feDiffuseLighting",   // <filter>
-    "feDisplacementMap",   // <filter>
-    "feDistantLight",      // <filter>
-    "feDropShadow",        // <filter>
-    "feFlood",             // <filter>
-    "feFuncA",             // <filter>
-    "feFuncB",             // <filter>
-    "feFuncG",             // <filter>
-    "feFuncR",             // <filter>
-    "feGaussianBlur",      // <filter>
-    "feImage",             // <filter>
-    "feMerge",             // <filter>
-    "feMergeNode",         // <filter>
-    "feMorphology",        // <filter>
-    "feOffset",            // <filter>
-    "fePointLight",        // <filter>
-    "feSpecularLighting",  // <filter>
-    "feSpotLight",         // <filter>
-    "feTile",              // <filter>
-    "feTurbulence",        // <filter>
-  ],
+import Debug from "../environment/debug";
+import NodeList from "./nodeNames";
+import Spec from "./spec/index";
+import CustomNodes from "./custom/index";
+
+import Attributes from "../attributes/index";
+import ManyElements from "../attributes/manyElements";
+
+import flatten from "../arguments/flatten";
+import classId from "../methods/classId";
+import DOM from "../methods/dom";
+import Transforms from "../methods/transforms";
+import URLs from "../methods/urls";
+import * as ViewBox from "../methods/viewBox";
+
+const Nodes = {};
+
+// assuming custom nodes are drawing-type, make them known to the library
+NodeList.v.push(...Object.keys(CustomNodes));
+// assuming custom nodes are drawing-type, append presentation attributes
+Object.keys(CustomNodes).forEach(node => {
+  CustomNodes[node].attributes = (CustomNodes[node].attributes === undefined
+    ? [...ManyElements.presentation]
+    : CustomNodes[node].attributes.concat(ManyElements.presentation));
+});
+// incorporate custom nodes as if they are drawing primitives.
+Object.assign(Nodes, Spec, CustomNodes);
+
+// in most cases the key === value. "line": "line"
+// except custom shapes: "regularPolygon": "polygon"
+Object.keys(NodeList)
+  .forEach(key => NodeList[key]
+    .filter(nodeName => Nodes[nodeName] === undefined)
+    .forEach(nodeName => {
+      Nodes[nodeName] = {};
+    }));
+
+const passthrough = function () { return Array.from(arguments); };
+
+// complete the lookup table. empty entries where nothing existed
+Object.keys(Nodes).forEach(key => {
+  if (!Nodes[key].nodeName) { Nodes[key].nodeName = key; }
+  if (!Nodes[key].init) { Nodes[key].init = passthrough; }
+  if (!Nodes[key].args) { Nodes[key].args = passthrough; }
+  if (!Nodes[key].methods) { Nodes[key].methods = {}; }
+  if (!Nodes[key].attributes) {
+    Nodes[key].attributes = Attributes[key] || [];
+  }
+});
+
+const assign = (groups, Methods) => {
+  groups.forEach(n =>
+    Object.keys(Methods).forEach(method => {
+      Nodes[n].methods[method] = function () {
+        Methods[method](...arguments);
+        return arguments[0];
+      };
+    }));
 };
 
-//
-// unimplemented
-// 
+const N = NodeList;
+assign(flatten(N.v, N.g, N.s), Transforms);
+assign(flatten(N.t, N.v, N.g), URLs);
+assign(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), DOM);
 
-const logic = [
-  "switch",    // anywhere
-  "use",       // anywhere
-];
+Debug.log(Nodes);
 
-const animate = [
-  "animate",
-  "animateMotion",
-  "animateTransform",
-  "discard",
-  "mpath",     // motion path
-  "set",
-];
-
-const unused = [
-  "unknown",
-];
-
-const embedded = [
-  "audio",          //  requires html namespace
-  "canvas",         //  requires html namespace
-  "foreignObject",  //  <switch>
-  "iframe",         //  requires html namespace
-  "image",          //  requires html namespace
-  "video",          //  requires html namespace
-];
-
-const linking = [
-  "a",  // anywhere
-];
-
+export default Nodes;

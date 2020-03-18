@@ -4,7 +4,7 @@
 
 import Debug from "../environment/debug";
 import Constructor from "./constructor";
-import Nodes from "./nodes";
+import Nodes from "./nodeNames";
 
 const elements = {};
 

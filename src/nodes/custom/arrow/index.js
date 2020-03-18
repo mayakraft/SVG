@@ -3,7 +3,7 @@
  */
 
 import args from "./arguments";
-import * as methods from "./methods";
+import methods from "./methods";
 import init from "./init";
 
 export default {

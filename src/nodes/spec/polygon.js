@@ -2,6 +2,9 @@
  * SVG (c) Robby Kraft
  */
 
+import flatten from "../../arguments/flatten";
+import coordinates from "../../arguments/coordinates";
+
 const polyString = function () {
   return Array
     .from(Array(Math.floor(arguments.length / 2)))

@@ -5,7 +5,6 @@
 import circle from "./circle";
 import ellipse from "./ellipse";
 import line from "./line";
-import marker from "./marker";
 import path from "./path";
 import polygon from "./polygon";
 // import polyline from "./polyline";
@@ -13,8 +12,7 @@ import rect from "./rect";
 import style from "./style";
 import text from "./text";
 import svg from "./svg/index";
-
-// applied to multiple types
+// multiple nodes in one
 import maskTypes from "./maskTypes"
 
 /**
@@ -27,7 +25,7 @@ import maskTypes from "./maskTypes"
  *
  */
 export default Object.assign({},
-  circle, ellipse, line, marker, path, polygon,
+  circle, ellipse, line, path, polygon,
   // // polyline, 
   rect, style, text,
   svg,

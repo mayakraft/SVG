@@ -3,7 +3,7 @@
  */
 
 import args from "./arguments";
-import * as methods from "./methods";
+import methods from "./methods";
 
 export default {
   curve: {

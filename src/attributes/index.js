@@ -3,25 +3,25 @@
  */
 
 import Debug from "../environment/debug";
-import N from "../nodes/nodes";
+import N from "../nodes/nodeNames";
 import ManyElements from "./manyElements";
-import SingleElements from "./singleElements";
+import NodeAttributes from "./singleElements";
 
 Object.values(N)
   .reduce((a,b) => a.concat(b), [])
-  .filter(nodeName => SingleElements[nodeName] === undefined)
-  .forEach(nodeName => { SingleElements[nodeName] = []; });
+  .filter(nodeName => NodeAttributes[nodeName] === undefined)
+  .forEach(nodeName => { NodeAttributes[nodeName] = []; });
 
-[ [["svg", "defs", "g"].concat(N.v), ManyElements.presentation],
+[ [["svg", "defs", "g"].concat(N.v, N.t), ManyElements.presentation],
   [["filter"], ManyElements.effects],
-  [["text"], ManyElements.text],
+  [N.cT.concat("text"), ManyElements.text], // todo: should we include "svg" here?
   [N.cF, ManyElements.effects],
   [N.cG, ManyElements.gradient],
-  [N.cT, ManyElements.text],
+  // [N.cT, ManyElements.text],
 ].forEach(pair => pair[0].forEach(key => {
-  SingleElements[key] = SingleElements[key].concat(pair[1]);
+  NodeAttributes[key] = NodeAttributes[key].concat(pair[1]);
 }));
 
-Debug.log(SingleElements);
+Debug.log("NodeAttributes", NodeAttributes);
 
-export default SingleElements;
+export default NodeAttributes;

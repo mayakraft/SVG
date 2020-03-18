@@ -111,8 +111,8 @@ export default {
     "yChannelSelector",
   ],
   text: [
-    "x",   // <text>
-    "y",   // <text>
+    // "x",   // <text>
+    // "y",   // <text>
     "dx",  // <text>
     "dy",  // <text>
     "alignment-baseline", // specifies how a text alignts vertically

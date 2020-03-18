@@ -6,22 +6,11 @@
 import Debug from "../environment/debug";
 import window from "../environment/window";
 import svgNS from "../environment/namespace";
-import NodeList from "./nodes";
 import NodesChildren from "./nodesChildren";
 import Case from "../arguments/case";
 // import Methods from "../methods";
-import Spec from "./spec/index";
-import CustomNodes from "./custom/index";
-import Attributes from "../attributes/index";
 
-const applyArgsToAttrs = (element, attrs, func, ...args) => {
-  if (typeof func !== "function") { return; }
-  func(...args).forEach((v, i) => {
-    if (attrs[i] != null) {
-      element.setAttribute(attrs[i], v);
-    }
-  });
-};
+import Spec from "./nodes";
 
 const RequiredAttrMap = {
   svg: {
@@ -41,30 +30,7 @@ const RequiredAttributes = (element, nodeName) => {
   }
 }
 
-Object.assign(Spec, CustomNodes);
-
-// in most cases the key === value. "line": "line"
-// but in the case of custom shapes, for example: "regularPolygon": "polygon"
-Object.keys(NodeList)
-  .forEach(key => NodeList[key]
-    .filter(nodeName => Spec[nodeName] === undefined)
-    .forEach(nodeName => {
-      Spec[nodeName] = {};
-    }));
-
-const passthrough = function () { return Array.from(arguments); };
-
-Object.keys(Spec).forEach(key => {
-  if (!Spec[key].nodeName) { Spec[key].nodeName = key; }
-  if (!Spec[key].init) { Spec[key].init = passthrough; }
-  if (!Spec[key].args) { Spec[key].args = passthrough; }
-  if (!Spec[key].methods) { Spec[key].methods = {}; }
-  if (!Spec[key].attributes) {
-    Spec[key].attributes = Attributes[key] || [];
-  }
-});
-
-Debug.log(Spec);
+const bound = {};
 
 const constructor = (nodeName, ...args) => {
   const element = window.document.createElementNS(svgNS, Spec[nodeName].nodeName);
@@ -79,8 +45,8 @@ const constructor = (nodeName, ...args) => {
   // camelCase functional style attribute setters, like .stroke() .strokeWidth()
   Spec[nodeName].attributes.forEach(attribute => {
     Object.defineProperty(element, Case.toCamel(attribute), {
-      value: (...args) => {
-        element.setAttribute(attribute, ...args);
+      value: function () {
+        element.setAttribute(attribute, ...arguments);
         return element;
       }
     });
@@ -90,7 +56,7 @@ const constructor = (nodeName, ...args) => {
   Object.keys(Spec[nodeName].methods).forEach(methodName =>
     Object.defineProperty(element, methodName, {
       value: function () {
-        return Spec[nodeName].methods[methodName](element, ...arguments);
+        return Spec[nodeName].methods[methodName].call(bound, element, ...arguments);
       }
     }));
 
@@ -98,8 +64,8 @@ const constructor = (nodeName, ...args) => {
   if (NodesChildren[nodeName]) {
     NodesChildren[nodeName].forEach(childNode => {
       Object.defineProperty(element, childNode, {
-        value: (...args) => {
-          const childElement = constructor(childNode, ...args);
+        value: function () {
+          const childElement = constructor(childNode, ...arguments);
           element.appendChild(childElement);
           return childElement;
         }
@@ -111,5 +77,7 @@ const constructor = (nodeName, ...args) => {
   // Methods(nodeName, element);
   return element;
 };
+
+bound.Constructor = constructor;
 
 export default constructor;

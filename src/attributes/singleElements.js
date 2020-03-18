@@ -14,6 +14,7 @@ export default {
   polygon: ["points"],
   polyline: ["points"],
   path: ["d"],
+  text: ["x", "y"],
   mask: ["id"],
   symbol: ["id"],
   clipPath: [
