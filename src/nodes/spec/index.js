@@ -24,16 +24,16 @@ import polys from "./polys";
  *
  */
 export default Object.assign({},
-  // circle,
-  // ellipse,
-  // line,
-  // path,
-  // rect,
-  // style,
-  // text,
-  // svg,
+  circle,
+  ellipse,
+  line,
+  path,
+  rect,
+  style,
+  text,
+  svg,
 
-  // // multiple
-  // maskTypes,
-  // polys,
+  // multiple
+  maskTypes,
+  polys,
 );
