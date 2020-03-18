@@ -2,23 +2,45 @@
  * SVG (c) Robby Kraft
  */
 
+import flatten from "../arguments/flatten";
+import coordinates from "../arguments/coordinates";
+
 // const distanceSq = (a, b) => Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2);
 const distanceSq = (a, b) => [0, 1]
   .map(i => a[i] - b[i])
   .map(e => e ** 2)
   .reduce((a, b) => a + b, 0);
 
+const attachToParent = (parent, svg) => (svg && svg.parentNode == null
+  ? parent.appendChild(svg)
+  : undefined);
+
+const removeFromParent = (svg) => (svg && svg.parentNode
+  ? svg.parentNode.removeChild(svg)
+  : undefined);
+
+const possiblePositionAttributes = [["cx", "cy"], ["x", "y"]];
+
 const controlPoint = function (parent, options = {}) {
+  // private properties. unless exposed
   const position = [0, 0]; // initialize below
-  let selected = false;
-  let svg;
+  const cp = {
+    selected: false,
+    svg: undefined,
+    // to be overwritten
+    updatePosition: input => input,
+  };
 
   const updateSVG = () => {
-    if (svg != null) {
-      if (svg.parentNode == null) { parent.appendChild(svg); }
-      svg.setAttribute("cx", position[0]);
-      svg.setAttribute("cy", position[1]);
+    if (!cp.svg) { return; }
+    if (!cp.svg.parentNode) {
+      parent.appendChild(cp.svg);
     }
+    possiblePositionAttributes
+      .filter(coords => cp.svg[coords[0]] != null)
+      .forEach(coords => coords.forEach((attr, i) => {
+        cp.svg.setAttribute(attr, position[i]);
+      }));
   };
 
   const proxy = new Proxy(position, {
@@ -30,24 +52,9 @@ const controlPoint = function (parent, options = {}) {
   });
 
   const setPosition = function (...args) {
-    if (args.length === 0) { return; }
-    const root = typeof args[0];
-    if (root === "number") {
-      position[0] = args[0];
-      position[1] = args[1];
-      updateSVG();
-    }
-    if (root === "object") {
-      if (typeof args[0][0] === "number") {
-        position[0] = args[0][0];
-        position[1] = args[0][1];
-        updateSVG();
-      } else if (typeof args[0].x === "number") {
-        position[0] = args[0].x;
-        position[1] = args[0].y;
-        updateSVG();
-      }
-    }
+    coordinates(...flatten(...args))  
+      .forEach((n, i) => { position[i] = n; })
+    updateSVG();
     // alert delegate
     if (typeof position.delegate === "function") {
       // console.log("proxy.pointsContainer", position.pointsContainer);
@@ -56,44 +63,32 @@ const controlPoint = function (parent, options = {}) {
   };
 
   // set default position
-  setPosition(options.position);
-
-  // to be overwritten
-  let updatePosition = input => input;
-
-  const onMouseMove = function (mouse) {
-    if (selected) {
-      setPosition(updatePosition(mouse));
-    }
-  };
-  const onMouseUp = () => { selected = false; };
+  // setPosition(options.position);
 
   position.delegate = undefined; // to be set
   position.setPosition = setPosition;
-  position.onMouseMove = onMouseMove;
-  position.onMouseUp = onMouseUp;
-  position.distance = (mouse) => Math.sqrt(distanceSq(mouse, position));
-  Object.defineProperty(position, "x", {
-    get: () => position[0],
-    set: (newValue) => { position[0] = newValue; }
-  });
-  Object.defineProperty(position, "y", {
-    get: () => position[1],
-    set: (newValue) => { position[1] = newValue; }
-  });
-  Object.defineProperty(position, "svg", {
-    get: () => svg,
-    set: (newSVG) => { svg = newSVG; }
-  });
-  Object.defineProperty(position, "positionDidUpdate", {
-    set: (method) => { updatePosition = method; }
-  });
-  Object.defineProperty(position, "selected", {
-    set: (value) => { selected = value; }
-  });
+  position.onMouseMove = mouse => (cp.selected
+    ? setPosition(cp.updatePosition(mouse))
+    : undefined);
+  position.onMouseUp = () => { cp.selected = false; }
+  position.distance = mouse => Math.sqrt(distanceSq(mouse, position));
+
+  ["x", "y"].forEach((prop, i) => Object.defineProperty(position, prop, {
+    get: () => position[i],
+    set: (v) => { position[i] = v; }
+  }));
+  // would be nice if "svg" also called removeFromParent(); on set()
+  ["svg", "updatePosition", "selected"].forEach(key => {
+    Object.defineProperty(position, key, {
+      get: () => cp[key],
+      set: (v) => { cp[key] = v; }
+    })
+  })
   Object.defineProperty(position, "remove", {
     value: () => {
-      if (svg != null) { svg.parentNode.removeChild(svg); }
+      // todo, do we need to do any other unwinding?
+      removeFromParent(cp.svg);
+      position.delegate = undefined;
     }
   });
 
@@ -105,19 +100,12 @@ const controls = function (svg, number, options) {
   let delegate;
   const points = Array.from(Array(number))
     .map(() => controlPoint(svg, options));
-  points.forEach((pt, i) => {
-    if (typeof options === "object"
-      && typeof options.position === "function") {
-      pt.setPosition(options.position(i));
-    }
-  });
 
   // hook up the delegate callback for the on change event
-  const protocol = function (point) {
-    if (typeof delegate === "function") {
-      delegate.call(points, points, point);
-    }
-  };
+  const protocol = point => (typeof delegate === "function"
+    ? delegate.call(points, points, point)
+    : undefined);
+
   points.forEach((p) => {
     p.delegate = protocol;
     p.pointsContainer = points;
@@ -158,26 +146,22 @@ const controls = function (svg, number, options) {
     }
   };
 
-  points.onChange = function (func, runOnceAtStart) {
-    if (typeof func === "function") {
+  const functionalMethods = {
+    onChange: (func, runOnceAtStart) => { 
       delegate = func;
       if (runOnceAtStart === true) { func.call(points, points, undefined); }
-    }
-    return points;
+    }, 
+    position: func => points.forEach((p, i) => p.setPosition(func.call(points, i))),
+    svg: func => points.forEach((p, i) => { p.svg = func.call(points, i); }),
   };
-
-  points.position = function (func) {
-    if (typeof func === "function") {
-      points.forEach((p, i) => p.setPosition(func.call(points, i)));
+  Object.keys(functionalMethods).forEach(key => {
+    points[key] = function () {
+      if (typeof arguments[0] === "function") {
+        functionalMethods[key](...arguments);
+      }
+      return points;
     }
-    return points;
-  };
-  points.svg = function (func) {
-    if (typeof func === "function") {
-      points.forEach((p, i) => { p.svg = func.call(points, i); });
-    }
-    return points;
-  };
+  });
   points.parent = function (parent) {
     if (parent != null && parent.appendChild != null) {
       points.forEach((p) => { parent.appendChild(p.svg); });
@@ -188,4 +172,9 @@ const controls = function (svg, number, options) {
   return points;
 };
 
-export default controls;
+const applyControlsToSVG = (svg) => {
+  svg.controls = (...args) => controls.call(svg, svg, ...args);
+};
+
+// export default controls;
+export default applyControlsToSVG;

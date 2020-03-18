@@ -111,8 +111,8 @@ export default {
     "yChannelSelector",
   ],
   text: [
-    "x",   // <text>
-    "y",   // <text>
+    // "x",   // <text>
+    // "y",   // <text>
     "dx",  // <text>
     "dy",  // <text>
     "alignment-baseline", // specifies how a text alignts vertically
@@ -136,54 +136,11 @@ export default {
     "word-spacing",
     "writing-mode",
   ],
-  mask: ["id"],
-  symbol: ["id"],
-  clipPath: [
-    "id",
-    "clip-rule", // use with clipPath
-  ],
-  marker: [
-    "id",
-    "markerHeight",
-    "markerUnits",
-    "markerWidth",
-    "orient",
-    "refX",
-    "refY",
-  ],
-  pattern: [
-    "patternContentUnits", // only <pattern>
-    "patternTransform", // only <pattern>
-    "patternUnits", // only <pattern>
-  ],
   gradient: [
     "gradientTransform", // linear/radial gradient
     "gradientUnits", // linear/radial gradient
     "spreadMethod", // linear/radial gradient
   ],
-  linearGradient: [
-    "x1", // <linearGradient>
-    "x2", // <linearGradient>
-    "y1", // <linearGradient>
-    "y2", // <linearGradient>
-  ],
-  radialGradient: [
-    "cx", // <radialGradient>
-    "cy", // <radialGradient>
-    "r",  // <radialGradient>
-    "fr", // <radialGradient>
-    "fx", // <radialGradient>
-    "fy", // <radialGradient>
-  ],
-  // the order of indices matter
-  svg: ["viewBox"],
-  line: ["x1", "y1", "x2", "y2"],
-  rect: ["x", "y", "width", "height"],
-  circle: ["cx", "cy", "r"],
-  ellipse: ["cx", "cy", "rx", "ry"],
-  polygon: ["points"],
-  polyline: ["points"],
-  path: ["d"],
 };
 
 const unused = [
@@ -192,8 +149,6 @@ const unused = [
   "marker-mid",  // assign to <marker>
   "marker-start",  // assign to <marker>
   "media", // for <style> only. @media
-  "stop-color",  // <stop>
-  "stop-opacity", // <stop>
   "target", // only used in: <a>
   "href", // anmations, effect images, gradients, 
   "requiredExtensions", // used in conjunction with <switch>

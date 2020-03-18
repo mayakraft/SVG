@@ -3,8 +3,10 @@
  */
 
 import Debug from "../environment/debug";
-import N from "./nodes";
+import N from "./nodeNames";
 import Custom from "./custom/index";
+
+// todo, get rid of custom primitives here if possible
 
 // arc, parabola, regularPolygon, arrow...
 const customPrimitives = Object.keys(Custom);

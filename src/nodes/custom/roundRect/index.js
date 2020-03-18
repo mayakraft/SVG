@@ -5,8 +5,9 @@
 import args from "./arguments";
 
 export default {
-  name: "roundRect",
-  nodeName: "path",
-  attributes: ["d"],
-  arguments: args
+  roundRect: {
+    nodeName: "path",
+    attributes: ["d"],
+    args: args
+  }
 };

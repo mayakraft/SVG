@@ -4,7 +4,8 @@
   "description": "creative coding with SVG",
   "main": "svg.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "tiny": "jest \\core.*\\.js"
   },
   "author": "Robby Kraft",
   "license": "MIT",
@@ -23,19 +24,18 @@
     "xmldom": "^0.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/polyfill": "^7.8.0",
-    "@babel/preset-env": "^7.7.7",
-    "babel-preset-minify": "^0.5.1",
-    "core-js": "^3.2.1",
+    "@babel/core": "^7.8.7",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "core-js": "^3.6.4",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-import": "^2.20.1",
     "jest": "^24.9.0",
-    "rollup": "^1.29.0",
-    "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-babel-minify": "^9.1.0",
-    "rollup-plugin-cleanup": "^3.1.1"
+    "rollup": "^1.32.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup-plugin-terser": "^5.3.0"
   },
   "jest": {
     "testEnvironment": "node"

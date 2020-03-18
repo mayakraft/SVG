@@ -4,7 +4,7 @@
 
 import K from "../../../environment/keys";
 
-export const setArrowPoints = function (el, ...args) {
+const setArrowPoints = function (el, ...args) {
   const children = Array.from(el.childNodes);
   const path = children.filter(node => node.nodeName === "path").shift();
   const polys = ["svg-arrow-head", "svg-arrow-tail"]
@@ -30,7 +30,7 @@ export const setArrowPoints = function (el, ...args) {
   return el;
 };
 
-export const head = (element, options) => {
+const head = (element, options) => {
   if (typeof options === K.object) {
     Object.assign(element.options.head, options);
     if (options.visible === undefined) {
@@ -45,7 +45,7 @@ export const head = (element, options) => {
   return element;
 };
 
-export const tail = (element, options) => {
+const tail = (element, options) => {
   if (typeof options === K.object) {
     Object.assign(element.options.tail, options);
     if (options.visible === undefined) {
@@ -61,14 +61,22 @@ export const tail = (element, options) => {
   return element;
 };
 
-export const curve = (element, amount) => {
+const curve = (element, amount) => {
   element.options.curve = amount;
   setArrowPoints(element);
   return element;
 };
 
-export const pinch = (element, amount) => {
+const pinch = (element, amount) => {
   element.options.pinch = amount;
   setArrowPoints(element);
   return element;
+};
+
+export default {
+  setArrowPoints,
+  head,
+  tail,
+  curve,
+  pinch,
 };

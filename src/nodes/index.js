@@ -4,20 +4,15 @@
 
 import Debug from "../environment/debug";
 import Constructor from "./constructor";
-import Nodes from "./nodes";
+import NodeNames from "./nodeNames";
 
 const elements = {};
 
-Object.keys(Nodes).forEach(key => Nodes[key]
+Object.keys(NodeNames).forEach(key => NodeNames[key]
   .forEach(nodeName => {
     elements[nodeName] = (...args) => Constructor(nodeName, ...args);
   }));
 
 Debug.log(elements);
-
-// the placeholder constructor. create any element type in the SVG namespace
-// const createElement = function (nodeName) {
-//   return window.document.createElementNS(svgNS, nodeName);
-// };
 
 export default elements;

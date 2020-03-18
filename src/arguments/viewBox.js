@@ -5,7 +5,7 @@
 import flatten from "./flatten";
 import coordinates from "./coordinates";
 
-const viewBoxString = function (x, y, width, height, padding) {
+const viewBoxValue = function (x, y, width, height, padding) {
   if (padding == null) { padding = 0; }
   const scale = 1.0;
   const d = (width / scale) - width;
@@ -20,8 +20,8 @@ const viewBoxString = function (x, y, width, height, padding) {
  * this will attempt to match a set of viewbox parameters
  * undefined, if it cannot build a string
  */
-export default (...args) => {
-  const numbers = coordinates(...flatten(...args));
+export default function () {
+  const numbers = coordinates(...flatten(arguments));
   if (numbers.length === 2) { numbers.unshift(0, 0); }
-  return numbers.length === 4 ? viewBoxString(...numbers) : undefined;
+  return numbers.length === 4 ? viewBoxValue(...numbers) : undefined;
 };

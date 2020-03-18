@@ -16,16 +16,16 @@ const initialize = function (svg, ...args) {
     .forEach(func => func.call(svg, svg));
 };
 
-const SVG = function (...args) {
-  const svg = Constructor(K.svg, ...args);
+const SVG = function () {
+  const svg = Constructor(K.svg, ...arguments);
   Touch(svg);
   Animation(svg);
-  svg.controls = (...args) => Controls.call(svg, svg, ...args);
+  Controls(svg);
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
-    window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...args));
+    window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...arguments));
   } else {
-    initialize(svg, ...args);
+    initialize(svg, ...arguments);
   }
   return svg;
 };

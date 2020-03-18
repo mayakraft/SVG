@@ -4,7 +4,7 @@
 
 creative coding with SVG.
 
-This library makes drawing SVGs nearly easy enough to be used by people new to coding. The library introduces method-chaining for styling, event handlers that work for computers and touch screens, and can run in the browser or Node.
+The library offers argument parsing, styling via method-chaining, event handlers that work for computers and touch screens, and can run in the browser or Node.
 
 ```html
 <script src="svg.js"></script>
@@ -14,6 +14,12 @@ This library makes drawing SVGs nearly easy enough to be used by people new to c
 const SVG = require("rabbit-ear-svg")
 ```
 
+## Examples
+
+[svg.rabbitear.org](https://svg.rabbitear.org), a live code editor, including examples.
+
+There are also examples in the `examples/` folder when you download it.
+
 ## Usage
 
 ```javascript
@@ -22,23 +28,40 @@ const svg = SVG()
 
 This creates an `<svg>` element.
 
-**optional init parameters** can contain: *2 numbers*: viewBox width and height, *DOM node*: the svg's parent in the window, *function*: a callback after window.onload and after the SVG is on screen.
+```javascript
+const svg = SVG(document.body)
+```
 
-All drawing primitives can be created as children of this new instance.
+This creates an `<svg>` element and appends it to the body
+
+```javascript
+const svg = SVG(800, 600)
+```
+
+This creates an `<svg>` with viewBox dimensions 800x600.
 
 ```javascript
 svg.rect(x, y, width, height)
-svg.path().moveTo(x1, y1).lineTo(x2, y2).curveTo(cx1, cy1, cx2, cy2, x3, y3)
+svg.line(x, y, x2, y2).stroke("#000")
 ```
 
-A **group** is one container-type element that can also be used to create primitives or more groups. Groups are used to manage layer order.
+Drawing is done by *appending* children to a parent. The last line will appear on top; the painter's algorithm.
 
 ```javascript
-const topLayer = svg.group()
-topLayer.rect(x, y, width, height)
+const layer = svg.g()
+layer.rect(x, y, width, height)
 ```
 
-**Style** is applied using method-chaining.
+Groups are used to manage layer order.
+
+```javascript
+svg.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)
+```
+
+Capitalized path commands relate to the capitalized [path commands in the spec](https://www.w3.org/TR/SVG/paths.html#PathData)
+
+- upper: absolutely positioned
+- lowercase: relative
 
 ```javascript
 svg.line(0, 0, 300, 300)
@@ -47,24 +70,26 @@ svg.line(0, 0, 300, 300)
   .strokeDasharray("5 3")
 ```
 
-**Events** combine both mouse and touch ('onmousedown' and 'ontouchstart'). **Animate** is a simple way to initialize a 60-fps game loop.
-
-- mousePressed
-- mouseReleased
-- mouseMoved
-- animate
+**Style** is applied using method-chaining, camel-case svg attributes.
 
 ```javascript
-svg.mousePressed = function (mouse) {
-
+svg.onPress = function (mouse) {
+  // mobile tablet screen touch or mouse press
 }
 ```
 
-## Examples
+**Events**
 
-Check out the examples in the `examples/` folder.
+- onPress
+- onRelease
+- onMove
+- play
 
-`examples/code/` contains a live-coding window, perfect for becoming acquainted. This example is also here [svg.rabbitear.org](https://svg.rabbitear.org).
+```javascript
+svg.play = function (mouse) {
+  // video frame based loop
+}
+```
 
 ## Reference
 
