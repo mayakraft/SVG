@@ -10,7 +10,7 @@ import NodesChildren from "./nodesChildren";
 import Case from "../arguments/case";
 // import Methods from "../methods";
 
-import Spec from "./nodes";
+import NodeSpec from "./nodes";
 
 const RequiredAttrMap = {
   svg: {
@@ -33,17 +33,17 @@ const RequiredAttributes = (element, nodeName) => {
 const bound = {};
 
 const constructor = (nodeName, ...args) => {
-  const element = window.document.createElementNS(svgNS, Spec[nodeName].nodeName);
+  const element = window.document.createElementNS(svgNS, NodeSpec[nodeName].nodeName);
   RequiredAttributes(element, nodeName);
-  Spec[nodeName].init(element, ...args);
-  Spec[nodeName].args(...args).forEach((v, i) => {
-    if (Spec[nodeName].attributes[i] != null) {
-      element.setAttribute(Spec[nodeName].attributes[i], v);
+  NodeSpec[nodeName].init(element, ...args);
+  NodeSpec[nodeName].args(...args).forEach((v, i) => {
+    if (NodeSpec[nodeName].attributes[i] != null) {
+      element.setAttribute(NodeSpec[nodeName].attributes[i], v);
     }
   });
 
   // camelCase functional style attribute setters, like .stroke() .strokeWidth()
-  Spec[nodeName].attributes.forEach(attribute => {
+  NodeSpec[nodeName].attributes.forEach(attribute => {
     Object.defineProperty(element, Case.toCamel(attribute), {
       value: function () {
         element.setAttribute(attribute, ...arguments);
@@ -53,10 +53,14 @@ const constructor = (nodeName, ...args) => {
   });
 
   // custom methods from each primitive's definition
-  Object.keys(Spec[nodeName].methods).forEach(methodName =>
+  Object.keys(NodeSpec[nodeName].methods).forEach(methodName =>
     Object.defineProperty(element, methodName, {
       value: function () {
-        return Spec[nodeName].methods[methodName].call(bound, element, ...arguments);
+        // all custom methods are attached to the node.
+        // if there is no return value specified,
+        // the method will return the element itself
+        // to encourage method-chaining design.
+        return NodeSpec[nodeName].methods[methodName].call(bound, element, ...arguments) || element;
       }
     }));
 

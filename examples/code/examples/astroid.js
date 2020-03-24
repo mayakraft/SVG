@@ -1,14 +1,21 @@
-svg.size(512, 512);
+svg.size(-256, -256, 512, 512);
+
+// all children will inherit this style
 svg.stroke("black");
 
-var SEGMENTS = 50;
-var w = svg.getWidth() / SEGMENTS * 0.5;
-var h = svg.getHeight() / SEGMENTS * 0.5;
+// how many divisions to make
+var segments = 30;
 
-for (var i = 0; i < SEGMENTS; i += 1) {
-  var j = SEGMENTS - i;
-  svg.line(w * i, svg.getHeight() / 2, svg.getWidth() / 2, h * j);
-  svg.line(svg.getWidth() - w * j, svg.getHeight() / 2, svg.getWidth() / 2, h * i);
-  svg.line(svg.getWidth() - w * i, svg.getHeight() / 2, svg.getWidth() / 2, svg.getHeight() - h * j);
-  svg.line(svg.getWidth() / 2, svg.getHeight() - h * i, w * j, svg.getHeight() / 2);
+// calculating these here makes our loop cleaner
+var w = svg.getWidth() / 2 / segments;
+var h = svg.getHeight() / 2 / segments;
+
+// "i" will increment from 0 to (segments - 1)
+for (var i = 0; i < segments; i += 1) {
+  // "j" will decrement from segments to 1
+  var j = segments - i;
+  svg.line(-w * i, 0, 0, -h * j);  // top left
+  svg.line(w * j, 0, 0, -h * i);   // top right
+  svg.line(w * i, 0, 0, h * j);    // bottom right
+  svg.line(-w * j, 0, 0, h * i);   // bottom left
 }
