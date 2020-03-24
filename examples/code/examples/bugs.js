@@ -1,13 +1,18 @@
 svg.size(-1, -1, 2, 2);
-svg.background("black", true);
+svg.background("black");
 
+// dots and lines are separated to their own layers
 var lines = svg.g().strokeWidth(0.003);
 var dots = svg.g().fill("#ec3");
+
+// the line endpoint, as vertices 0, 1, 2, 3
 var i = [0, 1];
 var stroke = "#158";
 
 svg.play = function (e) {
-  if (!randomInt(25)) {
+  // every 25th frame or so, change the line color
+  // and which points the line connects
+  if (Math.random() < 1/25) {
     i[0] = randomInt(4);
     i[1] = randomInt(4);
     stroke = random(["#158", "#e53"]);
@@ -23,6 +28,7 @@ svg.play = function (e) {
     noise(e.time + 100 - 10 * i[1])
   ).stroke(stroke);
 
+  // limit number of lines and dots
   while (dots.childNodes.length > 60) { dots.firstChild.remove(); }
   while (lines.childNodes.length > 100) { lines.firstChild.remove(); }
 };

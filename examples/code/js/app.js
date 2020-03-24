@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "astroid.js",
     "bezier.js",
     "bugs.js",
+    "clip-path.js",
     "clock.js",
-    "conics.js",
     "curves.js",
     "dragon.js",
     "draw.js",
@@ -87,10 +87,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // loadAndRunExamples(function (examples) {
     //   return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
     // });
-    // blank screen
-    // var randSize = Math.pow(2, Math.floor(Math.random()*8)+4);
-    var randSize = 100;
-    var welcomeText = "svg.size("+randSize+", "+randSize+");\nsvg.background('transparent');\n\n// svg.play = function (t) {\n//   svg.removeChildren();\n//   svg.circle(50 + 50*Math.sin(t.time), 50, 50);\n// };\n";
+    // var welcomeText = "svg.size(100, 100);\nsvg.background('transparent');\n\n// svg.play = function (t) {\n//   svg.removeChildren();\n//   svg.circle(50 + 50*Math.sin(t.time), 50, 10);\n// };\n";
+    var welcomeText = `svg.size(100, 100);
+svg.background('transparent');
+
+// var circle = svg.circle(50, 50, 50);
+// svg.play = function (t) {
+//   circle.center(50+50*Math.sin(t.time), 50);
+// };
+`
     app.injectCode(welcomeText);
   } else {
     app.injectCode(bootQueryValue);

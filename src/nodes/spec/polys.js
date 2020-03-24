@@ -12,20 +12,18 @@ const polyString = function () {
     .join(" ");
 }
 
-const polys = (...args) => [polyString(...coordinates(...flatten(...args)))];
+const stringifyArgs = (...args) => [polyString(...coordinates(...flatten(...args)))];
 
-const setPoints = (element, ...args) => {
-  element.setAttribute("points", polys(...args)[0]);
-  return element;
-};
+const setPoints = (element, ...args) => element
+  .setAttribute("points", stringifyArgs(...args)[0]);
 
 export default {
   polyline: {
-    args: polys,
+    args: stringifyArgs,
     methods: { setPoints }
   },
   polygon: {
-    args: polys,
+    args: stringifyArgs,
     methods: { setPoints }
   }
 };

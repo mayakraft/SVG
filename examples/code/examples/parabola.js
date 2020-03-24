@@ -1,8 +1,8 @@
-svg.size(100, 100);
+svg.size(-50, -50, 100, 100);
 
-svg.parabola(0, 0, 60, 60).fill("#000a").translate(20, 20);
-svg.parabola(0, 0, 60, 60).fill("#ec3a").rotate(90).translate(20, -80);
-svg.parabola(0, 0, 60, 60).fill("#158a").rotate(270).translate(-80, 20);
-svg.parabola(0, 0, 60, 60).fill("#e53a").rotate(180).translate(-80, -80);
+svg.parabola().fill("#000a").rotate(0).translate(0, -30).scale(30, 60);
+svg.parabola().fill("#ec3a").rotate(90).translate(0, -30).scale(30, 60);
+svg.parabola().fill("#158a").rotate(270).translate(0, -30).scale(30, 60);
+svg.parabola().fill("#e53a").rotate(180).translate(0, -30).scale(30, 60);
 
-svg.rect(20, 20, 60, 60).fill("none").stroke("black");
+svg.rect(-30, -30, 60, 60).fill("none").stroke("black");
