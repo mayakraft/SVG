@@ -4,15 +4,7 @@
 
 creative coding with SVG.
 
-The library offers argument parsing, styling via method-chaining, event handlers that work for computers and touch screens, and can run in the browser or Node.
-
-```html
-<script src="svg.js"></script>
-```
-
-```javascript
-const SVG = require("rabbit-ear-svg")
-```
+*easy drawing, easy styling, event handlers, browser or node.js*
 
 ## Examples
 
@@ -22,46 +14,44 @@ There are also examples in the `examples/` folder when you download it.
 
 ## Usage
 
+download and include `svg.js`, or in node `npm i rabbit-ear-svg`
+
+This creates an `<svg>` element.
+
 ```javascript
 const svg = SVG()
 ```
 
-This creates an `<svg>` element.
+This creates an `<svg>` element **and** appends it to the body
 
 ```javascript
 const svg = SVG(document.body)
 ```
 
-This creates an `<svg>` element and appends it to the body
+This creates an `<svg>` with viewBox dimensions 800x600.
 
 ```javascript
 const svg = SVG(800, 600)
 ```
 
-This creates an `<svg>` with viewBox dimensions 800x600.
+Drawing is done by *appending* children to a parent. The last line will appear on top; the painter's algorithm.
 
 ```javascript
 svg.rect(x, y, width, height)
 svg.line(x, y, x2, y2).stroke("#000")
 ```
 
-Drawing is done by *appending* children to a parent. The last line will appear on top; the painter's algorithm.
+Groups are used to manage layer order.
 
 ```javascript
 const layer = svg.g()
 layer.rect(x, y, width, height)
+layer.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)
 ```
 
-Groups are used to manage layer order.
+*Path command upper/lower case relates to their [path commands in the spec](https://www.w3.org/TR/SVG/paths.html#PathData)*
 
-```javascript
-svg.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)
-```
-
-Capitalized path commands relate to the capitalized [path commands in the spec](https://www.w3.org/TR/SVG/paths.html#PathData)
-
-- upper: absolutely positioned
-- lowercase: relative
+**Style** is applied using method-chaining, camel-case svg attributes.
 
 ```javascript
 svg.line(0, 0, 300, 300)
@@ -69,8 +59,6 @@ svg.line(0, 0, 300, 300)
   .strokeWidth(3)
   .strokeDasharray("5 3")
 ```
-
-**Style** is applied using method-chaining, camel-case svg attributes.
 
 ```javascript
 svg.onPress = function (mouse) {
@@ -93,17 +81,13 @@ svg.play = function (mouse) {
 
 ## Reference
 
-container and header types
+all supported elements
 
-```javascript
-group()
-defs()
-clipPath()
-mask()
-createElement(nodeName) // create any element under the svg namespace
+```
+svg, defs, desc, filter, metadata, style, script, title, view, cdata, g, circle, ellipse, line, path, polygon, polyline, rect, text, marker, symbol, clipPath, mask, linearGradient, radialGradient, pattern, textPath, tspan, stop, feBlend, feColorMatrix, feComponentTransfer, feComposite, feConvolveMatrix, feDiffuseLighting, feDisplacementMap, feDistantLight, feDropShadow, feFlood, feFuncA, feFuncB, feFuncG, feFuncR, feGaussianBlur, feImage, feMerge, feMergeNode, feMorphology, feOffset, fePointLight, feSpecularLighting, feSpotLight, feTile, feTurbulence,
 ```
 
-geometry primitives
+geometry primitives with setters/getters
 
 ```javascript
 line(x1, y1, x2, y2)
@@ -112,36 +96,40 @@ ellipse(x, y, radiusX, radiusY)
 rect(x, y, width, height)
 polygon(pointsArray)
 polyline(pointsArray)
-path() // method-chain with .moveTo() .curveTo() ...
-bezier(fromX, fromY, c1X, c1Y, c2X, c2Y, toX, toY)
+path()
 text(textString, x, y)
-arc(x, y, radius, startAngle, endAngle)
-wedge(x, y, radius, startAngle, endAngle)
-arcEllipse(x, y, radiusX, radiusY, startAngle, endAngle)
+
 wedgeEllipse(x, y, radiusX, radiusY, startAngle, endAngle)
 parabola(x, y, width, height)
 regularPolygon(cX, cY, radius, sides)
 roundRect(x, y, width, height, cornerRadius)
-arrow() // method-chain with .head() .tail()
 ```
 
-more SVG methods
+methods on the `<svg>` element
 
 ```javascript
-getViewBox()
+clear()
+size(x, y, w, h)
+size(w, h)
 setViewBox(x, y, w, h)
-convertToViewBox(x, y)
-translateViewBox(dx, dy)
-scaleViewBox(scale, origin_x = 0, origin_y = 0)
-
+background(color)
 getWidth()
 getHeight()
-setWidth(w)
-setHeight(h)
-background(color)
-size(width, height)
-size(x, y, width, height)
+stylesheet(css)
+load(file)
+save()
 ```
+
+methods on the `<path>` element
+
+```javascript
+clear()
+command(command, ...args)
+get()
+set(...)
+add(string)
+```
+
 
 ## Credit
 
