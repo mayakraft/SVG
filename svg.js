@@ -700,7 +700,11 @@
           return _typeof(a) === Keys.string;
         }).shift();
         if (text) {
-          element.innerHTML = text;
+          if (element.firstChild) {
+            element.firstChild.nodeValue = text;
+          } else {
+            element.appendChild(win.document.createTextNode(text));
+          }
         }
       }
     }
