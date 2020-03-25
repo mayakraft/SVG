@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var loadExamples = function loadExamples(callback) {
     exampleFilenames.forEach(function (file, i) {
       var iteration = i;
-      fetch("examples/" + file).then(function (data) {
+      fetch("examples/" + file, {cache: "no-store"}).then(function (data) {
         return data.text();
       }).then(function (result) {
         examples.push(result);
@@ -159,8 +159,8 @@ svg.background('transparent');
 
   app.didPause = function (paused) { };
   app.didUpdate = function () { };
-  app.reset = function () {
-    app.dom.canvas.removeAttribute("style");
+  app.didBeginUpdate = function () {
+    // app.dom.canvas.removeAttribute("style");
 
     if (svg !== undefined) {
       while (svg.lastChild) {

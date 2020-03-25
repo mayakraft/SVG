@@ -1,35 +1,14 @@
 import cleanup from "rollup-plugin-cleanup";
 import babel from "rollup-plugin-babel";
-// import minify from "rollup-plugin-babel-minify";
 import { terser } from "rollup-plugin-terser";
 
-module.exports = [{
-  input: "./src/index.js",
-  output: {
-    name: "SVG",
-    file: "svg.js",
-    format: "umd", // for npm and standalone <script src="">
-    // format: "es", // for modules "import..from.."
-    banner: "/* SVG (c) Robby Kraft, MIT License */",
-  },
-  plugins: [
-    cleanup({
-      comments: "none",
-      maxEmptyLines: 0,
-    }),
-    babel({
-      babelrc: false,
-      presets: [["@babel/env", { modules: false }]],
-    }),
-  ],
-},
+module.exports = [
 {
   input: "src/index.js",
   output: {
     name: "SVG",
-    file: "svg.min.js",
+    file: "svg.js",
     format: "umd",
-    // format: "es",
     banner: "/* SVG (c) Robby Kraft, MIT License */",
     bannerNewline: true,
   },
@@ -42,4 +21,24 @@ module.exports = [{
     terser(),
   ],
 },
+// {
+//   input: "./src/index.js",
+//   output: {
+//     name: "SVG",
+//     file: "svg.js",
+//     format: "umd", // for npm and standalone <script src="">
+//     // format: "es", // for modules "import..from.."
+//     banner: "/* SVG (c) Robby Kraft, MIT License */",
+//   },
+//   plugins: [
+//     cleanup({
+//       comments: "none",
+//       maxEmptyLines: 0,
+//     }),
+//     babel({
+//       babelrc: false,
+//       presets: [["@babel/env", { modules: false }]],
+//     }),
+//   ],
+// },
 ];

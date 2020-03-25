@@ -2,17 +2,11 @@
  * SVG (c) Robby Kraft
  */
 
-import vkXML from "../../../../include/vkbeautify-xml";
-import window from "../../../environment/window";
-import cdata from "../../../environment/cdata";
 import K from "../../../environment/keys";
+import cdata from "../../../environment/cdata";
 import DOM from "../../../methods/dom";
-import * as Load from "../../../file/load";
 import Save from "../../../file/save";
-import flatten from "../../../arguments/flatten";
-import coordinates from "../../../arguments/coordinates";
-import viewBox from "../../../arguments/viewBox";
-
+import * as Load from "../../../file/load";
 import { getViewBox, setViewBox } from "../../../methods/viewBox";
 
 const getFrame = function (element) {

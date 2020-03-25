@@ -43,8 +43,8 @@ var LiveCode = function LiveCode(container) {
 
   var compileAndRun = function compileAndRun() {
     try {
-      if (typeof app.reset === "function") {
-        app.reset();
+      if (typeof app.didBeginUpdate === "function") {
+        app.didBeginUpdate();
       }
       eval(app.editor.getValue());
       app.dom.console.innerHTML = "";
@@ -185,7 +185,7 @@ var LiveCode = function LiveCode(container) {
   // allow these to be overwritten. these are async methods
   app.didUpdate = function () {}; // callback. after code runs
   app.didPause = function () {}; // callback. after "paused" is modified
-  app.reset = function () {}; // this is called at the beginning of every execution cycle
+  app.didBeginUpdate = function () {}; // this is called at the beginning of every execution cycle
 
   compileAndRun();
   return app;
