@@ -5,7 +5,6 @@
 import K from "../../../environment/keys";
 import window from "../../../environment/window";
 import viewBox from "../../../arguments/viewBox";
-
 import methods from "./methods";
 
 const ElementConstructor = (new window.DOMParser())

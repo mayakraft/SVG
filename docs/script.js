@@ -6,7 +6,7 @@ var examples = [
   "svg5.rect(25, 25, 250, 100);",
   "svg6.polygon(10, 10, 300, 50, 180, 150)\n  .fill('black');\n\nvar points = [\n  [200,20],\n  [200,120],\n  [100,20],\n  [100,100]];\n\nsvg6.polygon(points)\n  .fill('thistle');\n",
   "svg7.polyline(0, 10, 280, 0, 260, 140, 10, 150)\n\nvar p = svg7.polyline()\n  .stroke('tomato')\n  .fill('none')\n  .strokeWidth(10);\n\nfor (var x = 0; x < 300; x += 20) {\n  p.addPoint(x, Math.random() * 150);\n}",
-  "svg8.path()\n  .fill('gold')\n  .stroke('crimson');",
+  "svg8.path()\n  .stroke('crimson')\n  .strokeWidth(10)\n  .fill('none')\n  .Move(250, 100)\n  .Line(60, 10)\n  .curve(-20, 100, 300, 0, 200, 100)\n  .ellipse(50, 50, 0, 0, 1, -80, -80);",
   "svg9.text('abc あいう 🥰🤩🥳', 0, 100)\n  .fill('gold')\n  .fontSize('34px');",
   "var layer = svg10.g().fill('dodgerblue');\n\nsvg10.rect(130, 0, 40, 150).fill('black');\n\nlayer.rect(0, 55, 300, 40);",
   "var clip = svg11.clipPath();\nclip.text('clipping', 0, 95)\n  .fontSize('80px');\n\nsvg11.line(0, 75, 300, 75)\n  .stroke('black')\n  .strokeWidth(20)\n  .clipPath(clip);\n\nsvg11.line(0, 30, 300, 120)\n  .stroke('crimson')\n  .strokeWidth(20)\n  .clipPath(clip);",
@@ -17,7 +17,7 @@ var examples = [
   "svg16.arc(150, 75, 65, Math.PI/2, Math.PI*7/4)\n  .fill('darkolivegreen')\n  .stroke('yellowgreen')\n  .strokeWidth(10);",
   "svg17.wedge(150, 75, 65, Math.PI/2, Math.PI*7/4)\n  .fill('darkolivegreen')\n  .stroke('yellowgreen')\n  .strokeWidth(10);",
   "svg18.onMove = function (mouse) {\n  svg18.circle(mouse.x, mouse.y, 10)\n    .fill('#0001');\n};",
-  "var c = svg19.circle(150, 75, 25)\n\nsvg19.play = function (e) {\n  c.setCenter(Math.sin(e.time) * 100 + 150, 75);\n};\n",
+  "var c = svg19.circle(150, 75, 25);\n\nsvg19.play = function (e) {\n  c.setCenter(Math.sin(e.time) * 100 + 150, 75);\n};\n",
 ];
 
 

@@ -8,7 +8,7 @@
 <h1>SVG Reference</h1>
 
 <p>
-  This is a Javascript library for creative coding with SVG. The <a href="https://svg.rabbitear.org/">web editor</a> is a quick way to start using the library. Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
+  This Javascript library enables fast-building of SVG images. The <a href="https://svg.rabbitear.org/">web editor</a> is a quick way to get aquainted. Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
 </p>
 
 <h3>Sections</h3>
@@ -22,38 +22,51 @@
 <h2>Overview</h2>
 
 <p>
-  The following command creates an <code>&lt;svg&gt;</code> image.
+  Drawing an SVG is like building a tree-structure with parents and children.
+</p>
+
+<pre class="code" style="line-height: 1">&lt;svg&gt;
+ ┃
+ ┣━ &lt;g&gt;
+ ┃   ┃
+ ┃   ┣━ &lt;circle&gt;
+ ┃   ┗━ &lt;path&gt;
+ ┃
+ ┗━ &lt;rect&gt;
+</pre>
+
+<p>
+  Parents create children, and at the top is the SVG. This command creates an <code>&lt;svg&gt;</code> element.
 </p>
 
 <pre class="code">const svg = SVG()</pre>
 
 <p>
-  This creates an <code>&lt;svg&gt;</code> element <b>and</b> appends it to the body
+  The following creates an <code>&lt;svg&gt;</code> element <b>and</b> appends it to the body.
 </p>
 
 <pre class="code">const svg = SVG(document.body)</pre>
 
 <p>
-  This creates an <code>&lt;svg&gt;</code> with viewBox dimensions 800x600.
+  The following creates an <code>&lt;svg&gt;</code> with viewBox dimensions 800x600.
 </p>
 
 <pre class="code">const svg = SVG(800, 600)</pre>
 
 <p>
-  Parent elements (<b>svg</b>, <b>g</b>, ...) can draw shapes. The painter's algorithm puts the circle on top of the rect.
+  Shapes are made by calling the shape on the parent. This will create it as a child. Shape-drawing parents are: <b>svg, g, marker, symbol, clipPath, mask</b>.
 </p>
 
 <pre class="code">svg.rect(x, y, width, height)
 svg.circle(x, y, radius)</pre>
 
 <p>
-  Groups (<b>g</b>) are used to manage layer order. <em>Path method cases reflect the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">specification</a>.</em>
-
+  Groups (<b>g</b>) are like layers in Photoshop, useful for managing layer order. In this example the circle is below the rect.
 </p>
 
 <pre class="code">const layer = svg.g()
-layer.rect(x, y, width, height)
-layer.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)</pre>
+svg.rect(x, y, width, height)
+layer.circle(x, y, radius)</pre>
 
 <h3>Style</h3>
 
@@ -66,6 +79,21 @@ layer.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)</pre>
   .strokeWidth(3)
   .strokeDasharray("5 3")</pre>
 
+<p>
+  If a style is applied to a parent, all children will inherit that style unless a child overwrites it.
+</p>
+
+<pre class="code">const layer = svg.g()
+  .fill("none")
+  .stroke("red");
+
+layer.rect(x, y, width, height)
+  .stroke("blue");</pre>
+
+<p>
+  In the example above, the rectangle has no fill (inherited from layer) and a blue stroke (overwritten).
+</p>
+
 <h3>Events</h3>
 
 <ul>
@@ -76,12 +104,37 @@ layer.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)</pre>
 </ul>
 
 <pre class="code">svg.onPress = function (mouse) {
-  // mobile tablet screen touch or mouse press
+  // mouse press or mobile tablet screen touch
 }</pre>
 
 <pre class="code">svg.play = function (event) {
-  // video frame based loop
+  // animation frame based loop
 }</pre>
+
+<h3>Methods</h3>
+
+<p>
+  Certain shapes come with methods, see the <a href="#methods">methods section below</a>. One notable example is the path element. <em>Upper/lowercase for path methods reflects the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">specification</a>.</em>
+</p>
+
+<pre class="code">svg.path()
+  .Move(x1, y1)
+  .line(x2, y2)
+  .Curve(cx1, cy1, cx2, cy2, x3, y3)</pre>
+
+<h3>SVG Onload</h3>
+
+<p>
+  In my opinion, the best way to create an SVG is to use the function callback feature. This encapsulates your code in a function (good to do) and waits until the page has loaded.
+</p>
+
+<pre class="code">
+SVG((svg) => {
+  svg.size(window.innerWidth / window.innerHeight, 1);
+  svg.rect(0, 0, svg.getWidth(), svg.getHeight());
+  ...
+});
+</pre>
 
 <h2>Shapes</h2>
 
@@ -159,9 +212,11 @@ layer.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)</pre>
 <pre class="wrap">accumulate, additive, alignment-baseline, attributeName, azimuth, baseFrequency, baseline-shift, begin, bias, by, calcMode, color, color-interpolation, color-interpolation-filters, cursor, diffuseConstant, direction, display, divisor, dominant-baseline, dur, dx, dy, edgeMode, elevation, end, exponent, fill, fill-opacity, fill-rule, filter, filterRes, filterUnits, flood-color, flood-opacity, font-family, font-size, font-size-adjust, font-stretch, font-style, font-variant, font-weight, from, gradientTransform, gradientUnits, image-rendering, in, in2, intercept, k1, k2, k3, k4, kernelMatrix, keyPoints, keySplines, keyTimes, lengthAdjust, letter-spacing, lighting-color, limitingConeAngle, max, method, min, mode, numOctaves, opacity, operator, order, overflow, overline-position, overline-thickness, paint-order, pointer-events, pointsAtX, pointsAtY, pointsAtZ, preserveAlpha, preserveAspectRatio, primitiveUnits, radius, repeatCount, repeatDur, restart, result, rotate, seed, shape-rendering, spacing, specularConstant, specularExponent, spreadMethod, startOffset, stdDeviation, stitchTiles, strikethrough-position, strikethrough-thickness, stroke, stroke-dasharray, stroke-dashoffset, stroke-linecap, stroke-linejoin, stroke-miterlimit, stroke-opacity, stroke-width, surfaceScale, tabindex, targetX, targetY, text-anchor, text-decoration, text-rendering, textLength, to, transform-origin, type, underline-position, underline-thickness, user-select, values, vector-effect, visibility, word-spacing, writing-mode, xChannelSelector, yChannelSelector</pre>
 
 
-<h3>Methods</h3>
+<h3 id="methods">Methods</h3>
 
-<h4>methods on the <code>&lt;svg&gt;</code> element</h4>
+<h4>Methods for individual element types</h4>
+
+<h4><code>&lt;svg&gt;</code></h4>
 
 <pre class="wrap">clear()
 size(x, y, w, h)
@@ -174,7 +229,7 @@ stylesheet(css)
 load(file)
 save()</pre>
 
-<h4>methods on the <code>&lt;path&gt;</code> element</h4>
+<h4><code>&lt;path&gt;</code></h4>
 
 <pre class="wrap">clear()
 command(command, ...args)
@@ -204,22 +259,46 @@ SmoothQuadCurve()
 
 close()</pre>
 
-<h4>General methods</h4>
+<h4><code>&lt;polygon&gt;, &lt;polyline&gt;</code></h4>
+<pre>setPoints(...)
+addPoint(...)</pre>
 
-<pre><f>removeChildren()</f>
-<f>setAttributes(...)</f>
-<f>clipPath(...)</f>
-<f>mask(...)</f>
+<h4><code>&lt;marker&gt;, &lt;symbol&gt;, &lt;clipPath&gt;, &lt;mask&gt;</code></h4>
+<pre>size(...)
+setViewBox(...)</pre>
 
-<f>translate(...)</f>
-<f>rotate(...)</f>
-<f>scale(...)</f>
-<f>clearTransforms()</f>
+<h4><code>&lt;line&gt;</code></h4>
+<pre>setPoints(...)</pre>
 
-<f>addClass(...)</f>
-<f>removeClass(...)</f>
-<f>setClass(...)</f>
-<f>setID(...)</f></pre>
+<h4><code>&lt;circle&gt;, &lt;ellipse&gt;</code></h4>
+<pre>radius(...)
+setRadius(...)
+center(...)
+setCenter(...)
+position(...)
+setPosition(...)</pre>
+
+<h4>Methods applied to most elements</h4>
+
+<pre class="wrap">removeChildren()
+appendTo(...)
+setAttributes(...)
+
+translate(...)
+rotate(...)
+scale(...)
+matrix(...)
+clearTransform()
+
+marker(...)
+symbol(...)
+clipPath(...)
+mask(...)
+
+addClass(...)
+removeClass(...)
+setClass(...)
+setID(...)</pre>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js"></script>
 <!-- <script type="text/javascript" charset="utf-8" src="ace/ace.js" charset="utf-8"></script> -->

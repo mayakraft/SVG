@@ -104,7 +104,7 @@ svg.background('transparent');
 
   // help button
   buttons[0].onclick = function () {
-    var win = window.open("//svg.rabbitear.org/docs/", "_blank");
+    var win = window.open("//robbykraft.github.io/SVG/docs/", "_blank");
     win.focus();
   };
 
