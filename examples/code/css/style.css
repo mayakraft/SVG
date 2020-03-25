@@ -111,9 +111,19 @@ div[class*="-button"] {
   background-image: url(../images/question.svg);
 }
 @media not all and (hover), (max-aspect-ratio: 1/1) {
-  .ace_editor { font-size: 1rem; }
-  #app { flex-direction: column-reverse; }
-  .code-console { width: 100%; }
+  .ace_editor {
+    font-size: 1rem;
+  }
+  #app {
+    flex-direction: column-reverse;
+  }
+  .code-console {
+    width: 100%;
+  }
+  .code-editor,
+  .code-canvas {
+    height: 50%;
+  }
   .play-pause-button {
     left: initial;
     right: 0.5rem;

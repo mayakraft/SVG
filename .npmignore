@@ -4,9 +4,8 @@
 .travis.yml
 .eslintrc.json
 rollup.config.js
-src/
 docs/
+examples/
 include/
-mine/
+src/
 tests/
-examples/code/ace/

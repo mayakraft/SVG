@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<title>✨SVG✨</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="style.css">
+<body>
+
+<h1>SVG Reference</h1>
+
+<p>
+  This is a Javascript library for creative coding with SVG. The <a href="https://svg.rabbitear.org/">web editor</a> is a quick way to start using the library. Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
+</p>
+
+<h3>Sections</h3>
+
+<ol>
+  <li>Overview</li>
+  <li>Shapes</li>
+  <li>Appendix</li>
+</ol>
+
+<h2>Overview</h2>
+
+<p>
+  The following command creates an <code>&lt;svg&gt;</code> image.
+</p>
+
+<pre class="code">const svg = SVG()</pre>
+
+<p>
+  This creates an <code>&lt;svg&gt;</code> element <b>and</b> appends it to the body
+</p>
+
+<pre class="code">const svg = SVG(document.body)</pre>
+
+<p>
+  This creates an <code>&lt;svg&gt;</code> with viewBox dimensions 800x600.
+</p>
+
+<pre class="code">const svg = SVG(800, 600)</pre>
+
+<p>
+  Parent elements (<b>svg</b>, <b>g</b>, ...) can draw shapes. The painter's algorithm puts the circle on top of the rect.
+</p>
+
+<pre class="code">svg.rect(x, y, width, height)
+svg.circle(x, y, radius)</pre>
+
+<p>
+  Groups (<b>g</b>) are used to manage layer order. <em>Path method cases reflect the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">specification</a>.</em>
+
+</p>
+
+<pre class="code">const layer = svg.g()
+layer.rect(x, y, width, height)
+layer.path().Move(x1, y1).line(x2, y2).Curve(cx1, cy1, cx2, cy2, x3, y3)</pre>
+
+<h3>Style</h3>
+
+<p>
+  <b>Style</b> is applied using method-chaining, camel-case svg attributes.
+</p>
+
+<pre class="code">svg.line(0, 0, 300, 300)
+  .stroke("#F08")
+  .strokeWidth(3)
+  .strokeDasharray("5 3")</pre>
+
+<h3>Events</h3>
+
+<ul>
+  <li>onPress</li>
+  <li>onRelease</li>
+  <li>onMove</li>
+  <li>play</li>
+</ul>
+
+<pre class="code">svg.onPress = function (mouse) {
+  // mobile tablet screen touch or mouse press
+}</pre>
+
+<pre class="code">svg.play = function (event) {
+  // video frame based loop
+}</pre>
+
+<h2>Shapes</h2>
+
+  <pre class="title"><code><f>SVG</f>()</code></pre>
+  <div class="sketch-1"></div>
+
+  <pre class="title"><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
+  <div class="sketch-2"></div>
+
+  <pre class="title"><code><f>circle</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>)</code></pre>
+  <div class="sketch-3"></div>
+
+  <pre class="title"><code><f>ellipse</f>(<arg>x</arg>, <arg>y</arg>, <arg>rx</arg>, <arg>ry</arg>)</code></pre>
+  <div class="sketch-4"></div>
+
+  <pre class="title"><code><f>rect</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+  <div class="sketch-5"></div>
+
+  <pre class="title"><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
+  <div class="sketch-6"></div>
+
+  <pre class="title"><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
+  <div class="sketch-7"></div>
+
+  <pre class="title"><code><f>path</f>()</code></pre>
+  <div class="sketch-8"></div>
+
+  <pre class="title"><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
+  <div class="sketch-9"></div>
+
+<h3>Layers and Masks</h3>
+
+  <pre class="title"><code><f>g</f>()</code></pre>
+  <div class="sketch-10"></div>
+
+  <pre class="title"><code><f>clipPath</f>()</code></pre>
+  <div class="sketch-11"></div>
+  
+  <pre class="title"><code><f>mask</f>()</code></pre>
+  <div class="sketch-12"></div>
+
+<h3>Outside the Specification</h3>
+
+  <pre class="title"><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
+  <div class="sketch-13"></div>
+
+  <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+  <div class="sketch-14"></div>
+
+  <pre class="title"><code><f>curve</f>(<arg>fromX</arg>, <arg>fromY</arg>, <arg>c1X</arg>, <arg>c1Y</arg>, <arg>c2X</arg>, <arg>c2Y</arg>, <arg>toX</arg>, <arg>toY</arg>)</code></pre>
+  <div class="sketch-15"></div>
+
+  <pre class="title"><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+  <div class="sketch-16"></div>
+
+  <pre class="title"><code><f>wedge</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+  <div class="sketch-17"></div>
+
+<h3>Events</h3>
+
+  <pre class="title"><code><f>onMove</f>, <f>onPress</f>, <f>onRelease</f></code></pre>
+  <div class="sketch-18"></div>
+
+  <pre class="title"><code><f>animate</f></code></pre>
+  <div class="sketch-19"></div>
+
+<h2>Appendix</h2>
+
+<h3>Supported Nodes</h3>
+
+<pre class="wrap">svg, defs, desc, filter, metadata, style, script, title, view, cdata, g, circle, ellipse, line, path, polygon, polyline, rect, text, marker, symbol, clipPath, mask, linearGradient, radialGradient, pattern, textPath, tspan, stop, feBlend, feColorMatrix, feComponentTransfer, feComposite, feConvolveMatrix, feDiffuseLighting, feDisplacementMap, feDistantLight, feDropShadow, feFlood, feFuncA, feFuncB, feFuncG, feFuncR, feGaussianBlur, feImage, feMerge, feMergeNode, feMorphology, feOffset, fePointLight, feSpecularLighting, feSpotLight, feTile, feTurbulence
+</pre>
+
+<h3>Supported Attributes</h3>
+<pre class="wrap">accumulate, additive, alignment-baseline, attributeName, azimuth, baseFrequency, baseline-shift, begin, bias, by, calcMode, color, color-interpolation, color-interpolation-filters, cursor, diffuseConstant, direction, display, divisor, dominant-baseline, dur, dx, dy, edgeMode, elevation, end, exponent, fill, fill-opacity, fill-rule, filter, filterRes, filterUnits, flood-color, flood-opacity, font-family, font-size, font-size-adjust, font-stretch, font-style, font-variant, font-weight, from, gradientTransform, gradientUnits, image-rendering, in, in2, intercept, k1, k2, k3, k4, kernelMatrix, keyPoints, keySplines, keyTimes, lengthAdjust, letter-spacing, lighting-color, limitingConeAngle, max, method, min, mode, numOctaves, opacity, operator, order, overflow, overline-position, overline-thickness, paint-order, pointer-events, pointsAtX, pointsAtY, pointsAtZ, preserveAlpha, preserveAspectRatio, primitiveUnits, radius, repeatCount, repeatDur, restart, result, rotate, seed, shape-rendering, spacing, specularConstant, specularExponent, spreadMethod, startOffset, stdDeviation, stitchTiles, strikethrough-position, strikethrough-thickness, stroke, stroke-dasharray, stroke-dashoffset, stroke-linecap, stroke-linejoin, stroke-miterlimit, stroke-opacity, stroke-width, surfaceScale, tabindex, targetX, targetY, text-anchor, text-decoration, text-rendering, textLength, to, transform-origin, type, underline-position, underline-thickness, user-select, values, vector-effect, visibility, word-spacing, writing-mode, xChannelSelector, yChannelSelector</pre>
+
+
+<h3>Methods</h3>
+
+<h4>methods on the <code>&lt;svg&gt;</code> element</h4>
+
+<pre class="wrap">clear()
+size(x, y, w, h)
+size(w, h)
+setViewBox(x, y, w, h)
+background(color)
+getWidth()
+getHeight()
+stylesheet(css)
+load(file)
+save()</pre>
+
+<h4>methods on the <code>&lt;path&gt;</code> element</h4>
+
+<pre class="wrap">clear()
+command(command, ...args)
+get()
+set(...)
+add(string)
+
+move()
+line()
+vertical()
+horizontal()
+ellipse()
+curve()
+smoothCurve()
+quadCurve()
+smoothQuadCurve()
+
+Move()
+Line()
+Vertical()
+Horizontal()
+Ellipse()
+Curve()
+SmoothCurve()
+QuadCurve()
+SmoothQuadCurve()
+
+close()</pre>
+
+<h4>General methods</h4>
+
+<pre><f>removeChildren()</f>
+<f>setAttributes(...)</f>
+<f>clipPath(...)</f>
+<f>mask(...)</f>
+
+<f>translate(...)</f>
+<f>rotate(...)</f>
+<f>scale(...)</f>
+<f>clearTransforms()</f>
+
+<f>addClass(...)</f>
+<f>removeClass(...)</f>
+<f>setClass(...)</f>
+<f>setID(...)</f></pre>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js"></script>
+<!-- <script type="text/javascript" charset="utf-8" src="ace/ace.js" charset="utf-8"></script> -->
+<script type="text/javascript" charset="utf-8" src="../svg.js"></script>
+<script type="text/javascript" charset="utf-8" src="svg.ace.js"></script>
+<script type="text/javascript" charset="utf-8" src="script.js"></script>
+
+</body>

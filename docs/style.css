@@ -1,0 +1,246 @@
+html, body, h1, h2, h3, h4, h5, h6, pre, code, p, ul, li {
+  margin: 0;
+  font-size: 1rem;
+}
+pre {
+  /*font-size: 1.2rem;*/
+}
+code {
+  font-size: inherit;
+}
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  font-weight: 400;
+  margin: 1rem;
+  background-color: #fff;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: Futura, "Helvetica Neue", Helvetica, sans-serif;
+}
+pre {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;  
+}
+h1{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: #444;
+  font-size: 6rem;
+  letter-spacing: -5px;
+  line-height: 0.85;
+}
+h2 {
+  color: #444;
+  margin: 0.5rem 0;
+  font-size: 4.5rem;
+}
+h3 {
+  margin: 0.5rem 0 0.5rem 0;
+  color: #444;
+  font-size: 2.25rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+p, ul {
+  /*background-color: #272822;*/
+  /*padding: 0.5rem 1rem;*/
+}
+p, ul, pre.returns {
+  color: black;
+}
+
+.section pre, pre.title{
+  color: black;
+  padding: 1rem 1rem;
+  display: block;
+  font-size: 1.7rem;
+  overflow-x: scroll;
+}
+ul {
+  list-style: none;
+  padding-left: 1em;
+}
+a, a:hover, a:visited, a:active {
+  color: #e53;
+  font-weight: 800;
+  text-decoration: none;
+}
+.section p a{
+  font-weight: 800;
+}
+/*div.section {
+  margin-top: 5rem;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  padding: 0.75rem;
+  border: 4px dashed #888;
+}*/
+div.section h1{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+div.section h3 {
+  margin: 2rem 0 0.5rem 0;
+}
+div.section p, div ul, div li {
+  background-color: #272822;
+}
+div.section ul{
+  padding-right: 3em;
+}
+pre.returns {
+  padding: 0.5rem 1rem;
+  margin: 0;
+  /*background-color: #272822;*/
+  font-size: 1.3rem;
+}
+pre.title {
+  margin-top: 2rem;
+}
+h3 + pre.title {
+  margin-top: 0;
+}
+h3 {
+  /*margin-top: 5rem;*/
+}
+pre.returns, .description {
+  margin-left: 0rem;
+}
+div[class^="sketch"] {
+  /*height: 100%;*/
+  height: 12rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0rem;
+  /*background-color: #272822;*/
+}
+div.section div[class^="sketch"] {
+  margin-left: 0rem;
+}
+
+.code-editor {
+  flex: 1;
+  height: 100%;
+  /*min-height: 150px;*/
+}
+.code-canvas {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /*min-height: 150px;*/
+}
+.code-canvas svg {
+  height: 100%;
+  margin: auto;
+}
+
+f   { color: #444; } /* function */
+n   { color: #AE81FF; } /* number */
+v   { color: #A6E22E; } /* variable */
+arg { color: #e53; } /* #FD9720;    argument */
+key { color: #f15; } /* #F92672;  operator */
+str { color: #ec3; } /* string */
+c   { color: #777; } /* comment */
+
+h1, h2, h3, h4, h5, h6, pre, code, p, ul, li, div {
+  z-index: 2;
+  /*pointer-events: none;*/
+}
+
+/*pre.title code { font-size: 1.25rem; }*/
+pre { padding: 1rem 0; }
+pre.title { margin-top: 0; }
+h3:first-of-type { margin: 1rem 0 0.5rem 0; }
+
+.code {
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+
+  display: block;
+  overflow: auto;
+  color: #272822;
+  background-color: #e8e8e8;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+
+/* non-mobile styling for all sizes */
+@media (min-width: 720px) {
+/*  body { margin: 2rem 100px 4rem 100px; }
+  pre { padding: 1rem 1rem; }
+  pre.title { margin-top: 1rem; }
+  h3:first-of-type { margin: 5rem 0 0.5rem 0;}
+  pre.returns, .description { margin-left: 3rem; }
+  div[class^="sketch"] { margin-left: 3rem; }*/
+}
+@media (min-width: 1120px) {
+  body { margin: 0 100px; }
+  /*body { margin: 4rem 300px 6rem 300px; }*/
+}
+
+.menu-button, .share-button, .question-button, .random-button, .playpause-button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 100%;
+}
+.menu-button {
+  background-color: #e53;
+}
+.share-button {
+  background-color: #e53;
+}
+.random-button {
+  background-color: #ec3;
+}
+.playpause-button {
+}
+.playpause-button.pause { background-color: #5b2; }
+.playpause-button.play { background-color: #e53; }
+
+/*div.grid {
+  display: grid;
+  grid-template-columns: 80px auto;
+}
+
+div.grid div {
+  justify-self: end;
+}
+*/
+
+div.grid p img {
+  display: inline;
+  margin: 0 0.5rem;
+}
+
+div.grid p{
+  display: flex;
+  align-items: center;
+}
+
+pre.wrap {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
