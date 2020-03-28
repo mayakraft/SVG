@@ -6,7 +6,7 @@ import K from "../../../environment/keys";
 import cdata from "../../../environment/cdata";
 import DOM from "../../../methods/dom";
 import Save from "../../../file/save";
-import * as Load from "../../../file/load";
+import Load from "../../../file/load";
 import { getViewBox, setViewBox } from "../../../methods/viewBox";
 
 const getFrame = function (element) {
@@ -62,8 +62,7 @@ const clear = function (element) {
   DOM.removeChildren(element);
 };
 
-const replaceSVG = function (target, source) {
-  if (source == null) { return; }
+const assignSVG = function (target, source) {
   clear(target);
   Array.from(source.childNodes).forEach((node) => {
     source.removeChild(node);
@@ -71,6 +70,15 @@ const replaceSVG = function (target, source) {
   });
   Array.from(source.attributes)
     .forEach(attr => target.setAttribute(attr.name, attr.value));
+};
+
+// check if the loader is running synchronously or asynchronously
+const loadHelper = function (target, data) {
+  const result = Load(data);
+  if (result == null) { return; }
+  return (typeof result.then === "function")
+    ? result.then(svg => assignSVG(target, svg))
+    : assignSVG(target, result);
 };
 
 // these will end up as methods on the <svg> nodes
@@ -82,7 +90,7 @@ export default {
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
   stylesheet: function (text) { return stylesheet.call(this, text); },
-  load: (el, data, callback) => replaceSVG(el, Load.sync(data, callback)),
+  load: loadHelper,
   save: Save,
 };
 

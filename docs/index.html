@@ -36,7 +36,11 @@
 </pre>
 
 <p>
-  Parents create children, and at the top is the SVG. This command creates an <code>&lt;svg&gt;</code> element.
+  It's very similar to how design software has layers and ordering items in-front/behind.
+</p>
+
+<p>
+  In code, this works by parents creating children. To begin, we need the first parent, the SVG. This command creates an <code>&lt;svg&gt;</code> element.
 </p>
 
 <pre class="code">const svg = SVG()</pre>
@@ -61,7 +65,7 @@
 svg.circle(x, y, radius)</pre>
 
 <p>
-  Groups (<b>g</b>) are like layers in Photoshop, useful for managing layer order. In this example the circle is below the rect.
+  Groups (<b>g</b>) are like layers in Photoshop, useful for managing layer order. In this example the circle will appear underneath the rect.
 </p>
 
 <pre class="code">const layer = svg.g()
@@ -184,7 +188,7 @@ SVG((svg) => {
   <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
   <div class="sketch-14"></div>
 
-  <pre class="title"><code><f>curve</f>(<arg>fromX</arg>, <arg>fromY</arg>, <arg>c1X</arg>, <arg>c1Y</arg>, <arg>c2X</arg>, <arg>c2Y</arg>, <arg>toX</arg>, <arg>toY</arg>)</code></pre>
+  <pre class="title"><code><f>curve</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>, <arg>bend</arg>)</code></pre>
   <div class="sketch-15"></div>
 
   <pre class="title"><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>

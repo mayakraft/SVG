@@ -3,6 +3,7 @@
  */
 
 import window from "../environment/window";
+import { isBrowser } from "../environment/detect";
 import K from "../environment/keys";
 
 /** parser error to check against */
@@ -10,11 +11,6 @@ import K from "../environment/keys";
 //  .parseFromString("INVALID", "text/xml")
 //  .getElementsByTagName("parsererror")[0]
 //  .namespaceURI;
-
-const asyncDone = (svg, callback) => {
-  if (callback != null) { callback(svg); }
-  return svg;
-};
 
 /**
  * parse and checkParseError go together. 
@@ -31,40 +27,30 @@ const checkParseError = xml => {
   return xml.documentElement;
 };
 
-const goFetch = function (input, callback) {
-  const promise = {};
-  fetch(input)
-    .then(response => response.text())
-    .then(str => checkParseError(parse(str)))
-    .then((xml) => {
-      const allSVGs = xml.getElementsByTagName("svg")[0];
-      // if (allSVGs == null || allSVGs.length === 0) {
-      if (allSVGs.length === 0) {
-        throw new Error("error, valid XML found, but no SVG element");
-      }
-      promise.svg = asyncDone(allSVGs[0], callback);
-    }).catch((err) => callback(null, err));
-    // });
-  return promise;
-};
+// get an svg from a html 5 fetch returned in a promise
+// will reject if there is no svg
 
-// the SVG is returned, or given as the argument in the callback(svg, error)
+// the SVG is returned as a promise
 // try "filename.svg", "<svg>" text blob, already-parsed XML document tree
-export const async = function (input, callback) {
-  if (typeof input === K.string || input instanceof String) {
-    if (input.slice(input.length - 4, input.length) === ".svg") {
-      try {
-        return goFetch(input, callback);
-      }
-      catch (error) {
-        return error;
-      }
+export const async = function (input) {
+  return new Promise((resolve, reject) => {
+    if (typeof input === K.string || input instanceof String) {
+      fetch(input)
+        .then(response => response.text())
+        .then(str => checkParseError(parse(str)))
+        // .then(str => parse(str).documentElement)
+        .then(xml => xml.nodeName === "svg"
+          ? xml
+          : xml.getElementsByTagName("svg")[0])
+        .then(svg => (svg == null
+            ? reject("valid XML found, but no SVG element")
+            : resolve(svg)))
+        .catch(err => reject(err));
     }
-    return asyncDone(loadSync(input), callback);
-  }
-  if (input instanceof window.Document) {
-    return asyncDone(input);
-  }
+    else if (input instanceof window.Document) {
+      return asyncDone(input);
+    }
+  });
 };
 
 export const sync = function (input) {
@@ -79,3 +65,15 @@ export const sync = function (input) {
     return input;
   }
 };
+
+// check for an actual .svg ending?
+// (input.slice(input.length - 4, input.length) === ".svg")
+const isFilename = input => typeof input === K.string
+  && /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
+  && input.length < 10000;
+
+const Load = input => (isFilename && isBrowser
+  ? async(input)
+  : sync(input));
+
+export default Load;

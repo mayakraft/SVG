@@ -5,6 +5,7 @@
 import K from "../../../environment/keys";
 import window from "../../../environment/window";
 import viewBox from "../../../arguments/viewBox";
+import coordinates from "../../../arguments/coordinates";
 import methods from "./methods";
 
 const ElementConstructor = (new window.DOMParser())
@@ -17,7 +18,7 @@ const ElementConstructor = (new window.DOMParser())
 
 export default {
   svg: {
-    args: (...args) => [viewBox(...args)].filter(a => a !== undefined),
+    args: (...args) => [viewBox(coordinates(...args))].filter(a => a != null),
     methods: methods,
     init: (element, ...args) => {
       const parent = args.filter(a => a != null)

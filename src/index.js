@@ -10,6 +10,8 @@ import K from "./environment/keys";
 import Touch from "./events/touch";
 import Animation from "./events/animation";
 import Controls from "./events/controls";
+import Load from "./file/load";
+import Save from "./file/save";
 
 const initialize = function (svg, ...args) {
   args.filter(arg => typeof arg === K.function)
@@ -31,11 +33,9 @@ const SVG = function () {
 };
 
 Object.assign(SVG, Nodes);
-SVG.NS = NS;
-
-// Object.keys(elements).forEach((key) => { SVG[key] = elements[key]; });
-// Object.keys(geometryMods).forEach((key) => { SVG[key] = geometryMods[key]; });
 // Object.keys(ViewBox).forEach((key) => { SVG[key] = ViewBox[key]; });
-// Object.keys(File).forEach((key) => { SVG[key] = File[key]; });
+SVG.load = Load;
+SVG.save = Save;
+SVG.NS = NS;
 
 export default SVG;
