@@ -1,2 +1,1487 @@
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t=t||self).SVG=e()}(this,(function(){"use strict";function t(e){return(t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(e)}function e(t){return function(t){if(Array.isArray(t))return n(t)}(t)||function(t){if("undefined"!=typeof Symbol&&Symbol.iterator in Object(t))return Array.from(t)}(t)||function(t,e){if(!t)return;if("string"==typeof t)return n(t,e);var r=Object.prototype.toString.call(t).slice(8,-1);"Object"===r&&t.constructor&&(r=t.constructor.name);if("Map"===r||"Set"===r)return Array.from(r);if("Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r))return n(t,e)}(t)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function n(t,e){(null==e||e>t.length)&&(e=t.length);for(var n=0,r=new Array(e);n<e;n++)r[n]=t[n];return r}var r=function(){},o={};["number","object","transform","class","style","function","string","undefined","boolean","path","svg","id"].forEach((function(t){return o[t]=t}));var i=("undefined"==typeof window?"undefined":t(window))!==o.undefined&&t(window.document)!==o.undefined,c=("undefined"==typeof process?"undefined":t(process))!==o.undefined&&null!=process.versions&&null!=process.versions.node,a=(("undefined"==typeof self?"undefined":t(self))===o.object&&self.constructor&&self.constructor.name,function(){var t={};if(c){var e=require("xmldom"),n=e.DOMParser,r=e.XMLSerializer;t.DOMParser=n,t.XMLSerializer=r,t.document=(new n).parseFromString("<!DOCTYPE html><title>.</title>","text/html")}else i&&(t=window);return t}()),u="http://www.w3.org/2000/svg",s={s:["svg"],d:["defs"],h:["desc","filter","metadata","style","script","title","view"],c:["cdata"],g:["g"],v:["circle","ellipse","line","path","polygon","polyline","rect"],t:["text"],i:["marker","symbol","clipPath","mask"],p:["linearGradient","radialGradient","pattern"],cT:["textPath","tspan"],cG:["stop"],cF:["feBlend","feColorMatrix","feComponentTransfer","feComposite","feConvolveMatrix","feDiffuseLighting","feDisplacementMap","feDistantLight","feDropShadow","feFlood","feFuncA","feFuncB","feFuncG","feFuncR","feGaussianBlur","feImage","feMerge","feMergeNode","feMorphology","feOffset","fePointLight","feSpecularLighting","feSpotLight","feTile","feTurbulence"]},f=function(t,e){return[Math.cos(t)*e,Math.sin(t)*e]},l=function(t,e,n,r,o){var i=arguments.length>5&&void 0!==arguments[5]&&arguments[5];if(null==o)return"";var c=f(r,n),a=f(o,n),u=[a[0]-c[0],a[1]-c[1]],s=c[0]*a[1]-c[1]*a[0],l=c[0]*a[0]+c[1]*a[1],d=Math.atan2(s,l)>0?0:1,p=i?"M ".concat(t,",").concat(e," l ").concat(c[0],",").concat(c[1]," "):"M ".concat(t+c[0],",").concat(e+c[1]," ");return p+=["a ",n,n,0,d,1,u[0],u[1]].join(" "),i&&(p+=" Z"),p},d=function(t,e,n,r,o){return[l(t,e,n,r,o,!1)]},p={arc:{nodeName:"path",attributes:["d"],args:d,methods:{setArc:function(t){for(var e=arguments.length,n=new Array(e>1?e-1:0),r=1;r<e;r++)n[r-1]=arguments[r];return t.setAttribute("d",d.apply(void 0,n))}}}},h=function(t,e,n,r,o){return[l(t,e,n,r,o,!0)]},v={wedge:{nodeName:"path",args:h,attributes:["d"],methods:{setArc:function(t){for(var e=arguments.length,n=new Array(e>1?e-1:0),r=1;r<e;r++)n[r-1]=arguments[r];return t.setAttribute("d",h.apply(void 0,n))}}}},m=function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:-1,e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:0,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:2,r=arguments.length>3&&void 0!==arguments[3]?arguments[3]:1;return Array.from(Array(129)).map((function(t,e){return(e-128)/128*2+1})).map((function(o){return[t+(o+1)*n*.5,e+Math.pow(o,2)*r]}))},g={parabola:{nodeName:"polyline",attributes:["points"],args:function(t,e,n,r){return[m(t,e,n,r).map((function(t){return"".concat(t[0],",").concat(t[1])})).join(" ")]}}},y=function(t,e,n,r){var o=[t,e];return Array.from(Array(r)).map((function(t,e){return 2*Math.PI*e/r})).map((function(t){return[Math.cos(t),Math.sin(t)]})).map((function(t){return o.map((function(e,r){return e+n*t[r]}))}))},b={regularPolygon:{nodeName:"polygon",attributes:["points"],args:function(t,e,n,r){return[y(t,e,n,r).map((function(t){return"".concat(t[0],",").concat(t[1])})).join(" ")]}}},A={roundRect:{nodeName:"path",attributes:["d"],args:function(t,e,n,r){var o=arguments.length>4&&void 0!==arguments[4]?arguments[4]:0;o>n/2&&(o=n/2),o>r/2&&(o=r/2);var i=n-2*o,c=r-2*o,a="A".concat(o," ").concat(o," 0 0 1");return["M".concat(t+(n-i)/2,",").concat(e),"h".concat(i),a,"".concat(t+n,",").concat(e+(r-c)/2),"v".concat(c),a,"".concat(t+n-o,",").concat(e+r),"h".concat(-i),a,"".concat(t,",").concat(e+r-o),"v".concat(-c),a,"".concat(t+o,",").concat(e)].join(" ")}}},x=function(e){return null!=e&&t(e[Symbol.iterator])===o.function},E=function n(){for(var r=arguments.length,i=new Array(r),c=0;c<r;c++)i[c]=arguments[c];switch(i.length){case void 0:case 0:return i;case 1:return x(i[0])&&t(i[0])!==o.string?n.apply(void 0,e(i[0])):[i[0]];default:return Array.from(i).map((function(t){return x(t)?e(n(t)):t})).reduce((function(t,e){return t.concat(e)}),[])}},C=function(){for(var e=arguments.length,n=new Array(e),r=0;r<e;r++)n[r]=arguments[r];return n.filter((function(e){return t(e)===o.number})).concat(n.filter((function(e){return t(e)===o.object})).map((function(e){return t(e.x)===o.number?[e.x,e.y]:t(e[0])===o.number?[e[0],e[1]]:void 0})).filter((function(t){return void 0!==t})).reduce((function(t,e){return t.concat(e)}),[]))},w=function(t,e){return[t[0]+e[0],t[1]+e[1]]},j=function(t,e){return[t[0]-e[0],t[1]-e[1]]},k=function(t,e){return[t[0]*e,t[1]*e]},O=function(){var t=C.apply(void 0,e(E.apply(void 0,arguments))),n=t.slice(0,4);if(!n.length)return[""];var r=t[4]||0,o=t[5]||.5,i=[n[0],n[1]],c=[n[2],n[3]],a=j(c,i),u=w(i,k(a,.5)),s=[a[1],-a[0]],f=w(u,k(s,r)),l=w(i,k(j(f,i),o)),d=w(c,k(j(f,c),o));return["M".concat(i[0],",").concat(i[1],"C").concat(l[0],",").concat(l[1]," ").concat(d[0],",").concat(d[1]," ").concat(c[0],",").concat(c[1])]},M={bend:function(t,n){return t.setAttribute("d",O.apply(void 0,e(function(t){var e=t.getAttribute("d");return null==e||""===e?[]:[e.slice(e.indexOf("M")+1,e.indexOf("C")).split(","),e.split(" ").pop().split(",")].map((function(t){return t.map((function(t){return parseFloat(t)}))}))}(t)).concat([n]))),t}},P={curve:{nodeName:"path",attributes:["d"],args:O,methods:M}},S={};Object.assign(S,p,v,g,b,A,P);var N=Object.keys(S),T=[s.h,s.p,s.i],F=[s.g,s.v,s.t,N],L={svg:[s.s,s.d].concat(T).concat(F),g:F,text:[s.cT],linearGradient:[s.cG],radialGradient:[s.cG],defs:T,filter:[s.cF],marker:F,symbol:F,clipPath:F,mask:F},z={};Object.keys(L).forEach((function(t){z[t]=L[t].reduce((function(t,e){return t.concat(e)}),[])})),r(z);var D=function(t){return t.replace(/([-_][a-z])/gi,(function(t){return t.toUpperCase().replace("-","").replace("_","")}))},U=function(t){return t.replace(/([a-z0-9])([A-Z])/g,"$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g,"$1-$2").toLowerCase()},B=function(t){return t.charAt(0).toUpperCase()+t.slice(1)},G={svg:["viewBox"],line:["x1","y1","x2","y2"],rect:["x","y","width","height"],circle:["cx","cy","r"],ellipse:["cx","cy","rx","ry"],polygon:["points"],polyline:["points"],path:["d"],text:["x","y"],mask:["id"],symbol:["id"],clipPath:["id","clip-rule"],marker:["id","markerHeight","markerUnits","markerWidth","orient","refX","refY"],linearGradient:["x1","x2","y1","y2"],radialGradient:["cx","cy","r","fr","fx","fy"],stop:["offset","stop-color","stop-opacity"],pattern:["patternContentUnits","patternTransform","patternUnits"]},R=function(t,e){return t.setAttribute(G.circle[2],e)},q=function(t,n,r){return C.apply(void 0,e(E(n,r))).slice(0,2).forEach((function(e,n){return t.setAttribute(G.circle[n],e)}))},X={circle:{args:function(t,n,r){return C.apply(void 0,e(E(t,n,r))).slice(0,3)},methods:{radius:R,setRadius:R,center:q,setCenter:q,position:q,setPosition:q}}},I=function(t,e,n){return[,,e,n].forEach((function(e,n){return t.setAttribute(G.ellipse[n],e)}))},Y=function(t,n,r){return C.apply(void 0,e(E(n,r))).slice(0,2).forEach((function(e,n){return t.setAttribute(G.ellipse[n],e)}))},V={ellipse:{args:function(t,n,r,o){return C.apply(void 0,e(E(t,n,r,o))).slice(0,4)},methods:{radius:I,setRadius:I,center:Y,setCenter:Y,position:Y,setPosition:Y}}},Z=function(t,n,r,o){return C.apply(void 0,e(E(t,n,r,o))).slice(0,4)},$={line:{args:Z,methods:{setPoints:function(t,e,n,r,o){return Z(e,n,r,o).forEach((function(e,n){return t.setAttribute(G.line[n],e)}))}}}},H=/[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g,Q=/-?[0-9]*\.?\d+/g,W={m:"move",l:"line",v:"vertical",h:"horizontal",a:"ellipse",c:"curve",s:"smoothCurve",q:"quadCurve",t:"smoothQuadCurve",z:"close"};Object.keys(W).forEach((function(t){var e=W[t];W[t.toUpperCase()]=e.charAt(0).toUpperCase()+e.slice(1)}));var _=function(t){var e=t.getAttribute("d");return null==e?"":e},J=function(t,e){for(var n=arguments.length,r=new Array(n>2?n-2:0),o=2;o<n;o++)r[o-2]=arguments[o];return t.setAttribute("d","".concat(_(t)).concat(e).concat(E.apply(void 0,r).join(" ")))},K=function(t){return t.removeAttribute("d")},tt={string:function(t,e){return t.setAttribute("d",e)},object:function(t,e){return e.forEach((function(e){return J(t,e.command,e.values)}))}},et={command:J,clear:K,get:function(t){return function(t){for(var e,n=[];null!==(e=H.exec(t));)n.push(e);return n.map((function(e){return{command:t[e.index],index:e.index}})).reduceRight((function(e,n){var r=t.substring(n.index,e.length?e[e.length-1].index:t.length);return e.concat([{command:n.command,index:n.index,chunk:r.length>0?r.substr(1,r.length-1):r}])}),[]).reverse().map((function(t){var e=t.chunk.match(Q);return t.en=W[t.command],t.values=e?e.map(parseFloat):[],delete t.chunk,t}))}(_(t))},set:function(e){if(1==(arguments.length<=1?0:arguments.length-1)){var n=t(arguments.length<=1?void 0:arguments[1]);tt[n]&&(K(e),tt[n](e,arguments.length<=1?void 0:arguments[1]))}},add:function(e){if(1==(arguments.length<=1?0:arguments.length-1)){var n=t(arguments.length<=1?void 0:arguments[1]);tt[n]&&tt[n](e,arguments.length<=1?void 0:arguments[1])}}};Object.keys(W).forEach((function(t){et[W[t]]=function(e){for(var n=arguments.length,r=new Array(n>1?n-1:0),o=1;o<n;o++)r[o-1]=arguments[o];return J.apply(void 0,[e,t].concat(r))}}));var nt={path:{methods:et}},rt={rect:{args:function(t,n,r,o){return C.apply(void 0,e(E(t,n,r,o))).slice(0,4)}}},ot=function(t){return(new a.DOMParser).parseFromString("<root></root>","text/xml").createCDATASection("".concat(t))},it={style:{methods:{setTextContent:function(t,e){t.textContent="",t.appendChild(ot(e))}}}},ct={text:{args:function(t,n,r){return C.apply(void 0,e(E(t,n,r))).slice(0,2)},init:function(e,n,r,i,c){var u=[n,r,i,c].filter((function(e){return t(e)===o.string})).shift();u&&(e.firstChild?e.firstChild.nodeValue=u:e.appendChild(a.document.createTextNode(u)))}}},at=function(t,e,n,r,o){null==o&&(o=0);var i=n/1-n;return[t-i-o,e-i-o,n+2*i+2*o,r+2*i+2*o].join(" ")};function ut(){var t=C.apply(void 0,e(E(arguments)));return 2===t.length&&t.unshift(0,0),4===t.length?at.apply(void 0,e(t)):void 0}var st={removeChildren:function(t){for(;t.lastChild;)t.removeChild(t.lastChild)},appendTo:function(t,e){null!=e&&e.appendChild(t)},setAttributes:function(t,e){return Object.keys(e).forEach((function(n){return t.setAttribute(U(n),e[n])}))}};var ft=function(e){if(t(e)===o.string||e instanceof String)try{return function(t){var e=t.getElementsByTagName("parsererror");if(e.length>0)throw new Error(e[0]);return t.documentElement}((n=e,(new a.DOMParser).parseFromString(n,"text/xml")))}catch(t){return t}var n;if(null!=e.childNodes)return e},lt="viewBox",dt=function(t){for(var e=arguments.length,n=new Array(e>1?e-1:0),r=1;r<e;r++)n[r-1]=arguments[r];var o=1===n.length&&"string"==typeof n[0]?n[0]:ut.apply(void 0,n);return o&&t.setAttribute(lt,o),t},pt=function(e){var n=function(t){var e=t.getAttribute(lt);return null==e?void 0:e.split(" ").map((function(t){return parseFloat(t)}))}(e);if(void 0!==n)return n;if(t(e.getBoundingClientRect)===o.function){var r=e.getBoundingClientRect();return[r.x,r.y,r.width,r.height]}return[]},ht="svg-background-rectangle",vt=function(t,e){var n=function(t){var e=t.getElementsByTagName(o.style);return 0===e.length?void 0:e[0]}(t);return null==n&&(n=this.Constructor(o.style),t.insertBefore(n,t.firstChild)),n.textContent="",n.appendChild(ot(e)),n},mt=function(t){Array.from(t.attributes).filter((function(t){return"xmlns"!==t})).forEach((function(e){return t.removeAttribute(e.name)})),st.removeChildren(t)},
-gt={clear:mt,size:dt,setViewBox:dt,background:function(t,n){var r=Array.from(t.childNodes).filter((function(t){return t.getAttribute(o.class)===ht})).shift();return null==r&&((r=this.Constructor.apply(this,["rect"].concat(e(pt(t))))).setAttribute(o.class,ht),t.insertBefore(r,t.firstChild)),r.setAttribute("fill",n),r},getWidth:function(t){return pt(t)[2]},getHeight:function(t){return pt(t)[3]},stylesheet:function(t){return vt.call(this,t)},load:function(t,e,n){return r=t,void(null!=(o=ft(e))&&(mt(r),Array.from(o.childNodes).forEach((function(t){o.removeChild(t),r.appendChild(t)})),Array.from(o.attributes).forEach((function(t){return r.setAttribute(t.name,t.value)}))));var r,o},save:function(t,e){e=Object.assign({output:o.string,windowStyle:!1,filename:"image.svg"},e);var n,r,u,s,f=function(t,e){for(var n=t.replace(/>\s{0,}</g,"><").replace(/</g,"~::~<").replace(/\s*xmlns\:/g,"~::~xmlns:").split("~::~"),r=n.length,o=!1,i=0,c="",a=null!=e&&"string"==typeof e?e:"\t",u=["\n"],s=0;s<100;s+=1)u.push(u[s]+a);for(var f=0;f<r;f+=1)n[f].search(/<!/)>-1?(c+=u[i]+n[f],o=!0,(n[f].search(/-->/)>-1||n[f].search(/\]>/)>-1||n[f].search(/!DOCTYPE/)>-1)&&(o=!1)):n[f].search(/-->/)>-1||n[f].search(/\]>/)>-1?(c+=n[f],o=!1):/^<\w/.exec(n[f-1])&&/^<\/\w/.exec(n[f])&&/^<[\w:\-\.\,]+/.exec(n[f-1])==/^<\/[\w:\-\.\,]+/.exec(n[f])[0].replace("/","")?(c+=n[f],o||(i-=1)):n[f].search(/<\w/)>-1&&-1===n[f].search(/<\//)&&-1===n[f].search(/\/>/)?c=c+=o?n[f]:u[i++]+n[f]:n[f].search(/<\w/)>-1&&n[f].search(/<\//)>-1?c=c+=o?n[f]:u[i]+n[f]:n[f].search(/<\//)>-1?c=c+=o?n[f]:u[--i]+n[f]:n[f].search(/\/>/)>-1?c=c+=o?n[f]:u[i]+n[f]:n[f].search(/<\?/)>-1||n[f].search(/xmlns\:/)>-1||n[f].search(/xmlns\=/)>-1?c+=u[i]+n[f]:c+=n[f];return"\n"===c[0]?c.slice(1):c}((new a.XMLSerializer).serializeToString(t));return i&&!c&&(n=e.filename,r=f,u=new a.Blob([r],{type:"text/plain"}),(s=a.document.createElement("a")).setAttribute("href",a.URL.createObjectURL(u)),s.setAttribute("download",n),a.document.body.appendChild(s),s.click(),a.document.body.removeChild(s)),"svg"===e.output?t:f}},yt=(new a.DOMParser).parseFromString("<div />","text/xml").documentElement.constructor,bt={svg:{args:function(){return[ut.apply(void 0,arguments)].filter((function(t){return void 0!==t}))},methods:gt,init:function(e){for(var n=arguments.length,r=new Array(n>1?n-1:0),i=1;i<n;i++)r[i-1]=arguments[i];var c=r.filter((function(t){return null!=t})).filter((function(t){return t instanceof yt})).shift();null!=c&&t(c.appendChild)===o.function&&c.appendChild(e)}}},At=function(){return Math.random().toString(36).replace(/[^a-z]+/g,"").concat("aaaaa").substr(0,5)},xt=function(){return Array.from(arguments).filter((function(e){return t(e)===o.string||e instanceof String})).shift()||At()},Et=function(){return[xt.apply(void 0,arguments)]},Ct={mask:{args:Et},clipPath:{args:Et},symbol:{args:Et},marker:{args:Et,methods:{size:dt,setViewBox:dt}}},wt=function(t){var e=t.getAttribute("points");return null==e?"":e},jt=function(){var t=arguments;return Array.from(Array(Math.floor(arguments.length/2))).map((function(e,n){return"".concat(t[2*n+0],",").concat(t[2*n+1])})).join(" ")},kt=function(){return[jt.apply(void 0,e(C.apply(void 0,e(E.apply(void 0,arguments)))))]},Ot=function(t){for(var e=arguments.length,n=new Array(e>1?e-1:0),r=1;r<e;r++)n[r-1]=arguments[r];return t.setAttribute("points",kt.apply(void 0,n)[0])},Mt=function(t){for(var e=arguments.length,n=new Array(e>1?e-1:0),r=1;r<e;r++)n[r-1]=arguments[r];return t.setAttribute("points",[wt(t),kt.apply(void 0,n)[0]].filter((function(t){return""!==t})).join(" "))},Pt={polyline:{args:kt,methods:{setPoints:Ot,addPoint:Mt}},polygon:{args:kt,methods:{setPoints:Ot,addPoint:Mt}}},St=Object.assign({},X,V,$,nt,rt,it,ct,bt,Ct,Pt),Nt={presentation:["color","color-interpolation","cursor","direction","display","fill","fill-opacity","fill-rule","font-family","font-size","font-size-adjust","font-stretch","font-style","font-variant","font-weight","image-rendering","letter-spacing","opacity","overflow","paint-order","pointer-events","preserveAspectRatio","shape-rendering","stroke","stroke-dasharray","stroke-dashoffset","stroke-linecap","stroke-linejoin","stroke-miterlimit","stroke-opacity","stroke-width","tabindex","transform-origin","user-select","vector-effect","visibility"],animation:["accumulate","additive","attributeName","begin","by","calcMode","dur","end","from","keyPoints","keySplines","keyTimes","max","min","repeatCount","repeatDur","restart","to","values"],effects:["azimuth","baseFrequency","bias","color-interpolation-filters","diffuseConstant","divisor","edgeMode","elevation","exponent","filter","filterRes","filterUnits","flood-color","flood-opacity","in","in2","intercept","k1","k2","k3","k4","kernelMatrix","lighting-color","limitingConeAngle","mode","numOctaves","operator","order","pointsAtX","pointsAtY","pointsAtZ","preserveAlpha","primitiveUnits","radius","result","seed","specularConstant","specularExponent","stdDeviation","stitchTiles","surfaceScale","targetX","targetY","type","xChannelSelector","yChannelSelector"],text:["dx","dy","alignment-baseline","baseline-shift","dominant-baseline","lengthAdjust","method","overline-position","overline-thickness","rotate","spacing","startOffset","strikethrough-position","strikethrough-thickness","text-anchor","text-decoration","text-rendering","textLength","underline-position","underline-thickness","word-spacing","writing-mode"],gradient:["gradientTransform","gradientUnits","spreadMethod"]};Object.values(s).reduce((function(t,e){return t.concat(e)}),[]).filter((function(t){return void 0===G[t]})).forEach((function(t){G[t]=[]})),[[["svg","defs","g"].concat(s.v,s.t),Nt.presentation],[["filter"],Nt.effects],[s.cT.concat("text"),Nt.text],[s.cF,Nt.effects],[s.cG,Nt.gradient]].forEach((function(t){return t[0].forEach((function(e){G[e]=G[e].concat(t[1])}))})),r(G);var Tt=function(t){if(null==t)return[];var e=t.getAttribute(o.class);return null==e?[]:e.split(" ").filter((function(t){return""!==t}))},Ft={addClass:function(t,e){var n=Tt(t).filter((function(t){return t!==e}));n.push(e),t.setAttributeNS(null,o.class,n.join(" "))},removeClass:function(t,e){var n=Tt(t).filter((function(t){return t!==e}));t.setAttributeNS(null,o.class,n.join(" "))},setClass:function(t,e){t.setAttributeNS(null,o.class,e)},setId:function(t,e){t.setAttributeNS(null,o.id,e)}},Lt=function(t){var e=t.getAttribute(o.transform);return null==e||""===e?void 0:e},zt={clearTransform:function(t){return t.removeAttribute(o.transform),t}};["translate","rotate","scale","matrix"].forEach((function(t){zt[t]=function(e){for(var n=arguments.length,r=new Array(n>1?n-1:0),i=1;i<n;i++)r[i-1]=arguments[i];return e.setAttribute(o.transform,[Lt(e),"".concat(t,"(").concat(r.join(" "),")")].filter((function(t){return void 0!==t})).join(" "))}}));var Dt,Ut={};["clip-path","mask","symbol","marker-end","marker-mid","marker-start"].forEach((function(e){Ut[D(e)]=function(n,r){return n.setAttribute(e,function(e){if(null==e)return"";if(t(e)===o.string)return"url"===e.slice(0,3)?e:"url(#".concat(e,")");if(null!=e.getAttribute){var n=e.getAttribute(o.id);return"url(#".concat(n,")")}return""}(r))}}));var Bt={};(Dt=s.v).push.apply(Dt,e(Object.keys(S))),Object.keys(S).forEach((function(t){S[t].attributes=void 0===S[t].attributes?e(Nt.presentation):S[t].attributes.concat(Nt.presentation)})),Object.assign(Bt,St,S),Object.keys(s).forEach((function(t){return s[t].filter((function(t){return void 0===Bt[t]})).forEach((function(t){Bt[t]={}}))}));var Gt=function(){return Array.from(arguments)};Object.keys(Bt).forEach((function(t){Bt[t].nodeName||(Bt[t].nodeName=t),Bt[t].init||(Bt[t].init=Gt),Bt[t].args||(Bt[t].args=Gt),Bt[t].methods||(Bt[t].methods={}),Bt[t].attributes||(Bt[t].attributes=G[t]||[])}));var Rt=function(t,e){t.forEach((function(t){return Object.keys(e).forEach((function(n){Bt[t].methods[n]=function(){return e[n].apply(e,arguments),arguments[0]}}))}))};Rt(E(s.t,s.v,s.g,s.s,s.p,s.i,s.h,s.d),Ft),Rt(E(s.t,s.v,s.g,s.s,s.p,s.i,s.h,s.d),st),Rt(E(s.v,s.g,s.s),zt),Rt(E(s.t,s.v,s.g),Ut),r(Bt);var qt={svg:{version:"1.1",xmlns:u},style:{type:"text/css"}},Xt=function(t,e){qt[e]&&Object.keys(qt[e]).forEach((function(n){return t.setAttribute(n,qt[e][n])}))},It={},Yt=function t(e){for(var n,r,o=arguments.length,i=new Array(o>1?o-1:0),c=1;c<o;c++)i[c-1]=arguments[c];var s=a.document.createElementNS(u,Bt[e].nodeName);return Xt(s,e),(n=Bt[e]).init.apply(n,[s].concat(i)),(r=Bt[e]).args.apply(r,i).forEach((function(t,n){null!=Bt[e].attributes[n]&&s.setAttribute(Bt[e].attributes[n],t)})),Bt[e].attributes.forEach((function(t){Object.defineProperty(s,D(t),{value:function(){return s.setAttribute.apply(s,[t].concat(Array.prototype.slice.call(arguments))),s}})})),Object.keys(Bt[e].methods).forEach((function(t){return Object.defineProperty(s,t,{value:function(){var n;return(n=Bt[e].methods[t]).call.apply(n,[It,s].concat(Array.prototype.slice.call(arguments)))||s}})})),z[e]&&z[e].forEach((function(e){Object.defineProperty(s,e,{value:function(){var n=t.apply(void 0,[e].concat(Array.prototype.slice.call(arguments)));return s.appendChild(n),n}})})),s};It.Constructor=Yt;var Vt={};Object.keys(s).forEach((function(t){return s[t].forEach((function(t){Vt[t]=function(){for(var e=arguments.length,n=new Array(e),r=0;r<e;r++)n[r]=arguments[r];return Yt.apply(void 0,[t].concat(n))}}))})),r(Vt);var Zt={move:["mousemove","touchmove"],press:["mousedown","touchstart"],release:["mouseup","touchend"]},$t=Object.values(Zt).reduce((function(t,e){return t.concat(e)}),[]),Ht=function(t,e,n){return Object.defineProperty(t,e,{get:function(){return n},enumerable:!0})},Qt=function(t){var e=[],n=[];Object.keys(Zt).forEach((function(t){Zt[t].forEach((function(t){n[t]=[]}))}));var r={press:function(){},release:function(){},move:function(t,n){t.buttons>0&&void 0===e[0]?e=n:0===t.buttons&&void 0!==e[0]&&(e=[]),["startX","startY"].forEach((function(n,r){return Ht(t,n,e[r])}))}};Object.keys(Zt).forEach((function(e){var o="on"+B(e);Object.defineProperty(t,o,{set:function(o){return null==o?function(e){Zt[e].forEach((function(e){n[e].forEach((function(n){return t.removeEventListener(e,n)}))}))}(e):Zt[e].forEach((function(i){var c=function(n){var i=null!=n.touches?n.touches[0]:n,c=function(t,e,n){var r=t.createSVGPoint();r.x=e,r.y=n;var o=r.matrixTransform(t.getScreenCTM().inverse());return[o.x,o.y]}(t,i.clientX,i.clientY);["x","y"].forEach((function(t,e){return Ht(n,t,c[e])})),r[e](n,c),o(n)};n[i].push(c),t.addEventListener(i,c)}))},enumerable:!0})})),Object.defineProperty(t,"off",{value:function(){return function(t,e){return $t.forEach((function(n){e[n].forEach((function(e){return t.removeEventListener(n,e)})),e[n]=[]}))}(t,n)}})},Wt=function(t){var e,n,r={},o=0,i=function(){a.cancelAnimationFrame(n),Object.keys(r).forEach((function(t){return delete r[t]})),e=void 0,o=0};Object.defineProperty(t,"play",{set:function(t){if(i(),null!=t){var c=At();r[c]=function(i){e||(e=i),t({time:.001*(i-e),frame:o}),o+=1,r[c]&&(n=a.requestAnimationFrame(r[c]))},n=a.requestAnimationFrame(r[c])}},enumerable:!0}),Object.defineProperty(t,"stop",{value:i,enumerable:!0})},_t=function(t,e){return[0,1].map((function(n){return t[n]-e[n]})).map((function(t){return Math.pow(t,2)})).reduce((function(t,e){return t+e}),0)},Jt=[["cx","cy"],["x","y"]],Kt=function(t){var n=[0,0],r={selected:!1,svg:void 0,updatePosition:function(t){return t}},o=function(){r.svg&&(r.svg.parentNode||t.appendChild(r.svg),Jt.filter((function(t){return null!=r.svg[t[0]]})).forEach((function(t){return t.forEach((function(t,e){r.svg.setAttribute(t,n[e])}))})))},i=new Proxy(n,{set:function(t,e,n,r){return t[e]=n,o(),!0}}),c=function(){C.apply(void 0,e(E.apply(void 0,arguments))).forEach((function(t,e){n[e]=t})),o(),"function"==typeof n.delegate&&n.delegate.apply(n.pointsContainer,[i,n.pointsContainer])};return n.delegate=void 0,n.setPosition=c,n.onMouseMove=function(t){return r.selected?c(r.updatePosition(t)):void 0},n.onMouseUp=function(){r.selected=!1},n.distance=function(t){return Math.sqrt(_t(t,n))},["x","y"].forEach((function(t,e){return Object.defineProperty(n,t,{get:function(){return n[e]},set:function(t){n[e]=t}})})),["svg","updatePosition","selected"].forEach((function(t){Object.defineProperty(n,t,{get:function(){return r[t]},set:function(e){r[t]=e}})})),Object.defineProperty(n,"remove",{value:function(){!function(t){t&&t.parentNode&&t.parentNode.removeChild(t)}(r.svg),n.delegate=void 0}}),i},te=function(t,e,n){var r,o,i=Array.from(Array(e)).map((function(){return Kt(t)})),c=function(t){return"function"==typeof o?o.call(i,i,t):void 0};i.forEach((function(t){t.delegate=c,t.pointsContainer=i}));t.onPress=function(t){i.length>0&&(r=i.map((function(e,n){return{i:n,d:_t(e,[t.x,t.y])}})).sort((function(t,e){return t.d-e.d})).shift().i,i[r].selected=!0)},t.onMove=function(t){i.forEach((function(e){return e.onMouseMove(t)}))},t.onRelease=function(){i.forEach((function(t){return t.onMouseUp()})),r=void 0},Object.defineProperty(i,"selectedIndex",{get:function(){return r}}),Object.defineProperty(i,"selected",{get:function(){return i[r]}}),Object.defineProperty(i,"add",{value:function(e){i.push(Kt(t))}}),i.removeAll=function(){for(;i.length>0;)i.pop().remove()};var a={onChange:function(t,e){o=t,!0===e&&t.call(i,i,void 0)},position:function(t){return i.forEach((function(e,n){return e.setPosition(t.call(i,n))}))},svg:function(t){return i.forEach((function(e,n){e.svg=t.call(i,n)}))}};return Object.keys(a).forEach((function(t){i[t]=function(){return"function"==typeof arguments[0]&&a[t].apply(a,arguments),i}})),i.parent=function(t){return null!=t&&null!=t.appendChild&&i.forEach((function(e){t.appendChild(e.svg)})),i},i},ee=function(t){t.controls=function(){for(var e=arguments.length,n=new Array(e),r=0;r<e;r++)n[r]=arguments[r];return te.call.apply(te,[t,t].concat(n))}},ne=function(e){for(var n=arguments.length,r=new Array(n>1?n-1:0),i=1;i<n;i++)r[i-1]=arguments[i];r.filter((function(e){return t(e)===o.function})).forEach((function(t){return t.call(e,e)}))},re=function(){var t=arguments,n=Yt.apply(void 0,[o.svg].concat(Array.prototype.slice.call(arguments)));return Qt(n),Wt(n),ee(n),"loading"===a.document.readyState?a.document.addEventListener("DOMContentLoaded",(function(){return ne.apply(void 0,[n].concat(e(t)))})):ne.apply(void 0,[n].concat(Array.prototype.slice.call(arguments))),n};return Object.assign(re,Vt),re.NS=u,re}));
+/* SVG (c) Robby Kraft, MIT License */
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.SVG = factory());
+}(this, (function () { 'use strict';
+
+  var Debug = {
+    log: () => {},
+  };
+
+  const keys = [
+    "number",
+    "object",
+    "transform",
+    "class",
+    "style",
+    "function",
+    "string",
+    "undefined",
+    "boolean",
+    "path",
+    "svg",
+    "id",
+  ];
+  const Keys = {};
+  keys.forEach(key => Keys[key] = key);
+
+  const isBrowser = typeof window !== Keys.undefined
+    && typeof window.document !== Keys.undefined;
+  const isNode = typeof process !== Keys.undefined
+    && process.versions != null
+    && process.versions.node != null;
+
+  const htmlString = "<!DOCTYPE html><title>.</title>";
+  const win = (function () {
+    let w = {};
+    if (isNode) {
+      const { DOMParser, XMLSerializer } = require("xmldom");
+      w.DOMParser = DOMParser;
+      w.XMLSerializer = XMLSerializer;
+      w.document = new DOMParser().parseFromString(htmlString, "text/html");
+    } else if (isBrowser) {
+      w = window;
+    }
+    return w;
+  }());
+
+  var NS = "http://www.w3.org/2000/svg";
+
+  var NodeNames = {
+    s: [
+      "svg",
+    ],
+    d: [
+      "defs",
+    ],
+    h: [
+      "desc",
+      "filter",
+      "metadata",
+      "style",
+      "script",
+      "title",
+      "view",
+    ],
+    c: [
+      "cdata",
+    ],
+    g: [
+      "g",
+    ],
+    v: [
+      "circle",
+      "ellipse",
+      "line",
+      "path",
+      "polygon",
+      "polyline",
+      "rect",
+    ],
+    t: [
+      "text",
+    ],
+    i: [
+      "marker",
+      "symbol",
+      "clipPath",
+      "mask",
+    ],
+    p: [
+      "linearGradient",
+      "radialGradient",
+      "pattern",
+    ],
+    cT: [
+      "textPath",
+      "tspan",
+    ],
+    cG: [
+      "stop",
+    ],
+    cF: [
+      "feBlend",
+      "feColorMatrix",
+      "feComponentTransfer",
+      "feComposite",
+      "feConvolveMatrix",
+      "feDiffuseLighting",
+      "feDisplacementMap",
+      "feDistantLight",
+      "feDropShadow",
+      "feFlood",
+      "feFuncA",
+      "feFuncB",
+      "feFuncG",
+      "feFuncR",
+      "feGaussianBlur",
+      "feImage",
+      "feMerge",
+      "feMergeNode",
+      "feMorphology",
+      "feOffset",
+      "fePointLight",
+      "feSpecularLighting",
+      "feSpotLight",
+      "feTile",
+      "feTurbulence",
+    ],
+  };
+
+  const vec = (a, d) => [Math.cos(a) * d, Math.sin(a) * d];
+  const arcPath = (x, y, radius, startAngle, endAngle, includeCenter = false) => {
+    if (endAngle == null) { return ""; }
+    const start = vec(startAngle, radius);
+    const end = vec(endAngle, radius);
+    const arcVec = [end[0] - start[0], end[1] - start[1]];
+    const py = start[0] * end[1] - start[1] * end[0];
+    const px = start[0] * end[0] + start[1] * end[1];
+    const arcdir = (Math.atan2(py, px) > 0 ? 0 : 1);
+    let d = (includeCenter
+      ? `M ${x},${y} l ${start[0]},${start[1]} `
+      : `M ${x+start[0]},${y+start[1]} `);
+    d += ["a ", radius, radius, 0, arcdir, 1, arcVec[0], arcVec[1]].join(" ");
+    if (includeCenter) { d += " Z"; }
+    return d;
+  };
+
+  const arcArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, false)];
+  var Arc = {
+    arc: {
+      nodeName: "path",
+      attributes: ["d"],
+      args: arcArguments,
+      methods: {
+        setArc: (el, ...args) => el.setAttribute("d", arcArguments(...args)),
+      }
+    }
+  };
+
+  const wedgeArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, true)];
+  var Wedge = {
+    wedge: {
+      nodeName: "path",
+      args: wedgeArguments,
+      attributes: ["d"],
+      methods: {
+        setArc: (el, ...args) => el.setAttribute("d", wedgeArguments(...args)),
+      }
+    }
+  };
+
+  const COUNT = 128;
+  const parabolaArguments = (x = -1, y = 0, width = 2, height = 1) => Array
+    .from(Array(COUNT + 1))
+    .map((_, i) => (i - (COUNT)) / COUNT * 2 + 1)
+    .map(i => [
+      x + (i + 1) * width * 0.5,
+      y + (i ** 2) * height
+    ]);
+  const parabolaPathString = (a, b, c, d) => [
+    parabolaArguments(a, b, c, d).map(n => `${n[0]},${n[1]}`).join(" ")
+  ];
+
+  var Parabola = {
+    parabola: {
+      nodeName: "polyline",
+      attributes: ["points"],
+      args: parabolaPathString
+    }
+  };
+
+  const regularPolygonArguments = (cX, cY, radius, sides) => {
+    const origin = [cX, cY];
+    return Array.from(Array(sides))
+      .map((el, i) => 2 * Math.PI * i / sides)
+      .map(a => [Math.cos(a), Math.sin(a)])
+      .map(pts => origin.map((o, i) => o + radius * pts[i]));
+  };
+  const polygonPathString = (cX, cY, radius, sides) => [
+    regularPolygonArguments(cX, cY, radius, sides)
+      .map(a => `${a[0]},${a[1]}`).join(" ")
+  ];
+
+  var RegularPolygon = {
+    regularPolygon: {
+      nodeName: "polygon",
+      attributes: ["points"],
+      args: polygonPathString
+    }
+  };
+
+  const roundRectArguments = (x, y, width, height, cornerRadius = 0) => {
+    if (cornerRadius > width / 2) { cornerRadius = width / 2; }
+    if (cornerRadius > height / 2) { cornerRadius = height / 2; }
+    const w = width - cornerRadius * 2;
+    const h = height - cornerRadius * 2;
+    const s = `A${cornerRadius} ${cornerRadius} 0 0 1`;
+    return [`M${x + (width - w) / 2},${y}`, `h${w}`, s, `${x + width},${y + (height - h) / 2}`, `v${h}`, s, `${x + width - cornerRadius},${y + height}`, `h${-w}`, s, `${x},${y + height - cornerRadius}`, `v${-h}`, s, `${x + cornerRadius},${y}`].join(" ");
+  };
+
+  var RoundRect = {
+    roundRect: {
+      nodeName: "path",
+      attributes: ["d"],
+      args: roundRectArguments
+    }
+  };
+
+  const isIterable = (obj) => {
+    return obj != null && typeof obj[Symbol.iterator] === Keys.function;
+  };
+  const flatten = (...args) => {
+    switch (args.length) {
+      case undefined:
+      case 0: return args;
+      case 1: return isIterable(args[0]) && typeof args[0] !== Keys.string
+        ? flatten(...args[0])
+        : [args[0]];
+      default:
+        return Array.from(args)
+          .map(a => (isIterable(a)
+            ? [...flatten(a)]
+            : a))
+          .reduce((a, b) => a.concat(b), []);
+    }
+  };
+
+  var coordinates = (...args) => {
+    return args.filter(a => typeof a === Keys.number)
+      .concat(
+        args.filter(a => typeof a === Keys.object && a !== null)
+        .map(el => {
+          if (typeof el.x === Keys.number) return [el.x, el.y];
+          if (typeof el[0] === Keys.number) return [el[0], el[1]];
+          return undefined;
+        }).filter(a => a !== undefined)
+        .reduce((a, b) => a.concat(b), [])
+      );
+  };
+
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1]];
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+  const scale = (a, s) => [a[0] * s, a[1] * s];
+  const curveArguments = function (...args) {
+    const params = coordinates(...flatten(...args));
+    const endpoints = params.slice(0, 4);
+    if (!endpoints.length) { return [""]; }
+    const o_curve = params[4] || 0;
+    const o_pinch = params[5] || 0.5;
+    const tailPt = [endpoints[0], endpoints[1]];
+    const headPt = [endpoints[2], endpoints[3]];
+    const vector = sub(headPt, tailPt);
+    const midpoint = add(tailPt, scale(vector, 0.5));
+    const perpendicular = [vector[1], -vector[0]];
+    const bezPoint = add(midpoint, scale(perpendicular, o_curve));
+    const tailControl = add(tailPt, scale(sub(bezPoint, tailPt), o_pinch));
+    const headControl = add(headPt, scale(sub(bezPoint, headPt), o_pinch));
+    return [`M${tailPt[0]},${tailPt[1]}C${tailControl[0]},${tailControl[1]} ${headControl[0]},${headControl[1]} ${headPt[0]},${headPt[1]}`];
+  };
+
+  const getEndpoints = (element) => {
+    const d = element.getAttribute("d");
+    if (d == null || d === "") { return []; }
+    return [
+      d.slice(d.indexOf("M")+1, d.indexOf("C")).split(","),
+      d.split(" ").pop().split(",")
+    ].map(p => p.map(n => parseFloat(n)));
+  };
+  const bend = (element, amount) => {
+    element.setAttribute("d", curveArguments(...getEndpoints(element), amount));
+    return element;
+  };
+  var methods = {
+    bend
+  };
+
+  var Curve = {
+    curve: {
+      nodeName: "path",
+      attributes: ["d"],
+      args: curveArguments,
+      methods: methods
+    }
+  };
+
+  const nodes = {};
+  Object.assign(nodes,
+    Arc,
+    Wedge,
+    Parabola,
+    RegularPolygon,
+    RoundRect,
+    Curve
+  );
+
+  const customPrimitives = Object.keys(nodes);
+  const headerStuff = [NodeNames.h, NodeNames.p, NodeNames.i];
+  const drawingShapes = [NodeNames.g, NodeNames.v, NodeNames.t, customPrimitives];
+  const folders = {
+    svg: [NodeNames.s, NodeNames.d].concat(headerStuff).concat(drawingShapes),
+    g: drawingShapes,
+    text: [NodeNames.cT],
+    linearGradient: [NodeNames.cG],
+    radialGradient: [NodeNames.cG],
+    defs: headerStuff,
+    filter: [NodeNames.cF],
+    marker: drawingShapes,
+    symbol: drawingShapes,
+    clipPath: drawingShapes,
+    mask: drawingShapes,
+  };
+  const nodesAndChildren = {};
+  Object.keys(folders).forEach(key => {
+    nodesAndChildren[key] = folders[key].reduce((a, b) => a.concat(b), []);
+  });
+  Debug.log(nodesAndChildren);
+
+  var Case = {
+    toCamel: s => s
+      .replace(/([-_][a-z])/ig, $1 => $1
+      .toUpperCase()
+      .replace("-", "")
+      .replace("_", "")),
+    toKebab: s => s
+      .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+      .replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2")
+      .toLowerCase(),
+    capitalized: s => s
+      .charAt(0).toUpperCase() + s.slice(1)
+  };
+
+  var NodeAttributes = {
+    svg: ["viewBox"],
+    line: ["x1", "y1", "x2", "y2"],
+    rect: ["x", "y", "width", "height"],
+    circle: ["cx", "cy", "r"],
+    ellipse: ["cx", "cy", "rx", "ry"],
+    polygon: ["points"],
+    polyline: ["points"],
+    path: ["d"],
+    text: ["x", "y"],
+    mask: ["id"],
+    symbol: ["id"],
+    clipPath: [
+      "id",
+      "clip-rule",
+    ],
+    marker: [
+      "id",
+      "markerHeight",
+      "markerUnits",
+      "markerWidth",
+      "orient",
+      "refX",
+      "refY",
+    ],
+    linearGradient: [
+      "x1",
+      "x2",
+      "y1",
+      "y2",
+    ],
+    radialGradient: [
+      "cx",
+      "cy",
+      "r",
+      "fr",
+      "fx",
+      "fy",
+    ],
+    stop: [
+      "offset",
+      "stop-color",
+      "stop-opacity",
+    ],
+    pattern: [
+      "patternContentUnits",
+      "patternTransform",
+      "patternUnits",
+    ],
+  };
+
+  const setRadius = (el, r) => el.setAttribute(NodeAttributes.circle[2], r);
+  const setCenter = (el, a, b) => coordinates(...flatten(a, b)).slice(0, 2)
+    .forEach((value, i) => el.setAttribute(NodeAttributes.circle[i], value));
+  var circle = {
+    circle: {
+      args: (a, b, c) => coordinates(...flatten(a, b, c)).slice(0, 3),
+      methods: {
+        radius: setRadius,
+        setRadius: setRadius,
+        center: setCenter,
+        setCenter: setCenter,
+        position: setCenter,
+        setPosition: setCenter,
+      }
+    }
+  };
+
+  const setRadii = (el, rx, ry) => [,,rx,ry].forEach((value, i) => el
+    .setAttribute(NodeAttributes.ellipse[i], value));
+  const setCenter$1 = (el, a, b) => coordinates(...flatten(a, b)).slice(0, 2)
+    .forEach((value, i) => el.setAttribute(NodeAttributes.ellipse[i], value));
+  var ellipse = {
+    ellipse: {
+      args: (a, b, c, d) => coordinates(...flatten(a, b, c, d)).slice(0, 4),
+      methods: {
+        radius: setRadii,
+        setRadius: setRadii,
+        center: setCenter$1,
+        setCenter: setCenter$1,
+        position: setCenter$1,
+        setPosition: setCenter$1,
+      }
+    }
+  };
+
+  const Args = (a, b, c, d) => coordinates(...flatten(a, b, c, d)).slice(0, 4);
+  const setPoints = (element, a, b, c, d) => Args(a, b, c, d)
+    .forEach((value, i) => element.setAttribute(NodeAttributes.line[i], value));
+  var line = {
+    line: {
+      args: Args,
+      methods: {
+        setPoints,
+      }
+    }
+  };
+
+  var markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
+  var digitRegEx = /-?[0-9]*\.?\d+/g;
+  const pathCommands = {
+    m: "move",
+    l: "line",
+    v: "vertical",
+    h: "horizontal",
+    a: "ellipse",
+    c: "curve",
+    s: "smoothCurve",
+    q: "quadCurve",
+    t: "smoothQuadCurve",
+    z: "close"
+  };
+  Object.keys(pathCommands).forEach(key => {
+    const s = pathCommands[key];
+    pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
+  });
+  const getD = (el) => {
+    const attr = el.getAttribute("d");
+    return (attr == null) ? "" : attr;
+  };
+  const appendPathItem = (el, command, ...args) => el
+    .setAttribute("d", `${getD(el)}${command}${flatten(...args).join(" ")}`);
+  const parsePathCommands = function (str) {
+    const results = [];
+    let match;
+    while ((match = markerRegEx.exec(str)) !== null) {
+      results.push(match);
+    }  return results.map(match => ({
+      command: str[match.index],
+      index: match.index
+    }))
+    .reduceRight((all, cur) => {
+      const chunk = str.substring(cur.index, all.length ? all[all.length - 1].index : str.length);
+      return all.concat([
+         { command: cur.command,
+         index: cur.index,
+         chunk: (chunk.length > 0) ? chunk.substr(1, chunk.length - 1) : chunk }
+      ]);
+    }, [])
+    .reverse()
+    .map((el) => {
+      const values = el.chunk.match(digitRegEx);
+      el.en = pathCommands[el.command];
+      el.values = values ? values.map(parseFloat) : [];
+      delete el.chunk;
+      return el;
+    });
+  };
+  const clear = element => element.removeAttribute("d");
+  const getCommands = element => parsePathCommands(getD(element));
+  const setCommands = (element, commandsObject) => commandsObject
+    .forEach(el => appendPathItem(element, el.command, el.values));
+  const setString = (element, commandsString) => element
+    .setAttribute("d", commandsString);
+  const setters = {
+    "string": setString,
+    "object": setCommands,
+  };
+  const noClearSet = (element, ...args) => {
+    if (args.length === 1) {
+      const typ = typeof args[0];
+      if (setters[typ]) {
+        setters[typ](element, args[0]);
+      }
+    }
+  };
+  const clearAndSet = (element, ...args) => {
+    if (args.length === 1) {
+      const typ = typeof args[0];
+      if (setters[typ]) {
+        clear(element);
+        setters[typ](element, args[0]);
+      }
+    }
+  };
+  const methods$1 = {
+    command: appendPathItem,
+    clear,
+    "get": getCommands,
+    "set": clearAndSet,
+    "add": noClearSet,
+  };
+  Object.keys(pathCommands).forEach(key => {
+    methods$1[pathCommands[key]] = (el, ...args) => appendPathItem(el, key, ...args);
+  });
+  var path = {
+    path: {
+      methods: methods$1
+    }
+  };
+
+  var rect = {
+    rect: {
+      args: (a, b, c, d) => coordinates(...flatten(a, b, c, d)).slice(0, 4),
+    }
+  };
+
+  const cdata = (textContent) => (new win.DOMParser())
+    .parseFromString("<root></root>", "text/xml")
+    .createCDATASection(`${textContent}`);
+
+  var style = {
+    style: {
+      methods: {
+        setTextContent: (el, text) => {
+          el.textContent = "";
+          el.appendChild(cdata(text));
+        }
+      }
+    }
+  };
+
+  var text = {
+    text: {
+      args: (a, b, c) => coordinates(...flatten(a, b, c)).slice(0, 2),
+      init: (element, a, b, c, d) => {
+        const text = [a,b,c,d].filter(a => typeof a === Keys.string).shift();
+        if (text) {
+          if (element.firstChild) {
+            element.firstChild.nodeValue = text;
+          } else {
+            element.appendChild(win.document.createTextNode(text));
+          }
+        }
+      }
+    }
+  };
+
+  const viewBoxValue = function (x, y, width, height, padding) {
+    if (padding == null) { padding = 0; }
+    const scale = 1.0;
+    const d = (width / scale) - width;
+    const X = (x - d) - padding;
+    const Y = (y - d) - padding;
+    const W = (width + d * 2) + padding * 2;
+    const H = (height + d * 2) + padding * 2;
+    return [X, Y, W, H].join(" ");
+  };
+  function viewBox () {
+    const numbers = coordinates(...flatten(arguments));
+    if (numbers.length === 2) { numbers.unshift(0, 0); }
+    return numbers.length === 4 ? viewBoxValue(...numbers) : undefined;
+  }
+
+  var DOM = {
+    removeChildren: (element) => {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    },
+    appendTo: (element, parent) => {
+      if (parent != null) {
+        parent.appendChild(element);
+      }
+    },
+    setAttributes: (element, attrs) => Object.keys(attrs)
+      .forEach(key => element.setAttribute(Case.toKebab(key), attrs[key]))
+  };
+
+  function vkXML (text, step) {
+    const ar = text.replace(/>\s{0,}</g, "><")
+      .replace(/</g, "~::~<")
+      .replace(/\s*xmlns\:/g, "~::~xmlns:")
+      .split("~::~");
+    const len = ar.length;
+    let inComment = false;
+    let deep = 0;
+    let str = "";
+    const space = (step != null && typeof step === "string" ? step : "\t");
+    const shift = ["\n"];
+    for (let si = 0; si < 100; si += 1) {
+      shift.push(shift[si] + space);
+    }
+    for (let ix = 0; ix < len; ix += 1) {
+      if (ar[ix].search(/<!/) > -1) {
+        str += shift[deep] + ar[ix];
+        inComment = true;
+        if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1
+          || ar[ix].search(/!DOCTYPE/) > -1) {
+          inComment = false;
+        }
+      } else if (ar[ix].search(/-->/) > -1 || ar[ix].search(/\]>/) > -1) {
+        str += ar[ix];
+        inComment = false;
+      } else if (/^<\w/.exec(ar[ix - 1]) && /^<\/\w/.exec(ar[ix])
+        && /^<[\w:\-\.\,]+/.exec(ar[ix - 1])
+        == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace("/", "")) {
+        str += ar[ix];
+        if (!inComment) { deep -= 1; }
+      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) === -1
+        && ar[ix].search(/\/>/) === -1) {
+        str = !inComment ? str += shift[deep++] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\w/) > -1 && ar[ix].search(/<\//) > -1) {
+        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\//) > -1) {
+        str = !inComment ? str += shift[--deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/\/>/) > -1) {
+        str = !inComment ? str += shift[deep] + ar[ix] : str += ar[ix];
+      } else if (ar[ix].search(/<\?/) > -1) {
+        str += shift[deep] + ar[ix];
+      } else if (ar[ix].search(/xmlns\:/) > -1 || ar[ix].search(/xmlns\=/) > -1) {
+        str += shift[deep] + ar[ix];
+      } else {
+        str += ar[ix];
+      }
+    }
+    return (str[0] === "\n") ? str.slice(1) : str;
+  }
+
+  const downloadInBrowser = function (filename, contentsAsString) {
+    const blob = new win.Blob([contentsAsString], { type: "text/plain" });
+    const a = win.document.createElement("a");
+    a.setAttribute("href", win.URL.createObjectURL(blob));
+    a.setAttribute("download", filename);
+    win.document.body.appendChild(a);
+    a.click();
+    win.document.body.removeChild(a);
+  };
+  const SAVE_OPTIONS = () => ({
+    output: Keys.string,
+    windowStyle: false,
+    filename: "image.svg"
+  });
+  const save = function (svg, options) {
+    options = Object.assign(SAVE_OPTIONS(), options);
+    const source = (new win.XMLSerializer()).serializeToString(svg);
+    const formattedString = vkXML(source);
+    if (isBrowser && !isNode) {
+      downloadInBrowser(options.filename, formattedString);
+    }
+    return (options.output === "svg" ? svg : formattedString);
+  };
+
+  const parse = string => (new win.DOMParser())
+    .parseFromString(string, "text/xml");
+  const checkParseError = xml => {
+    const parserErrors = xml.getElementsByTagName("parsererror");
+    if (parserErrors.length > 0) {
+      throw new Error(parserErrors[0]);
+    }
+    return xml.documentElement;
+  };
+  const async = function (input) {
+    return new Promise((resolve, reject) => {
+      if (typeof input === Keys.string || input instanceof String) {
+        fetch(input)
+          .then(response => response.text())
+          .then(str => checkParseError(parse(str)))
+          .then(xml => xml.nodeName === "svg"
+            ? xml
+            : xml.getElementsByTagName("svg")[0])
+          .then(svg => (svg == null
+              ? reject("valid XML found, but no SVG element")
+              : resolve(svg)))
+          .catch(err => reject(err));
+      }
+      else if (input instanceof win.Document) {
+        return asyncDone(input);
+      }
+    });
+  };
+  const sync = function (input) {
+    if (typeof input === Keys.string || input instanceof String) {
+      try {
+        return checkParseError(parse(input));
+      } catch (error) {
+        return error;
+      }
+    }
+    if (input.childNodes != null) {
+      return input;
+    }
+  };
+  const isFilename = input => typeof input === Keys.string
+    && /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
+    && input.length < 10000;
+  const Load = input => (isFilename && isBrowser
+    ? async(input)
+    : sync(input));
+
+  const vB = "viewBox";
+  const setViewBox = (element, ...args) => {
+    const viewBox$1 = args.length === 1 && typeof args[0] === "string"
+      ? args[0]
+      : viewBox(...args);
+    if (viewBox$1) {
+      element.setAttribute(vB, viewBox$1);
+    }
+    return element;
+  };
+  const getViewBox = function (element) {
+    const vb = element.getAttribute(vB);
+    return (vb == null
+      ? undefined
+      : vb.split(" ").map(n => parseFloat(n)));
+  };
+  const convertToViewBox = function (svg, x, y) {
+    const pt = svg.createSVGPoint();
+    pt.x = x;
+    pt.y = y;
+    const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return [svgPoint.x, svgPoint.y];
+  };
+
+  const getFrame = function (element) {
+    const viewBox = getViewBox(element);
+    if (viewBox !== undefined) {
+      return viewBox;
+    }
+    if (typeof element.getBoundingClientRect === Keys.function) {
+      const rr = element.getBoundingClientRect();
+      return [rr.x, rr.y, rr.width, rr.height];
+    }
+    return [];
+  };
+  const bgClass = "svg-background-rectangle";
+  const background = function (element, color) {
+    let backRect = Array.from(element.childNodes)
+      .filter(child => child.getAttribute(Keys.class) === bgClass)
+      .shift();
+    if (backRect == null) {
+      backRect = this.Constructor("rect", ...getFrame(element));
+      backRect.setAttribute(Keys.class, bgClass);
+      element.insertBefore(backRect, element.firstChild);
+    }
+    backRect.setAttribute("fill", color);
+    return backRect;
+  };
+  const findStyleSheet = function (element) {
+    const styles = element.getElementsByTagName(Keys.style);
+    return styles.length === 0 ? undefined : styles[0];
+  };
+  const stylesheet = function (element, textContent) {
+    let styleSection = findStyleSheet(element);
+    if (styleSection == null) {
+      styleSection = this.Constructor(Keys.style);
+      element.insertBefore(styleSection, element.firstChild);
+    }
+    styleSection.textContent = "";
+    styleSection.appendChild(cdata(textContent));
+    return styleSection;
+  };
+  const clear$1 = function (element) {
+    Array.from(element.attributes)
+      .filter(a => a !== "xmlns")
+      .forEach(attr => element.removeAttribute(attr.name));
+    DOM.removeChildren(element);
+  };
+  const assignSVG = function (target, source) {
+    clear$1(target);
+    Array.from(source.childNodes).forEach((node) => {
+      source.removeChild(node);
+      target.appendChild(node);
+    });
+    Array.from(source.attributes)
+      .forEach(attr => target.setAttribute(attr.name, attr.value));
+  };
+  const loadHelper = function (target, data) {
+    const result = Load(data);
+    if (result == null) { return; }
+    return (typeof result.then === "function")
+      ? result.then(svg => assignSVG(target, svg))
+      : assignSVG(target, result);
+  };
+  var methods$2 = {
+    clear: clear$1,
+    size: setViewBox,
+    setViewBox: setViewBox,
+    background: background,
+    getWidth: el => getFrame(el)[2],
+    getHeight: el => getFrame(el)[3],
+    stylesheet: function (text) { return stylesheet.call(this, text); },
+    load: loadHelper,
+    save: save,
+  };
+
+  const ElementConstructor = (new win.DOMParser())
+    .parseFromString("<div />", "text/xml").documentElement.constructor;
+  var svg = {
+    svg: {
+      args: (...args) => [viewBox(coordinates(...args))].filter(a => a != null),
+      methods: methods$2,
+      init: (element, ...args) => {
+        const parent = args.filter(a => a != null)
+          .filter(arg => arg instanceof ElementConstructor)
+          .shift();
+        if (parent != null && typeof parent.appendChild === Keys.function) {
+          parent.appendChild(element);
+        }
+      }
+    }
+  };
+
+  var UUID = () => Math.random().toString(36).replace(/[^a-z]+/g, '').concat("aaaaa").substr(0, 5);
+
+  const makeIDString = function () {
+    return Array.from(arguments)
+      .filter(a => typeof a === Keys.string || a instanceof String)
+      .shift() || UUID();
+  };
+  const args = (...args) => [makeIDString(...args)];
+  var maskTypes = {
+    mask: { args: args },
+    clipPath: { args: args },
+    symbol: { args: args },
+    marker: {
+      args: args,
+      methods: {
+        size: setViewBox,
+        setViewBox: setViewBox
+      }
+    },
+  };
+
+  const getPoints = el => {
+    const attr = el.getAttribute("points");
+    return (attr == null) ? "" : attr;
+  };
+  const polyString = function () {
+    return Array
+      .from(Array(Math.floor(arguments.length / 2)))
+      .map((_, i) => `${arguments[i*2+0]},${arguments[i*2+1]}`)
+      .join(" ");
+  };
+  const stringifyArgs = (...args) => [polyString(...coordinates(...flatten(...args)))];
+  const setPoints$1 = (element, ...args) => element
+    .setAttribute("points", stringifyArgs(...args)[0]);
+  const addPoint = (element, ...args) => element
+    .setAttribute("points", [getPoints(element), stringifyArgs(...args)[0]].filter(a => a !== "").join(" "));
+  var polys = {
+    polyline: {
+      args: stringifyArgs,
+      methods: {
+        setPoints: setPoints$1,
+        addPoint
+      }
+    },
+    polygon: {
+      args: stringifyArgs,
+      methods: {
+        setPoints: setPoints$1,
+        addPoint
+      }
+    }
+  };
+
+  var Spec = Object.assign({},
+    circle,
+    ellipse,
+    line,
+    path,
+    rect,
+    style,
+    text,
+    svg,
+    maskTypes,
+    polys,
+  );
+
+  var ManyElements = {
+    presentation: [
+      "color",
+      "color-interpolation",
+      "cursor",
+      "direction",
+      "display",
+      "fill",
+      "fill-opacity",
+      "fill-rule",
+      "font-family",
+      "font-size",
+      "font-size-adjust",
+      "font-stretch",
+      "font-style",
+      "font-variant",
+      "font-weight",
+      "image-rendering",
+      "letter-spacing",
+      "opacity",
+      "overflow",
+      "paint-order",
+      "pointer-events",
+      "preserveAspectRatio",
+      "shape-rendering",
+      "stroke",
+      "stroke-dasharray",
+      "stroke-dashoffset",
+      "stroke-linecap",
+      "stroke-linejoin",
+      "stroke-miterlimit",
+      "stroke-opacity",
+      "stroke-width",
+      "tabindex",
+      "transform-origin",
+      "user-select",
+      "vector-effect",
+      "visibility"
+    ],
+    animation: [
+      "accumulate",
+      "additive",
+      "attributeName",
+      "begin",
+      "by",
+      "calcMode",
+      "dur",
+      "end",
+      "from",
+      "keyPoints",
+      "keySplines",
+      "keyTimes",
+      "max",
+      "min",
+      "repeatCount",
+      "repeatDur",
+      "restart",
+      "to",
+      "values",
+    ],
+    effects: [
+      "azimuth",
+      "baseFrequency",
+      "bias",
+      "color-interpolation-filters",
+      "diffuseConstant",
+      "divisor",
+      "edgeMode",
+      "elevation",
+      "exponent",
+      "filter",
+      "filterRes",
+      "filterUnits",
+      "flood-color",
+      "flood-opacity",
+      "in",
+      "in2",
+      "intercept",
+      "k1",
+      "k2",
+      "k3",
+      "k4",
+      "kernelMatrix",
+      "lighting-color",
+      "limitingConeAngle",
+      "mode",
+      "numOctaves",
+      "operator",
+      "order",
+      "pointsAtX",
+      "pointsAtY",
+      "pointsAtZ",
+      "preserveAlpha",
+      "primitiveUnits",
+      "radius",
+      "result",
+      "seed",
+      "specularConstant",
+      "specularExponent",
+      "stdDeviation",
+      "stitchTiles",
+      "surfaceScale",
+      "targetX",
+      "targetY",
+      "type",
+      "xChannelSelector",
+      "yChannelSelector",
+    ],
+    text: [
+      "dx",
+      "dy",
+      "alignment-baseline",
+      "baseline-shift",
+      "dominant-baseline",
+      "lengthAdjust",
+      "method",
+      "overline-position",
+      "overline-thickness",
+      "rotate",
+      "spacing",
+      "startOffset",
+      "strikethrough-position",
+      "strikethrough-thickness",
+      "text-anchor",
+      "text-decoration",
+      "text-rendering",
+      "textLength",
+      "underline-position",
+      "underline-thickness",
+      "word-spacing",
+      "writing-mode",
+    ],
+    gradient: [
+      "gradientTransform",
+      "gradientUnits",
+      "spreadMethod",
+    ],
+  };
+
+  Object.values(NodeNames)
+    .reduce((a,b) => a.concat(b), [])
+    .filter(nodeName => NodeAttributes[nodeName] === undefined)
+    .forEach(nodeName => { NodeAttributes[nodeName] = []; });
+  [ [["svg", "defs", "g"].concat(NodeNames.v, NodeNames.t), ManyElements.presentation],
+    [["filter"], ManyElements.effects],
+    [NodeNames.cT.concat("text"), ManyElements.text],
+    [NodeNames.cF, ManyElements.effects],
+    [NodeNames.cG, ManyElements.gradient],
+  ].forEach(pair => pair[0].forEach(key => {
+    NodeAttributes[key] = NodeAttributes[key].concat(pair[1]);
+  }));
+  Debug.log(NodeAttributes);
+
+  const getClassList = (element) => {
+    if (element == null) { return []; }
+    const currentClass = element.getAttribute(Keys.class);
+    return (currentClass == null
+      ? []
+      : currentClass.split(" ").filter(s => s !== ""));
+  };
+  var classId = {
+    addClass: (element, newClass) => {
+      const classes = getClassList(element)
+        .filter(c => c !== newClass);
+      classes.push(newClass);
+      element.setAttributeNS(null, Keys.class, classes.join(" "));
+    },
+    removeClass: (element, removedClass) => {
+      const classes = getClassList(element)
+        .filter(c => c !== removedClass);
+      element.setAttributeNS(null, Keys.class, classes.join(" "));
+    },
+    setClass: (element, className) => {
+      element.setAttributeNS(null, Keys.class, className);
+    },
+    setId: (element, idName) => {
+      element.setAttributeNS(null, Keys.id, idName);
+    }
+  };
+
+  const getAttr = (element) => {
+    const t = element.getAttribute(Keys.transform);
+    return (t == null || t === "") ? undefined : t;
+  };
+  const methods$3 = {
+    clearTransform: (el) => { el.removeAttribute(Keys.transform); return el; }
+  };
+  ["translate", "rotate", "scale", "matrix"].forEach(key => {
+    methods$3[key] = (element, ...args) => element.setAttribute(
+      Keys.transform,
+      [getAttr(element), `${key}(${args.join(" ")})`]
+        .filter(a => a !== undefined)
+        .join(" "));
+  });
+
+  const findIdURL = function (arg) {
+    if (arg == null) { return ""; }
+    if (typeof arg === Keys.string) {
+      return arg.slice(0, 3) === "url"
+        ? arg
+        : `url(#${arg})`;
+    }
+    if (arg.getAttribute != null) {
+      const idString = arg.getAttribute(Keys.id);
+      return `url(#${idString})`;
+    }
+    return "";
+  };
+  const methods$4 = {};
+  ["clip-path",
+    "mask",
+    "symbol",
+    "marker-end",
+    "marker-mid",
+    "marker-start",
+  ].forEach(attr => {
+    methods$4[Case.toCamel(attr)] = (element, parent) => element.setAttribute(attr, findIdURL(parent));
+  });
+
+  const Nodes = {};
+  NodeNames.v.push(...Object.keys(nodes));
+  Object.keys(nodes).forEach(node => {
+    nodes[node].attributes = (nodes[node].attributes === undefined
+      ? [...ManyElements.presentation]
+      : nodes[node].attributes.concat(ManyElements.presentation));
+  });
+  Object.assign(Nodes, Spec, nodes);
+  Object.keys(NodeNames)
+    .forEach(key => NodeNames[key]
+      .filter(nodeName => Nodes[nodeName] === undefined)
+      .forEach(nodeName => {
+        Nodes[nodeName] = {};
+      }));
+  const passthrough = function () { return Array.from(arguments); };
+  Object.keys(Nodes).forEach(key => {
+    if (!Nodes[key].nodeName) { Nodes[key].nodeName = key; }
+    if (!Nodes[key].init) { Nodes[key].init = passthrough; }
+    if (!Nodes[key].args) { Nodes[key].args = passthrough; }
+    if (!Nodes[key].methods) { Nodes[key].methods = {}; }
+    if (!Nodes[key].attributes) {
+      Nodes[key].attributes = NodeAttributes[key] || [];
+    }
+  });
+  const assign = (groups, Methods) => {
+    groups.forEach(n =>
+      Object.keys(Methods).forEach(method => {
+        Nodes[n].methods[method] = function () {
+          Methods[method](...arguments);
+          return arguments[0];
+        };
+      }));
+  };
+  assign(flatten(NodeNames.t, NodeNames.v, NodeNames.g, NodeNames.s, NodeNames.p, NodeNames.i, NodeNames.h, NodeNames.d), classId);
+  assign(flatten(NodeNames.t, NodeNames.v, NodeNames.g, NodeNames.s, NodeNames.p, NodeNames.i, NodeNames.h, NodeNames.d), DOM);
+  assign(flatten(NodeNames.v, NodeNames.g, NodeNames.s), methods$3);
+  assign(flatten(NodeNames.t, NodeNames.v, NodeNames.g), methods$4);
+  Debug.log(Nodes);
+
+  const RequiredAttrMap = {
+    svg: {
+      version: "1.1",
+      xmlns: NS,
+    },
+    style: {
+      type: "text/css"
+    }
+  };
+  const RequiredAttributes = (element, nodeName) => {
+    if (RequiredAttrMap[nodeName]) {
+      Object.keys(RequiredAttrMap[nodeName])
+        .forEach(key => element.setAttribute(key, RequiredAttrMap[nodeName][key]));
+    }
+  };
+  const bound = {};
+  const constructor = (nodeName, ...args) => {
+    const element = win.document.createElementNS(NS, Nodes[nodeName].nodeName);
+    RequiredAttributes(element, nodeName);
+    Nodes[nodeName].init(element, ...args);
+    Nodes[nodeName].args(...args).forEach((v, i) => {
+      if (Nodes[nodeName].attributes[i] != null) {
+        element.setAttribute(Nodes[nodeName].attributes[i], v);
+      }
+    });
+    Nodes[nodeName].attributes.forEach(attribute => {
+      Object.defineProperty(element, Case.toCamel(attribute), {
+        value: function () {
+          element.setAttribute(attribute, ...arguments);
+          return element;
+        }
+      });
+    });
+    Object.keys(Nodes[nodeName].methods).forEach(methodName =>
+      Object.defineProperty(element, methodName, {
+        value: function () {
+          return Nodes[nodeName].methods[methodName].call(bound, element, ...arguments) || element;
+        }
+      }));
+    if (nodesAndChildren[nodeName]) {
+      nodesAndChildren[nodeName].forEach(childNode => {
+        Object.defineProperty(element, childNode, {
+          value: function () {
+            const childElement = constructor(childNode, ...arguments);
+            element.appendChild(childElement);
+            return childElement;
+          }
+        });
+      });
+    }
+    return element;
+  };
+  bound.Constructor = constructor;
+
+  const elements = {};
+  Object.keys(NodeNames).forEach(key => NodeNames[key]
+    .forEach(nodeName => {
+      elements[nodeName] = (...args) => constructor(nodeName, ...args);
+    }));
+  Debug.log(elements);
+
+  const categories = {
+    move: ["mousemove", "touchmove"],
+    press: ["mousedown", "touchstart"],
+    release: ["mouseup", "touchend"]
+  };
+  const handlerNames = Object.values(categories)
+    .reduce((a,b) => a.concat(b), []);
+  const off = (element, handlers) => handlerNames.forEach(handlerName => {
+    handlers[handlerName].forEach(func => element.removeEventListener(handlerName, func));
+    handlers[handlerName] = [];
+  });
+  const defineGetter = (obj, prop, value) => Object.defineProperty(obj, prop, {
+    get: () => value,
+    enumerable: true
+  });
+  const TouchEvents = function (element) {
+    let startPoint = [];
+    const handlers = [];
+    Object.keys(categories).forEach((key) => {
+      categories[key].forEach((handler) => {
+        handlers[handler] = [];
+      });
+    });
+    const removeHandler = (category) => {
+      categories[category].forEach(handlerName => {
+        handlers[handlerName].forEach(func => element.removeEventListener(handlerName, func));
+      });
+    };
+    const categoryUpdate = {
+      press: () => {},
+      release: () => {},
+      move: (e, viewPoint) => {
+        if (e.buttons > 0 && startPoint[0] === undefined) {
+          startPoint = viewPoint;
+        } else if(e.buttons === 0 && startPoint[0] !== undefined) {
+          startPoint = [];
+        }
+        ["startX", "startY"].forEach((prop, i) => defineGetter(e, prop, startPoint[i]));
+      }
+    };
+    Object.keys(categories).forEach(category => {
+      const propName = "on" + Case.capitalized(category);
+      Object.defineProperty(element, propName, {
+        set: (handler) => (handler == null)
+          ? removeHandler(category)
+          : categories[category].forEach(handlerName => {
+              const handlerFunc = (e) => {
+                const pointer = e.touches != null ? e.touches[0] : e;
+                const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY);
+                ["x", "y"].forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
+                categoryUpdate[category](e, viewPoint);
+                handler(e);
+              };
+              handlers[handlerName].push(handlerFunc);
+              element.addEventListener(handlerName, handlerFunc);
+            }),
+        enumerable: true
+      });
+    });
+    Object.defineProperty(element, "off", { value: () => off(element, handlers) });
+  };
+
+  const Animation = function (element) {
+    let start;
+    const handlers = {};
+    let frame = 0;
+    let requestId;
+    const removeHandlers = () => {
+      win.cancelAnimationFrame(requestId);
+      Object.keys(handlers)
+        .forEach(uuid => delete handlers[uuid]);
+      start = undefined;
+      frame = 0;
+    };
+    Object.defineProperty(element, "play", {
+      set: (handler) => {
+        removeHandlers();
+        if (handler == null) { return; }
+        const uuid = UUID();
+        const handlerFunc = (e) => {
+          if (!start) {
+            start = e;
+          }
+          const progress = (e - start) * 0.001;
+          handler({time: progress, frame: frame});
+          frame += 1;
+          if (handlers[uuid]) {
+            requestId = win.requestAnimationFrame(handlers[uuid]);
+          }
+        };
+        handlers[uuid] = handlerFunc;
+        requestId = win.requestAnimationFrame(handlers[uuid]);
+      },
+      enumerable: true
+    });
+    Object.defineProperty(element, "stop", { value: removeHandlers, enumerable: true });
+  };
+
+  const distanceSq = (a, b) => [0, 1]
+    .map(i => a[i] - b[i])
+    .map(e => e ** 2)
+    .reduce((a, b) => a + b, 0);
+  const removeFromParent = (svg) => (svg && svg.parentNode
+    ? svg.parentNode.removeChild(svg)
+    : undefined);
+  const possiblePositionAttributes = [["cx", "cy"], ["x", "y"]];
+  const controlPoint = function (parent, options = {}) {
+    const position = [0, 0];
+    const cp = {
+      selected: false,
+      svg: undefined,
+      updatePosition: input => input,
+    };
+    const updateSVG = () => {
+      if (!cp.svg) { return; }
+      if (!cp.svg.parentNode) {
+        parent.appendChild(cp.svg);
+      }
+      possiblePositionAttributes
+        .filter(coords => cp.svg[coords[0]] != null)
+        .forEach(coords => coords.forEach((attr, i) => {
+          cp.svg.setAttribute(attr, position[i]);
+        }));
+    };
+    const proxy = new Proxy(position, {
+      set: (target, property, value, receiver) => {
+        target[property] = value;
+        updateSVG();
+        return true;
+      }
+    });
+    const setPosition = function (...args) {
+      coordinates(...flatten(...args))
+        .forEach((n, i) => { position[i] = n; });
+      updateSVG();
+      if (typeof position.delegate === "function") {
+        position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
+      }
+    };
+    position.delegate = undefined;
+    position.setPosition = setPosition;
+    position.onMouseMove = mouse => (cp.selected
+      ? setPosition(cp.updatePosition(mouse))
+      : undefined);
+    position.onMouseUp = () => { cp.selected = false; };
+    position.distance = mouse => Math.sqrt(distanceSq(mouse, position));
+    ["x", "y"].forEach((prop, i) => Object.defineProperty(position, prop, {
+      get: () => position[i],
+      set: (v) => { position[i] = v; }
+    }));
+    ["svg", "updatePosition", "selected"].forEach(key => {
+      Object.defineProperty(position, key, {
+        get: () => cp[key],
+        set: (v) => { cp[key] = v; }
+      });
+    });
+    Object.defineProperty(position, "remove", {
+      value: () => {
+        removeFromParent(cp.svg);
+        position.delegate = undefined;
+      }
+    });
+    return proxy;
+  };
+  const controls = function (svg, number, options) {
+    let selected;
+    let delegate;
+    const points = Array.from(Array(number))
+      .map(() => controlPoint(svg, options));
+    const protocol = point => (typeof delegate === "function"
+      ? delegate.call(points, points, point)
+      : undefined);
+    points.forEach((p) => {
+      p.delegate = protocol;
+      p.pointsContainer = points;
+    });
+    const mousePressedHandler = function (mouse) {
+      if (!(points.length > 0)) { return; }
+      selected = points
+        .map((p, i) => ({ i, d: distanceSq(p, [mouse.x, mouse.y]) }))
+        .sort((a, b) => a.d - b.d)
+        .shift()
+        .i;
+      points[selected].selected = true;
+    };
+    const mouseMovedHandler = function (mouse) {
+      points.forEach(p => p.onMouseMove(mouse));
+    };
+    const mouseReleasedHandler = function () {
+      points.forEach(p => p.onMouseUp());
+      selected = undefined;
+    };
+    svg.onPress = mousePressedHandler;
+    svg.onMove = mouseMovedHandler;
+    svg.onRelease = mouseReleasedHandler;
+    Object.defineProperty(points, "selectedIndex", { get: () => selected });
+    Object.defineProperty(points, "selected", { get: () => points[selected] });
+    Object.defineProperty(points, "add", {
+      value: (opt) => {
+        points.push(controlPoint(svg, opt));
+      },
+    });
+    points.removeAll = () => {
+      while (points.length > 0) {
+        points.pop().remove();
+      }
+    };
+    const functionalMethods = {
+      onChange: (func, runOnceAtStart) => {
+        delegate = func;
+        if (runOnceAtStart === true) { func.call(points, points, undefined); }
+      },
+      position: func => points.forEach((p, i) => p.setPosition(func.call(points, i))),
+      svg: func => points.forEach((p, i) => { p.svg = func.call(points, i); }),
+    };
+    Object.keys(functionalMethods).forEach(key => {
+      points[key] = function () {
+        if (typeof arguments[0] === "function") {
+          functionalMethods[key](...arguments);
+        }
+        return points;
+      };
+    });
+    points.parent = function (parent) {
+      if (parent != null && parent.appendChild != null) {
+        points.forEach((p) => { parent.appendChild(p.svg); });
+      }
+      return points;
+    };
+    return points;
+  };
+  const applyControlsToSVG = (svg) => {
+    svg.controls = (...args) => controls.call(svg, svg, ...args);
+  };
+
+  const initialize = function (svg, ...args) {
+    args.filter(arg => typeof arg === Keys.function)
+      .forEach(func => func.call(svg, svg));
+  };
+  const SVG = function () {
+    const svg = constructor(Keys.svg, ...arguments);
+    TouchEvents(svg);
+    Animation(svg);
+    applyControlsToSVG(svg);
+    if (win.document.readyState === "loading") {
+      win.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...arguments));
+    } else {
+      initialize(svg, ...arguments);
+    }
+    return svg;
+  };
+  Object.assign(SVG, elements);
+  SVG.NS = NS;
+
+  return SVG;
+
+})));

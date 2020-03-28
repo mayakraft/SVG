@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "parabola.js",
     "polygon.js",
     "riley1.js",
+    "spiral.js",
     "star.js",
     "ten-print.js",
   ];
@@ -160,6 +161,7 @@ svg.background('transparent');
   app.didPause = function (paused) { };
   app.didUpdate = function () { };
   app.didBeginUpdate = function () {
+    console.log("did begin called");
     // app.dom.canvas.removeAttribute("style");
 
     if (svg !== undefined) {

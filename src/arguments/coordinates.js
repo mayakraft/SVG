@@ -17,7 +17,7 @@ export default (...args) => {
   // [top-level numbers] concat [{x:,y:} and [0,1]] style
   return args.filter(a => typeof a === K.number)
     .concat(
-      args.filter(a => typeof a === K.object)
+      args.filter(a => typeof a === K.object && a !== null)
       .map(el => {
         if (typeof el.x === K.number) return [el.x, el.y];
         if (typeof el[0] === K.number) return [el[0], el[1]];

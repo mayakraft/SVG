@@ -20,7 +20,7 @@ creative coding with SVG
 
 ## Usage
 
-[documentation is here](https://svg.rabbitear.org/docs/)
+[documentation is here](https://robbykraft.github.io/SVG/docs/)
 
 ## Credit
 
