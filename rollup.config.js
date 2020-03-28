@@ -14,11 +14,11 @@ module.exports = [
   },
   plugins: [
     cleanup({ comments: "none" }),
-    // babel({
-    //   babelrc: false,
-    //   presets: [["@babel/env", { modules: false }]],
-    // }),
-    // terser(),
+    babel({
+      babelrc: false,
+      presets: [["@babel/env", { modules: false }]],
+    }),
+    terser(),
   ],
 },
 // {
