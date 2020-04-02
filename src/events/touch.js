@@ -52,7 +52,8 @@ const TouchEvents = function (element) {
       } else if(e.buttons === 0 && startPoint[0] !== undefined) {
         startPoint = [];
       }
-      ["startX", "startY"].forEach((prop, i) => defineGetter(e, prop, startPoint[i]));
+      ["startX", "startY"].filter(prop => !e.hasOwnProperty(prop))
+        .forEach((prop, i) => defineGetter(e, prop, startPoint[i]));
     }
   };
 
@@ -64,11 +65,18 @@ const TouchEvents = function (element) {
         ? removeHandler(category)
         : categories[category].forEach(handlerName => {
             const handlerFunc = (e) => {
-              const pointer = e.touches != null ? e.touches[0] : e;
-              const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY); // e.target
-              // todo: might need a check against overwriting properties that already exist
-              ["x", "y"].forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
-              categoryUpdate[category](e, viewPoint);
+              // const pointer = (e.touches != null && e.touches.length
+              const pointer = (e.touches != null
+                ? e.touches[0]
+                : e);
+              // onRelease events don't have a pointer
+              if (pointer !== undefined) {
+                const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY).map(n => isNaN(n) ? undefined : n); // e.target
+                ["x", "y"]
+                  .filter(prop => !e.hasOwnProperty(prop))
+                  .forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
+                categoryUpdate[category](e, viewPoint);
+              }
               handler(e);
             };
             handlers[handlerName].push(handlerFunc);

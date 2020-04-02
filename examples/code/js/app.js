@@ -88,15 +88,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // loadAndRunExamples(function (examples) {
     //   return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
     // });
-    // var welcomeText = "svg.size(100, 100);\nsvg.background('transparent');\n\n// svg.play = function (t) {\n//   svg.removeChildren();\n//   svg.circle(50 + 50*Math.sin(t.time), 50, 10);\n// };\n";
+//     var welcomeText = `svg.size(100, 100);
+// svg.background('transparent');
+// `
     var welcomeText = `svg.size(100, 100);
 svg.background('transparent');
 
-// var circle = svg.circle(50, 50, 50);
-// svg.play = function (t) {
-//   circle.center(50+50*Math.sin(t.time), 50);
-// };
-`
+svg.controls(2)
+  .svg(() => svg.circle().radius(5).fill("red"))
+  .position(() => [Math.random()*100, Math.random()*100]);
+
+let c = svg.circle().radius(10);
+svg.onMove = function (e) {
+  c.center(e.x, e.y);
+};
+
+`;
     app.injectCode(welcomeText);
   } else {
     app.injectCode(bootQueryValue);
@@ -161,7 +168,7 @@ svg.background('transparent');
   app.didPause = function (paused) { };
   app.didUpdate = function () { };
   app.didBeginUpdate = function () {
-    console.log("did begin called");
+    // console.log("did begin called");
     // app.dom.canvas.removeAttribute("style");
 
     if (svg !== undefined) {

@@ -57,8 +57,8 @@ p, ul, pre.returns {
   overflow-x: scroll;
 }
 ul {
-  list-style: none;
-  padding-left: 1em;
+  /*list-style: none;*/
+  /*padding-left: 1.5rem;*/
 }
 a, a:hover, a:visited, a:active {
   color: #e53;

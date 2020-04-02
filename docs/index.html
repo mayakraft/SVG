@@ -22,7 +22,7 @@
 <h2>Overview</h2>
 
 <p>
-  Drawing an SVG is like building a tree-structure with parents and children.
+  Designers organize drawings into <em>layers</em>, a tree of parents and children.
 </p>
 
 <pre class="code" style="line-height: 1">&lt;svg&gt;
@@ -36,41 +36,69 @@
 </pre>
 
 <p>
-  It's very similar to how design software has layers and ordering items in-front/behind.
+  To draw a shape first ask yourself <b>who is this shape's parent?</b>
 </p>
 
+<pre class="code"><key>who-is-the-parent</key>.circle(800, 600, 100)</pre>
+
 <p>
-  In code, this works by parents creating children. To begin, we need the first parent, the SVG. This command creates an <code>&lt;svg&gt;</code> element.
+  The simplest arrangement is that every shape is a child of the SVG. This command creates an <code>&lt;svg&gt;</code> element.
 </p>
 
 <pre class="code">const svg = SVG()</pre>
 
 <p>
-  The following creates an <code>&lt;svg&gt;</code> element <b>and</b> appends it to the body.
+  This creates an <code>&lt;svg&gt;</code> element <b>and</b> appends it to the body.
 </p>
 
 <pre class="code">const svg = SVG(document.body)</pre>
 
 <p>
-  The following creates an <code>&lt;svg&gt;</code> with viewBox dimensions 800x600.
+  This creates an <code>&lt;svg&gt;</code> with viewBox dimensions 800x600.
 </p>
 
 <pre class="code">const svg = SVG(800, 600)</pre>
 
+<h3>Drawing</h3>
+
 <p>
-  Shapes are made by calling the shape on the parent. This will create it as a child. Shape-drawing parents are: <b>svg, g, marker, symbol, clipPath, mask</b>.
+  To draw a shape first write the parent, followed by a ".".
 </p>
 
 <pre class="code">svg.rect(x, y, width, height)
 svg.circle(x, y, radius)</pre>
 
 <p>
-  Groups (<b>g</b>) are like layers in Photoshop, useful for managing layer order. In this example the circle will appear underneath the rect.
+  SVG shapes are <b>circle</b>, <b>ellipse</b>, <b>line</b>, <b>path</b>, <b>polygon</b>, <b>polyline</b>, <b>rect</b>, <b>text</b>
 </p>
 
-<pre class="code">const layer = svg.g()
-svg.rect(x, y, width, height)
-layer.circle(x, y, radius)</pre>
+<p>
+  Nested layers looks like this:
+</p>
+
+<pre class="code">const child = svg.g();
+const grandchild = child.g();</pre>
+
+<p>
+  Groups can manage layer order. In this example the circle will appear underneath the rect.
+</p>
+
+<pre class="code">const layer = svg.g()          // layer
+svg.rect(x, y, width, height)  // on top of layer
+layer.circle(x, y, radius)     // child of layer, underneath rect</pre>
+
+<p>
+  Shape-drawing parents are:
+</p>
+
+<ul>
+  <li><b>svg</b></li>
+  <li><b>g</b></li>
+  <li><b>marker</b></li>
+  <li><b>symbol</b></li>
+  <li><b>clipPath</b></li>
+  <li><b>mask</b></li>
+</ul>
 
 <h3>Style</h3>
 
@@ -80,8 +108,8 @@ layer.circle(x, y, radius)</pre>
 
 <pre class="code">svg.line(0, 0, 300, 300)
   .stroke("#F08")
-  .strokeWidth(3)
-  .strokeDasharray("5 3")</pre>
+  .strokeWidth(3)          // stroke-width
+  .strokeDasharray("5 3")  // stroke-dasharray</pre>
 
 <p>
   If a style is applied to a parent, all children will inherit that style unless a child overwrites it.
