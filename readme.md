@@ -25,7 +25,7 @@ creative coding with SVG
 ## Credit
 
 - [vkBeautify](https://github.com/vkiryukhin/vkBeautify) pretty-print for SVG export
-- [XML DOM](https://github.com/xmldom/xmldom) for node.js usage
+- [XML DOM](https://github.com/xmldom/xmldom) for node.js
 
 ## License
 
