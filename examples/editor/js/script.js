@@ -141,10 +141,15 @@ const Maths = function (data) {
       ? []
       : Array.from(Array(maths.intersections.length))
         .map((_, i) => mathObject.intersect(maths.mathObjects[i]));
-    maths.intersections.push(newIntersections);
+    // circles return intersections in an array
+    // lines return the intersection top level
+    const flatten = newIntersections.length === 1 && newIntersections[0].constructor === Array
+      ? newIntersections[0]
+      : newIntersections;
+    maths.intersections.push(flatten);
     maths.points.push([press, e]);
-    console.log(maths.mathObjects);
-    console.log(maths.intersections);
+    // console.log(maths.mathObjects);
+    // console.log(maths.intersections);
     return e;
   };
   return maths;

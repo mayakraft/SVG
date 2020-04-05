@@ -2,6 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
+import K from "../../environment/keys";
 import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 
@@ -25,16 +26,26 @@ const setPoints = (element, ...args) => element
 const addPoint = (element, ...args) => element
   .setAttribute("points", [getPoints(element), stringifyArgs(...args)[0]].filter(a => a !== "").join(" "));
 
+// this should be improved
+// right now the special case is if there is only 1 argument and it's a string
+// it should be able to take strings or numbers at any point,
+// converting the strings to coordinates
+const Args = function (...args) {
+  return args.length === 1 && typeof args[0] === K.string
+    ? [args[0]]
+    : stringifyArgs(...args);
+}
+
 export default {
   polyline: {
-    args: stringifyArgs,
+    args: Args,
     methods: {
       setPoints,
       addPoint
     }
   },
   polygon: {
-    args: stringifyArgs,
+    args: Args,
     methods: {
       setPoints,
       addPoint
