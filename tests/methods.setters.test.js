@@ -26,12 +26,12 @@ test("line setters", () => {
 test("circle setters", () => {
   const attrs = ["cx", "cy"];
   let c = SVG.circle();
-  c.setCenter(1,2,3,4);
-  attrs.forEach((attr, i) => expect(c.getAttribute(attr)).toBe(String([1,2][i])));
+  c.setCenter(1, 2, 3, 4);
+  attrs.forEach((attr, i) => expect(c.getAttribute(attr)).toBe(String([1, 2][i])));
   expect(c.attributes.length).toBe(2);
 
   c.setRadius(10);
-  attrs.forEach((attr, i) => expect(c.getAttribute(attr)).toBe(String([1,2][i])));
+  attrs.forEach((attr, i) => expect(c.getAttribute(attr)).toBe(String([1, 2][i])));
   expect(c.getAttribute("r")).toBe("10");
   expect(c.attributes.length).toBe(3);
 });

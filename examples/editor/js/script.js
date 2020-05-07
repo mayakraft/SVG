@@ -5,62 +5,6 @@ Vue.component("button-mode", {
   </div>`
 });
 
-const states = {
-  select: {
-    shape: pts => SVG.rect(
-      pts[0].x,
-      pts[0].y,
-      pts[pts.length-1].x - pts[0].x,
-      pts[pts.length-1].y - pts[0].y)
-    .strokeWidth(0.004)
-    .strokeDasharray(0.01),
-    math: math.rectangle.fromPoints,
-  },
-  remove: {
-    shape: SVG.g,
-    math: pts => {},
-  },
-  line: {
-    shape: (...pts) => SVG.line(infinityBox.clipLine(math.line.fromPoints(...pts))),
-    math: math.line.fromPoints,
-  },
-  ray: {
-    shape: SVG.g,
-    math: math.ray,
-  },
-  segment: {
-    shape: SVG.line,
-    math: math.segment,
-  },
-  circle: {
-    shape: SVG.circle,
-    math: math.circle,
-  },
-  "perpendicular-bisector": {
-    shape: SVG.g,
-    math: math.line.perpendicularBisector,
-  },
-  bisect: {
-    shape: SVG.polyline,
-    math: pts => {},
-  },
-  "perpendicular-to": {
-    shape: SVG.g,
-    math: pts => {},
-  },
-  polygon: {
-    shape: SVG.g,
-    math: math.polygon,
-  },
-  // this will create an entry in the Data that a previous
-  // shape has been mutated.
-  alter: {
-    shape: SVG.g,
-    math: pts => {},
-  }
-};
-// <i class='icon {{mode}}'></i>
-
 var app = new Vue({
   el: "#app",
   data: {
@@ -75,20 +19,29 @@ var app = new Vue({
   }
 });
 
+const Snap = (points, point) => {
+  const pt = point.x != null ? [point.x, point.y] : point;
+  const pts = points.map(a => a.x != null ? [a.x, a.y] : a);
+  const nearest = math.core.nearest_point(pt, pts);
+  if (nearest && math.core.distance2(pt, nearest) < 0.05) {
+    delete point.x;
+    delete point.y;
+    Object.defineProperty(point, "x", {get: () => nearest[0], enumerable: true});
+    Object.defineProperty(point, "y", {get: () => nearest[1], enumerable: true});
+  }
+  return point;
+};
+
 const UI = function (svg) {
   const ui = {};
-  ui.layer = svg.g()
-    .stroke("black")
-    .fill("none")
-    .strokeWidth(0.001);
+  ui.layer = svg.g().stroke("black").fill("none").strokeWidth(0.001);
   const dragPoints = [];
   let press;
   ui.onMove = function (e) {
     ui.layer.removeChildren();
-    // ui.layer.circle(e.x, e.y, 0.002).fill("red").stroke("none");
     if (e.buttons > 0) {
       dragPoints.push(e);
-      ui.layer.appendChild(states[app.state].shape([press, e]));
+      ui.layer.appendChild(states[app.state].svg([press, e]));
     }
   };
   ui.onPress = function (e) {
@@ -103,70 +56,34 @@ const UI = function (svg) {
   return ui;
 };
 
-const Maths = function (data) {
-  const maths = {};
-  maths.points = [];
-  maths.intersections = [];
-  maths.mathObjects = [];
-  maths.nearest = {
-    vertex: undefined,
-    edge: undefined,
-    face: undefined,
-  };
+const History = function () {
+  const history = [];
   let press;
-  maths.onMove = function (e) {
-    const pts = maths.points.concat(maths.intersections)
-      .reduce((a, b) => a.concat(b), [])
-      .map(a => a.x != null ? [a.x, a.y] : a);
-    maths.nearest.vertex = math.core.nearest_point([e.x, e.y], pts);
-    // remove points too far away
-    if (maths.nearest.vertex && math.core.distance2([e.x, e.y], maths.nearest.vertex) > 0.02) {
-      maths.nearest.vertex = undefined;
-    }
-  };
-  maths.onPress = function (e) {
-    if (maths.nearest.vertex) {
-      e = maths.nearest.vertex;
-    }
-    press = e;
-    return e;
-  };
-  maths.onRelease = function (e) {
-    if (maths.nearest.vertex) {
-      e = maths.nearest.vertex;
-    }
-    const mathObject = states[app.state].math([press, e]);
-    maths.mathObjects.push(mathObject);
-    const newIntersections = mathObject.intersect == null
-      ? []
-      : Array.from(Array(maths.intersections.length))
-        .map((_, i) => mathObject.intersect(maths.mathObjects[i]));
-    maths.intersections.push(newIntersections);
-    maths.points.push([press, e]);
-    console.log(maths.mathObjects);
-    console.log(maths.intersections);
-    return e;
-  };
-  return maths;
-};
-
-const Data = function () {
-  const data = [];
-  let press;
-  data.onMove = function (e) {};
-  data.onPress = function (e) {
+  history.onPress = function (e) {
     press = e;
   };
-  data.onRelease = function (e) {
-    data.push({
+  history.onRelease = function (e) {
+    history.push({
       state: app.state,
-      points: [press, e],
+      arguments: [press, e],
     });
   };
-  return data;
+  return history;
 };
 
-window.data;
+const Intersections = function (history) {
+  const primitives = history
+    .map(entry => states[entry.state].math(...entry.arguments))
+    .filter(el => el != null);
+
+  return Array.from(Array(primitives.length))
+    .map((_, i) => Array.from(Array(i))
+      .map((_, j) => primitives[i].intersect(primitives[j]))
+      .filter(a => a != null)
+      .map(s => s.constructor === Array && typeof s[0] != "number" ? s : [s]))
+    .map(a => a.reduce((a,b) => a.concat(b), []))
+    .reduce((a,b) => a.concat(b), []);
+};
 
 // infinity box
 const infinityBox = math.polygon(
@@ -183,38 +100,44 @@ SVG(1, 1, document.querySelectorAll(".canvas-container")[0], (svg) => {
     .strokeWidth(0.001);
 
   const ui = UI(svg);
-  const data = Data();
-  const maths = Maths(data);
-  window.data = data;
+  const history = History();
+  let snapPoints = [];
+  window.hist = history;
 
-  const draw = () => {
+  const didChange = () => {
     drawLayer.removeChildren();
-    data.map(d => states[d.state].shape(d.points))
+
+    // convert the history into svg shapes
+    history.map(entry => states[entry.state].svg(...entry.arguments))
       .filter(el => el != null)
       .forEach(el => drawLayer.appendChild(el));
+
+    // snap-points are arguments + intersections 
+    const args = history.map(h => h.arguments).reduce((a,b) => a.concat(b), []);
+    const intersects = Intersections(history);
+    snapPoints = args.concat(intersects);
+
+    // draw all the arguments and intersection points
+    [args, intersects].forEach((arr, i) => arr
+      .forEach(p => drawLayer.circle(p).radius(0.01)
+        .fill(["#fb4", "#e53"][i])
+        .stroke("none")));
   };
 
   svg.onPress = function (e) {
-    e = maths.onPress(e);
+    e = Snap(snapPoints, e);
     ui.onPress(e);
-    data.onPress(e);
+    history.onPress(e);
   };
   svg.onRelease = function (e) {
-    e = maths.onRelease(e);
+    e = Snap(snapPoints, e);
     ui.onRelease(e);
-    data.onRelease(e);
-    draw();
+    history.onRelease(e);
+    didChange();
   };
   svg.onMove = function (e) {
+    e = Snap(snapPoints, e);
     ui.onMove(e);
-    data.onMove(e);
-    maths.onMove(e);
-    Object.keys(maths.nearest)
-      .filter(a => maths.nearest[a] !== undefined)
-      .forEach(p => ui.layer.circle(maths.nearest[p])
-        .radius(0.005)
-        .fill("#e53")
-        .stroke("none"));
   };
 });
 

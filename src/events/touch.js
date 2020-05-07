@@ -21,7 +21,8 @@ const off = (element, handlers) => handlerNames.forEach(handlerName => {
 
 const defineGetter = (obj, prop, value) => Object.defineProperty(obj, prop, {
   get: () => value,
-  enumerable: true
+  enumerable: true,
+  configurable: true,
 });
 
 const TouchEvents = function (element) {

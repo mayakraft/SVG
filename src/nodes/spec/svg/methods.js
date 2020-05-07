@@ -31,7 +31,8 @@ const background = function (element, color) {
     .filter(child => child.getAttribute(K.class) === bgClass)
     .shift();
   if (backRect == null) {
-    backRect = this.Constructor("rect", ...getFrame(element));
+    const frame = getFrame(element);
+    backRect = this.Constructor("rect", frame[2], frame[3], frame[0], frame[1]);
     backRect.setAttribute(K.class, bgClass);
     element.insertBefore(backRect, element.firstChild);
   }
@@ -50,7 +51,7 @@ const stylesheet = function (element, textContent) {
     styleSection = this.Constructor(K.style);
     element.insertBefore(styleSection, element.firstChild);
   }
-  styleSection.textContent = ""; 
+  styleSection.textContent = "";
   styleSection.appendChild(cdata(textContent));
   return styleSection;
 };

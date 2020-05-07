@@ -8,21 +8,87 @@
 <h1>SVG Reference</h1>
 
 <p>
-  This Javascript library enables fast-building of SVG images. The <a href="https://svg.rabbitear.org/">web editor</a> is a quick way to get aquainted. Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
+  This Javascript library helps you easily make SVG images. The <a href="https://svg.rabbitear.org/">web editor</a> has examples to get aquainted (roll the dice). Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
 </p>
 
 <h3>Sections</h3>
 
 <ol>
-  <li>Overview</li>
   <li>Shapes</li>
+  <li>Overview</li>
   <li>Appendix</li>
 </ol>
+
+<h2>Shapes</h2>
+
+  <pre class="title"><code><f>SVG</f>()</code></pre>
+  <div class="sketch-1"></div>
+
+  <pre class="title"><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
+  <div class="sketch-2"></div>
+
+  <pre class="title"><code><f>circle</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>)</code></pre>
+  <div class="sketch-3"></div>
+
+  <pre class="title"><code><f>ellipse</f>(<arg>x</arg>, <arg>y</arg>, <arg>rx</arg>, <arg>ry</arg>)</code></pre>
+  <div class="sketch-4"></div>
+
+  <pre class="title"><code><f>rect</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+  <div class="sketch-5"></div>
+
+  <pre class="title"><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
+  <div class="sketch-6"></div>
+
+  <pre class="title"><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
+  <div class="sketch-7"></div>
+
+  <pre class="title"><code><f>path</f>()</code></pre>
+  <div class="sketch-8"></div>
+
+  <pre class="title"><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
+  <div class="sketch-9"></div>
+
+<h3>Layers and Masks</h3>
+
+  <pre class="title"><code><f>g</f>()</code></pre>
+  <div class="sketch-10"></div>
+
+  <pre class="title"><code><f>clipPath</f>()</code></pre>
+  <div class="sketch-11"></div>
+  
+  <pre class="title"><code><f>mask</f>()</code></pre>
+  <div class="sketch-12"></div>
+
+<h3>Outside the Specification</h3>
+
+  <pre class="title"><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
+  <div class="sketch-13"></div>
+
+  <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+  <div class="sketch-14"></div>
+
+  <pre class="title"><code><f>curve</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>, <arg>bend</arg>)</code></pre>
+  <div class="sketch-15"></div>
+
+  <pre class="title"><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+  <div class="sketch-16"></div>
+
+  <pre class="title"><code><f>wedge</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+  <div class="sketch-17"></div>
+
+<h3>Events</h3>
+
+  <pre class="title"><code><f>onMove</f>, <f>onPress</f>, <f>onRelease</f></code></pre>
+  <div class="sketch-18"></div>
+
+  <pre class="title"><code><f>animate</f></code></pre>
+  <div class="sketch-19"></div>
+
 
 <h2>Overview</h2>
 
 <p>
-  Designers organize drawings into <em>layers</em>, a tree of parents and children.
+  SVGs are organized into <em>layers</em>, a tree of parents and children. In this example the <b>rect</b> is drawn last, on top of everything.
 </p>
 
 <pre class="code" style="line-height: 1">&lt;svg&gt;
@@ -143,6 +209,47 @@ layer.rect(x, y, width, height)
   // animation frame based loop
 }</pre>
 
+<h3>Animation</h3>
+
+<p>
+  if you are familiar with Processing or openFrameworks the animation works differently here. This is the basic form for a still frame:
+</p>
+
+
+<pre class="code">svg.size(100, 100);
+svg.background('transparent');
+// draw here
+svg.ellipse()
+</pre>
+
+<p>
+  The basic structure for animations, Processing/openFrameworks style, you need the removeChildren at the beginning of the play() loop. Also the background is a child, so it needs to follow.
+</p>
+
+<pre class="code">svg.size(100, 100);
+
+svg.play = function (e) {
+  svg.removeChildren();
+  svg.background('transparent');
+  // draw here
+  svg.ellipse()
+};</pre>
+
+<p>
+  But even that's not the best approach. Better SVG drawing is to place the item on the screen before the loop and modify it's properties.
+</p>
+
+<pre class="code">svg.size(100, 100);
+
+var el = svg.ellipse();
+
+svg.play = function (e) {
+  svg.removeChildren();
+  svg.background('transparent');
+  // modify drawing here
+  el.setCenter(...);
+};</pre>
+
 <h3>Methods</h3>
 
 <p>
@@ -167,71 +274,6 @@ SVG((svg) => {
   ...
 });
 </pre>
-
-<h2>Shapes</h2>
-
-  <pre class="title"><code><f>SVG</f>()</code></pre>
-  <div class="sketch-1"></div>
-
-  <pre class="title"><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
-  <div class="sketch-2"></div>
-
-  <pre class="title"><code><f>circle</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>)</code></pre>
-  <div class="sketch-3"></div>
-
-  <pre class="title"><code><f>ellipse</f>(<arg>x</arg>, <arg>y</arg>, <arg>rx</arg>, <arg>ry</arg>)</code></pre>
-  <div class="sketch-4"></div>
-
-  <pre class="title"><code><f>rect</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
-  <div class="sketch-5"></div>
-
-  <pre class="title"><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
-  <div class="sketch-6"></div>
-
-  <pre class="title"><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
-  <div class="sketch-7"></div>
-
-  <pre class="title"><code><f>path</f>()</code></pre>
-  <div class="sketch-8"></div>
-
-  <pre class="title"><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
-  <div class="sketch-9"></div>
-
-<h3>Layers and Masks</h3>
-
-  <pre class="title"><code><f>g</f>()</code></pre>
-  <div class="sketch-10"></div>
-
-  <pre class="title"><code><f>clipPath</f>()</code></pre>
-  <div class="sketch-11"></div>
-  
-  <pre class="title"><code><f>mask</f>()</code></pre>
-  <div class="sketch-12"></div>
-
-<h3>Outside the Specification</h3>
-
-  <pre class="title"><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
-  <div class="sketch-13"></div>
-
-  <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
-  <div class="sketch-14"></div>
-
-  <pre class="title"><code><f>curve</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>, <arg>bend</arg>)</code></pre>
-  <div class="sketch-15"></div>
-
-  <pre class="title"><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
-  <div class="sketch-16"></div>
-
-  <pre class="title"><code><f>wedge</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
-  <div class="sketch-17"></div>
-
-<h3>Events</h3>
-
-  <pre class="title"><code><f>onMove</f>, <f>onPress</f>, <f>onRelease</f></code></pre>
-  <div class="sketch-18"></div>
-
-  <pre class="title"><code><f>animate</f></code></pre>
-  <div class="sketch-19"></div>
 
 <h2>Appendix</h2>
 

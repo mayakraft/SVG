@@ -11,14 +11,14 @@ import style from "./style";
 import text from "./text";
 import svg from "./svg/index";
 // multiple nodes in one
-import maskTypes from "./maskTypes"
+import maskTypes from "./maskTypes";
 import polys from "./polys";
 
 /**
  * in each of these instances, arguments maps the arguments to attributes
  * as the attributes are listed in the "attributes" folder.
  *
- * arguments: function. this should convert the array of arguments into 
+ * arguments: function. this should convert the array of arguments into
  * an array of (processed) arguments. 1:1. arguments into arguments.
  * make sure it is returning an array.
  *

@@ -6,6 +6,7 @@ import window from "../environment/window";
 import UUID from "../arguments/uuid";
 
 const Animation = function (element) {
+  let fps; // bring this back
 
   let start;
   const handlers = {};
@@ -18,7 +19,7 @@ const Animation = function (element) {
       .forEach(uuid => delete handlers[uuid]);
     start = undefined;
     frame = 0;
-  }
+  };
 
   Object.defineProperty(element, "play", {
     set: (handler) => {
@@ -28,9 +29,10 @@ const Animation = function (element) {
       const handlerFunc = (e) => {
         if (!start) {
           start = e;
+          frame = 0;
         }
         const progress = (e - start) * 0.001;
-        handler({time: progress, frame: frame});
+        handler({ time: progress, frame });
         // prepare next frame
         frame += 1;
         if (handlers[uuid]) {

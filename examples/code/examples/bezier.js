@@ -8,7 +8,7 @@ var curve = svg.path();
 var l1 = svg.line().stroke("black");
 var l2 = svg.line().stroke("black");
 
-// these are persistent control points
+// these are control points
 // 1.create an svg element to track with each point
 // 2.assign a position
 // 3.append to a parent

@@ -3,7 +3,6 @@
  */
 
 // import Arguments from "../arguments/index";
-import Debug from "../environment/debug";
 import window from "../environment/window";
 import svgNS from "../environment/namespace";
 import NodesChildren from "./nodesChildren";
@@ -28,7 +27,7 @@ const RequiredAttributes = (element, nodeName) => {
     Object.keys(RequiredAttrMap[nodeName])
       .forEach(key => element.setAttribute(key, RequiredAttrMap[nodeName][key]));
   }
-}
+};
 
 const bound = {};
 
@@ -43,7 +42,7 @@ const constructor = (nodeName, ...args) => {
   });
 
   // camelCase functional style attribute setters, like .stroke() .strokeWidth()
-  NodeSpec[nodeName].attributes.forEach(attribute => {
+  NodeSpec[nodeName].attributes.forEach((attribute) => {
     Object.defineProperty(element, Case.toCamel(attribute), {
       value: function () {
         element.setAttribute(attribute, ...arguments);
@@ -66,7 +65,7 @@ const constructor = (nodeName, ...args) => {
 
   // a method to create a child and automatically append it to this node
   if (NodesChildren[nodeName]) {
-    NodesChildren[nodeName].forEach(childNode => {
+    NodesChildren[nodeName].forEach((childNode) => {
       Object.defineProperty(element, childNode, {
         value: function () {
           const childElement = constructor(childNode, ...arguments);

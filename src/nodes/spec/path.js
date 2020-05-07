@@ -4,8 +4,8 @@
 
 import flatten from "../../arguments/flatten";
 
-var markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
-var digitRegEx = /-?[0-9]*\.?\d+/g;
+const markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
+const digitRegEx = /-?[0-9]*\.?\d+/g;
 
 const pathCommands = {
   m: "move",
@@ -34,7 +34,7 @@ const pathCommands = {
 // };
 
 // make capitalized copies of each command
-Object.keys(pathCommands).forEach(key => {
+Object.keys(pathCommands).forEach((key) => {
   const s = pathCommands[key];
   pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
   // expectedArguments[key.toUpperCase()] = expectedArguments[key];
@@ -55,11 +55,11 @@ const appendPathItem = (el, command, ...args) => el
 // ]
 const parsePathCommands = function (str) {
   // Ulric Wilfred
-  const results = []; 
+  const results = [];
   let match;
   while ((match = markerRegEx.exec(str)) !== null) {
     results.push(match);
-  };
+  }
   return results.map(match => ({
     command: str[match.index],
     index: match.index
@@ -67,8 +67,8 @@ const parsePathCommands = function (str) {
   .reduceRight((all, cur) => {
     const chunk = str.substring(cur.index, all.length ? all[all.length - 1].index : str.length);
     return all.concat([
-       { command: cur.command, 
-       index: cur.index, 
+       { command: cur.command,
+       index: cur.index,
        chunk: (chunk.length > 0) ? chunk.substr(1, chunk.length - 1) : chunk }
     ]);
   }, [])
@@ -96,8 +96,8 @@ const setString = (element, commandsString) => element
   .setAttribute("d", commandsString);
 
 const setters = {
-  "string": setString,
-  "object": setCommands,
+  string: setString,
+  object: setCommands,
 };
 
 // depending on the user's argument, different setters will get called
@@ -123,12 +123,12 @@ const clearAndSet = (element, ...args) => {
 const methods = {
   command: appendPathItem,
   clear,
-  "get": getCommands,
-  "set": clearAndSet,
-  "add": noClearSet,
+  get: getCommands,
+  set: clearAndSet,
+  add: noClearSet,
 };
 
-Object.keys(pathCommands).forEach(key => {
+Object.keys(pathCommands).forEach((key) => {
   methods[pathCommands[key]] = (el, ...args) => appendPathItem(el, key, ...args);
 });
 

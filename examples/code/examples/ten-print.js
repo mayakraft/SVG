@@ -7,7 +7,7 @@ var layer = svg.g()
   .strokeWidth("1%")
   .strokeLinecap("square");
 
-// a 2d-grid of diagonal lines, either / or \
+// a 2d-grid of either / or \
 // the column and row sizes are 1px
 for (var y = 0; y < 25; y += 1) {
   for (var x = 0; x < 40; x += 1) {

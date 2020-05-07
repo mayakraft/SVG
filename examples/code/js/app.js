@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var svg = SVG(app.dom.canvas, 300, 150, { window: true });
   window.svg = svg;
-  svg.setAttribute("class", "svg-code");
 
   const buttons = [ { title: "Help", class: "question-button" },
     { title: "Download", class: "download-button" },
@@ -88,22 +87,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // loadAndRunExamples(function (examples) {
     //   return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
     // });
-//     var welcomeText = `svg.size(100, 100);
-// svg.background('transparent');
-// `
     var welcomeText = `svg.size(100, 100);
 svg.background('transparent');
-
-svg.controls(2)
-  .svg(() => svg.circle().radius(5).fill("red"))
-  .position(() => [Math.random()*100, Math.random()*100]);
-
-let c = svg.circle().radius(10);
-svg.onMove = function (e) {
-  c.center(e.x, e.y);
-};
-
-`;
+`
     app.injectCode(welcomeText);
   } else {
     app.injectCode(bootQueryValue);
@@ -172,11 +158,9 @@ svg.onMove = function (e) {
     // app.dom.canvas.removeAttribute("style");
 
     if (svg !== undefined) {
-      while (svg.lastChild) {
-        svg.removeChild(svg.lastChild);
-      }
+      svg.removeChildren();
       Array.from(svg.attributes).filter(function (a) {
-        return ["version", "xmlns", "class", "width", "height"].indexOf(a.nodeName) === -1;
+        return ["version", "xmlns"].indexOf(a.nodeName) === -1;
       }).forEach(function(attr) { svg.removeAttribute(attr.nodeName); });
       // while (svg.attributes.length > 0) {
       //   svg.removeAttribute(svg.attributes[0].nodeName);
