@@ -21,7 +21,7 @@ const Nodes = {};
 // assuming custom nodes are drawing-type, make them known to the library
 N.v.push(...Object.keys(CustomNodes));
 // assuming custom nodes are drawing-type, append presentation attributes
-Object.keys(CustomNodes).forEach(node => {
+Object.keys(CustomNodes).forEach((node) => {
   CustomNodes[node].attributes = (CustomNodes[node].attributes === undefined
     ? [...ManyElements.presentation]
     : CustomNodes[node].attributes.concat(ManyElements.presentation));
@@ -34,14 +34,14 @@ Object.assign(Nodes, Spec, CustomNodes);
 Object.keys(N)
   .forEach(key => N[key]
     .filter(nodeName => Nodes[nodeName] === undefined)
-    .forEach(nodeName => {
+    .forEach((nodeName) => {
       Nodes[nodeName] = {};
     }));
 
 const passthrough = function () { return Array.from(arguments); };
 
 // complete the lookup table. empty entries where nothing existed
-Object.keys(Nodes).forEach(key => {
+Object.keys(Nodes).forEach((key) => {
   if (!Nodes[key].nodeName) { Nodes[key].nodeName = key; }
   if (!Nodes[key].init) { Nodes[key].init = passthrough; }
   if (!Nodes[key].args) { Nodes[key].args = passthrough; }
@@ -53,7 +53,7 @@ Object.keys(Nodes).forEach(key => {
 
 const assign = (groups, Methods) => {
   groups.forEach(n =>
-    Object.keys(Methods).forEach(method => {
+    Object.keys(Methods).forEach((method) => {
       Nodes[n].methods[method] = function () {
         Methods[method](...arguments);
         return arguments[0];

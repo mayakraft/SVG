@@ -1,6 +1,4 @@
-// var CodeSVG = function CodeSVG(container) {
 var LiveCode = function LiveCode(container) {
-  var SVG = window.SVG;
   var ace = window.ace;
   var app = {};
   var isPaused = false;

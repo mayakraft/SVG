@@ -6,10 +6,12 @@ import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 import attributes from "../../attributes/singleElements";
 
-const setRadii = (el, rx, ry) => [,,rx,ry].forEach((value, i) => el
-  .setAttribute(attributes.ellipse[i], value));
+// const setRadii = (el, rx, ry) => [,,rx,ry]
+//   .forEach((value, i) => el.setAttribute(attributes.ellipse[i], value));
+const setRadii = (el, rx, ry) => [rx, ry]
+  .forEach((value, i) => el.setAttribute(attributes.ellipse[i], value));
 
-const setCenter = (el, a, b) => coordinates(...flatten(a, b)).slice(0, 2)
+const setCenter = (el, a, b) => [, , ...coordinates(...flatten(a, b)).slice(0, 2)]
   .forEach((value, i) => el.setAttribute(attributes.ellipse[i], value));
 
 export default {
@@ -18,12 +20,12 @@ export default {
     methods: {
       radius: setRadii,
       setRadius: setRadii,
+      origin: setCenter,
+      setOrigin: setCenter,
       center: setCenter,
-      setCenter: setCenter,
+      setCenter,
       position: setCenter,
       setPosition: setCenter,
     }
   }
 };
-
-

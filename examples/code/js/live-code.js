@@ -159,7 +159,7 @@ var LiveCode = function LiveCode(container) {
   app.editor.session.setMode("ace/mode/javascript");
   app.editor.session.on("change", editorDidUpdate);
   app.editor.session.setTabSize(2);
-  app.editor.setOptions({ fontSize: "9pt" });
+  app.editor.setOptions({ fontSize: "11pt" });
   app.editor.focus();
 
   app.dom.playPause.onclick = function () {
@@ -172,7 +172,7 @@ var LiveCode = function LiveCode(container) {
   };
   app.dom.fontSize.onclick = function () {
     zoom = !zoom;
-    app.editor.setOptions({ fontSize: (zoom ? "18pt" : "9pt") });
+    app.editor.setOptions({ fontSize: (zoom ? "18pt" : "11pt") });
     app.editor.focus();
   };
 

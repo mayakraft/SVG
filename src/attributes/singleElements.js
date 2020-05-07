@@ -8,9 +8,9 @@ export default {
   // the order of indices matter
   svg: ["viewBox"],
   line: ["x1", "y1", "x2", "y2"],
-  rect: ["x", "y", "width", "height"],
-  circle: ["cx", "cy", "r"],
-  ellipse: ["cx", "cy", "rx", "ry"],
+  rect: ["width", "height", "x", "y"],
+  circle: ["r", "cx", "cy"],
+  ellipse: ["rx", "ry", "cx", "cy"],
   polygon: ["points"],
   polyline: ["points"],
   path: ["d"],

@@ -31,7 +31,7 @@ const folders = {
 };
 
 const nodesAndChildren = {};
-Object.keys(folders).forEach(key => {
+Object.keys(folders).forEach((key) => {
   nodesAndChildren[key] = folders[key].reduce((a, b) => a.concat(b), []);
 });
 

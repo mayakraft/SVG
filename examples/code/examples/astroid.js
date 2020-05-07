@@ -1,13 +1,11 @@
 svg.size(-256, -256, 512, 512);
 svg.background("black");
 
-// all children will inherit this style
+// all children of this group inherit this style
 var layer = svg.g().stroke("white");
 
-// how many divisions to make
 var segments = 30;
 
-// calculating these here makes our loop cleaner
 var w = svg.getWidth() / 2 / segments;
 var h = svg.getHeight() / 2 / segments;
 

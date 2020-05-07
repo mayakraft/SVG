@@ -6,8 +6,8 @@ import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 import attributes from "../../attributes/singleElements";
 
-const setRadius = (el, r) => el.setAttribute(attributes.circle[2], r);
-const setCenter = (el, a, b) => coordinates(...flatten(a, b)).slice(0, 2)
+const setRadius = (el, r) => el.setAttribute(attributes.circle[0], r);
+const setOrigin = (el, a, b) => [, ...coordinates(...flatten(a, b)).slice(0, 2)]
   .forEach((value, i) => el.setAttribute(attributes.circle[i], value));
 
 const fromPoints = (a, b, c, d) => [a, b, Math.sqrt(Math.pow(c-a, 2) + Math.pow(d-b, 2))];
@@ -23,11 +23,13 @@ export default {
     },
     methods: {
       radius: setRadius,
-      setRadius: setRadius,
-      center: setCenter,
-      setCenter: setCenter,
-      position: setCenter,
-      setPosition: setCenter,
+      setRadius,
+      origin: setOrigin,
+      setOrigin,
+      center: setOrigin,
+      setCenter: setOrigin,
+      position: setOrigin,
+      setPosition: setOrigin,
     }
   }
 };
