@@ -7,6 +7,7 @@ import Constructor from "./nodes/constructor";
 import window from "./environment/window";
 import NS from "./environment/namespace";
 import K from "./environment/keys";
+import Append from "./environment/append";
 import Touch from "./events/touch";
 import Animation from "./events/animation";
 import Controls from "./events/controls";
@@ -37,5 +38,6 @@ Object.assign(SVG, Nodes);
 SVG.load = Load;
 SVG.save = Save;
 SVG.NS = NS;
+SVG.append = Append.bind(SVG);
 
 export default SVG;

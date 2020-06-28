@@ -10,12 +10,13 @@ const setRadius = (el, r) => el.setAttribute(attributes.circle[0], r);
 const setOrigin = (el, a, b) => [, ...coordinates(...flatten(a, b)).slice(0, 2)]
   .forEach((value, i) => el.setAttribute(attributes.circle[i], value));
 
-const fromPoints = (a, b, c, d) => [a, b, Math.sqrt(Math.pow(c-a, 2) + Math.pow(d-b, 2))];
+const fromPoints = (a, b, c, d) => [Math.sqrt(Math.pow(c - a, 2) + Math.pow(d - b, 2)), a, b];
 
 export default {
   circle: {
     args: (a, b, c, d) => {
       const coords = coordinates(...flatten(a, b, c, d));
+      // console.log("SVG circle coords", coords);
       return (coords.length > 3
         ? fromPoints(...coords)
         : coords);

@@ -2,8 +2,7 @@ import cleanup from "rollup-plugin-cleanup";
 import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
 
-module.exports = [
-{
+module.exports = [{
   input: "src/index.js",
   output: {
     name: "SVG",

@@ -8,7 +8,7 @@
 <h1>SVG Reference</h1>
 
 <p>
-  This Javascript library helps you easily make SVG images. The <a href="https://svg.rabbitear.org/">web editor</a> has examples to get aquainted (roll the dice). Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
+  This Javascript library helps you easily craft SVG images. The <a href="https://svg.rabbitear.org/">web editor</a> has some examples to get you started (roll the dice). Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
 </p>
 
 <h3>Sections</h3>
@@ -27,13 +27,13 @@
   <pre class="title"><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
   <div class="sketch-2"></div>
 
-  <pre class="title"><code><f>circle</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>)</code></pre>
+  <pre class="title"><code><f>circle</f>(<arg>radius</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
   <div class="sketch-3"></div>
 
-  <pre class="title"><code><f>ellipse</f>(<arg>x</arg>, <arg>y</arg>, <arg>rx</arg>, <arg>ry</arg>)</code></pre>
+  <pre class="title"><code><f>ellipse</f>(<arg>rx</arg>, <arg>ry</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
   <div class="sketch-4"></div>
 
-  <pre class="title"><code><f>rect</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+  <pre class="title"><code><f>rect</f>(<arg>width</arg>, <arg>height</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
   <div class="sketch-5"></div>
 
   <pre class="title"><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
@@ -61,7 +61,7 @@
 
 <h3>Outside the Specification</h3>
 
-  <pre class="title"><code><f>regularPolygon</f>(<arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>, <arg>sides</arg>)</code></pre>
+  <pre class="title"><code><f>regularPolygon</f>(<arg>sides</arg>, <arg>radius</arg>, <arg>cX</arg>, <arg>cY</arg>)</code></pre>
   <div class="sketch-13"></div>
 
   <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
@@ -131,8 +131,8 @@
   To draw a shape first write the parent, followed by a ".".
 </p>
 
-<pre class="code">svg.rect(x, y, width, height)
-svg.circle(x, y, radius)</pre>
+<pre class="code">svg.rect(width, height, x, y)
+svg.circle(radius, x, y)</pre>
 
 <p>
   SVG shapes are <b>circle</b>, <b>ellipse</b>, <b>line</b>, <b>path</b>, <b>polygon</b>, <b>polyline</b>, <b>rect</b>, <b>text</b>
@@ -150,8 +150,8 @@ const grandchild = child.g();</pre>
 </p>
 
 <pre class="code">const layer = svg.g()          // layer
-svg.rect(x, y, width, height)  // on top of layer
-layer.circle(x, y, radius)     // child of layer, underneath rect</pre>
+svg.rect(width, height, x, y)  // on top of layer
+layer.circle(radius, x, y)     // child of layer, underneath rect</pre>
 
 <p>
   Shape-drawing parents are:
@@ -185,7 +185,7 @@ layer.circle(x, y, radius)     // child of layer, underneath rect</pre>
   .fill("none")
   .stroke("red");
 
-layer.rect(x, y, width, height)
+layer.rect(width, height, x, y)
   .stroke("blue");</pre>
 
 <p>
@@ -270,7 +270,7 @@ svg.play = function (e) {
 <pre class="code">
 SVG((svg) => {
   svg.size(window.innerWidth / window.innerHeight, 1);
-  svg.rect(0, 0, svg.getWidth(), svg.getHeight());
+  svg.rect(svg.getWidth(), svg.getHeight());
   ...
 });
 </pre>
