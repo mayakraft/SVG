@@ -19,8 +19,8 @@ export default (...args) => {
     .concat(
       args.filter(a => typeof a === K.object && a !== null)
         .map((el) => {
-          if (typeof el.x === K.number) return [el.x, el.y];
-          if (typeof el[0] === K.number) return [el[0], el[1]];
+          if (typeof el.x === K.number) { return [el.x, el.y]; }
+          if (typeof el[0] === K.number) { return [el[0], el[1]]; }
           return undefined;
         }).filter(a => a !== undefined)
         .reduce((a, b) => a.concat(b), [])

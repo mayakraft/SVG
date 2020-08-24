@@ -2,17 +2,15 @@
  * SVG (c) Robby Kraft
  */
 
-import Debug from "../environment/debug";
 import N from "./nodeNames";
-import Custom from "./custom/index";
-
-// todo, get rid of custom primitives here if possible
+// import Custom from "./custom/index";
 
 // arc, parabola, regularPolygon, arrow...
-const customPrimitives = Object.keys(Custom);
+// const customPrimitives = Object.keys(Custom);
+// todo, get rid of custom primitives here if possible
 
 const headerStuff = [N.h, N.p, N.i];
-const drawingShapes = [N.g, N.v, N.t, customPrimitives];
+const drawingShapes = [N.g, N.v, N.t];//, customPrimitives];
 
 const folders = {
   // VISIBLE
@@ -34,7 +32,5 @@ const nodesAndChildren = {};
 Object.keys(folders).forEach((key) => {
   nodesAndChildren[key] = folders[key].reduce((a, b) => a.concat(b), []);
 });
-
-Debug.log(nodesAndChildren);
 
 export default nodesAndChildren;

@@ -14,6 +14,9 @@ import Controls from "./events/controls";
 import Load from "./file/load";
 import Save from "./file/save";
 
+// core methods
+import coordinates from "./arguments/coordinates";
+
 const initialize = function (svg, ...args) {
   args.filter(arg => typeof arg === K.function)
     .forEach(func => func.call(svg, svg));
@@ -39,5 +42,9 @@ SVG.load = Load;
 SVG.save = Save;
 SVG.NS = NS;
 SVG.append = Append.bind(SVG);
+
+SVG.core = Object.assign(Object.create(null), {
+  coordinates,
+});
 
 export default SVG;
