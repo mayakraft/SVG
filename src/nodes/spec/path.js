@@ -82,22 +82,31 @@ const getD = (el) => {
   return (attr == null) ? "" : attr;
 };
 
-const clear = element => element.removeAttribute("d");
+const clear = element => {
+  element.removeAttribute("d");
+  return element;
+};
 
 // todo: would be great if for arguments > 2 it alternated space and comma
-const appendPathCommand = (el, command, ...args) => el
-  .setAttribute("d", `${getD(el)}${command}${flatten(...args).join(" ")}`);
+const appendPathCommand = (el, command, ...args) => {
+  el.setAttribute("d", `${getD(el)}${command}${flatten(...args).join(" ")}`);
+  return el;
+};
 
-const appendPathString = (el, string) => el
-  .setAttribute("d", `${getD(el)}${string}`);
+const appendPathString = (el, string) => {
+  el.setAttribute("d", `${getD(el)}${string}`);
+  return el;
+};
 
 // user got the commands object and is returning it to us
 // const setPathCommands = (element, commandsObject) => commandsObject
 //   .forEach(el => appendPathCommand(element, el.command, el.values));
 
 // user provided one already-formatted path string
-const setPathString = (element, commandsString) => element
-  .setAttribute("d", commandsString);
+const setPathString = (element, commandsString) => {
+  element.setAttribute("d", commandsString);
+  return element;
+};
 
 // break out the path commands into an array of descriptive objects
 const getCommands = element => parsePathCommands(getD(element));

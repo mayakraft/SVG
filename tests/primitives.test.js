@@ -22,6 +22,33 @@ test("all primitives", () => {
   expect(group.childNodes.length).toBe(7);
 });
 
+test("init from SVG", () => {
+  const svg = SVG();
+  svg.line(0, 1, 2, 3);
+  svg.rect(0, 1, 2, 3);
+  svg.circle(0, 1, 2);
+  svg.ellipse(0, 1, 2);
+  svg.polygon([[0, 1], [2, 3], [4, 5]]);
+  svg.polyline([[0, 1], [2, 3], [4, 5]]);
+  svg.text("abc", 0, 1);
+  const nodeNames = ["line", "rect", "circle", "ellipse", "polygon", "polyline", "text"];
+  Array.from(svg.childNodes).forEach((el, i) => {
+    expect(el.nodeName).toBe(nodeNames[i]);
+  });
+  expect(svg.childNodes.length).toBe(7);
+});
+
+test("method chaining", () => {
+  const svg = SVG();
+  expect(svg.line().setPoints(1, 2, 3, 4).getAttribute("x1")).toBe("1");
+  expect(svg.rect().setSize(3, 4).setOrigin(1, 2).getAttribute("width")).toBe("3")
+  expect(svg.circle().setCenter(3, 4).getAttribute("cx")).toBe("3")
+  expect(svg.ellipse().setRadius(1, 2).getAttribute("rx")).toBe("1")
+  expect(svg.polygon().setPoints(1, 2, 3, 4).getAttribute("points")).toBe("1,2 3,4")
+  expect(svg.polyline().setPoints(1, 2, 3, 4).getAttribute("points")).toBe("1,2 3,4")
+  // expect(svg.text().setPoints(1, 2, 3, 4).getAttribute("x")).toBe("1")
+
+})
 
 // test("custom primitives", () => {
 //   const group = SVG.g();

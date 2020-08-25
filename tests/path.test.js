@@ -60,6 +60,10 @@ test("path commands", () => {
   // expect(path.getAttribute("d")).toBe("H20V60");
 });
 
+test("path commands", () => {
+  const path = SVG.path("M50 50h200");
+  expect(path.getD()).toBe("M50 50h200");
+});
 
 test("path commands", () => {
   const path = SVG.path("M50 50");

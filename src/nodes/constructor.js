@@ -59,7 +59,9 @@ const constructor = (nodeName, ...args) => {
         // if there is no return value specified,
         // the method will return the element itself
         // to encourage method-chaining design.
-        return NodeSpec[nodeName].methods[methodName].call(bound, element, ...arguments) || element;
+        // nevermind.
+        // things need to be able to return undefined
+        return NodeSpec[nodeName].methods[methodName].call(bound, element, ...arguments);// || element;
       }
     }));
 

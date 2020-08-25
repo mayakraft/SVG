@@ -10,6 +10,7 @@ export default {
       setTextContent: (el, text) => {
         el.textContent = "";
         el.appendChild(cdata(text));
+        return el;
       }
     }
   }

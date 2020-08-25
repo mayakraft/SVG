@@ -9,7 +9,6 @@ export const clear = function (element) {
   DOM.removeChildren(element);
 };
 
-
 export const assignSVG = function (target, source) {
   clear(target);
   Array.from(source.childNodes).forEach((node) => {

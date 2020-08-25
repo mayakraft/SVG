@@ -6,7 +6,7 @@ import window from "../environment/window";
 import UUID from "../arguments/uuid";
 
 const Animation = function (element) {
-  let fps; // bring this back
+  let fps; // todo: bring this back
 
   let start;
   const handlers = {};

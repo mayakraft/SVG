@@ -152,6 +152,10 @@
       .toUpperCase()
       .replace("-", "")
       .replace("_", "")),
+     toKebab: s => s
+       .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+       .replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2")
+       .toLowerCase(),
     capitalized: s => s
       .charAt(0).toUpperCase() + s.slice(1)
   };
@@ -240,9 +244,15 @@
   const distanceSq2 = (a, b) => ((a[0] - b[0]) ** 2) + ((a[1] - b[1]) ** 2);
   const distance2 = (a, b) => Math.sqrt(distanceSq2(a, b));
 
-  const setRadius = (el, r) => el.setAttribute(NodeAttributes.circle[0], r);
-  const setOrigin = (el, a, b) => [, ...coordinates(...flatten_arrays(a, b)).slice(0, 2)]
-    .forEach((value, i) => el.setAttribute(NodeAttributes.circle[i], value));
+  const setRadius = (el, r) => {
+    el.setAttribute(NodeAttributes.circle[0], r);
+    return el;
+  };
+  const setOrigin = (el, a, b) => {
+    [, ...coordinates(...flatten_arrays(a, b)).slice(0, 2)]
+      .forEach((value, i) => el.setAttribute(NodeAttributes.circle[i], value));
+    return el;
+  };
   const fromPoints = (a, b, c, d) => [distance2([a, b], [c, d]), a, b];
   var circle = {
     circle: {
@@ -265,10 +275,15 @@
     }
   };
 
-  const setRadii = (el, rx, ry) => [rx, ry]
-    .forEach((value, i) => el.setAttribute(NodeAttributes.ellipse[i], value));
-  const setCenter = (el, a, b) => [, , ...coordinates(...flatten_arrays(a, b)).slice(0, 2)]
-    .forEach((value, i) => el.setAttribute(NodeAttributes.ellipse[i], value));
+  const setRadii = (el, rx, ry) => {
+    [rx, ry].forEach((value, i) => el.setAttribute(NodeAttributes.ellipse[i], value));
+    return el;
+  };
+  const setCenter = (el, a, b) => {
+    [, , ...coordinates(...flatten_arrays(a, b)).slice(0, 2)]
+      .forEach((value, i) => el.setAttribute(NodeAttributes.ellipse[i], value));
+    return el;
+  };
   var ellipse = {
     ellipse: {
       args: (a, b, c, d) => coordinates(...flatten_arrays(a, b, c, d)).slice(0, 4),
@@ -286,8 +301,8 @@
   };
 
   const Args = (a, b, c, d) => coordinates(...flatten_arrays(a, b, c, d)).slice(0, 4);
-  const setPoints = (element, a, b, c, d) => Args(a, b, c, d)
-    .forEach((value, i) => element.setAttribute(NodeAttributes.line[i], value));
+  const setPoints = (element, a, b, c, d) => { Args(a, b, c, d)
+    .forEach((value, i) => element.setAttribute(NodeAttributes.line[i], value)); return element; };
   var line = {
     line: {
       args: Args,
@@ -346,9 +361,14 @@
     const attr = el.getAttribute("d");
     return (attr == null) ? "" : attr;
   };
-  const clear = element => element.removeAttribute("d");
-  const appendPathCommand = (el, command, ...args) => el
-    .setAttribute("d", `${getD(el)}${command}${flatten_arrays(...args).join(" ")}`);
+  const clear = element => {
+    element.removeAttribute("d");
+    return element;
+  };
+  const appendPathCommand = (el, command, ...args) => {
+    el.setAttribute("d", `${getD(el)}${command}${flatten_arrays(...args).join(" ")}`);
+    return el;
+  };
   const getCommands = element => parsePathCommands(getD(element));
   const methods = {
     addCommand: appendPathCommand,
@@ -367,10 +387,16 @@
     }
   };
 
-  const setSize = (el, rx, ry) => [rx, ry]
-    .forEach((value, i) => el.setAttribute(NodeAttributes.rect[i], value));
-  const setOrigin$1 = (el, a, b) => [, , ...coordinates(...flatten_arrays(a, b)).slice(0, 2)]
-    .forEach((value, i) => el.setAttribute(NodeAttributes.rect[i], value));
+  const setSize = (el, rx, ry) => {
+    [rx, ry]
+      .forEach((value, i) => el.setAttribute(NodeAttributes.rect[i], value));
+    return el;
+  };
+  const setOrigin$1 = (el, a, b) => {
+    [, , ...coordinates(...flatten_arrays(a, b)).slice(0, 2)]
+      .forEach((value, i) => el.setAttribute(NodeAttributes.rect[i], value));
+    return el;
+  };
   var rect = {
     rect: {
       args: (a, b, c, d) => {
@@ -402,6 +428,7 @@
         setTextContent: (el, text) => {
           el.textContent = "";
           el.appendChild(cdata(text));
+          return el;
         }
       }
     }
@@ -423,8 +450,7 @@
     }
   };
 
-  const viewBoxValue = function (x, y, width, height, padding) {
-    if (padding == null) { padding = 0; }
+  const viewBoxValue = function (x, y, width, height, padding = 0) {
     const scale = 1.0;
     const d = (width / scale) - width;
     const X = (x - d) - padding;
@@ -571,11 +597,11 @@
   const isFilename = input => typeof input === Keys.string
     && /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
     && input.length < 10000;
-  const Load = input => {
-    return (isFilename(input) && isBrowser && typeof win.fetch === Keys.function
+  const Load = input => (isFilename(input)
+    && isBrowser
+    && typeof win.fetch === Keys.function
     ? async(input)
     : sync(input));
-  };
 
   const clear$1 = function (element) {
     Array.from(element.attributes)
@@ -727,10 +753,16 @@
       .join(" ");
   };
   const stringifyArgs = (...args) => [polyString(...coordinates(...flatten_arrays(...args)))];
-  const setPoints$1 = (element, ...args) => element
-    .setAttribute("points", stringifyArgs(...args)[0]);
-  const addPoint = (element, ...args) => element
-    .setAttribute("points", [getPoints(element), stringifyArgs(...args)[0]].filter(a => a !== "").join(" "));
+  const setPoints$1 = (element, ...args) => {
+    element.setAttribute("points", stringifyArgs(...args)[0]);
+    return element;
+  };
+  const addPoint = (element, ...args) => {
+    element.setAttribute("points", [getPoints(element), stringifyArgs(...args)[0]]
+      .filter(a => a !== "")
+      .join(" "));
+    return element;
+  };
   const Args$1 = function (...args) {
     return args.length === 1 && typeof args[0] === Keys.string
       ? [args[0]]
@@ -1052,7 +1084,7 @@
     Object.keys(Nodes[nodeName].methods).forEach(methodName =>
       Object.defineProperty(element, methodName, {
         value: function () {
-          return Nodes[nodeName].methods[methodName].call(bound, element, ...arguments) || element;
+          return Nodes[nodeName].methods[methodName].call(bound, element, ...arguments);
         }
       }));
     if (nodesAndChildren[nodeName]) {

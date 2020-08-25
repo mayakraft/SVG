@@ -4,8 +4,7 @@
   "description": "creative coding with SVG",
   "main": "svg.js",
   "scripts": {
-    "test": "jest",
-    "tiny": "jest \\core.*\\.js"
+    "test": "jest"
   },
   "author": "Robby Kraft",
   "license": "MIT",
