@@ -1,5 +1,5 @@
-// import babel from "@rollup/plugin-babel";
-// import { terser } from "rollup-plugin-terser";
+import babel from "@rollup/plugin-babel";
+import { terser } from "rollup-plugin-terser";
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import cleanup from "rollup-plugin-cleanup";
 
@@ -13,11 +13,11 @@ module.exports = [{
   },
   plugins: [
     nodeResolve(),
-    // babel({
-    //   babelrc: false,
-    //   presets: [["@babel/env", { modules: false }]],
-    // }),
+    babel({
+      babelHelpers: "bundled",
+      presets: ["@babel/preset-env"]
+    }),
     cleanup(),
-    // terser(),
+    terser(),
   ],
 }];

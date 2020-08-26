@@ -12,6 +12,20 @@ import K from "../environment/keys";
 //  .getElementsByTagName("parsererror")[0]
 //  .namespaceURI;
 
+const filterWhitespaceNodes = (node) => {
+  if (node === null) { return node; }
+  for (let i = node.childNodes.length - 1; i >= 0; i -= 1) {
+    const child = node.childNodes[i];
+    if (child.nodeType === 3 && child.data.match(/^\s*$/)) {
+      node.removeChild(child);
+    }
+    if (child.nodeType === 1) {
+      filterWhitespaceNodes(child);
+    }
+  }
+  return node;
+};
+
 /**
  * parse and checkParseError go together. 
  * checkParseError needs to be called to pull out the .documentElement
@@ -24,7 +38,7 @@ const checkParseError = xml => {
   if (parserErrors.length > 0) {
     throw new Error(parserErrors[0]);
   }
-  return xml.documentElement;
+  return filterWhitespaceNodes(xml.documentElement);
 };
 
 // get an svg from a html 5 fetch returned in a promise

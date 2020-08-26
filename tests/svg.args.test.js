@@ -27,3 +27,14 @@ test("parent element", () => {
   const svg = SVG(600, 600, parent);
   expect(svg.parentNode.nodeName).toBe("div");
 });
+
+test("svg embed as string", () => {
+  // this string contains \n newlines, the load method targets and removes them
+  // by testing the <line> element at [0] this is also testing the newline removal
+  const svgString = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <line x1="0" y1="0" x2="300" y2="150" stroke="black" stroke-width="5"/>
+</svg>`;
+  const svg = SVG(svgString);
+  expect(svg.childNodes.length).toBe(1);
+  expect(svg.childNodes[0].nodeName).toBe("line");
+})

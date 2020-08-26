@@ -64,7 +64,7 @@ export default {
   background,
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
-  stylesheet: function (text) { return stylesheet.call(this, text); },
+  stylesheet: function (el, text) { return stylesheet.call(this, el, text); },
   load: loadHelper,
   save: Save,
 };
