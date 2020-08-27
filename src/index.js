@@ -7,15 +7,23 @@ import Constructor from "./nodes/constructor";
 import window from "./environment/window";
 import NS from "./environment/namespace";
 import K from "./environment/keys";
-import Append from "./environment/append";
-import Touch from "./events/touch";
-import Animation from "./events/animation";
-import Controls from "./events/controls";
-import Load from "./file/load";
-import Save from "./file/save";
+import attach from "./environment/attach";
+import load from "./file/load";
+import save from "./file/save";
 
 // core methods
+import Case from "./arguments/case";
 import coordinates from "./arguments/coordinates";
+import flatten from "./arguments/flatten";
+import attributes from "./attributes/singleElements";
+import cdata from "./environment/cdata";
+import * as detect from "./environment/detect";
+import classMethods from "./methods/classId";
+import dom from "./methods/dom";
+import * as math from "./methods/math";
+import transforms from "./methods/transforms";
+import * as viewBox from "./methods/viewBox";
+import children from "./nodes/nodesChildren";
 
 const initialize = function (svg, ...args) {
   args.filter(arg => typeof arg === K.function)
@@ -24,9 +32,6 @@ const initialize = function (svg, ...args) {
 
 const SVG = function () {
   const svg = Constructor(K.svg, ...arguments);
-  Touch(svg);
-  Animation(svg);
-  Controls(svg);
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
     window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...arguments));
@@ -37,14 +42,18 @@ const SVG = function () {
 };
 
 Object.assign(SVG, Nodes);
-// Object.keys(ViewBox).forEach((key) => { SVG[key] = ViewBox[key]; });
-SVG.load = Load;
-SVG.save = Save;
 SVG.NS = NS;
-SVG.append = Append.bind(SVG);
 
 SVG.core = Object.assign(Object.create(null), {
+  attach: attach.bind(SVG),
+  load,
+  save,
   coordinates,
-});
+  flatten,
+  attributes,
+  children,
+  cdata,
+  detect,
+}, Case, classMethods, dom, math, transforms, viewBox);
 
 export default SVG;

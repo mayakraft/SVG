@@ -8,6 +8,9 @@ import viewBox from "../../../arguments/viewBox";
 import coordinates from "../../../arguments/coordinates";
 import methods from "./methods";
 import { loadHelper } from "./loadHelper";
+import Touch from "../../../events/touch";
+import Animation from "../../../events/animation";
+import Controls from "../../../events/controls";
 
 const ElementConstructor = (new window.DOMParser())
   .parseFromString("<div />", "text/xml").documentElement.constructor;
@@ -28,7 +31,9 @@ export default {
         .filter(arg => arg instanceof ElementConstructor)
         .filter(el => typeof el.appendChild === K.function)
         .forEach(parent => parent.appendChild(element));
-      // Events(element);
+      Touch(element);
+      Animation(element);
+      Controls(element);
     }
   }
 };

@@ -1,3 +1,6 @@
+/**
+ * SVG (c) Robby Kraft
+ */
 
 const pointsString = function () {
   return Array.from(Array(Math.floor(arguments.length / 2)))

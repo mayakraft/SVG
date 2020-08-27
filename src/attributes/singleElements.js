@@ -4,7 +4,7 @@
 
 // this object will be completed with all remaining nodeName keys
 // with an empty array value
-export default {
+export default Object.assign(Object.create(null), {
   // the order of indices matter
   svg: ["viewBox"],
   line: ["x1", "y1", "x2", "y2"],
@@ -54,4 +54,4 @@ export default {
     "patternTransform", // only <pattern>
     "patternUnits", // only <pattern>
   ],
-};
+});
