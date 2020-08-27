@@ -4,18 +4,13 @@
 
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
-
-// const distanceSq = (a, b) => Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2);
-const distanceSq = (a, b) => [0, 1]
-  .map(i => a[i] - b[i])
-  .map(e => e ** 2)
-  .reduce((a, b) => a + b, 0);
+import { distanceSq2 } from "../methods/math";
 
 const attachToParent = (parent, svg) => (svg && svg.parentNode == null
   ? parent.appendChild(svg)
   : undefined);
 
-const removeFromParent = (svg) => (svg && svg.parentNode
+const removeFromParent = svg => (svg && svg.parentNode
   ? svg.parentNode.removeChild(svg)
   : undefined);
 
@@ -44,7 +39,7 @@ const controlPoint = function (parent, options = {}) {
   };
 
   const proxy = new Proxy(position, {
-    set: (target, property, value, receiver) => {
+    set: (target, property, value) => {
       target[property] = value;
       updateSVG();
       return true;
@@ -52,12 +47,11 @@ const controlPoint = function (parent, options = {}) {
   });
 
   const setPosition = function (...args) {
-    coordinates(...flatten(...args))  
-      .forEach((n, i) => { position[i] = n; })
+    coordinates(...flatten(...args))
+      .forEach((n, i) => { position[i] = n; });
     updateSVG();
     // alert delegate
     if (typeof position.delegate === "function") {
-      // console.log("proxy.pointsContainer", position.pointsContainer);
       position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
     }
   };
@@ -70,20 +64,19 @@ const controlPoint = function (parent, options = {}) {
   position.onMouseMove = mouse => (cp.selected
     ? setPosition(cp.updatePosition(mouse))
     : undefined);
-  position.onMouseUp = () => { cp.selected = false; }
-  position.distance = mouse => Math.sqrt(distanceSq(mouse, position));
+  position.onMouseUp = () => { cp.selected = false; };
+  position.distance = mouse => Math.sqrt(distanceSq2(mouse, position));
 
   ["x", "y"].forEach((prop, i) => Object.defineProperty(position, prop, {
     get: () => position[i],
     set: (v) => { position[i] = v; }
   }));
   // would be nice if "svg" also called removeFromParent(); on set()
-  ["svg", "updatePosition", "selected"].forEach(key => {
-    Object.defineProperty(position, key, {
+  ["svg", "updatePosition", "selected"].forEach(key => Object
+    .defineProperty(position, key, {
       get: () => cp[key],
       set: (v) => { cp[key] = v; }
-    })
-  })
+    }));
   Object.defineProperty(position, "remove", {
     value: () => {
       // todo, do we need to do any other unwinding?
@@ -103,7 +96,7 @@ const controls = function (svg, number, options) {
 
   // hook up the delegate callback for the on change event
   const protocol = point => (typeof delegate === "function"
-    ? delegate.call(points, points, point)
+    ? delegate.call(points, point, selected, points)
     : undefined);
 
   points.forEach((p) => {
@@ -114,7 +107,7 @@ const controls = function (svg, number, options) {
   const mousePressedHandler = function (mouse) {
     if (!(points.length > 0)) { return; }
     selected = points
-      .map((p, i) => ({ i, d: distanceSq(p, [mouse.x, mouse.y]) }))
+      .map((p, i) => ({ i, d: distanceSq2(p, [mouse.x, mouse.y]) }))
       .sort((a, b) => a.d - b.d)
       .shift()
       .i;
@@ -147,20 +140,24 @@ const controls = function (svg, number, options) {
   };
 
   const functionalMethods = {
-    onChange: (func, runOnceAtStart) => { 
+    onChange: (func, runOnceAtStart) => {
       delegate = func;
-      if (runOnceAtStart === true) { func.call(points, points, undefined); }
-    }, 
+      // we need a point, give us the last one in the array
+      if (runOnceAtStart === true) {
+        const index = points.length - 1;
+        func.call(points, points[index], index, points);
+      }
+    },
     position: func => points.forEach((p, i) => p.setPosition(func.call(points, i))),
     svg: func => points.forEach((p, i) => { p.svg = func.call(points, i); }),
   };
-  Object.keys(functionalMethods).forEach(key => {
+  Object.keys(functionalMethods).forEach((key) => {
     points[key] = function () {
       if (typeof arguments[0] === "function") {
         functionalMethods[key](...arguments);
       }
       return points;
-    }
+    };
   });
   points.parent = function (parent) {
     if (parent != null && parent.appendChild != null) {

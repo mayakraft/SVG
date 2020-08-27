@@ -16,6 +16,7 @@ const keys = [
   "path",
   "svg",
   "id",
+  "viewBox",
 ];
 
 const Keys = {};

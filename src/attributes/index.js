@@ -2,7 +2,6 @@
  * SVG (c) Robby Kraft
  */
 
-import Debug from "../environment/debug";
 import N from "../nodes/nodeNames";
 import ManyElements from "./manyElements";
 import NodeAttributes from "./singleElements";
@@ -20,7 +19,5 @@ Object.values(N)
 ].forEach(pair => pair[0].forEach(key => {
   NodeAttributes[key] = NodeAttributes[key].concat(pair[1]);
 }));
-
-Debug.log(NodeAttributes);
 
 export default NodeAttributes;

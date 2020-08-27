@@ -1,26 +1,5 @@
 const SVG = require("../svg");
 
-test("argument parsing, line", () => {
-  const lines = [
-    SVG.line(1,2,3,4),
-    SVG.line([1,2,3,4]),
-    SVG.line([[1,2,3,4]]),
-    SVG.line([1,2],[3,4]),
-    SVG.line([1],[2],[3],[4]),
-    SVG.line({x:1,y:2}, {x:3,y:4}),
-    SVG.line([{x:1,y:2}, {x:3,y:4}]),
-    SVG.line([{x:1,y:2}], [{x:3,y:4}]),
-    SVG.line([[{x:1,y:2}], [{x:3,y:4}]]),
-  ];
-  const result = lines
-    .map(el => ["x1", "y1", "x2", "y2"]
-      .map(attr => el.getAttribute(attr))
-      .map((value, i) => value === String(i + 1))
-      .reduce((a, b) => a && b, true))
-    .reduce((a, b) => a && b, true);
-  expect(result).toBe(true);
-});
-
 test("argument parsing, polygon", () => {
   let poly = SVG.polygon([0, 0, 0, 1, 1, 1, 1, 0]);
   expect(poly.getAttribute("points")).toBe("0,0 0,1 1,1 1,0");
@@ -39,4 +18,13 @@ test("argument parsing, polygon", () => {
     .map(points => points === "0,1 2,3 4,5")
     .reduce((a, b) => a && b, true);
   expect(result).toBe(true);
+});
+
+test("polygon point methods", () => {
+  const poly = SVG.polygon([0, 0, 0, 1, 1, 1, 1, 0]);
+  expect(poly.getAttribute("points")).toBe("0,0 0,1 1,1 1,0");
+  poly.addPoint(6, 7);
+  expect(poly.getAttribute("points")).toBe("0,0 0,1 1,1 1,0 6,7");
+  poly.addPoint([3, 4]);
+  expect(poly.getAttribute("points")).toBe("0,0 0,1 1,1 1,0 6,7 3,4");
 });

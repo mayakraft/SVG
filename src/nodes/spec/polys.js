@@ -20,11 +20,17 @@ const polyString = function () {
 
 const stringifyArgs = (...args) => [polyString(...coordinates(...flatten(...args)))];
 
-const setPoints = (element, ...args) => element
-  .setAttribute("points", stringifyArgs(...args)[0]);
+const setPoints = (element, ...args) => {
+  element.setAttribute("points", stringifyArgs(...args)[0]);
+  return element;
+};
 
-const addPoint = (element, ...args) => element
-  .setAttribute("points", [getPoints(element), stringifyArgs(...args)[0]].filter(a => a !== "").join(" "));
+const addPoint = (element, ...args) => {
+  element.setAttribute("points", [getPoints(element), stringifyArgs(...args)[0]]
+    .filter(a => a !== "")
+    .join(" "));
+  return element;
+};
 
 // this should be improved
 // right now the special case is if there is only 1 argument and it's a string

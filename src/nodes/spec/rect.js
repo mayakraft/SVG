@@ -6,11 +6,17 @@ import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 import attributes from "../../attributes/singleElements";
 
-const setSize = (el, rx, ry) => [rx, ry]
-  .forEach((value, i) => el.setAttribute(attributes.rect[i], value));
+const setRectSize = (el, rx, ry) => {
+  [rx, ry]
+    .forEach((value, i) => el.setAttribute(attributes.rect[i], value));
+  return el;
+};
 
-const setOrigin = (el, a, b) => [, , ...coordinates(...flatten(a, b)).slice(0, 2)]
-  .forEach((value, i) => el.setAttribute(attributes.rect[i], value));
+const setRectOrigin = (el, a, b) => {
+  [, , ...coordinates(...flatten(a, b)).slice(0, 2)]
+    .forEach((value, i) => el.setAttribute(attributes.rect[i], value));
+  return el;
+};
 
 export default {
   rect: {
@@ -25,12 +31,12 @@ export default {
       return coords;
     },
     methods: {
-      origin: setOrigin,
-      setOrigin,
-      center: setOrigin,
-      setCenter: setOrigin,
-      size: setSize,
-      setSize,
+      origin: setRectOrigin,
+      setOrigin: setRectOrigin,
+      center: setRectOrigin,
+      setCenter: setRectOrigin,
+      size: setRectSize,
+      setSize: setRectSize,
     }
   }
 };

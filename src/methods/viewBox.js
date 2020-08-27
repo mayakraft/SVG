@@ -3,8 +3,7 @@
  */
 
 import viewBoxString from "../arguments/viewBox";
-
-const vB = "viewBox";
+import K from "../environment/keys";
 
 export const setViewBox = (element, ...args) => {
   // are they giving us pre-formatted string, or a list of numbers
@@ -12,13 +11,13 @@ export const setViewBox = (element, ...args) => {
     ? args[0]
     : viewBoxString(...args);
   if (viewBox) {
-    element.setAttribute(vB, viewBox);
+    element.setAttribute(K.viewBox, viewBox);
   }
   return element;
 };
 
 export const getViewBox = function (element) {
-  const vb = element.getAttribute(vB);
+  const vb = element.getAttribute(K.viewBox);
   return (vb == null
     ? undefined
     : vb.split(" ").map(n => parseFloat(n)));

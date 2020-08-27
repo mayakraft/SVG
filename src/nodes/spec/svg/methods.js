@@ -6,7 +6,7 @@ import K from "../../../environment/keys";
 import cdata from "../../../environment/cdata";
 import DOM from "../../../methods/dom";
 import Save from "../../../file/save";
-import Load from "../../../file/load";
+import { clear, loadHelper } from "./loadHelper";
 import { getViewBox, setViewBox } from "../../../methods/viewBox";
 
 const getFrame = function (element) {
@@ -56,41 +56,15 @@ const stylesheet = function (element, textContent) {
   return styleSection;
 };
 
-const clear = function (element) {
-  Array.from(element.attributes)
-    .filter(a => a !== "xmlns")
-    .forEach(attr => element.removeAttribute(attr.name));
-  DOM.removeChildren(element);
-};
-
-const assignSVG = function (target, source) {
-  clear(target);
-  Array.from(source.childNodes).forEach((node) => {
-    source.removeChild(node);
-    target.appendChild(node);
-  });
-  Array.from(source.attributes)
-    .forEach(attr => target.setAttribute(attr.name, attr.value));
-};
-
-// check if the loader is running synchronously or asynchronously
-const loadHelper = function (target, data) {
-  const result = Load(data);
-  if (result == null) { return; }
-  return (typeof result.then === "function")
-    ? result.then(svg => assignSVG(target, svg))
-    : assignSVG(target, result);
-};
-
 // these will end up as methods on the <svg> nodes
 export default {
-  clear: clear,
+  clear,
   size: setViewBox,
-  setViewBox: setViewBox,
-  background: background,
+  setViewBox,
+  background,
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
-  stylesheet: function (text) { return stylesheet.call(this, text); },
+  stylesheet: function (el, text) { return stylesheet.call(this, el, text); },
   load: loadHelper,
   save: Save,
 };

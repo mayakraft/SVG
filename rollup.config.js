@@ -1,6 +1,7 @@
-import cleanup from "rollup-plugin-cleanup";
-import babel from "rollup-plugin-babel";
+import babel from "@rollup/plugin-babel";
 import { terser } from "rollup-plugin-terser";
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import cleanup from "rollup-plugin-cleanup";
 
 module.exports = [{
   input: "src/index.js",
@@ -9,30 +10,14 @@ module.exports = [{
     file: "svg.js",
     format: "umd",
     banner: "/* SVG (c) Robby Kraft, MIT License */",
-    bannerNewline: true,
   },
   plugins: [
-    cleanup({ comments: "none" }),
+    nodeResolve(),
     babel({
-      babelrc: false,
-      presets: [["@babel/env", { modules: false }]],
+      babelHelpers: "bundled",
+      presets: ["@babel/preset-env"]
     }),
+    cleanup(),
     terser(),
   ],
-},
-// {
-//   input: "./src/index.js",
-//   output: {
-//     name: "SVG",
-//     file: "svg.js",
-//     format: "es", // for modules "import..from.."
-//     banner: "/* SVG (c) Robby Kraft, MIT License */",
-//   },
-//   plugins: [
-//     cleanup({
-//       comments: "none",
-//       maxEmptyLines: 0,
-//     }),
-//   ],
-// },
-];
+}];

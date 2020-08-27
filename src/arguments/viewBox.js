@@ -5,8 +5,7 @@
 import flatten from "./flatten";
 import coordinates from "./coordinates";
 
-const viewBoxValue = function (x, y, width, height, padding) {
-  if (padding == null) { padding = 0; }
+const viewBoxValue = function (x, y, width, height, padding = 0) {
   const scale = 1.0;
   const d = (width / scale) - width;
   const X = (x - d) - padding;

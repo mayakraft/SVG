@@ -7,6 +7,7 @@ import window from "../../../environment/window";
 import viewBox from "../../../arguments/viewBox";
 import coordinates from "../../../arguments/coordinates";
 import methods from "./methods";
+import { loadHelper } from "./loadHelper";
 
 const ElementConstructor = (new window.DOMParser())
   .parseFromString("<div />", "text/xml").documentElement.constructor;
@@ -19,14 +20,14 @@ const ElementConstructor = (new window.DOMParser())
 export default {
   svg: {
     args: (...args) => [viewBox(coordinates(...args))].filter(a => a != null),
-    methods: methods,
+    methods,
     init: (element, ...args) => {
-      const parent = args.filter(a => a != null)
+      args.filter(a => typeof a === "string")
+        .forEach(string => loadHelper(element, string));
+      args.filter(a => a != null)
         .filter(arg => arg instanceof ElementConstructor)
-        .shift();
-      if (parent != null && typeof parent.appendChild === K.function) {
-        parent.appendChild(element);
-      }
+        .filter(el => typeof el.appendChild === K.function)
+        .forEach(parent => parent.appendChild(element));
       // Events(element);
     }
   }
