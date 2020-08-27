@@ -14,7 +14,9 @@ const Animation = function (element) {
   let requestId;
 
   const removeHandlers = () => {
-    window.cancelAnimationFrame(requestId);
+    if (window.cancelAnimationFrame) {
+      window.cancelAnimationFrame(requestId);
+    }
     Object.keys(handlers)
       .forEach(uuid => delete handlers[uuid]);
     start = undefined;
@@ -40,7 +42,12 @@ const Animation = function (element) {
         }
       };
       handlers[uuid] = handlerFunc;
-      requestId = window.requestAnimationFrame(handlers[uuid]);
+      // node.js doesn't have requestAnimationFrame
+      // we don't need to duplicate this if statement above, because it won't
+      // ever be called if this one is prevented.
+      if (window.requestAnimationFrame) {
+        requestId = window.requestAnimationFrame(handlers[uuid]);
+      }
     },
     enumerable: true
   });

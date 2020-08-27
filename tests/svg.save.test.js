@@ -1,11 +1,17 @@
 const SVG = require("../svg");
 
-test("set background", () => {
+test("export options", () => {
   const svg = SVG();
-  svg.background("black", true);
-  svg.background("#332698", false);
-  expect(svg.childNodes.length).toBe(1);
+  const save0 = svg.save();
+  const save1 = svg.save({ output: "string" });
+  const save2 = svg.save({ output: "svg" });
+  const save3 = svg.save({ windowStyle: true });
+  expect(typeof save0).toBe("string");
+  expect(typeof save1).toBe("string");
+  expect(typeof save2).toBe("object");
+  expect(typeof save3).toBe("string");
 });
+
 
 test("svg export", () => {
   const svg = SVG();

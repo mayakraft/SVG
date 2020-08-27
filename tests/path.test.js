@@ -63,6 +63,8 @@ test("path commands", () => {
 test("path commands", () => {
   const path = SVG.path("M50 50h200");
   expect(path.getD()).toBe("M50 50h200");
+  const path2 = SVG.path();
+  expect(path2.getD()).toBe("");
 });
 
 test("path commands", () => {

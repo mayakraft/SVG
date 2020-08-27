@@ -78,8 +78,11 @@ const TouchEvents = function (element) {
               }
               handler(e);
             };
-            handlers[handlerName].push(handlerFunc);
-            element.addEventListener(handlerName, handlerFunc);
+            // node.js doesn't have addEventListener
+            if (element.addEventListener) {
+              handlers[handlerName].push(handlerFunc);
+              element.addEventListener(handlerName, handlerFunc);
+            }
           }),
       enumerable: true
     });

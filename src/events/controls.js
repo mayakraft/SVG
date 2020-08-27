@@ -52,7 +52,6 @@ const controlPoint = function (parent, options = {}) {
     updateSVG();
     // alert delegate
     if (typeof position.delegate === "function") {
-      // console.log("proxy.pointsContainer", position.pointsContainer);
       position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
     }
   };
@@ -97,7 +96,7 @@ const controls = function (svg, number, options) {
 
   // hook up the delegate callback for the on change event
   const protocol = point => (typeof delegate === "function"
-    ? delegate.call(points, points, point)
+    ? delegate.call(points, point, selected, points)
     : undefined);
 
   points.forEach((p) => {
@@ -143,7 +142,11 @@ const controls = function (svg, number, options) {
   const functionalMethods = {
     onChange: (func, runOnceAtStart) => {
       delegate = func;
-      if (runOnceAtStart === true) { func.call(points, points, undefined); }
+      // we need a point, give us the last one in the array
+      if (runOnceAtStart === true) {
+        const index = points.length - 1;
+        func.call(points, points[index], index, points);
+      }
     },
     position: func => points.forEach((p, i) => p.setPosition(func.call(points, i))),
     svg: func => points.forEach((p, i) => { p.svg = func.call(points, i); }),
