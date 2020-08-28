@@ -1,3 +1,7 @@
+/**
+ * SVG (c) Robby Kraft
+ */
+
 import K from "../../../environment/keys";
 import Load from "../../../file/load";
 import DOM from "../../../methods/dom";

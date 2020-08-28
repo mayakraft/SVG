@@ -2,13 +2,10 @@
  * SVG (c) Robby Kraft
  */
 
-// import Arguments from "../arguments/index";
 import window from "../environment/window";
 import svgNS from "../environment/namespace";
 import NodesChildren from "./nodesChildren";
 import Case from "../arguments/case";
-// import Methods from "../methods";
-
 import NodeSpec from "./nodes";
 
 const RequiredAttrMap = {
@@ -40,7 +37,6 @@ const constructor = (nodeName, ...args) => {
       element.setAttribute(NodeSpec[nodeName].attributes[i], v);
     }
   });
-
   // camelCase functional style attribute setters, like .stroke() .strokeWidth()
   NodeSpec[nodeName].attributes.forEach((attribute) => {
     Object.defineProperty(element, Case.toCamel(attribute), {
@@ -50,7 +46,6 @@ const constructor = (nodeName, ...args) => {
       }
     });
   });
-
   // custom methods from each primitive's definition
   Object.keys(NodeSpec[nodeName].methods).forEach(methodName =>
     Object.defineProperty(element, methodName, {
@@ -64,7 +59,6 @@ const constructor = (nodeName, ...args) => {
         return NodeSpec[nodeName].methods[methodName].call(bound, element, ...arguments);// || element;
       }
     }));
-
   // a method to create a child and automatically append it to this node
   if (NodesChildren[nodeName]) {
     NodesChildren[nodeName].forEach((childNode) => {
@@ -77,9 +71,6 @@ const constructor = (nodeName, ...args) => {
       });
     });
   }
-
-  // Arguments(nodeName, element, ...args);
-  // Methods(nodeName, element);
   return element;
 };
 

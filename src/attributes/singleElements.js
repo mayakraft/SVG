@@ -4,13 +4,13 @@
 
 // this object will be completed with all remaining nodeName keys
 // with an empty array value
-export default {
+export default Object.assign(Object.create(null), {
   // the order of indices matter
   svg: ["viewBox"],
   line: ["x1", "y1", "x2", "y2"],
-  rect: ["width", "height", "x", "y"],
-  circle: ["r", "cx", "cy"],
-  ellipse: ["rx", "ry", "cx", "cy"],
+  rect: ["x", "y", "width", "height"],
+  circle: ["cx", "cy", "r"],
+  ellipse: ["cx", "cy", "rx", "ry"],
   polygon: ["points"],
   polyline: ["points"],
   path: ["d"],
@@ -54,4 +54,4 @@ export default {
     "patternTransform", // only <pattern>
     "patternUnits", // only <pattern>
   ],
-};
+});

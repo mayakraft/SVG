@@ -3,12 +3,14 @@ const SVG = require("../svg");
 test("circle arguments", () => {
   expect(SVG.circle(1).getAttribute("r")).toBe("1");
   expect(SVG.circle(5).getAttribute("r")).toBe("5");
-  expect(SVG.circle(2, 3).getAttribute("r")).toBe("2");
-  expect(SVG.circle(2, 3).getAttribute("cx")).toBe("3");
+  expect(SVG.circle(2, 3).getAttribute("cx")).toBe("2");
+  expect(SVG.circle(2, 3).getAttribute("cy")).toBe("3");
+  expect(SVG.circle(2, 3).getAttribute("r") === null
+    || SVG.circle(2, 3).getAttribute("r") === "").toBe(true);
 
-  expect(SVG.circle(1, 2, 3).getAttribute("r")).toBe("1");
-  expect(SVG.circle(1, 2, 3).getAttribute("cx")).toBe("2");
-  expect(SVG.circle(1, 2, 3).getAttribute("cy")).toBe("3");
+  expect(SVG.circle(1, 2, 3).getAttribute("cx")).toBe("1");
+  expect(SVG.circle(1, 2, 3).getAttribute("cy")).toBe("2");
+  expect(SVG.circle(1, 2, 3).getAttribute("r")).toBe("3");
 
   expect(parseFloat(SVG.circle(1, 2, 3, 4).getAttribute("r")))
     .toBeCloseTo(2 * Math.sqrt(2));

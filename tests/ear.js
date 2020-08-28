@@ -25,10 +25,10 @@
   const use = function (library) {
     if (typeof library !== "function"
       || library === null
-      || typeof library.append !== "function") {
+      || typeof library.core.attach !== "function") {
       return;
     }
-    library.append(this);
+    library.core.attach(this);
   };
   rabbitEar.use = use.bind(rabbitEar);
   return rabbitEar;

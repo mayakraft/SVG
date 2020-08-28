@@ -1,6 +1,9 @@
-// append this library to be a part of the larger library
+/**
+ * SVG (c) Robby Kraft
+ */
 
-const applyToRabbitEar = (svg, ear) => {
+// attach this library to be a part of the larger library
+const attachToRabbitEar = (svg, ear) => {
   ear.svg = svg;
   const keys = [
     // "vector",
@@ -19,13 +22,13 @@ const applyToRabbitEar = (svg, ear) => {
   });
 };
 
-const Append = function (library) {
+const Attach = function (library) {
   // is RabbitEar?
   if (typeof library.cp === "function"
     && typeof library.graph === "function"
     && typeof library.origami === "function") {
-    applyToRabbitEar(this, library);
+    attachToRabbitEar(this, library);
   }
 };
 
-export default Append;
+export default Attach;

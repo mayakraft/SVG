@@ -16,9 +16,9 @@ svg {
 
 window.onload = function () {
   var flag = SVG(600, 400, document.body);
-  flag.rect(0, 0, flag.getWidth(), flag.getHeight())
+  flag.rect(flag.getWidth(), flag.getHeight())
     .fill("white");
-  flag.circle(flag.getWidth()/2, flag.getHeight()/2, flag.getHeight()*0.3)
+  flag.circle(flag.getWidth() / 2, flag.getHeight() / 2, flag.getHeight() * 0.3)
     .fill("#BC002D");
 };
 

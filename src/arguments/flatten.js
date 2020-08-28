@@ -12,7 +12,7 @@ const is_iterable = (obj) => {
  * totally flatten, recursive
  * @returns an array, always.
  */
-export const flatten_arrays = function () {
+const flatten_arrays = function () {
   switch (arguments.length) {
     case undefined:
     case 0: return Array.from(arguments);
@@ -26,6 +26,5 @@ export const flatten_arrays = function () {
         : a)).reduce((a, b) => a.concat(b), []);
   }
 };
-
 
 export default flatten_arrays;

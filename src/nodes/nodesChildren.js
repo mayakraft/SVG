@@ -28,9 +28,9 @@ const folders = {
   mask: drawingShapes,
 };
 
-const nodesAndChildren = {};
+const nodesAndChildren = Object.create(null);
 Object.keys(folders).forEach((key) => {
   nodesAndChildren[key] = folders[key].reduce((a, b) => a.concat(b), []);
 });
 
-export default nodesAndChildren;
+export default Object.freeze(nodesAndChildren);

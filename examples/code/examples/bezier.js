@@ -14,7 +14,7 @@ var l2 = svg.line().stroke("black");
 // 3.append to a parent
 // 4.onChange event handler with "this" bound to the controls
 svg.controls(4)
-  .svg(function () { return SVG.circle(0, 0, svg.getWidth() * 0.05).fill("#e53"); })
+  .svg(function () { return SVG.circle(svg.getWidth() * 0.05).fill("#e53"); })
   .position(function () { return [random(svg.getWidth()), random(svg.getHeight())]; })
   .parent(back)
   .onChange(function () {

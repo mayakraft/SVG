@@ -4,7 +4,7 @@ svg.background("#edb");
 // a clip-path will hide or show parts of shapes.
 // presence of a filled-shape indicates visibility
 var clip = svg.clipPath();
-clip.circle(50, 0, 70.7); // the visible portion
+clip.circle(70.7).origin(50, 0); // the visible portion
 
 // three circles, untouched
 svg.circle(0, 50, 50).fill("#e53");

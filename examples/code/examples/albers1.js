@@ -11,17 +11,17 @@ var style = { fill: "#2c266d", opacity: 0.4 };
 
 // transform-origin moves the center of rotation
 // right rect
-g.rect(0, 0, 30, 50)
+g.rect(30, 50)
   .setAttributes(style)
   .transformOrigin("0 50")
   .rotate(25);
 
 // no rotation
 // center rect
-g.rect(0, 0, 30, 50).setAttributes(style);
+g.rect(30, 50).setAttributes(style);
 
 // left rect
-g.rect(0, 0, 30, 50)
+g.rect(30, 50)
   .setAttributes(style)
   .transformOrigin("0 50")
   .rotate(-25);
