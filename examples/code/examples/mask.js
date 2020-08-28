@@ -14,7 +14,7 @@ var points = Array.from(Array(100))
 // but the polygon and background color alternate
 // white/black and black/white
 maskA.polygon(points).fill("white").fillRule("evenodd");
-maskB.rect(0, 0, 1, 1).fill("white");
+maskB.rect(1, 1).fill("white");
 maskB.polygon(points).fill("black").fillRule("evenodd");
 
 // two circles, assigned to different masks

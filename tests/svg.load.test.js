@@ -13,6 +13,13 @@ test("loading callback", done => {
   })
 });
 
+// test("async attempt promises", () => {
+//   const svg = SVG();
+//   svg.load(path)
+//     .then(() => {});
+//   expect(svg.childNodes.length).toBe(0);
+// });
+
 test("async using fs", (done) => {
   const svg = SVG();
   fs.readFile(path, {encoding: "utf8"}, (err, data) => {

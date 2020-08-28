@@ -31,8 +31,7 @@ const background = function (element, color) {
     .filter(child => child.getAttribute(K.class) === bgClass)
     .shift();
   if (backRect == null) {
-    const frame = getFrame(element);
-    backRect = this.Constructor("rect", frame[2], frame[3], frame[0], frame[1]);
+    backRect = this.Constructor("rect", ...getFrame(element));
     backRect.setAttribute(K.class, bgClass);
     element.insertBefore(backRect, element.firstChild);
   }

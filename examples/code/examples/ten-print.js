@@ -11,7 +11,7 @@ var layer = svg.g()
 // the column and row sizes are 1px
 for (var y = 0; y < 25; y += 1) {
   for (var x = 0; x < 40; x += 1) {
-    // 0 and 1, or 1 and 0, to shift the y-value
+    // a random 0 or 1, and "b" will be the opposite
     var a = Math.random() - 0.5 > 0 ? 0 : 1;
     var b = a ? 0 : 1;
     // a diagonal line, upwards or downwards
