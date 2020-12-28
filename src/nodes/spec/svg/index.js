@@ -7,7 +7,7 @@ import window from "../../../environment/window";
 import viewBox from "../../../arguments/viewBox";
 import coordinates from "../../../arguments/coordinates";
 import methods from "./methods";
-import { loadHelper } from "./loadHelper";
+import { loadSVG } from "./methods";
 import Touch from "../../../events/touch";
 import Animation from "../../../events/animation";
 import Controls from "../../../events/controls";
@@ -25,8 +25,8 @@ export default {
     args: (...args) => [viewBox(coordinates(...args))].filter(a => a != null),
     methods,
     init: (element, ...args) => {
-      args.filter(a => typeof a === "string")
-        .forEach(string => loadHelper(element, string));
+      args.filter(a => typeof a === K.string)
+        .forEach(string => loadSVG(element, string));
       args.filter(a => a != null)
         .filter(arg => arg instanceof ElementConstructor)
         .filter(el => typeof el.appendChild === K.function)

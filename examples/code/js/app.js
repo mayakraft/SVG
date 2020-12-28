@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "curves.js",
     "dragon.js",
     "draw.js",
+		"hanoi.js",
     "mask.js",
     "parabola.js",
     "polygon.js",

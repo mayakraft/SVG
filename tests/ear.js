@@ -4,7 +4,7 @@
   (global = global || self, global.ear = factory());
 }(this, (function () { 'use strict';
 
-  const obj = { svgPath: () => {} };
+  const obj = { svg: () => {} };
   obj.prototype = Object.prototype;
 
   const rabbitEar = {
