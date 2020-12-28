@@ -4,7 +4,7 @@
 
 import N from "./nodeNames";
 import Spec from "./spec/index";
-// import CustomNodes from "./custom/index";
+import CustomNodes from "./custom/index";
 
 import Attributes from "../attributes/index";
 import ManyElements from "../attributes/manyElements";
@@ -18,15 +18,16 @@ import URLs from "../methods/urls";
 const Nodes = {};
 
 // assuming custom nodes are drawing-type, make them known to the library
-// N.v.push(...Object.keys(CustomNodes));
-// // assuming custom nodes are drawing-type, append presentation attributes
-// Object.keys(CustomNodes).forEach((node) => {
-//   CustomNodes[node].attributes = (CustomNodes[node].attributes === undefined
-//     ? [...ManyElements.presentation]
-//     : CustomNodes[node].attributes.concat(ManyElements.presentation));
-// });
+N.v.push(...Object.keys(CustomNodes));
+// assuming custom nodes are drawing-type, append presentation attributes
+Object.keys(CustomNodes).forEach((node) => {
+  CustomNodes[node].attributes = (CustomNodes[node].attributes === undefined
+    ? [...ManyElements.presentation]
+    : CustomNodes[node].attributes.concat(ManyElements.presentation));
+});
 // incorporate custom nodes as if they are drawing primitives.
-Object.assign(Nodes, Spec);//, CustomNodes);
+// Object.assign(Nodes, Spec);//, CustomNodes);
+Object.assign(Nodes, Spec, CustomNodes);
 
 // in most cases the key === value. "line": "line"
 // except custom shapes: "regularPolygon": "polygon"

@@ -3,14 +3,15 @@
  */
 
 import N from "./nodeNames";
-// import Custom from "./custom/index";
+import Custom from "./custom/index";
 
-// arc, parabola, regularPolygon, arrow...
-// const customPrimitives = Object.keys(Custom);
+// arc, parabola, regularPolygon...
+const customPrimitives = Object.keys(Custom);
 // todo, get rid of custom primitives here if possible
 
 const headerStuff = [N.h, N.p, N.i];
-const drawingShapes = [N.g, N.v, N.t];//, customPrimitives];
+// const drawingShapes = [N.g, N.v, N.t];//, customPrimitives];
+const drawingShapes = [N.g, N.v, N.t, customPrimitives];
 
 const folders = {
   // VISIBLE

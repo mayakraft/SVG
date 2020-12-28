@@ -9,7 +9,7 @@ var size = 1 / 30;
 for(var i = 1; i < 360; i += 1) {
   var x = i * radius;
   var r = Math.pow(i, 0.5) * size;
-  svg.regularPolygon(x, 0, r, 3)
+  svg.regularPolygon(3, x, 0, r)
     .rotate(i * phipi * 180 / Math.PI)
     .fill("#000");
 }

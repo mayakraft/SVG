@@ -2,7 +2,7 @@
  * SVG (c) Robby Kraft
  */
 
-const regularPolygonArguments = (cX, cY, radius, sides) => {
+const regularPolygonArguments = (sides, cX, cY, radius) => {
   const origin = [cX, cY];
   // default is point-aligned along the axis.
   // if we want edge-aligned, add this value to the angle.
@@ -13,8 +13,8 @@ const regularPolygonArguments = (cX, cY, radius, sides) => {
     .map(pts => origin.map((o, i) => o + radius * pts[i]));
 };
 
-const polygonPathString = (cX, cY, radius, sides) => [
-  regularPolygonArguments(cX, cY, radius, sides)
+const polygonPathString = (sides, cX = 0, cY = 0, radius = 1) => [
+  regularPolygonArguments(sides, cX, cY, radius)
     .map(a => `${a[0]},${a[1]}`).join(" ")
 ];
 

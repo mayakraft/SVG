@@ -4,10 +4,19 @@
 
 import K from "../../../environment/keys";
 import cdata from "../../../environment/cdata";
-import DOM from "../../../methods/dom";
+import { clearSVG, assignSVG } from "../../../methods/dom";
+import Load from "../../../file/load";
 import Save from "../../../file/save";
-import { clear, loadHelper } from "./loadHelper";
 import { getViewBox, setViewBox } from "../../../methods/viewBox";
+
+// check if the loader is running synchronously or asynchronously
+export const loadSVG = (target, data) => {
+  const result = Load(data);
+  if (result == null) { return; }
+  return (typeof result.then === K.function)
+    ? result.then(svg => assignSVG(target, svg))
+    : assignSVG(target, result);
+};
 
 const getFrame = function (element) {
   const viewBox = getViewBox(element);
@@ -22,6 +31,15 @@ const getFrame = function (element) {
   return [];
 };
 
+const setPadding = function (element, padding) {
+  const viewBox = getViewBox(element);
+  if (viewBox !== undefined) {
+    setViewBox(element, ...[-padding, -padding, padding * 2, padding * 2]
+      .map((nudge, i) => viewBox[i] + nudge));
+  }
+  return element;
+};
+
 const bgClass = "svg-background-rectangle";
 
 // i prevented circular dependency by passing a pointer to Constructor through 'this'
@@ -33,10 +51,11 @@ const background = function (element, color) {
   if (backRect == null) {
     backRect = this.Constructor("rect", ...getFrame(element));
     backRect.setAttribute(K.class, bgClass);
-    element.insertBefore(backRect, element.firstChild);
+    backRect.setAttribute("stroke", "none");
+		element.insertBefore(backRect, element.firstChild);
   }
   backRect.setAttribute("fill", color);
-  return backRect;
+  return element;
 };
 
 const findStyleSheet = function (element) {
@@ -57,14 +76,16 @@ const stylesheet = function (element, textContent) {
 
 // these will end up as methods on the <svg> nodes
 export default {
-  clear,
+  clear: clearSVG,
   size: setViewBox,
   setViewBox,
+  getViewBox,
+  padding: setPadding,
   background,
   getWidth: el => getFrame(el)[2],
   getHeight: el => getFrame(el)[3],
   stylesheet: function (el, text) { return stylesheet.call(this, el, text); },
-  load: loadHelper,
+  load: loadSVG,
   save: Save,
 };
 

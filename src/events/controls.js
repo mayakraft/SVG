@@ -148,8 +148,8 @@ const controls = function (svg, number, options) {
         func.call(points, points[index], index, points);
       }
     },
-    position: func => points.forEach((p, i) => p.setPosition(func.call(points, i))),
-    svg: func => points.forEach((p, i) => { p.svg = func.call(points, i); }),
+    position: func => points.forEach((p, i) => p.setPosition(func.call(points, p, i, points))),
+    svg: func => points.forEach((p, i) => { p.svg = func.call(points, p, i, points); }),
   };
   Object.keys(functionalMethods).forEach((key) => {
     points[key] = function () {
