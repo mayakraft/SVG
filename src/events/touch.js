@@ -4,11 +4,12 @@
 
 import Case from "../arguments/case";
 import { convertToViewBox } from "../methods/viewBox";
+import Libraries from "../environment/libraries";
 
 const categories = {
   move: ["mousemove", "touchmove"],
   press: ["mousedown", "touchstart"], // "mouseover",
-  release: ["mouseup", "touchend"] //    "mouseleave", "touchcancel",
+  release: ["mouseup", "touchend"] // "mouseleave", "touchcancel",
 };
 
 const handlerNames = Object.values(categories)
@@ -24,6 +25,14 @@ const defineGetter = (obj, prop, value) => Object.defineProperty(obj, prop, {
   enumerable: true,
   configurable: true,
 });
+
+const assignPress = (e, startPoint) => {
+	["pressX", "pressY"].filter(prop => !e.hasOwnProperty(prop))
+		.forEach((prop, i) => defineGetter(e, prop, startPoint[i]));
+	if (!e.hasOwnProperty("press")) {
+		defineGetter(e, "press", Libraries.math.vector(...startPoint));
+	}
+};
 
 const TouchEvents = function (element) {
   // todo, more pointers for multiple screen touches
@@ -43,7 +52,10 @@ const TouchEvents = function (element) {
 
   // add more properties depending on the type of handler
   const categoryUpdate = {
-    press: () => {},
+    press: (e, viewPoint) => {
+      startPoint = viewPoint;
+			assignPress(e, startPoint);
+		},
     release: () => {},
     move: (e, viewPoint) => {
       if (e.buttons > 0 && startPoint[0] === undefined) {
@@ -51,8 +63,7 @@ const TouchEvents = function (element) {
       } else if (e.buttons === 0 && startPoint[0] !== undefined) {
         startPoint = [];
       }
-      ["startX", "startY"].filter(prop => !e.hasOwnProperty(prop))
-        .forEach((prop, i) => defineGetter(e, prop, startPoint[i]));
+			assignPress(e, startPoint);
     }
   };
 
@@ -70,10 +81,14 @@ const TouchEvents = function (element) {
                 : e);
               // onRelease events don't have a pointer
               if (pointer !== undefined) {
-                const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY).map(n => isNaN(n) ? undefined : n); // e.target
+                const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY)
+									.map(n => isNaN(n) ? undefined : n); // e.target
                 ["x", "y"]
                   .filter(prop => !e.hasOwnProperty(prop))
                   .forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
+								if (!e.hasOwnProperty("position")) {
+									defineGetter(e, "position", Libraries.math.vector(...viewPoint));
+								}
                 categoryUpdate[category](e, viewPoint);
               }
               handler(e);
@@ -92,3 +107,4 @@ const TouchEvents = function (element) {
 };
 
 export default TouchEvents;
+

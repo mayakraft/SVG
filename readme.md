@@ -8,15 +8,21 @@ creative coding with SVG
 
 ## Examples
 
-[svg.rabbitear.org](https://svg.rabbitear.org), a live code editor, including examples (roll the dice).
+[svg.rabbitear.org](https://robbykraft.github.io/SVG/examples/code/), a live code editor which includes examples (roll the dice).
 
 [Download](https://github.com/robbykraft/SVG/releases), and there are more examples in the `examples/` folder.
 
 ## Install
 
-- [Download](https://github.com/robbykraft/SVG/releases) and include `svg.js`
-- use a CDN [https://robbykraft.github.io/SVG/svg.js](https://robbykraft.github.io/SVG/svg.js)
-- in Node `npm i rabbit-ear-svg`
+The compiled library is one file, and works in the browser or in Node.
+
+```
+https://robbykraft.github.io/SVG/svg.js
+```
+
+```
+npm i rabbit-ear-svg
+```
 
 ## Usage
 
@@ -25,7 +31,7 @@ creative coding with SVG
 ## Credit
 
 - [vkBeautify](https://github.com/vkiryukhin/vkBeautify) pretty-print for SVG export
-- [XML DOM](https://github.com/xmldom/xmldom) for node.js
+- [XML DOM](https://github.com/xmldom/xmldom) for usage in Node
 
 ## License
 
