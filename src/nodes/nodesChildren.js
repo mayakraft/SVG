@@ -34,4 +34,5 @@ Object.keys(folders).forEach((key) => {
   nodesAndChildren[key] = folders[key].reduce((a, b) => a.concat(b), []);
 });
 
-export default Object.freeze(nodesAndChildren);
+// export default Object.freeze(nodesAndChildren);
+export default nodesAndChildren;

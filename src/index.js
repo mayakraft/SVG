@@ -26,9 +26,6 @@ import transforms from "./methods/transforms";
 import * as viewBox from "./methods/viewBox";
 import children from "./nodes/nodesChildren";
 
-// for use()
-// import NODES from "./nodes/nodes";
-
 const initialize = function (svg, ...args) {
   args.filter(arg => typeof arg === K.function)
     .forEach(func => func.call(svg, svg));
@@ -59,30 +56,5 @@ SVG.core = Object.assign(Object.create(null), {
   cdata,
   detect,
 }, Case, classMethods, dom, math, transforms, viewBox);
-
-// SVG.use = (library) => {
-//   const oldInit = NODES.svg.init;
-//   NODES.svg.init = function (element, ...args) {
-//     // get the input from a string or an object
-//     // const graph = get_object(arg);
-//     const fold_object = getFoldObject(args);
-//     if (fold_object) {
-//       // options
-//       const options = library.options(...args);
-//       // render
-//       library.render_into_svg(element, fold_object, options);
-//       // return
-//       // return element;
-//     }
-//     // const foldSVG = library(getFoldObject(args), { output: "svg" });
-//     // const foldSVG = library.render_components(...args);
-//     // if (foldSVG && foldSVG.childNodes) {
-//     //   Array.from(foldSVG.childNodes).forEach(g => element.appendChild(g));
-//     //   Array.from(foldSVG.attributes)
-//     //     .forEach(attr => element.setAttribute(attr.nodeName, attr.nodeValue));
-//     // }
-//     return oldInit(element, ...args);
-//   }
-// };
 
 export default SVG;
