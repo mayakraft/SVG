@@ -8,7 +8,7 @@ creative coding with SVG
 
 ## Examples
 
-[svg.rabbitear.org](https://robbykraft.github.io/SVG/examples/code/), a live code editor which includes examples (roll the dice).
+[Code editor](https://robbykraft.github.io/SVG/examples/code/), a live code editor which includes examples (roll the dice).
 
 [Download](https://github.com/robbykraft/SVG/releases), and there are more examples in the `examples/` folder.
 
@@ -26,7 +26,11 @@ npm i rabbit-ear-svg
 
 ## Usage
 
-[documentation is here](https://robbykraft.github.io/SVG/docs/)
+Two sources of documentation:
+
+[SVG docs](https://robbykraft.github.io/SVG/docs/)
+
+[rabbit ear docs](https://rabbitear.org/docs/svg.html)
 
 ## Credit
 

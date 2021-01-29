@@ -1,6 +1,6 @@
 {
   "name": "rabbit-ear-svg",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "creative coding with SVG",
   "main": "svg.js",
   "scripts": {
@@ -11,14 +11,14 @@
   "repository": "https://github.com/robbykraft/SVG",
   "keywords": [
     "svg",
-    "script",
+    "art",
     "vector",
+    "graphics",
     "creative",
     "code",
     "illustrator",
     "animation",
-    "art",
-    "graphics",
+    "script",
     "library"
   ],
   "dependencies": {
