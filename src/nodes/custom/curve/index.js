@@ -9,7 +9,7 @@ export default {
   curve: {
     nodeName: "path",
     attributes: ["d"],
-    args: args,  // one function
-    methods: methods  // object of functions
+    args,  // one function
+    methods  // object of functions
   }
 };
