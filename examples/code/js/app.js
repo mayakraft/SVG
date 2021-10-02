@@ -88,9 +88,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // loadAndRunExamples(function (examples) {
     //   return app.injectCode(examples[Math.floor(Math.random() * examples.length)]);
     // });
-    var welcomeText = `svg.size(100, 100);
-svg.background('transparent');
-`
+    var welcomeText = `svg.size(100, 100)
+  .background('transparent')
+  .strokeWidth(svg.getWidth() / 100)
+  .stroke('black');
+`;
     app.injectCode(welcomeText);
   } else {
     app.injectCode(bootQueryValue);

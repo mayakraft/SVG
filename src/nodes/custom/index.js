@@ -16,7 +16,7 @@ import Wedge from "./wedge/index";
 import Parabola from "./parabola/index";
 import RegularPolygon from "./regularPolygon/index";
 import RoundRect from "./roundRect/index";
-// import Arrow from "./arrow/index";
+import Arrow from "./arrow/index";
 import Curve from "./curve/index";
 
 const nodes = {};
@@ -29,7 +29,7 @@ Object.assign(nodes,
   Parabola,
   RegularPolygon,
   RoundRect,
-  // Arrow,
+  Arrow,
   Curve
 );
 

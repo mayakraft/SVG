@@ -3,80 +3,85 @@
  */
 
 import K from "../../../environment/keys";
+import Case from "../../../arguments/case";
+import flatten from "../../../arguments/flatten";
+import coordinates from "../../../arguments/coordinates";
+import makeArrowPaths from "./makeArrowPaths";
 
-const setArrowPoints = function (el, ...args) {
-  const children = Array.from(el.childNodes);
-  const path = children.filter(node => node.nodeName === "path").shift();
-  const polys = ["svg-arrow-head", "svg-arrow-tail"]
-    .map(c => children.filter(n => n.getAttribute("class") === c).shift());
-
-  // draw
-  // if straight or curved
-  path.setAttribute("d", buildArrow(...args));
-
-  if (o.head.visible) {
-    polys[0].removeAttribute("display");
-    setPoints(polys[0], headPolyPts);
-  } else {
-    polys[0].setAttribute("display", "none");
-  }
-
-  if (o.tail.visible) {
-    polys[1].removeAttribute("display");
-    setPoints(polys[1], tailPolyPts);
-  } else {
-    polys[1].setAttribute("display", "none");
-  }
-  return el;
-};
-
-const head = (element, options) => {
-  if (typeof options === K.object) {
-    Object.assign(element.options.head, options);
-    if (options.visible === undefined) {
-      element.options.head.visible = true;
+// end is "head" or "tail"
+const setArrowheadOptions = (element, options, which) => {
+  if (typeof options === K.boolean) {
+    element.options[which].visible = options;
+  } else if (typeof options === K.object) {
+    Object.assign(element.options[which], options);
+    if (options.visible == null) {
+      element.options[which].visible = true;
     }
-  } else if (typeof options === K.boolean) {
-    element.options.head.visible = options;
   } else if (options == null) {
-    element.options.head.visible = true;
+    element.options[which].visible = true;
   }
-  setArrowPoints(element);
+};
+
+const setArrowStyle = (element, options = {}, which) => {
+  const path = element.getElementsByClassName(`arrow-${which}`)[0];
+  Object.keys(options)
+    .map(key => ({ key, fn: path[Case.toCamel(key)] }))
+    .filter(el => typeof el.fn === "function")
+    .forEach(el => el.fn(options[el.key]));
+};
+
+const redraw = (element) => {
+  const paths = makeArrowPaths(element.options);
+  Object.keys(paths)
+    .map(path => ({
+      path,
+      element: element.getElementsByClassName(`arrow-${path}`)[0]
+    }))
+    .filter(el => el.element)
+    .map(el => { el.element.setAttribute("d", paths[el.path]); return el; })
+    .filter(el => element.options[el.path])
+    .forEach(el => el.element.setAttribute(
+      "visibility",
+      element.options[el.path].visible
+        ? "visible"
+        : "hidden"));
   return element;
 };
 
-const tail = (element, options) => {
-  if (typeof options === K.object) {
-    Object.assign(element.options.tail, options);
-    if (options.visible === undefined) {
-      element.options.tail.visible = true;
-    }
-    element.options.tail.visible = true;
-  } else if (typeof options === K.boolean) {
-    element.options.tail.visible = options;
-  } else if (options == null) {
-    element.options.tail.visible = true;
-  }
-  setArrowPoints(element);
-  return element;
+const setPoints = (element, ...args) => {
+  element.options.endpoints = coordinates(...flatten(...args)).slice(0, 4);
+  return redraw(element);
 };
 
-const curve = (element, amount) => {
-  element.options.curve = amount;
-  setArrowPoints(element);
-  return element;
+const bend = (element, amount) => {
+  element.options.bend = amount;
+  return redraw(element);
 };
 
 const pinch = (element, amount) => {
   element.options.pinch = amount;
-  setArrowPoints(element);
-  return element;
+  return redraw(element);
 };
 
+const head = (element, options) => {
+  setArrowheadOptions(element, options, "head");
+  setArrowStyle(element, options, "head");
+  return redraw(element);
+};
+
+const tail = (element, options) => {
+  setArrowheadOptions(element, options, "tail");
+  setArrowStyle(element, options, "tail");
+  return redraw(element);
+};
+
+const getLine = element => element.getElementsByClassName("arrow-line")[0];
+
 export default {
-  setArrowPoints,
+  setPoints,
+  bend,
+  pinch,
   head,
   tail,
-  curve,
-  pinch,
-};
+  getLine,
+}
