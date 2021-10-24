@@ -2,18 +2,18 @@
  * SVG (c) Robby Kraft
  */
 
-import svg from "./svg/index";
-import g from "./g";
-import circle from "./circle";
-import ellipse from "./ellipse";
-import line from "./line";
-import path from "./path";
-import rect from "./rect";
-import style from "./style";
-import text from "./text";
+import svgDef from "./svg/index";
+import gDef from "./g";
+import circleDef from "./circle";
+import ellipseDef from "./ellipse";
+import lineDef from "./line";
+import pathDef from "./path";
+import rectDef from "./rect";
+import styleDef from "./style";
+import textDef from "./text";
 // multiple nodes in one
 import maskTypes from "./maskTypes";
-import polys from "./polys";
+import polyDefs from "./polys";
 
 /**
  * in each of these instances, arguments maps the arguments to attributes
@@ -25,17 +25,16 @@ import polys from "./polys";
  *
  */
 export default Object.assign({},
-  svg,
-  g,
-  circle,
-  ellipse,
-  line,
-  path,
-  rect,
-  style,
-  text,
-
+  svgDef,
+  gDef,
+  circleDef,
+  ellipseDef,
+  lineDef,
+  pathDef,
+  rectDef,
+  styleDef,
+  textDef,
   // multiple
   maskTypes,
-  polys,
+  polyDefs,
 );

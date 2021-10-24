@@ -62,13 +62,21 @@ const constructor = (nodeName, ...args) => {
   // a method to create a child and automatically append it to this node
   if (NodesChildren[nodeName]) {
     NodesChildren[nodeName].forEach((childNode) => {
-      Object.defineProperty(element, childNode, {
-        value: function () {
-          const childElement = constructor(childNode, ...arguments);
-          element.appendChild(childElement);
-          return childElement;
-        }
-      });
+      const value = function () {
+        const childElement = constructor(childNode, ...arguments);
+        element.appendChild(childElement);
+        return childElement;
+      };
+      // static methods have to be created in runtime,
+      // after the object has been initialized.
+      if (NodeSpec[childNode].static) {
+        Object.keys(NodeSpec[childNode].static).forEach(key => {
+          value[key] = function () {
+            return NodeSpec[childNode].static[key](element, ...arguments);
+          };
+        });
+      }
+      Object.defineProperty(element, childNode, { value });
     });
   }
   return element;

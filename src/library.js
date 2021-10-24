@@ -1,7 +1,7 @@
-export const inside = {
+export const SVG_Constructor = {
 	init: () => {},
-}
+};
 
 export default function () {
-	return inside.init(...arguments);
+	return SVG_Constructor.init(...arguments);
 };

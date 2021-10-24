@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import SVG, { inside } from "./library";
+import SVG, { SVG_Constructor } from "./library";
 import Nodes from "./nodes/index";
 import Constructor from "./nodes/constructor";
 import window from "./environment/window";
@@ -32,7 +31,7 @@ const initialize = function (svg, ...args) {
     .forEach(func => func.call(svg, svg));
 };
 
-inside.init = function () {
+SVG_Constructor.init = function () {
   const svg = Constructor(K.svg, ...arguments);
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
@@ -41,7 +40,7 @@ inside.init = function () {
     initialize(svg, ...arguments);
   }
   return svg;
-}
+};
 
 // const SVG = function () {
 //   const svg = Constructor(K.svg, ...arguments);
@@ -54,10 +53,10 @@ inside.init = function () {
 //   return svg;
 // };
 
-Object.assign(SVG, Nodes);
 SVG.NS = NS;
 SVG.linker = linker.bind(SVG);
 SVG.use = use.bind(SVG);
+Object.assign(SVG, Nodes);
 SVG.core = Object.assign(Object.create(null), {
   load,
   save,
