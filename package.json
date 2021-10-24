@@ -1,6 +1,6 @@
 {
   "name": "rabbit-ear-svg",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "creative coding with SVG",
   "main": "svg.js",
   "scripts": {
