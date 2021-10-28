@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 const regularPolygonArguments = (sides, cX, cY, radius) => {
   const origin = [cX, cY];
   // default is point-aligned along the axis.

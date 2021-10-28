@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 const COUNT = 128;
 
 const parabolaArguments = (x = -1, y = 0, width = 2, height = 1) => Array

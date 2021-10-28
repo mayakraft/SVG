@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../environment/keys";
+import * as K from "../environment/keys";
 
 const getAttr = (element) => {
   const t = element.getAttribute(K.transform);

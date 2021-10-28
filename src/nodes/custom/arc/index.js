@@ -1,14 +1,14 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import arcPath from "./arcPath";
+import * as K from "../../../environment/keys";
 
 const arcArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, false)];
 
 export default {
   arc: {
-    nodeName: "path",
+    nodeName: K.path,
     attributes: ["d"],
     args: arcArguments,
     methods: {

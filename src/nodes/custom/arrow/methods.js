@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../../../environment/keys";
+import * as K from "../../../environment/keys";
 import Case from "../../../arguments/case";
 import flatten from "../../../arguments/flatten";
 import coordinates from "../../../arguments/coordinates";
@@ -23,10 +22,10 @@ const setArrowheadOptions = (element, options, which) => {
 };
 
 const setArrowStyle = (element, options = {}, which) => {
-  const path = element.getElementsByClassName(`arrow-${which}`)[0];
+  const path = element.getElementsByClassName(`${K.arrow}-${which}`)[0];
   Object.keys(options)
     .map(key => ({ key, fn: path[Case.toCamel(key)] }))
-    .filter(el => typeof el.fn === "function")
+    .filter(el => typeof el.fn === K._function)
     .forEach(el => el.fn(options[el.key]));
 };
 
@@ -35,7 +34,7 @@ const redraw = (element) => {
   Object.keys(paths)
     .map(path => ({
       path,
-      element: element.getElementsByClassName(`arrow-${path}`)[0]
+      element: element.getElementsByClassName(`${K.arrow}-${path}`)[0]
     }))
     .filter(el => el.element)
     .map(el => { el.element.setAttribute("d", paths[el.path]); return el; })
@@ -49,7 +48,7 @@ const redraw = (element) => {
 };
 
 const setPoints = (element, ...args) => {
-  element.options.endpoints = coordinates(...flatten(...args)).slice(0, 4);
+  element.options.points = coordinates(...flatten(...args)).slice(0, 4);
   return redraw(element);
 };
 
@@ -63,25 +62,36 @@ const pinch = (element, amount) => {
   return redraw(element);
 };
 
+const padding = (element, amount) => {
+  element.options.padding = amount;
+  return redraw(element);
+};
+
 const head = (element, options) => {
-  setArrowheadOptions(element, options, "head");
-  setArrowStyle(element, options, "head");
+  setArrowheadOptions(element, options, K.head);
+  setArrowStyle(element, options, K.head);
   return redraw(element);
 };
 
 const tail = (element, options) => {
-  setArrowheadOptions(element, options, "tail");
-  setArrowStyle(element, options, "tail");
+  setArrowheadOptions(element, options, K.tail);
+  setArrowStyle(element, options, K.tail);
   return redraw(element);
 };
 
-const getLine = element => element.getElementsByClassName("arrow-line")[0];
+const getLine = element => element.getElementsByClassName(`${K.arrow}-line`)[0];
+const getHead = element => element.getElementsByClassName(`${K.arrow}-${K.head}`)[0];
+const getTail = element => element.getElementsByClassName(`${K.arrow}-${K.tail}`)[0];
 
 export default {
   setPoints,
+  points: setPoints,
   bend,
   pinch,
+  padding,
   head,
   tail,
   getLine,
-}
+  getHead,
+  getTail,
+};

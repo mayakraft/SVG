@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 export default {
   toCamel: s => s
     .replace(/([-_][a-z])/ig, $1 => $1

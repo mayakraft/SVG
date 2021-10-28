@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../../../environment/keys";
+import * as K from "../../../environment/keys";
 import window from "../../../environment/window";
 import viewBox from "../../../arguments/viewBox";
 import coordinates from "../../../arguments/coordinates";
@@ -29,7 +28,7 @@ export default {
         .forEach(string => loadSVG(element, string));
       args.filter(a => a != null)
         .filter(arg => arg instanceof ElementConstructor)
-        .filter(el => typeof el.appendChild === K.function)
+        .filter(el => typeof el.appendChild === K._function)
         .forEach(parent => parent.appendChild(element));
       Touch(element);
       Animation(element);

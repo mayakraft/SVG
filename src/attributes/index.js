@@ -1,7 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
+import * as K from "../environment/keys";
 import N from "../nodes/nodeNames";
 import ManyElements from "./manyElements";
 import NodeAttributes from "./singleElements";
@@ -11,7 +11,7 @@ Object.values(N)
   .filter(nodeName => NodeAttributes[nodeName] === undefined)
   .forEach(nodeName => { NodeAttributes[nodeName] = []; });
 
-[ [["svg", "defs", "g"].concat(N.v, N.t), ManyElements.presentation],
+[ [[K.svg, "defs", "g"].concat(N.v, N.t), ManyElements.presentation],
   [["filter"], ManyElements.effects],
   [N.cT.concat("text"), ManyElements.text], // todo: should we include "svg" here?
   [N.cF, ManyElements.effects],

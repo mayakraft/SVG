@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import Constructor from "./constructor";
 import NodeNames from "./nodeNames";
 

@@ -1,10 +1,9 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import window from "../environment/window";
 import { isBrowser } from "../environment/detect";
-import K from "../environment/keys";
+import * as K from "../environment/keys";
 
 /** parser error to check against */
 // const pErr = (new window.DOMParser())
@@ -52,9 +51,9 @@ export const async = function (input) {
       fetch(input)
         .then(response => response.text())
         .then(str => checkParseError(parse(str)))
-        .then(xml => xml.nodeName === "svg"
+        .then(xml => xml.nodeName === K.svg
           ? xml
-          : xml.getElementsByTagName("svg")[0])
+          : xml.getElementsByTagName(K.svg)[0])
         .then(svg => (svg == null
             ? reject("valid XML found, but no SVG element")
             : resolve(svg)))
@@ -87,7 +86,7 @@ const isFilename = input => typeof input === K.string
 
 const Load = input => (isFilename(input) 
   && isBrowser
-  && typeof window.fetch === K.function
+  && typeof window.fetch === K._function
   ? async(input)
   : sync(input));
 

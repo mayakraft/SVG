@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../../environment/keys";
+import * as K from "../../environment/keys";
 import { sync } from "../../file/load";
 import { moveChildren } from "../../methods/dom";
 

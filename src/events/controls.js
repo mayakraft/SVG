@@ -1,7 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
+import * as K from "../environment/keys";
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
 import { distanceSq2 } from "../methods/math";
@@ -51,7 +51,7 @@ const controlPoint = function (parent, options = {}) {
       .forEach((n, i) => { position[i] = n; });
     updateSVG();
     // alert delegate
-    if (typeof position.delegate === "function") {
+    if (typeof position.delegate === K._function) {
       position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
     }
   };
@@ -72,7 +72,7 @@ const controlPoint = function (parent, options = {}) {
     set: (v) => { position[i] = v; }
   }));
   // would be nice if "svg" also called removeFromParent(); on set()
-  ["svg", "updatePosition", "selected"].forEach(key => Object
+  [K.svg, "updatePosition", "selected"].forEach(key => Object
     .defineProperty(position, key, {
       get: () => cp[key],
       set: (v) => { cp[key] = v; }
@@ -95,7 +95,7 @@ const controls = function (svg, number, options) {
     .map(() => controlPoint(svg, options));
 
   // hook up the delegate callback for the on change event
-  const protocol = point => (typeof delegate === "function"
+  const protocol = point => (typeof delegate === K._function
     ? delegate.call(points, point, selected, points)
     : undefined);
 
@@ -153,7 +153,7 @@ const controls = function (svg, number, options) {
   };
   Object.keys(functionalMethods).forEach((key) => {
     points[key] = function () {
-      if (typeof arguments[0] === "function") {
+      if (typeof arguments[0] === K._function) {
         functionalMethods[key](...arguments);
       }
       return points;

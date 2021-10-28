@@ -1,13 +1,12 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import viewBoxString from "../arguments/viewBox";
-import K from "../environment/keys";
+import * as K from "../environment/keys";
 
 export const setViewBox = (element, ...args) => {
   // are they giving us pre-formatted string, or a list of numbers
-  const viewBox = args.length === 1 && typeof args[0] === "string"
+  const viewBox = args.length === 1 && typeof args[0] === K.string
     ? args[0]
     : viewBoxString(...args);
   if (viewBox) {

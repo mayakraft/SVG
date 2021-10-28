@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 export const magnitudeSq2 = (a) => (a[0] ** 2) + (a[1] ** 2);
 export const magnitude2 = (a) => Math.sqrt(magnitudeSq2(a));
 export const distanceSq2 = (a, b) => magnitudeSq2(sub2(a, b));

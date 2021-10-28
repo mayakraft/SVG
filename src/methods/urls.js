@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../environment/keys";
+import * as K from "../environment/keys";
 import Nodes from "../nodes/nodeNames";
 import Case from "../arguments/case";
 

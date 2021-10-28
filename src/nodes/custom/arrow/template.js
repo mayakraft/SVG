@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-export const arrow = function (...args) {
+const arrow = function (...args) {
   const shape = window.document.createElementNS(svgNS, "g");
   const tailPoly = window.document.createElementNS(svgNS, "polygon");
   const headPoly = window.document.createElementNS(svgNS, "polygon");
@@ -21,7 +20,7 @@ export const arrow = function (...args) {
     tail: { width: 0.5, height: 2, visible: false, padding: 0.0 },
     curve: 0.0,
     pinch: 0.618,
-    endpoints: [],
+    points: [],
   };
   setArrowPoints(shape, ...args);
   prepare("arrow", shape);

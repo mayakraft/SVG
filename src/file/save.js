@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import vkXML from "../../include/vkbeautify-xml";
 import svgNS from "../environment/namespace";
 import window from "../environment/window";
@@ -10,7 +9,7 @@ import {
   isNode,
   isWebWorker
 } from "../environment/detect";
-import K from "../environment/keys";
+import * as K from "../environment/keys";
 
 const SAVE_OPTIONS = () => ({
   download: false, // trigger a file download (browser only)
@@ -70,7 +69,7 @@ const save = function (svg, options) {
   if (options.download && isBrowser && !isNode) {
     downloadInBrowser(options.filename, formattedString);
   }
-  return (options.output === "svg" ? svg : formattedString);
+  return (options.output === K.svg ? svg : formattedString);
 };
 
 export default save;

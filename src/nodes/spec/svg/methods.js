@@ -1,8 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../../../environment/keys";
+import * as K from "../../../environment/keys";
 import cdata from "../../../environment/cdata";
 import { clearSVG, assignSVG } from "../../../methods/dom";
 import Load from "../../../file/load";
@@ -13,7 +12,7 @@ import { getViewBox, setViewBox } from "../../../methods/viewBox";
 export const loadSVG = (target, data) => {
   const result = Load(data);
   if (result == null) { return; }
-  return (typeof result.then === K.function)
+  return (typeof result.then === K._function)
     ? result.then(svg => assignSVG(target, svg))
     : assignSVG(target, result);
 };
@@ -23,7 +22,7 @@ const getFrame = function (element) {
   if (viewBox !== undefined) {
     return viewBox;
   }
-  if (typeof element.getBoundingClientRect === K.function) {
+  if (typeof element.getBoundingClientRect === K._function) {
     const rr = element.getBoundingClientRect();
     return [rr.x, rr.y, rr.width, rr.height];
   }
@@ -46,15 +45,15 @@ const bgClass = "svg-background-rectangle";
 // every function is bound
 const background = function (element, color) {
   let backRect = Array.from(element.childNodes)
-    .filter(child => child.getAttribute(K.class) === bgClass)
+    .filter(child => child.getAttribute(K._class) === bgClass)
     .shift();
   if (backRect == null) {
     backRect = this.Constructor("rect", ...getFrame(element));
-    backRect.setAttribute(K.class, bgClass);
-    backRect.setAttribute("stroke", "none");
+    backRect.setAttribute(K._class, bgClass);
+    backRect.setAttribute(K.stroke, K.none);
 		element.insertBefore(backRect, element.firstChild);
   }
-  backRect.setAttribute("fill", color);
+  backRect.setAttribute(K.fill, color);
   return element;
 };
 

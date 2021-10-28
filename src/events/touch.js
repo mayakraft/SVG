@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import Case from "../arguments/case";
 import { convertToViewBox } from "../methods/viewBox";
 import Libraries from "../environment/libraries";

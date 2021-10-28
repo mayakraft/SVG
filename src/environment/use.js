@@ -1,6 +1,7 @@
 /**
 * svg (c) Robby Kraft
 */
+import * as K from "./keys";
 import libraries from "./libraries";
 import NODES from "../nodes/nodes";
 
@@ -9,7 +10,7 @@ const bindRabbitEar = (_this, library) => {
 };
 
 const possibleFoldObject = (object) => {
-  if (typeof object !== "object") { return false; }
+  if (typeof object !== K.object) { return false; }
   const foldKeys = ["vertices_coords", "edges_vertices", "faces_vertices", "faces_edges"];
   return Object.keys(object)
     .map(key => foldKeys.includes(key))

@@ -1,9 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../environment/keys";
-
+import * as K from "../environment/keys";
 /**
  * this will extract coordinates from a set of inputs
  * and present them as a stride-2 flat array. length % 2 === 0

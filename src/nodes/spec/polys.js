@@ -1,13 +1,12 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "../../environment/keys";
+import * as K from "../../environment/keys";
 import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 
 const getPoints = (el) => {
-  const attr = el.getAttribute("points");
+  const attr = el.getAttribute(K.points);
   return (attr == null) ? "" : attr;
 };
 
@@ -21,12 +20,12 @@ const polyString = function () {
 const stringifyArgs = (...args) => [polyString(...coordinates(...flatten(...args)))];
 
 const setPoints = (element, ...args) => {
-  element.setAttribute("points", stringifyArgs(...args)[0]);
+  element.setAttribute(K.points, stringifyArgs(...args)[0]);
   return element;
 };
 
 const addPoint = (element, ...args) => {
-  element.setAttribute("points", [getPoints(element), stringifyArgs(...args)[0]]
+  element.setAttribute(K.points, [getPoints(element), stringifyArgs(...args)[0]]
     .filter(a => a !== "")
     .join(" "));
   return element;

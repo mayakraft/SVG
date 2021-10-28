@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import methods from "./methods";
 import init from "./init";
 

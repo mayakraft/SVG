@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import svgDef from "./svg/index";
 import gDef from "./g";
 import circleDef from "./circle";

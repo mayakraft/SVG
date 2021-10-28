@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 export default {
   presentation: [
     "color",

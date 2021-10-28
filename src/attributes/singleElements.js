@@ -1,28 +1,28 @@
 /**
  * SVG (c) Robby Kraft
  */
-
+import * as K from "../environment/keys";
 // this object will be completed with all remaining nodeName keys
 // with an empty array value
 export default Object.assign(Object.create(null), {
   // the order of indices matter
-  svg: ["viewBox"],
+  svg: [K.viewBox],
   line: ["x1", "y1", "x2", "y2"],
   rect: ["x", "y", "width", "height"],
   circle: ["cx", "cy", "r"],
   ellipse: ["cx", "cy", "rx", "ry"],
-  polygon: ["points"],
-  polyline: ["points"],
+  polygon: [K.points],
+  polyline: [K.points],
   path: ["d"],
   text: ["x", "y"],
-  mask: ["id"],
-  symbol: ["id"],
+  mask: [K.id],
+  symbol: [K.id],
   clipPath: [
-    "id",
+    K.id,
     "clip-rule", // use with clipPath
   ],
   marker: [
-    "id",
+    K.id,
     "markerHeight",
     "markerUnits",
     "markerWidth",

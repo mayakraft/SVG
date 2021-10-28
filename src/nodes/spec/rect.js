@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 import attributes from "../../attributes/singleElements";

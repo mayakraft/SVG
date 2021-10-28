@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import N from "./nodeNames";
 import Custom from "./custom/index";
 

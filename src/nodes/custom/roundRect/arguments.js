@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 const roundRectArguments = (x, y, width, height, cornerRadius = 0) => {
   if (cornerRadius > width / 2) { cornerRadius = width / 2; }
   if (cornerRadius > height / 2) { cornerRadius = height / 2; }

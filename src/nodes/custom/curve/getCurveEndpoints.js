@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 const getNumbersFromPathCommand = str => str
   .slice(1)
   .split(/[, ]+/)

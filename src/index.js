@@ -6,7 +6,7 @@ import Nodes from "./nodes/index";
 import Constructor from "./nodes/constructor";
 import window from "./environment/window";
 import NS from "./environment/namespace";
-import K from "./environment/keys";
+import * as K from "./environment/keys";
 import linker from "./environment/linker";
 import use from "./environment/use";
 import load from "./file/load";
@@ -27,7 +27,7 @@ import * as viewBox from "./methods/viewBox";
 import children from "./nodes/nodesChildren";
 
 const initialize = function (svg, ...args) {
-  args.filter(arg => typeof arg === K.function)
+  args.filter(arg => typeof arg === K._function)
     .forEach(func => func.call(svg, svg));
 };
 

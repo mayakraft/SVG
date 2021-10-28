@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 const vec = (a, d) => [Math.cos(a) * d, Math.sin(a) * d];
 
 const arcPath = (x, y, radius, startAngle, endAngle, includeCenter = false) => {

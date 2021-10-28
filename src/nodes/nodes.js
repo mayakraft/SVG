@@ -1,14 +1,11 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import N from "./nodeNames";
 import Spec from "./spec/index";
 import CustomNodes from "./custom/index";
-
 import Attributes from "../attributes/index";
 import ManyElements from "../attributes/manyElements";
-
 import flatten from "../arguments/flatten";
 import classId from "../methods/classId";
 import DOM from "../methods/dom";

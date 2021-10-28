@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import Case from "../arguments/case";
 
 export const removeChildren = (element) => {

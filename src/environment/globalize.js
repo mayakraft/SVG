@@ -1,12 +1,8 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import window from "./window";
-import K from "./environment/keys";
-
-// const { SVG } = window;
-
+import * as K from "./environment/keys";
 /**
  * this creates a more accessible interface for beginner coders.
  * similar to the structure of Processing / p5.js
@@ -17,7 +13,7 @@ import K from "./environment/keys";
 const bindSVGMethodsTo = function (svg, environment) {
   // bind all member methods of window.svg to the environment
   Object.getOwnPropertyNames(svg)
-    .filter(p => typeof svg[p] === K.function)
+    .filter(p => typeof svg[p] === K._function)
     .forEach((name) => { environment[name] = svg[name].bind(svg); });
   // special case: SVG top level
   const forbidden = [K.svg, K.style, "setPoints", "setArc", "setEllipticalArc", "setBezier"];

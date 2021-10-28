@@ -1,11 +1,10 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import window from "../../environment/window"
 import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
-import K from "../../environment/keys";
+import * as K from "../../environment/keys";
 
 export default {
   text: {

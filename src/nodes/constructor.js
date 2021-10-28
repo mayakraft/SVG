@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import window from "../environment/window";
 import svgNS from "../environment/namespace";
 import NodesChildren from "./nodesChildren";

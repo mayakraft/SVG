@@ -2,377 +2,184 @@
 <title>✨SVG✨</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="code.css">
 <link rel="stylesheet" type="text/css" href="style.css">
 <body>
 
-<h1>SVG Reference</h1>
+<h3>
+  Reference Docs
+</h3>
 
-<p>
-  This Javascript library helps you easily craft SVG images. The <a href="https://svg.rabbitear.org/">web editor</a> has some examples to get you started (roll the dice). Download the library <a href="https://github.com/robbykraft/SVG/releases">here</a>.
-</p>
+<h1>
+  SVG Library
+</h1>
 
-<h3>Sections</h3>
+<h2>Elements</h2>
 
-<ol>
-  <li>Shapes</li>
-  <li>Overview</li>
-  <li>Appendix</li>
-</ol>
-
-<h2>Shapes</h2>
-
-  <pre class="title"><code><f>SVG</f>()</code></pre>
+  <pre class="title"><code><ft>SVG</ft>()</code></pre>
   <div class="sketch-1"></div>
 
-  <pre class="title"><code><f>line</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>)</code></pre>
+  <pre class="title"><code><ft>line</ft>(<argt>x1</argt>, <argt>y1</argt>, <argt>x2</argt>, <argt>y2</argt>)</code></pre>
   <div class="sketch-2"></div>
 
-  <pre class="title"><code><f>circle</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>)</code></pre>
+  <pre class="title"><code><ft>circle</ft>(<argt>x</argt>, <argt>y</argt>, <argt>radius</argt>)</code></pre>
   <div class="sketch-3"></div>
 
-  <pre class="title"><code><f>ellipse</f>(<arg>x</arg>, <arg>y</arg>, <arg>rx</arg>, <arg>ry</arg>)</code></pre>
+  <pre class="title"><code><ft>ellipse</ft>(<argt>x</argt>, <argt>y</argt>, <argt>rx</argt>, <argt>ry</argt>)</code></pre>
   <div class="sketch-4"></div>
 
-  <pre class="title"><code><f>rect</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+  <pre class="title"><code><ft>rect</ft>(<argt>x</argt>, <argt>y</argt>, <argt>width</argt>, <argt>height</argt>)</code></pre>
   <div class="sketch-5"></div>
 
-  <pre class="title"><code><f>polygon</f>(<arg>pointsArray</arg>)</code></pre>
+  <pre class="title"><code><ft>polygon</ft>(<argt>pointsArray</argt>)</code></pre>
   <div class="sketch-6"></div>
 
-  <pre class="title"><code><f>polyline</f>(<arg>pointsArray</arg>)</code></pre>
+  <pre class="title"><code><ft>polyline</ft>(<argt>pointsArray</argt>)</code></pre>
   <div class="sketch-7"></div>
 
-  <pre class="title"><code><f>path</f>()</code></pre>
+  <pre class="title"><code><ft>path</ft>()</code></pre>
   <div class="sketch-8"></div>
 
-  <pre class="title"><code><f>text</f>(<arg>textString</arg>, <arg>x</arg>, <arg>y</arg>)</code></pre>
+  <pre class="title"><code><ft>text</ft>(<argt>textString</argt>, <argt>x</argt>, <argt>y</argt>)</code></pre>
   <div class="sketch-9"></div>
 
-<h3>Layers and Masks</h3>
+<h2>Layers and Masks</h2>
 
-  <pre class="title"><code><f>g</f>()</code></pre>
+  <pre class="title"><code><ft>g</ft>()</code></pre>
   <div class="sketch-10"></div>
 
-  <pre class="title"><code><f>clipPath</f>()</code></pre>
+  <pre class="title"><code><ft>clipPath</ft>()</code></pre>
   <div class="sketch-11"></div>
   
-  <pre class="title"><code><f>mask</f>()</code></pre>
+  <pre class="title"><code><ft>mask</ft>()</code></pre>
   <div class="sketch-12"></div>
 
-<h3>Outside the Specification</h3>
+<h2>Outside the Specification</h2>
 
-  <pre class="title"><code><f>regularPolygon</f>(<arg>sides</arg>, <arg>cX</arg>, <arg>cY</arg>, <arg>radius</arg>)</code></pre>
+  <pre class="title"><code><ft>regularPolygon</ft>(<argt>sides</argt>, <argt>cX</argt>, <argt>cY</argt>, <argt>radius</argt>)</code></pre>
   <div class="sketch-13"></div>
 
-  <pre class="title"><code><f>parabola</f>(<arg>x</arg>, <arg>y</arg>, <arg>width</arg>, <arg>height</arg>)</code></pre>
+  <pre class="title"><code><ft>parabola</ft>(<argt>x</argt>, <argt>y</argt>, <argt>width</argt>, <argt>height</argt>)</code></pre>
   <div class="sketch-14"></div>
 
-  <pre class="title"><code><f>curve</f>(<arg>x1</arg>, <arg>y1</arg>, <arg>x2</arg>, <arg>y2</arg>, <arg>bend</arg>)</code></pre>
+  <pre class="title"><code><ft>curve</ft>(<argt>x1</argt>, <argt>y1</argt>, <argt>x2</argt>, <argt>y2</argt>)</code></pre>
   <div class="sketch-15"></div>
 
-  <pre class="title"><code><f>arc</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+  <pre class="title"><code><ft>arc</ft>(<argt>x</argt>, <argt>y</argt>, <argt>radius</argt>, <argt>angleA</argt>, <argt>angleB</argt>)</code></pre>
   <div class="sketch-16"></div>
 
-  <pre class="title"><code><f>wedge</f>(<arg>x</arg>, <arg>y</arg>, <arg>radius</arg>, <arg>angleA</arg>, <arg>angleB</arg>)</code></pre>
+  <pre class="title"><code><ft>wedge</ft>(<argt>x</argt>, <argt>y</argt>, <argt>radius</argt>, <argt>angleA</argt>, <argt>angleB</argt>)</code></pre>
   <div class="sketch-17"></div>
 
-<h3>Events</h3>
-
-  <pre class="title"><code><f>onMove</f>, <f>onPress</f>, <f>onRelease</f></code></pre>
+  <pre class="title"><code><ft>arrow</ft>(<argt>x1</argt>, <argt>y1</argt>, <argt>x2</argt>, <argt>y2</argt>)</code></pre>
   <div class="sketch-18"></div>
 
-  <pre class="title"><code><f>animate</f></code></pre>
+<h2>Events</h2>
+
+  <pre class="title"><code><ft>onMove</ft>, <ft>onPress</ft>, <ft>onRelease</ft></code></pre>
   <div class="sketch-19"></div>
 
-
-<h2>Overview</h2>
-
-<p>
-  SVGs are organized into <em>layers</em>, a tree of parents and children. In this example the <b>rect</b> is drawn last, on top of everything.
-</p>
-
-<pre class="code" style="line-height: 1">&lt;svg&gt;
- ┃
- ┣━ &lt;g&gt;
- ┃   ┃
- ┃   ┣━ &lt;circle&gt;
- ┃   ┗━ &lt;path&gt;
- ┃
- ┗━ &lt;rect&gt;
-</pre>
-
-<p>
-  To draw a shape first ask yourself <b>who is this shape's parent?</b>
-</p>
-
-<pre class="code"><key>who-is-the-parent</key>.circle(800, 600, 100)</pre>
-
-<p>
-  The simplest arrangement is that every shape is a child of the SVG. This command creates an <code>&lt;svg&gt;</code> element.
-</p>
-
-<pre class="code">const svg = SVG()</pre>
-
-<p>
-  This creates an <code>&lt;svg&gt;</code> element <b>and</b> appends it to the body.
-</p>
-
-<pre class="code">const svg = SVG(document.body)</pre>
-
-<p>
-  This creates an <code>&lt;svg&gt;</code> with viewBox dimensions 800x600.
-</p>
-
-<pre class="code">const svg = SVG(800, 600)</pre>
-
-<h3>Drawing</h3>
-
-<p>
-  To draw a shape first write the parent, followed by a ".".
-</p>
-
-<pre class="code">svg.rect(width, height, x, y)
-svg.circle(radius, x, y)</pre>
-
-<p>
-  SVG shapes are <b>circle</b>, <b>ellipse</b>, <b>line</b>, <b>path</b>, <b>polygon</b>, <b>polyline</b>, <b>rect</b>, <b>text</b>
-</p>
-
-<p>
-  Nested layers looks like this:
-</p>
-
-<pre class="code">const child = svg.g();
-const grandchild = child.g();</pre>
-
-<p>
-  Groups can manage layer order. In this example the circle will appear underneath the rect.
-</p>
-
-<pre class="code">const layer = svg.g()          // layer
-svg.rect(width, height, x, y)  // on top of layer
-layer.circle(radius, x, y)     // child of layer, underneath rect</pre>
-
-<p>
-  Shape-drawing parents are:
-</p>
-
-<ul>
-  <li><b>svg</b></li>
-  <li><b>g</b></li>
-  <li><b>marker</b></li>
-  <li><b>symbol</b></li>
-  <li><b>clipPath</b></li>
-  <li><b>mask</b></li>
-</ul>
-
-<h3>Style</h3>
-
-<p>
-  <b>Style</b> is applied using method-chaining, camel-case svg attributes.
-</p>
-
-<pre class="code">svg.line(0, 0, 300, 300)
-  .stroke("#F08")
-  .strokeWidth(3)          // stroke-width
-  .strokeDasharray("5 3")  // stroke-dasharray</pre>
-
-<p>
-  If a style is applied to a parent, all children will inherit that style unless a child overwrites it.
-</p>
-
-<pre class="code">const layer = svg.g()
-  .fill("none")
-  .stroke("red");
-
-layer.rect(width, height, x, y)
-  .stroke("blue");</pre>
-
-<p>
-  In the example above, the rectangle has no fill (inherited from layer) and a blue stroke (overwritten).
-</p>
-
-<h3>Events</h3>
-
-<ul>
-  <li>onPress</li>
-  <li>onRelease</li>
-  <li>onMove</li>
-  <li>play</li>
-</ul>
-
-<pre class="code">svg.onPress = function (mouse) {
-  // mouse press or mobile tablet screen touch
-}</pre>
-
-<pre class="code">svg.play = function (event) {
-  // animation frame based loop
-}</pre>
-
-<h3>Animation</h3>
-
-<p>
-  if you are familiar with Processing or openFrameworks the animation works differently here. This is the basic form for a still frame:
-</p>
-
-
-<pre class="code">svg.size(100, 100);
-svg.background('transparent');
-// draw here
-svg.ellipse()
-</pre>
-
-<p>
-  The basic structure for animations, Processing/openFrameworks style, you need the removeChildren at the beginning of the play() loop. Also the background is a child, so it needs to follow.
-</p>
-
-<pre class="code">svg.size(100, 100);
-
-svg.play = function (e) {
-  svg.removeChildren();
-  svg.background('transparent');
-  // draw here
-  svg.ellipse()
-};</pre>
-
-<p>
-  But even that's not the best approach. Better SVG drawing is to place the item on the screen before the loop and modify it's properties.
-</p>
-
-<pre class="code">svg.size(100, 100);
-
-var el = svg.ellipse();
-
-svg.play = function (e) {
-  svg.removeChildren();
-  svg.background('transparent');
-  // modify drawing here
-  el.setCenter(...);
-};</pre>
-
-<h3>Methods</h3>
-
-<p>
-  Certain shapes come with methods, see the <a href="#methods">methods section below</a>. One notable example is the path element. <em>Upper/lowercase for path methods reflects the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">specification</a>.</em>
-</p>
-
-<pre class="code">svg.path()
-  .Move(x1, y1)
-  .line(x2, y2)
-  .Curve(cx1, cy1, cx2, cy2, x3, y3)</pre>
-
-<h3>SVG Onload</h3>
-
-<p>
-  In my opinion, the best way to create an SVG is to use the function callback feature. This encapsulates your code in a function (good to do) and waits until the page has loaded.
-</p>
-
-<pre class="code">
-SVG((svg) => {
-  svg.size(window.innerWidth / window.innerHeight, 1);
-  svg.rect(svg.getWidth(), svg.getHeight());
-  ...
-});
-</pre>
+  <pre class="title"><code><ft>animate</ft></code></pre>
+  <div class="sketch-20"></div>
 
 <h2>Appendix</h2>
 
-<h3>Supported Nodes</h3>
-
-<pre class="wrap">svg, defs, desc, filter, metadata, style, script, title, view, cdata, g, circle, ellipse, line, path, polygon, polyline, rect, text, marker, symbol, clipPath, mask, linearGradient, radialGradient, pattern, textPath, tspan, stop, feBlend, feColorMatrix, feComponentTransfer, feComposite, feConvolveMatrix, feDiffuseLighting, feDisplacementMap, feDistantLight, feDropShadow, feFlood, feFuncA, feFuncB, feFuncG, feFuncR, feGaussianBlur, feImage, feMerge, feMergeNode, feMorphology, feOffset, fePointLight, feSpecularLighting, feSpotLight, feTile, feTurbulence
-</pre>
-
-<h3>Supported Attributes</h3>
-<pre class="wrap">accumulate, additive, alignment-baseline, attributeName, azimuth, baseFrequency, baseline-shift, begin, bias, by, calcMode, color, color-interpolation, color-interpolation-filters, cursor, diffuseConstant, direction, display, divisor, dominant-baseline, dur, dx, dy, edgeMode, elevation, end, exponent, fill, fill-opacity, fill-rule, filter, filterRes, filterUnits, flood-color, flood-opacity, font-family, font-size, font-size-adjust, font-stretch, font-style, font-variant, font-weight, from, gradientTransform, gradientUnits, image-rendering, in, in2, intercept, k1, k2, k3, k4, kernelMatrix, keyPoints, keySplines, keyTimes, lengthAdjust, letter-spacing, lighting-color, limitingConeAngle, max, method, min, mode, numOctaves, opacity, operator, order, overflow, overline-position, overline-thickness, paint-order, pointer-events, pointsAtX, pointsAtY, pointsAtZ, preserveAlpha, preserveAspectRatio, primitiveUnits, radius, repeatCount, repeatDur, restart, result, rotate, seed, shape-rendering, spacing, specularConstant, specularExponent, spreadMethod, startOffset, stdDeviation, stitchTiles, strikethrough-position, strikethrough-thickness, stroke, stroke-dasharray, stroke-dashoffset, stroke-linecap, stroke-linejoin, stroke-miterlimit, stroke-opacity, stroke-width, surfaceScale, tabindex, targetX, targetY, text-anchor, text-decoration, text-rendering, textLength, to, transform-origin, type, underline-position, underline-thickness, user-select, values, vector-effect, visibility, word-spacing, writing-mode, xChannelSelector, yChannelSelector</pre>
-
-
 <h3 id="methods">Methods</h3>
 
-<h4>Methods for individual element types</h4>
+<pre class="code"><code><f>removeChildren</f>()
+<f>appendTo</f>(...)
+<f>setAttributes</f>(...)
 
-<h4><code>&lt;svg&gt;</code></h4>
+<f>translate</f>(...)
+<f>rotate</f>(...)
+<f>scale</f>(...)
+<f>matrix</f>(...)
+<f>clearTransform</f>()
 
-<pre class="wrap">clear()
-size(x, y, w, h)
-size(w, h)
-setViewBox(x, y, w, h)
-background(color)
-getWidth()
-getHeight()
-stylesheet(css)
-load(file)
-save()</pre>
+<f>marker</f>(...)
+<f>symbol</f>(...)
+<f>clipPath</f>(...)
+<f>mask</f>(...)
 
-<h4><code>&lt;path&gt;</code></h4>
+<f>addClass</f>(...)
+<f>removeClass</f>(...)
+<f>setClass</f>(...)
+<f>setID</f>(...)</code></pre>
 
-<pre class="wrap">clear()
-command(command, ...args)
-get()
-set(...)
-add(string)
+<h3>svg</h3>
 
-move()
-line()
-vertical()
-horizontal()
-ellipse()
-curve()
-smoothCurve()
-quadCurve()
-smoothQuadCurve()
+<pre class="code"><code><f>clear</f>()
+<f>size</f>(x, y, w, h)
+<f>size</f>(w, h)
+<f>setViewBox</f>(x, y, w, h)
+<f>background</f>(color)
+<f>getWidth</f>()
+<f>getHeight</f>()
+<f>stylesheet</f>(css)
+<f>load</f>(file)
+<f>save</f>()</code></pre>
 
-Move()
-Line()
-Vertical()
-Horizontal()
-Ellipse()
-Curve()
-SmoothCurve()
-QuadCurve()
-SmoothQuadCurve()
+<h3>path</h3>
 
-close()</pre>
+<pre class="code"><code><f>clear</f>()
+<f>command</f>(command, ...args)
+<f>get</f>()
+<f>set</f>(...)
+<f>add</f>(string)
 
-<h4><code>&lt;polygon&gt;, &lt;polyline&gt;</code></h4>
-<pre>setPoints(...)
-addPoint(...)</pre>
+<f>move</f>()
+<f>line</f>()
+<f>vertical</f>()
+<f>horizontal</f>()
+<f>ellipse</f>()
+<f>curve</f>()
+<f>smoothCurve</f>()
+<f>quadCurve</f>()
+<f>smoothQuadCurve</f>()
 
-<h4><code>&lt;marker&gt;, &lt;symbol&gt;, &lt;clipPath&gt;, &lt;mask&gt;</code></h4>
-<pre>size(...)
-setViewBox(...)</pre>
+<f>Move</f>()
+<f>Line</f>()
+<f>Vertical</f>()
+<f>Horizontal</f>()
+<f>Ellipse</f>()
+<f>Curve</f>()
+<f>SmoothCurve</f>()
+<f>QuadCurve</f>()
+<f>SmoothQuadCurve</f>()
 
-<h4><code>&lt;line&gt;</code></h4>
-<pre>setPoints(...)</pre>
+<f>close</f>()</code></pre>
 
-<h4><code>&lt;circle&gt;, &lt;ellipse&gt;</code></h4>
-<pre>radius(...)
-setRadius(...)
-center(...)
-setCenter(...)
-position(...)
-setPosition(...)</pre>
+<h3>polygon, polyline</h3>
 
-<h4>Methods applied to most elements</h4>
+<pre class="code"><code><f>setPoints</f>(...)
+<f>addPoint</f>(...)</code></pre>
 
-<pre class="wrap">removeChildren()
-appendTo(...)
-setAttributes(...)
+<h3>marker, symbol, clipPath, mask</h3>
 
-translate(...)
-rotate(...)
-scale(...)
-matrix(...)
-clearTransform()
+<pre class="code"><code><f>size</f>(...)
+<f>setViewBox</f>(...)</code></pre>
 
-marker(...)
-symbol(...)
-clipPath(...)
-mask(...)
+<h3>line</h3>
 
-addClass(...)
-removeClass(...)
-setClass(...)
-setID(...)</pre>
+<pre class="code"><code><f>setPoints</f>(...)</code></pre>
+
+<h3>circle, ellipse</h3>
+
+<pre class="code"><code><f>radius</f>(...)
+<f>setRadius</f>(...)
+<f>center</f>(...)
+<f>setCenter</f>(...)
+<f>position</f>(...)
+<f>setPosition</f>(...)</code></pre>
+
+<h3>Supported Nodes</h3>
+
+<pre class="code wrap"><code>svg, defs, desc, filter, metadata, style, script, title, view, cdata, g, circle, ellipse, line, path, polygon, polyline, rect, text, marker, symbol, clipPath, mask, linearGradient, radialGradient, pattern, textPath, tspan, stop, feBlend, feColorMatrix, feComponentTransfer, feComposite, feConvolveMatrix, feDiffuseLighting, feDisplacementMap, feDistantLight, feDropShadow, feFlood, feFuncA, feFuncB, feFuncG, feFuncR, feGaussianBlur, feImage, feMerge, feMergeNode, feMorphology, feOffset, fePointLight, feSpecularLighting, feSpotLight, feTile, feTurbulence
+</code></pre>
+
+<h3>Supported Attributes</h3>
+
+<pre class="code wrap"><code>accumulate, additive, alignment-baseline, attributeName, azimuth, baseFrequency, baseline-shift, begin, bias, by, calcMode, color, color-interpolation, color-interpolation-filters, cursor, diffuseConstant, direction, display, divisor, dominant-baseline, dur, dx, dy, edgeMode, elevation, end, exponent, fill, fill-opacity, fill-rule, filter, filterRes, filterUnits, flood-color, flood-opacity, font-family, font-size, font-size-adjust, font-stretch, font-style, font-variant, font-weight, from, gradientTransform, gradientUnits, image-rendering, in, in2, intercept, k1, k2, k3, k4, kernelMatrix, keyPoints, keySplines, keyTimes, lengthAdjust, letter-spacing, lighting-color, limitingConeAngle, max, method, min, mode, numOctaves, opacity, operator, order, overflow, overline-position, overline-thickness, paint-order, pointer-events, pointsAtX, pointsAtY, pointsAtZ, preserveAlpha, preserveAspectRatio, primitiveUnits, radius, repeatCount, repeatDur, restart, result, rotate, seed, shape-rendering, spacing, specularConstant, specularExponent, spreadMethod, startOffset, stdDeviation, stitchTiles, strikethrough-position, strikethrough-thickness, stroke, stroke-dasharray, stroke-dashoffset, stroke-linecap, stroke-linejoin, stroke-miterlimit, stroke-opacity, stroke-width, surfaceScale, tabindex, targetX, targetY, text-anchor, text-decoration, text-rendering, textLength, to, transform-origin, type, underline-position, underline-thickness, user-select, values, vector-effect, visibility, word-spacing, writing-mode, xChannelSelector, yChannelSelector</code></pre>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js"></script>
 <!-- <script type="text/javascript" charset="utf-8" src="ace/ace.js" charset="utf-8"></script> -->

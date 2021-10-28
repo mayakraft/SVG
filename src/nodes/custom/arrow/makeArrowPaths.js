@@ -1,16 +1,16 @@
 /**
  * SVG (c) Robby Kraft
  */
-
+import * as K from "../../../environment/keys";
 import { add2, sub2, scale2, magnitude2 } from "../../../methods/math";
 
-const ends = ["tail", "head"];
+const ends = [K.tail, K.head];
 const stringifyPoint = p => p.join(",");
 const pointsToPath = (points) => "M" + points.map(pt => pt.join(",")).join("L") + "Z";
 
 const makeArrowPaths = function (options) {
   // throughout, tail is 0, head is 1
-  let pts = [[0,1], [2,3]].map(pt => pt.map(i => options.endpoints[i] || 0));
+  let pts = [[0,1], [2,3]].map(pt => pt.map(i => options.points[i] || 0));
   let vector = sub2(pts[1], pts[0]);
   let midpoint = add2(pts[0], scale2(vector, 0.5));
   // make sure arrow isn't too small
@@ -25,6 +25,9 @@ const makeArrowPaths = function (options) {
     const minVec = len === 0 ? [minLength, 0] : scale2(vector, minLength / len);
     pts = [sub2, add2].map(f => f(midpoint, scale2(minVec, 0.5)));
     vector = sub2(pts[1], pts[0]);
+  } else {
+    // allow padding to be able to be applied. but still cap it at minLength
+    // if (options.padding) {}
   }
   let perpendicular = [vector[1], -vector[0]];
   let bezPoint = add2(midpoint, scale2(perpendicular, options.bend));
@@ -35,8 +38,14 @@ const makeArrowPaths = function (options) {
     : scale2(bez, 1 / bezsLen[i]));
   const vectors = bezsNorm.map(norm => scale2(norm, -1));
   const normals = vectors.map(vec => [vec[1], -vec[0]]);
+  // get padding from either head/tail options or root of options
+  const pad = ends.map((s, i) => options[s].padding
+    ? options[s].padding
+    : (options.padding ? options.padding : 0.0));
   const scales = ends
-    .map(s => options[s].height * ((options[s].visible ? 1 : 0) + options[s].padding));
+    .map((s, i) => options[s].height * (options[s].visible ? 1 : 0))
+    .map((n, i) => n + pad[i]);
+    // .map((s, i) => options[s].height * ((options[s].visible ? 1 : 0) + pad[i]));
   const arcs = pts.map((pt, i) => add2(pt, scale2(bezsNorm[i], scales[i])));
   // readjust bezier curve now that the arrow heads push inwards
   vector = sub2(arcs[1], arcs[0]);

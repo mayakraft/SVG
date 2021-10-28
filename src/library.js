@@ -1,7 +1,10 @@
+/**
+ * SVG (c) Robby Kraft
+ */
 export const SVG_Constructor = {
-	init: () => {},
+  init: () => {},
 };
 
 export default function () {
-	return SVG_Constructor.init(...arguments);
+  return SVG_Constructor.init(...arguments);
 };

@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import cdata from "../../environment/cdata";
 
 export default {

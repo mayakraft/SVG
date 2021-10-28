@@ -1,14 +1,13 @@
 /**
  * SVG (c) Robby Kraft
  */
-
-import K from "./keys";
+import * as K from "./keys";
 
 // compare to undefined, the string
-const isBrowser = typeof window !== K.undefined
-  && typeof window.document !== K.undefined;
+const isBrowser = typeof window !== K._undefined
+  && typeof window.document !== K._undefined;
 
-const isNode = typeof process !== K.undefined
+const isNode = typeof process !== K._undefined
   && process.versions != null
   && process.versions.node != null;
 

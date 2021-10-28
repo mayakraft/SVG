@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 export default {
   s: [  // svg
     "svg",

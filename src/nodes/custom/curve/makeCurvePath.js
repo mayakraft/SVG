@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import { add2, sub2, scale2 } from "../../../methods/math";
 
 // endpoints is an array of 4 numbers

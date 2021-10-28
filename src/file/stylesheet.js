@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 const parseCSSText = function (styleContent) {
   const styleElement = document.createElement("style");
   styleElement.textContent = styleContent;

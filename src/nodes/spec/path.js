@@ -1,7 +1,6 @@
 /**
  * SVG (c) Robby Kraft
  */
-
 import flatten from "../../arguments/flatten";
 
 const markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
