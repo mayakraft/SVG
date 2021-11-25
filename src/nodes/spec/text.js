@@ -11,7 +11,7 @@ export default {
     // assuming people will at most supply coordinate (x,y,z) and text
     args: (a, b, c) => coordinates(...flatten(a, b, c)).slice(0, 2),
     init: (element, a, b, c, d) => {
-      const text = [a,b,c,d].filter(a => typeof a === K.string).shift();
+      const text = [a,b,c,d].filter(a => typeof a === K._string).shift();
       if (text) {
         element.appendChild(window.document.createTextNode(text));
         // it seems like this is excessive and will never happen

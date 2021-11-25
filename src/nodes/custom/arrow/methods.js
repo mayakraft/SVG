@@ -9,9 +9,9 @@ import makeArrowPaths from "./makeArrowPaths";
 
 // end is "head" or "tail"
 const setArrowheadOptions = (element, options, which) => {
-  if (typeof options === K.boolean) {
+  if (typeof options === K._boolean) {
     element.options[which].visible = options;
-  } else if (typeof options === K.object) {
+  } else if (typeof options === K._object) {
     Object.assign(element.options[which], options);
     if (options.visible == null) {
       element.options[which].visible = true;
@@ -22,7 +22,7 @@ const setArrowheadOptions = (element, options, which) => {
 };
 
 const setArrowStyle = (element, options = {}, which) => {
-  const path = element.getElementsByClassName(`${K.arrow}-${which}`)[0];
+  const path = element.getElementsByClassName(`${K._arrow}-${which}`)[0];
   Object.keys(options)
     .map(key => ({ key, fn: path[Case.toCamel(key)] }))
     .filter(el => typeof el.fn === K._function)
@@ -34,7 +34,7 @@ const redraw = (element) => {
   Object.keys(paths)
     .map(path => ({
       path,
-      element: element.getElementsByClassName(`${K.arrow}-${path}`)[0]
+      element: element.getElementsByClassName(`${K._arrow}-${path}`)[0]
     }))
     .filter(el => el.element)
     .map(el => { el.element.setAttribute("d", paths[el.path]); return el; })
@@ -68,20 +68,20 @@ const padding = (element, amount) => {
 };
 
 const head = (element, options) => {
-  setArrowheadOptions(element, options, K.head);
-  setArrowStyle(element, options, K.head);
+  setArrowheadOptions(element, options, K._head);
+  setArrowStyle(element, options, K._head);
   return redraw(element);
 };
 
 const tail = (element, options) => {
-  setArrowheadOptions(element, options, K.tail);
-  setArrowStyle(element, options, K.tail);
+  setArrowheadOptions(element, options, K._tail);
+  setArrowStyle(element, options, K._tail);
   return redraw(element);
 };
 
-const getLine = element => element.getElementsByClassName(`${K.arrow}-line`)[0];
-const getHead = element => element.getElementsByClassName(`${K.arrow}-${K.head}`)[0];
-const getTail = element => element.getElementsByClassName(`${K.arrow}-${K.tail}`)[0];
+const getLine = element => element.getElementsByClassName(`${K._arrow}-line`)[0];
+const getHead = element => element.getElementsByClassName(`${K._arrow}-${K._head}`)[0];
+const getTail = element => element.getElementsByClassName(`${K._arrow}-${K._tail}`)[0];
 
 export default {
   setPoints,

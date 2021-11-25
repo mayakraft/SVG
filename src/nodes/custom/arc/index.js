@@ -8,7 +8,7 @@ const arcArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, false)];
 
 export default {
   arc: {
-    nodeName: K.path,
+    nodeName: K._path,
     attributes: ["d"],
     args: arcArguments,
     methods: {

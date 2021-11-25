@@ -12,7 +12,7 @@ const arrowKeys = Object.keys(makeArrowOptions());
 
 const matchingOptions = (...args) => {
   for (let a = 0; a < args.length; a++) {
-    if (typeof args[a] !== K.object) { continue; }
+    if (typeof args[a] !== K._object) { continue; }
     const keys = Object.keys(args[a]);
     for (let i = 0; i < keys.length; i++) {
       if (arrowKeys.includes(keys[i])) {
@@ -23,12 +23,12 @@ const matchingOptions = (...args) => {
 };
 
 const init = function (element, ...args) {
-  element.setAttribute(K._class, K.arrow);
-  const paths = ["line", K.tail, K.head]
-    .map(key => Library.path().setClass(`${K.arrow}-${key}`).appendTo(element));
-  paths[0].setAttribute(K.style, "fill:none;");
-  paths[1].setAttribute(K.stroke, K.none);
-  paths[2].setAttribute(K.stroke, K.none);
+  element.setAttribute(K._class, K._arrow);
+  const paths = ["line", K._tail, K._head]
+    .map(key => Library.path().setClass(`${K._arrow}-${key}`).appendTo(element));
+  paths[0].setAttribute(K._style, "fill:none;");
+  paths[1].setAttribute(K._stroke, K._none);
+  paths[2].setAttribute(K._stroke, K._none);
   element.options = makeArrowOptions();
   Methods.setPoints(element, ...args);
   const options = matchingOptions(...args);

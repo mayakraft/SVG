@@ -13,7 +13,7 @@ import * as K from "../environment/keys";
 
 const SAVE_OPTIONS = () => ({
   download: false, // trigger a file download (browser only)
-  output: K.string, // output type ("string", "svg") string or XML DOM object
+  output: K._string, // output type ("string", "svg") string or XML DOM object
   windowStyle: false, // include any external stylesheets present on the window object
   filename: "image.svg" // if "download" is true, the filename for the downloaded file
 });
@@ -57,7 +57,7 @@ const save = function (svg, options) {
   // stylesheets present on the window, this allows them to be included.
   // default: not included.
   if (options.windowStyle) {
-    const styleContainer = window.document.createElementNS(svgNS, K.style);
+    const styleContainer = window.document.createElementNS(svgNS, K._style);
     styleContainer.setAttribute("type", "text/css");
     styleContainer.innerHTML = getWindowStylesheets();
     svg.appendChild(styleContainer);
@@ -69,7 +69,7 @@ const save = function (svg, options) {
   if (options.download && isBrowser && !isNode) {
     downloadInBrowser(options.filename, formattedString);
   }
-  return (options.output === K.svg ? svg : formattedString);
+  return (options.output === K._svg ? svg : formattedString);
 };
 
 export default save;

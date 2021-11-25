@@ -1,5 +1,5 @@
 const SVG = require("../svg");
-const { DOMParser } = require("xmldom");
+const { DOMParser } = require("@xmldom/xmldom");
 
 test("argument parsing, svg", () => {
   const svg0 = SVG();

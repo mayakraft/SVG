@@ -8,7 +8,7 @@ import window from "./environment/window";
 import NS from "./environment/namespace";
 import * as K from "./environment/keys";
 import linker from "./environment/linker";
-import use from "./environment/use";
+// import use from "./environment/use";
 import load from "./file/load";
 import save from "./file/save";
 
@@ -21,7 +21,7 @@ import cdata from "./environment/cdata";
 import * as detect from "./environment/detect";
 import classMethods from "./methods/classId";
 import dom from "./methods/dom";
-import * as math from "./methods/math";
+import * as algebra from "./methods/algebra";
 import transforms from "./methods/transforms";
 import * as viewBox from "./methods/viewBox";
 import children from "./nodes/nodesChildren";
@@ -32,7 +32,7 @@ const initialize = function (svg, ...args) {
 };
 
 SVG_Constructor.init = function () {
-  const svg = Constructor(K.svg, ...arguments);
+  const svg = Constructor(K._svg, ...arguments);
   // call initialize as soon as possible. check if page has loaded
   if (window.document.readyState === "loading") {
     window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...arguments));
@@ -43,7 +43,7 @@ SVG_Constructor.init = function () {
 };
 
 // const SVG = function () {
-//   const svg = Constructor(K.svg, ...arguments);
+//   const svg = Constructor(K._svg, ...arguments);
 //   // call initialize as soon as possible. check if page has loaded
 //   if (window.document.readyState === "loading") {
 //     window.document.addEventListener("DOMContentLoaded", () => initialize(svg, ...arguments));
@@ -55,7 +55,7 @@ SVG_Constructor.init = function () {
 
 SVG.NS = NS;
 SVG.linker = linker.bind(SVG);
-SVG.use = use.bind(SVG);
+// SVG.use = use.bind(SVG);
 Object.assign(SVG, Nodes);
 SVG.core = Object.assign(Object.create(null), {
   load,
@@ -66,6 +66,6 @@ SVG.core = Object.assign(Object.create(null), {
   children,
   cdata,
   detect,
-}, Case, classMethods, dom, math, transforms, viewBox);
+}, Case, classMethods, dom, algebra, transforms, viewBox);
 
 export default SVG;

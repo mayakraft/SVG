@@ -47,13 +47,13 @@ const checkParseError = xml => {
 // try "filename.svg", "<svg>" text blob, already-parsed XML document tree
 export const async = function (input) {
   return new Promise((resolve, reject) => {
-    if (typeof input === K.string || input instanceof String) {
+    if (typeof input === K._string || input instanceof String) {
       fetch(input)
         .then(response => response.text())
         .then(str => checkParseError(parse(str)))
-        .then(xml => xml.nodeName === K.svg
+        .then(xml => xml.nodeName === K._svg
           ? xml
-          : xml.getElementsByTagName(K.svg)[0])
+          : xml.getElementsByTagName(K._svg)[0])
         .then(svg => (svg == null
             ? reject("valid XML found, but no SVG element")
             : resolve(svg)))
@@ -66,7 +66,7 @@ export const async = function (input) {
 };
 
 export const sync = function (input) {
-  if (typeof input === K.string || input instanceof String) {
+  if (typeof input === K._string || input instanceof String) {
     try {
       return checkParseError(parse(input));
     } catch (error) {
@@ -80,7 +80,7 @@ export const sync = function (input) {
 
 // check for an actual .svg ending?
 // (input.slice(input.length - 4, input.length) === ".svg")
-const isFilename = input => typeof input === K.string
+const isFilename = input => typeof input === K._string
   && /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
   && input.length < 10000;
 

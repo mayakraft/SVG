@@ -3,7 +3,7 @@
  */
 import * as K from "./keys";
 
-// compare to undefined, the string
+// compare to "undefined", the string
 const isBrowser = typeof window !== K._undefined
   && typeof window.document !== K._undefined;
 
@@ -11,7 +11,7 @@ const isNode = typeof process !== K._undefined
   && process.versions != null
   && process.versions.node != null;
 
-const isWebWorker = typeof self === K.object
+const isWebWorker = typeof self === K._object
   && self.constructor
   && self.constructor.name === "DedicatedWorkerGlobalScope";
 
