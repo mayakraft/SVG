@@ -3,10 +3,11 @@
  */
 import * as K from "../../environment/keys";
 import flatten from "../../arguments/flatten";
+import semi_flatten from "../../arguments/semi-flatten";
 import coordinates from "../../arguments/coordinates";
 
 const getPoints = (el) => {
-  const attr = el.getAttribute(K.points);
+  const attr = el.getAttribute(K._points);
   return (attr == null) ? "" : attr;
 };
 
@@ -17,15 +18,17 @@ const polyString = function () {
     .join(" ");
 };
 
-const stringifyArgs = (...args) => [polyString(...coordinates(...flatten(...args)))];
+const stringifyArgs = (...args) => [
+  polyString(...coordinates(...semi_flatten(...args)))
+];
 
 const setPoints = (element, ...args) => {
-  element.setAttribute(K.points, stringifyArgs(...args)[0]);
+  element.setAttribute(K._points, stringifyArgs(...args)[0]);
   return element;
 };
 
 const addPoint = (element, ...args) => {
-  element.setAttribute(K.points, [getPoints(element), stringifyArgs(...args)[0]]
+  element.setAttribute(K._points, [getPoints(element), stringifyArgs(...args)[0]]
     .filter(a => a !== "")
     .join(" "));
   return element;
@@ -36,7 +39,7 @@ const addPoint = (element, ...args) => {
 // it should be able to take strings or numbers at any point,
 // converting the strings to coordinates
 const Args = function (...args) {
-  return args.length === 1 && typeof args[0] === K.string
+  return args.length === 1 && typeof args[0] === K._string
     ? [args[0]]
     : stringifyArgs(...args);
 };

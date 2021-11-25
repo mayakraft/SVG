@@ -8,9 +8,9 @@ import { moveChildren } from "../../methods/dom";
 const loadGroup = (group, ...sources) => {
   const elements = sources.map(source => sync(source))
     .filter(a => a !== undefined);
-  elements.filter(element => element.tagName === K.svg)
+  elements.filter(element => element.tagName === K._svg)
     .forEach(element => moveChildren(group, element));
-  elements.filter(element => element.tagName !== K.svg)
+  elements.filter(element => element.tagName !== K._svg)
     .forEach(element => group.appendChild(element));
   return group;
 };

@@ -6,7 +6,7 @@ import * as K from "../../../environment/keys";
 
 export default {
   roundRect: {
-    nodeName: K.path,
+    nodeName: K._path,
     attributes: ["d"],
     args: args
   }

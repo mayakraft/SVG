@@ -2,9 +2,9 @@
  * SVG (c) Robby Kraft
  */
 import * as K from "../../../environment/keys";
-import { add2, sub2, scale2, magnitude2 } from "../../../methods/math";
+import { add2, sub2, scale2, magnitude2 } from "../../../methods/algebra";
 
-const ends = [K.tail, K.head];
+const ends = [K._tail, K._head];
 const stringifyPoint = p => p.join(",");
 const pointsToPath = (points) => "M" + points.map(pt => pt.join(",")).join("L") + "Z";
 

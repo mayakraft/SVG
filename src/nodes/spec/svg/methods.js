@@ -50,22 +50,22 @@ const background = function (element, color) {
   if (backRect == null) {
     backRect = this.Constructor("rect", ...getFrame(element));
     backRect.setAttribute(K._class, bgClass);
-    backRect.setAttribute(K.stroke, K.none);
+    backRect.setAttribute(K._stroke, K._none);
 		element.insertBefore(backRect, element.firstChild);
   }
-  backRect.setAttribute(K.fill, color);
+  backRect.setAttribute(K._fill, color);
   return element;
 };
 
 const findStyleSheet = function (element) {
-  const styles = element.getElementsByTagName(K.style);
+  const styles = element.getElementsByTagName(K._style);
   return styles.length === 0 ? undefined : styles[0];
 };
 
 const stylesheet = function (element, textContent) {
   let styleSection = findStyleSheet(element);
   if (styleSection == null) {
-    styleSection = this.Constructor(K.style);
+    styleSection = this.Constructor(K._style);
     element.insertBefore(styleSection, element.firstChild);
   }
   styleSection.textContent = "";

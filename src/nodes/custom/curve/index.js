@@ -7,7 +7,7 @@ import * as K from "../../../environment/keys";
 
 export default {
   curve: {
-    nodeName: K.path,
+    nodeName: K._path,
     attributes: ["d"],
     args,  // one function
     methods  // object of functions

@@ -7,7 +7,7 @@ import * as K from "../../../environment/keys";
 export default {
   parabola: {
     nodeName: "polyline",
-    attributes: [K.points],
+    attributes: [K._points],
     args: args
   }
 };

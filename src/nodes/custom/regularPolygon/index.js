@@ -6,8 +6,8 @@ import * as K from "../../../environment/keys";
 
 export default {
   regularPolygon: {
-    nodeName: K.polygon,
-    attributes: [K.points],
+    nodeName: "polygon",
+    attributes: [K._points],
     args: args
   }
 };

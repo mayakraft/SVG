@@ -27,6 +27,6 @@ export default {
     element.setAttributeNS(null, K._class, className);
   },
   setId: (element, idName) => {
-    element.setAttributeNS(null, K.id, idName);
+    element.setAttributeNS(null, K._id, idName);
   }
 };

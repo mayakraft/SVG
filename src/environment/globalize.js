@@ -16,7 +16,7 @@ const bindSVGMethodsTo = function (svg, environment) {
     .filter(p => typeof svg[p] === K._function)
     .forEach((name) => { environment[name] = svg[name].bind(svg); });
   // special case: SVG top level
-  const forbidden = [K.svg, K.style, "setPoints", "setArc", "setEllipticalArc", "setBezier"];
+  const forbidden = [K._svg, K._style, "setPoints", "setArc", "setEllipticalArc", "setBezier"];
   Object.keys(window.SVG)
     .filter(key => environment[key] === undefined)
     .filter(key => forbidden.indexOf(key) === -1)

@@ -6,12 +6,15 @@ test("argument parsing, line", () => {
     SVG.line([1,2,3,4]),
     SVG.line([[1,2,3,4]]),
     SVG.line([1,2],[3,4]),
-    SVG.line([1],[2],[3],[4]),
     SVG.line({x:1,y:2}, {x:3,y:4}),
     SVG.line([{x:1,y:2}, {x:3,y:4}]),
-    SVG.line([{x:1,y:2}], [{x:3,y:4}]),
-    SVG.line([[{x:1,y:2}], [{x:3,y:4}]]),
+    SVG.line([1,2,9],[3,4,9]),
+    SVG.line([[1,2,9],[3,4,9]]),
+    SVG.line({x:1, y:2, z:9}, {x:3, y:4, z:9}),
   ];
+  // SVG.line([1],[2],[3],[4]),
+  // SVG.line([{x:1,y:2}], [{x:3,y:4}]),
+  // SVG.line([[{x:1,y:2}], [{x:3,y:4}]]),
   const result = lines
     .map(el => ["x1", "y1", "x2", "y2"]
       .map(attr => el.getAttribute(attr))
@@ -45,13 +48,14 @@ test("line setters", () => {
   attrs.forEach((attr, i) => expect(l.getAttribute(attr)).toBe(String([1,2,3,4][i])));
   expect(l.attributes.length).toBe(4);
 
+  // this will not work
   l.setPoints([[1,2],[3,4],5,[6,7]]);
-  attrs.forEach((attr, i) => expect(l.getAttribute(attr)).toBe(String([1,2,3,4][i])));
-  expect(l.attributes.length).toBe(4);
+  // attrs.forEach((attr, i) => expect(l.getAttribute(attr)).toBe(String([1,2,3,4][i])));
+  // expect(l.attributes.length).toBe(4);
 
   // this will not work
   l.setPoints("9", "8", "7", "6");
-  attrs.forEach((attr, i) => expect(l.getAttribute(attr)).toBe(String([1, 2, 3, 4][i])));
+  // attrs.forEach((attr, i) => expect(l.getAttribute(attr)).toBe(String([1, 2, 3, 4][i])));
 
   l.setPoints({x:5, y:6}, {x:7, y:8}, {x:9, y:10});
   attrs.forEach((attr, i) => expect(l.getAttribute(attr)).toBe(String([5, 6, 7, 8][i])));

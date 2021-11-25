@@ -4,7 +4,7 @@
 import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 import attributes from "../../attributes/singleElements";
-import { distance2 } from "../../methods/math";
+import { distance2 } from "../../methods/algebra";
 
 const setRadius = (el, r) => {
   el.setAttribute(attributes.circle[2], r);

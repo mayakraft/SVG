@@ -1,7 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-import { add2, sub2, scale2 } from "../../../methods/math";
+import { add2, sub2, scale2 } from "../../../methods/algebra";
 
 // endpoints is an array of 4 numbers
 const makeCurvePath = (endpoints = [], bend = 0, pinch = 0.5) => {

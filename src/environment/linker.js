@@ -4,6 +4,7 @@
 import Nodes from "../nodes/nodes";
 import Constructor from "../nodes/constructor";
 import NodesChildren from "../nodes/nodesChildren";
+import libraries from "./libraries";
 /**
  * The purpose of this section is to implant this library to become
  * one small part of a larger library. This requires knowing about
@@ -11,22 +12,20 @@ import NodesChildren from "../nodes/nodesChildren";
  */
 const link_rabbitear_math = (svg, ear) => {
   // give all primitives a .svg() method that turns them into a <path>
-  const keys = [
-    // "vector",
-    // "line",
-    // "ray",
-    "segment",
+  // ignoring primitives: "vector", "line", "ray", "matrix", "plane"
+  [ "segment",
     "circle",
     "ellipse",
     "rect",
     "polygon",
-    // "matrix",
-    // "plane",
-  ];
-  keys.filter(key => ear[key] && ear[key].prototype)
+  ].filter(key => ear[key] && ear[key].prototype)
     .forEach((key) => {
       ear[key].prototype.svg = function () { return svg.path(this.svgPath()); };
     });
+
+  // bind the other way. allow SVG library to return vector() objects,
+  // as in the onMove function, the location of the pointer.
+  libraries.math.vector = ear.vector;
 };
 
 // create a new svg element "origami", which is really a <svg>

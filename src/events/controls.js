@@ -4,7 +4,7 @@
 import * as K from "../environment/keys";
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
-import { distanceSq2 } from "../methods/math";
+import { distanceSq2 } from "../methods/algebra";
 
 const attachToParent = (parent, svg) => (svg && svg.parentNode == null
   ? parent.appendChild(svg)
@@ -72,7 +72,7 @@ const controlPoint = function (parent, options = {}) {
     set: (v) => { position[i] = v; }
   }));
   // would be nice if "svg" also called removeFromParent(); on set()
-  [K.svg, "updatePosition", "selected"].forEach(key => Object
+  [K._svg, "updatePosition", "selected"].forEach(key => Object
     .defineProperty(position, key, {
       get: () => cp[key],
       set: (v) => { cp[key] = v; }

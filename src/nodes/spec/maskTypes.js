@@ -7,7 +7,7 @@ import { setViewBox } from "../../methods/viewBox";
 
 const makeIDString = function () {
   return Array.from(arguments)
-    .filter(a => typeof a === K.string || a instanceof String)
+    .filter(a => typeof a === K._string || a instanceof String)
     .shift() || UUID();
 };
 

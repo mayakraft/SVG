@@ -6,17 +6,17 @@ import * as K from "../environment/keys";
 
 export const setViewBox = (element, ...args) => {
   // are they giving us pre-formatted string, or a list of numbers
-  const viewBox = args.length === 1 && typeof args[0] === K.string
+  const viewBox = args.length === 1 && typeof args[0] === K._string
     ? args[0]
     : viewBoxString(...args);
   if (viewBox) {
-    element.setAttribute(K.viewBox, viewBox);
+    element.setAttribute(K._viewBox, viewBox);
   }
   return element;
 };
 
 export const getViewBox = function (element) {
-  const vb = element.getAttribute(K.viewBox);
+  const vb = element.getAttribute(K._viewBox);
   return (vb == null
     ? undefined
     : vb.split(" ").map(n => parseFloat(n)));

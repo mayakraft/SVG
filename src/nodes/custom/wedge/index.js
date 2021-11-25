@@ -8,7 +8,7 @@ const wedgeArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, true)];
 
 export default {
   wedge: {
-    nodeName: K.path,
+    nodeName: K._path,
     args: wedgeArguments,
     attributes: ["d"],
     methods: {
