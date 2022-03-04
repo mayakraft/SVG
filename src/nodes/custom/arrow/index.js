@@ -1,7 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-import methods from "./methods";
+import ArrowMethods from "./methods";
 import init from "./init";
 
 export default {
@@ -9,7 +9,7 @@ export default {
     nodeName: "g",
     attributes: [],
     args: () => [],  // one function
-    methods,  // object of functions
+    methods: ArrowMethods,  // object of functions
     init,
   }
 };

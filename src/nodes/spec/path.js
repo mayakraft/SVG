@@ -139,7 +139,7 @@ const getCommands = element => parsePathCommands(getD(element));
 //   }
 // };
 
-const methods = {
+const path_methods = {
   addCommand: appendPathCommand,
   appendCommand: appendPathCommand,
   clear,
@@ -151,11 +151,11 @@ const methods = {
 };
 
 Object.keys(pathCommands).forEach((key) => {
-  methods[pathCommands[key]] = (el, ...args) => appendPathCommand(el, key, ...args);
+  path_methods[pathCommands[key]] = (el, ...args) => appendPathCommand(el, key, ...args);
 });
 
 export default {
   path: {
-    methods
+    methods: path_methods
   }
 };

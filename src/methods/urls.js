@@ -1,20 +1,20 @@
 /**
  * SVG (c) Robby Kraft
  */
-import * as K from "../environment/keys";
+import * as S from "../environment/strings";
 import Nodes from "../nodes/nodeNames";
 import Case from "../arguments/case";
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
 const findIdURL = function (arg) {
   if (arg == null) { return ""; }
-  if (typeof arg === K._string) {
+  if (typeof arg === S.str_string) {
     return arg.slice(0, 3) === "url"
       ? arg
       : `url(#${arg})`;
   }
   if (arg.getAttribute != null) {
-    const idString = arg.getAttribute(K._id);
+    const idString = arg.getAttribute(S.str_id);
     return `url(#${idString})`;
   }
   return "";

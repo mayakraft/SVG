@@ -2,12 +2,12 @@
  * SVG (c) Robby Kraft
  */
 import args from "./arguments";
-import * as K from "../../../environment/keys";
+import * as S from "../../../environment/strings";
 
 export default {
   regularPolygon: {
     nodeName: "polygon",
-    attributes: [K._points],
+    attributes: [S.str_points],
     args: args
   }
 };

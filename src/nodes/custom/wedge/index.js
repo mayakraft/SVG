@@ -2,13 +2,13 @@
  * SVG (c) Robby Kraft
  */
 import arcPath from "../arc/arcPath";
-import * as K from "../../../environment/keys";
+import * as S from "../../../environment/strings";
 
 const wedgeArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, true)];
 
 export default {
   wedge: {
-    nodeName: K._path,
+    nodeName: S.str_path,
     args: wedgeArguments,
     attributes: ["d"],
     methods: {

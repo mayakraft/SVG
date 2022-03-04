@@ -1,13 +1,13 @@
 /**
  * SVG (c) Robby Kraft
  */
-import * as K from "../../environment/keys";
+import * as S from "../../environment/strings";
 import UUID from "../../arguments/uuid";
 import { setViewBox } from "../../methods/viewBox";
 
 const makeIDString = function () {
   return Array.from(arguments)
-    .filter(a => typeof a === K._string || a instanceof String)
+    .filter(a => typeof a === S.str_string || a instanceof String)
     .shift() || UUID();
 };
 

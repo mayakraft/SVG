@@ -1,7 +1,7 @@
 /**
  * SVG (c) Robby Kraft
  */
-import * as K from "../../../environment/keys";
+import * as S from "../../../environment/strings";
 import cdata from "../../../environment/cdata";
 import { clearSVG, assignSVG } from "../../../methods/dom";
 import Load from "../../../file/load";
@@ -12,7 +12,7 @@ import { getViewBox, setViewBox } from "../../../methods/viewBox";
 export const loadSVG = (target, data) => {
   const result = Load(data);
   if (result == null) { return; }
-  return (typeof result.then === K._function)
+  return (typeof result.then === S.str_function)
     ? result.then(svg => assignSVG(target, svg))
     : assignSVG(target, result);
 };
@@ -22,7 +22,7 @@ const getFrame = function (element) {
   if (viewBox !== undefined) {
     return viewBox;
   }
-  if (typeof element.getBoundingClientRect === K._function) {
+  if (typeof element.getBoundingClientRect === S.str_function) {
     const rr = element.getBoundingClientRect();
     return [rr.x, rr.y, rr.width, rr.height];
   }
@@ -45,27 +45,27 @@ const bgClass = "svg-background-rectangle";
 // every function is bound
 const background = function (element, color) {
   let backRect = Array.from(element.childNodes)
-    .filter(child => child.getAttribute(K._class) === bgClass)
+    .filter(child => child.getAttribute(S.str_class) === bgClass)
     .shift();
   if (backRect == null) {
     backRect = this.Constructor("rect", ...getFrame(element));
-    backRect.setAttribute(K._class, bgClass);
-    backRect.setAttribute(K._stroke, K._none);
+    backRect.setAttribute(S.str_class, bgClass);
+    backRect.setAttribute(S.str_stroke, S.str_none);
 		element.insertBefore(backRect, element.firstChild);
   }
-  backRect.setAttribute(K._fill, color);
+  backRect.setAttribute(S.str_fill, color);
   return element;
 };
 
 const findStyleSheet = function (element) {
-  const styles = element.getElementsByTagName(K._style);
+  const styles = element.getElementsByTagName(S.str_style);
   return styles.length === 0 ? undefined : styles[0];
 };
 
 const stylesheet = function (element, textContent) {
   let styleSection = findStyleSheet(element);
   if (styleSection == null) {
-    styleSection = this.Constructor(K._style);
+    styleSection = this.Constructor(S.str_style);
     element.insertBefore(styleSection, element.firstChild);
   }
   styleSection.textContent = "";

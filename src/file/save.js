@@ -4,16 +4,12 @@
 import vkXML from "../../include/vkbeautify-xml";
 import svgNS from "../environment/namespace";
 import window from "../environment/window";
-import {
-  isBrowser,
-  isNode,
-  isWebWorker
-} from "../environment/detect";
-import * as K from "../environment/keys";
+import detect from "../environment/detect";
+import * as S from "../environment/strings";
 
 const SAVE_OPTIONS = () => ({
   download: false, // trigger a file download (browser only)
-  output: K._string, // output type ("string", "svg") string or XML DOM object
+  output: S.str_string, // output type ("string", "svg") string or XML DOM object
   windowStyle: false, // include any external stylesheets present on the window object
   filename: "image.svg" // if "download" is true, the filename for the downloaded file
 });
@@ -57,7 +53,7 @@ const save = function (svg, options) {
   // stylesheets present on the window, this allows them to be included.
   // default: not included.
   if (options.windowStyle) {
-    const styleContainer = window.document.createElementNS(svgNS, K._style);
+    const styleContainer = window.document.createElementNS(svgNS, S.str_style);
     styleContainer.setAttribute("type", "text/css");
     styleContainer.innerHTML = getWindowStylesheets();
     svg.appendChild(styleContainer);
@@ -66,10 +62,10 @@ const save = function (svg, options) {
   const source = (new window.XMLSerializer()).serializeToString(svg);
   const formattedString = vkXML(source);
   //
-  if (options.download && isBrowser && !isNode) {
+  if (options.download && detect.isBrowser && !detect.isNode) {
     downloadInBrowser(options.filename, formattedString);
   }
-  return (options.output === K._svg ? svg : formattedString);
+  return (options.output === S.str_svg ? svg : formattedString);
 };
 
 export default save;

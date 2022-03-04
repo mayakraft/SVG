@@ -4,7 +4,7 @@
 import flatten from "../../arguments/flatten";
 import coordinates from "../../arguments/coordinates";
 import attributes from "../../attributes/singleElements";
-import { distance2 } from "../../methods/algebra";
+import { svg_distance2 } from "../../methods/algebra";
 
 const setRadius = (el, r) => {
   el.setAttribute(attributes.circle[2], r);
@@ -17,7 +17,7 @@ const setOrigin = (el, a, b) => {
   return el;
 };
 
-const fromPoints = (a, b, c, d) => [a, b, distance2([a, b], [c, d])];
+const fromPoints = (a, b, c, d) => [a, b, svg_distance2([a, b], [c, d])];
 
 export default {
   circle: {

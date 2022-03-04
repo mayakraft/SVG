@@ -1,10 +1,10 @@
 /**
  * SVG (c) Robby Kraft
  */
-import * as K from "../environment/keys";
+import * as S from "../environment/strings";
 import flatten from "../arguments/flatten";
 import coordinates from "../arguments/coordinates";
-import { distanceSq2 } from "../methods/algebra";
+import { svg_distanceSq2 } from "../methods/algebra";
 
 const attachToParent = (parent, svg) => (svg && svg.parentNode == null
   ? parent.appendChild(svg)
@@ -51,7 +51,7 @@ const controlPoint = function (parent, options = {}) {
       .forEach((n, i) => { position[i] = n; });
     updateSVG();
     // alert delegate
-    if (typeof position.delegate === K._function) {
+    if (typeof position.delegate === S.str_function) {
       position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
     }
   };
@@ -65,14 +65,14 @@ const controlPoint = function (parent, options = {}) {
     ? setPosition(cp.updatePosition(mouse))
     : undefined);
   position.onMouseUp = () => { cp.selected = false; };
-  position.distance = mouse => Math.sqrt(distanceSq2(mouse, position));
+  position.distance = mouse => Math.sqrt(svg_distanceSq2(mouse, position));
 
   ["x", "y"].forEach((prop, i) => Object.defineProperty(position, prop, {
     get: () => position[i],
     set: (v) => { position[i] = v; }
   }));
   // would be nice if "svg" also called removeFromParent(); on set()
-  [K._svg, "updatePosition", "selected"].forEach(key => Object
+  [S.str_svg, "updatePosition", "selected"].forEach(key => Object
     .defineProperty(position, key, {
       get: () => cp[key],
       set: (v) => { cp[key] = v; }
@@ -95,7 +95,7 @@ const controls = function (svg, number, options) {
     .map(() => controlPoint(svg, options));
 
   // hook up the delegate callback for the on change event
-  const protocol = point => (typeof delegate === K._function
+  const protocol = point => (typeof delegate === S.str_function
     ? delegate.call(points, point, selected, points)
     : undefined);
 
@@ -107,7 +107,7 @@ const controls = function (svg, number, options) {
   const mousePressedHandler = function (mouse) {
     if (!(points.length > 0)) { return; }
     selected = points
-      .map((p, i) => ({ i, d: distanceSq2(p, [mouse.x, mouse.y]) }))
+      .map((p, i) => ({ i, d: svg_distanceSq2(p, [mouse.x, mouse.y]) }))
       .sort((a, b) => a.d - b.d)
       .shift()
       .i;
@@ -153,7 +153,7 @@ const controls = function (svg, number, options) {
   };
   Object.keys(functionalMethods).forEach((key) => {
     points[key] = function () {
-      if (typeof arguments[0] === K._function) {
+      if (typeof arguments[0] === S.str_function) {
         functionalMethods[key](...arguments);
       }
       return points;

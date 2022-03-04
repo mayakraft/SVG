@@ -1,15 +1,15 @@
 /**
  * SVG (c) Robby Kraft
  */
-import * as K from "../environment/keys";
-import semi_flatten from "./semi-flatten";
+import * as S from "../environment/strings";
+import svg_semi_flatten from "./semi-flatten";
 
 /**
  * totally flatten, recursive
  * @returns an array, always.
  */
-const flatten_arrays = function () {
-  return semi_flatten(arguments).reduce((a, b) => a.concat(b), []);
+const svg_flatten_arrays = function () {
+  return svg_semi_flatten(arguments).reduce((a, b) => a.concat(b), []);
 };
 
-export default flatten_arrays;
+export default svg_flatten_arrays;

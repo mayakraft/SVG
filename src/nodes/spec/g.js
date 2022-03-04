@@ -1,16 +1,16 @@
 /**
  * SVG (c) Robby Kraft
  */
-import * as K from "../../environment/keys";
+import * as S from "../../environment/strings";
 import { sync } from "../../file/load";
 import { moveChildren } from "../../methods/dom";
 
 const loadGroup = (group, ...sources) => {
   const elements = sources.map(source => sync(source))
     .filter(a => a !== undefined);
-  elements.filter(element => element.tagName === K._svg)
+  elements.filter(element => element.tagName === S.str_svg)
     .forEach(element => moveChildren(group, element));
-  elements.filter(element => element.tagName !== K._svg)
+  elements.filter(element => element.tagName !== S.str_svg)
     .forEach(element => group.appendChild(element));
   return group;
 };

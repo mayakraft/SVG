@@ -48,7 +48,7 @@ Object.keys(Nodes).forEach((key) => {
   }
 });
 
-const assign = (groups, Methods) => {
+const assignMethods = (groups, Methods) => {
   groups.forEach(n =>
     Object.keys(Methods).forEach((method) => {
       Nodes[n].methods[method] = function () {
@@ -58,9 +58,9 @@ const assign = (groups, Methods) => {
     }));
 };
 
-assign(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), classId);
-assign(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), DOM);
-assign(flatten(N.v, N.g, N.s), Transforms);
-assign(flatten(N.t, N.v, N.g), URLs);
+assignMethods(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), classId);
+assignMethods(flatten(N.t, N.v, N.g, N.s, N.p, N.i, N.h, N.d), DOM);
+assignMethods(flatten(N.v, N.g, N.s), Transforms);
+assignMethods(flatten(N.t, N.v, N.g), URLs);
 
 export default Nodes;

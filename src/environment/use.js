@@ -2,7 +2,7 @@
 * svg (c) Robby Kraft
 */
 /*
-import * as K from "./keys";
+import * as S from "./strings";
 import libraries from "./libraries";
 import NODES from "../nodes/nodes";
 
@@ -12,7 +12,7 @@ const bindRabbitEar = (_this, library) => {
 
 
 // const possibleFoldObject = (object) => {
-//   if (typeof object !== K._object) { return false; }
+//   if (typeof object !== S.str_object) { return false; }
 //   const foldKeys = ["vertices_coords", "edges_vertices", "faces_vertices", "faces_edges"];
 //   return Object.keys(object)
 //     .map(key => foldKeys.includes(key))
@@ -27,13 +27,13 @@ const bindRabbitEar = (_this, library) => {
 //   const oldInit = NODES.svg.init;
 //   NODES.svg.init = function (element, ...args) {
 //     // get the input from a string or an object
-//     // const graph = get_object(arg);
-//     const fold_object = getFoldObject(args);
-//     if (fold_object) {
+//     // const graph = getstr_object(arg);
+//     const foldstr_object = getFoldObject(args);
+//     if (foldstr_object) {
 //       // options
 //       const options = library.options(...args);
 //       // render
-//       library.render_into_svg(element, fold_object, options);
+//       library.render_intostr_svg(element, foldstr_object, options);
 //       // return
 //       // return element;
 //     }
@@ -54,7 +54,7 @@ const use = function (library) {
 	if (library.origami) {
 		bindRabbitEar(this, library);
 	}
-	// if (library.render_into_svg) {
+	// if (library.render_intostr_svg) {
 	// 	bindFoldToSvg(this, library);
 	// }
 };

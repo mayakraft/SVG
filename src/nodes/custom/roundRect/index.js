@@ -2,11 +2,11 @@
  * SVG (c) Robby Kraft
  */
 import args from "./arguments";
-import * as K from "../../../environment/keys";
+import * as S from "../../../environment/strings";
 
 export default {
   roundRect: {
-    nodeName: K._path,
+    nodeName: S.str_path,
     attributes: ["d"],
     args: args
   }

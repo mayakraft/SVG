@@ -2,8 +2,8 @@
  * SVG (c) Robby Kraft
  */
 import window from "../environment/window";
-import { isBrowser } from "../environment/detect";
-import * as K from "../environment/keys";
+import detect from "../environment/detect";
+import * as S from "../environment/strings";
 
 /** parser error to check against */
 // const pErr = (new window.DOMParser())
@@ -47,13 +47,13 @@ const checkParseError = xml => {
 // try "filename.svg", "<svg>" text blob, already-parsed XML document tree
 export const async = function (input) {
   return new Promise((resolve, reject) => {
-    if (typeof input === K._string || input instanceof String) {
+    if (typeof input === S.str_string || input instanceof String) {
       fetch(input)
         .then(response => response.text())
         .then(str => checkParseError(parse(str)))
-        .then(xml => xml.nodeName === K._svg
+        .then(xml => xml.nodeName === S.str_svg
           ? xml
-          : xml.getElementsByTagName(K._svg)[0])
+          : xml.getElementsByTagName(S.str_svg)[0])
         .then(svg => (svg == null
             ? reject("valid XML found, but no SVG element")
             : resolve(svg)))
@@ -66,7 +66,7 @@ export const async = function (input) {
 };
 
 export const sync = function (input) {
-  if (typeof input === K._string || input instanceof String) {
+  if (typeof input === S.str_string || input instanceof String) {
     try {
       return checkParseError(parse(input));
     } catch (error) {
@@ -80,13 +80,13 @@ export const sync = function (input) {
 
 // check for an actual .svg ending?
 // (input.slice(input.length - 4, input.length) === ".svg")
-const isFilename = input => typeof input === K._string
+const isFilename = input => typeof input === S.str_string
   && /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
   && input.length < 10000;
 
 const Load = input => (isFilename(input) 
-  && isBrowser
-  && typeof window.fetch === K._function
+  && detect.isBrowser
+  && typeof window.fetch === S.str_function
   ? async(input)
   : sync(input));
 
