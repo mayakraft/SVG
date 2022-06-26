@@ -1,8 +1,8 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import window from "../environment/window";
-import detect from "../environment/detect";
+import { isBrowser } from "../environment/detect";
 import * as S from "../environment/strings";
 
 /** parser error to check against */
@@ -12,32 +12,32 @@ import * as S from "../environment/strings";
 //  .namespaceURI;
 
 const filterWhitespaceNodes = (node) => {
-  if (node === null) { return node; }
-  for (let i = node.childNodes.length - 1; i >= 0; i -= 1) {
-    const child = node.childNodes[i];
-    if (child.nodeType === 3 && child.data.match(/^\s*$/)) {
-      node.removeChild(child);
-    }
-    if (child.nodeType === 1) {
-      filterWhitespaceNodes(child);
-    }
-  }
-  return node;
+	if (node === null) { return node; }
+	for (let i = node.childNodes.length - 1; i >= 0; i -= 1) {
+		const child = node.childNodes[i];
+		if (child.nodeType === 3 && child.data.match(/^\s*$/)) {
+			node.removeChild(child);
+		}
+		if (child.nodeType === 1) {
+			filterWhitespaceNodes(child);
+		}
+	}
+	return node;
 };
 
 /**
  * parse and checkParseError go together. 
  * checkParseError needs to be called to pull out the .documentElement
  */
-const parse = string => (new window.DOMParser())
-  .parseFromString(string, "text/xml");
+const parse = string => (new (window()).DOMParser())
+	.parseFromString(string, "text/xml");
 
 const checkParseError = xml => {
-  const parserErrors = xml.getElementsByTagName("parsererror");
-  if (parserErrors.length > 0) {
-    throw new Error(parserErrors[0]);
-  }
-  return filterWhitespaceNodes(xml.documentElement);
+	const parserErrors = xml.getElementsByTagName("parsererror");
+	if (parserErrors.length > 0) {
+		throw new Error(parserErrors[0]);
+	}
+	return filterWhitespaceNodes(xml.documentElement);
 };
 
 // get an svg from a html 5 fetch returned in a promise
@@ -46,48 +46,48 @@ const checkParseError = xml => {
 // the SVG is returned as a promise
 // try "filename.svg", "<svg>" text blob, already-parsed XML document tree
 export const async = function (input) {
-  return new Promise((resolve, reject) => {
-    if (typeof input === S.str_string || input instanceof String) {
-      fetch(input)
-        .then(response => response.text())
-        .then(str => checkParseError(parse(str)))
-        .then(xml => xml.nodeName === S.str_svg
-          ? xml
-          : xml.getElementsByTagName(S.str_svg)[0])
-        .then(svg => (svg == null
-            ? reject("valid XML found, but no SVG element")
-            : resolve(svg)))
-        .catch(err => reject(err));
-    }
-    else if (input instanceof window.Document) {
-      return asyncDone(input);
-    }
-  });
+	return new Promise((resolve, reject) => {
+		if (typeof input === S.str_string || input instanceof String) {
+			fetch(input)
+				.then(response => response.text())
+				.then(str => checkParseError(parse(str)))
+				.then(xml => xml.nodeName === S.str_svg
+					? xml
+					: xml.getElementsByTagName(S.str_svg)[0])
+				.then(svg => (svg == null
+						? reject("valid XML found, but no SVG element")
+						: resolve(svg)))
+				.catch(err => reject(err));
+		}
+		else if (input instanceof window().Document) {
+			return asyncDone(input);
+		}
+	});
 };
 
 export const sync = function (input) {
-  if (typeof input === S.str_string || input instanceof String) {
-    try {
-      return checkParseError(parse(input));
-    } catch (error) {
-      return error;
-    }
-  }
-  if (input.childNodes != null) {
-    return input;
-  }
+	if (typeof input === S.str_string || input instanceof String) {
+		try {
+			return checkParseError(parse(input));
+		} catch (error) {
+			return error;
+		}
+	}
+	if (input.childNodes != null) {
+		return input;
+	}
 };
 
 // check for an actual .svg ending?
 // (input.slice(input.length - 4, input.length) === ".svg")
 const isFilename = input => typeof input === S.str_string
-  && /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
-  && input.length < 10000;
+	&& /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
+	&& input.length < 10000;
 
 const Load = input => (isFilename(input) 
-  && detect.isBrowser
-  && typeof window.fetch === S.str_function
-  ? async(input)
-  : sync(input));
+	&& isBrowser
+	&& typeof window().fetch === S.str_function
+	? async(input)
+	: sync(input));
 
 export default Load;

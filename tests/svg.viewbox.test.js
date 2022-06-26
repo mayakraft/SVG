@@ -1,4 +1,5 @@
 const SVG = require("../svg");
+SVG.window = require("@xmldom/xmldom");
 
 test("viewBox get and set", () => {
 	const svg = SVG();

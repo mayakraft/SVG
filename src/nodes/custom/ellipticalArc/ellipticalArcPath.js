@@ -1,5 +1,5 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 
 // export const setEllipticalArc = function (shape, x, y, rX, rY,

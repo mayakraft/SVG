@@ -1,10 +1,10 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import window from "./window";
 
-const cdata = (textContent) => (new window.DOMParser())
-  .parseFromString("<root></root>", "text/xml")
-  .createCDATASection(`${textContent}`);
+const cdata = (textContent) => (new (window()).DOMParser())
+	.parseFromString("<root></root>", "text/xml")
+	.createCDATASection(`${textContent}`);
 
 export default cdata;

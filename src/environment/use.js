@@ -1,5 +1,5 @@
 /**
-* svg (c) Robby Kraft
+* SVG (c) Kraft
 */
 /*
 import * as S from "./strings";

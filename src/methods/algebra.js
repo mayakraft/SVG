@@ -1,5 +1,5 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 export const svg_magnitudeSq2 = (a) => (a[0] ** 2) + (a[1] ** 2);
 export const svg_magnitude2 = (a) => Math.sqrt(svg_magnitudeSq2(a));
