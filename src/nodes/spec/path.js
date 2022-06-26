@@ -1,5 +1,5 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import flatten from "../../arguments/flatten";
 
@@ -7,16 +7,16 @@ const markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
 const digitRegEx = /-?[0-9]*\.?\d+/g;
 
 const pathCommands = {
-  m: "move",
-  l: "line",
-  v: "vertical",
-  h: "horizontal",
-  a: "ellipse",
-  c: "curve",
-  s: "smoothCurve",
-  q: "quadCurve",
-  t: "smoothQuadCurve",
-  z: "close"
+	m: "move",
+	l: "line",
+	v: "vertical",
+	h: "horizontal",
+	a: "ellipse",
+	c: "curve",
+	s: "smoothCurve",
+	q: "quadCurve",
+	t: "smoothQuadCurve",
+	z: "close"
 };
 
 // const expectedArguments = {
@@ -34,9 +34,9 @@ const pathCommands = {
 
 // make capitalized copies of each command
 Object.keys(pathCommands).forEach((key) => {
-  const s = pathCommands[key];
-  pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
-  // expectedArguments[key.toUpperCase()] = expectedArguments[key];
+	const s = pathCommands[key];
+	pathCommands[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
+	// expectedArguments[key.toUpperCase()] = expectedArguments[key];
 });
 
 // results in an array of objects [
@@ -44,32 +44,32 @@ Object.keys(pathCommands).forEach((key) => {
 //  { command: "l", values: [45, 95], en: "line" }
 // ]
 const parsePathCommands = function (str) {
-  // Ulric Wilfred
-  const results = [];
-  let match;
-  while ((match = markerRegEx.exec(str)) !== null) {
-    results.push(match);
-  }
-  return results.map(match => ({
-    command: str[match.index],
-    index: match.index
-  }))
-  .reduceRight((all, cur) => {
-    const chunk = str.substring(cur.index, all.length ? all[all.length - 1].index : str.length);
-    return all.concat([
-       { command: cur.command,
-       index: cur.index,
-       chunk: (chunk.length > 0) ? chunk.substr(1, chunk.length - 1) : chunk }
-    ]);
-  }, [])
-  .reverse()
-  .map((el) => {
-    const values = el.chunk.match(digitRegEx);
-    el.en = pathCommands[el.command];
-    el.values = values ? values.map(parseFloat) : [];
-    delete el.chunk;
-    return el;
-  });
+	// Ulric Wilfred
+	const results = [];
+	let match;
+	while ((match = markerRegEx.exec(str)) !== null) {
+		results.push(match);
+	}
+	return results.map(match => ({
+		command: str[match.index],
+		index: match.index
+	}))
+	.reduceRight((all, cur) => {
+		const chunk = str.substring(cur.index, all.length ? all[all.length - 1].index : str.length);
+		return all.concat([
+			 { command: cur.command,
+			 index: cur.index,
+			 chunk: (chunk.length > 0) ? chunk.substr(1, chunk.length - 1) : chunk }
+		]);
+	}, [])
+	.reverse()
+	.map((el) => {
+		const values = el.chunk.match(digitRegEx);
+		el.en = pathCommands[el.command];
+		el.values = values ? values.map(parseFloat) : [];
+		delete el.chunk;
+		return el;
+	});
 };
 
 /**
@@ -77,24 +77,24 @@ const parsePathCommands = function (str) {
  * @returns {string} the "d" attribute, or if unset, returns an empty string "".
  */
 const getD = (el) => {
-  const attr = el.getAttribute("d");
-  return (attr == null) ? "" : attr;
+	const attr = el.getAttribute("d");
+	return (attr == null) ? "" : attr;
 };
 
 const clear = element => {
-  element.removeAttribute("d");
-  return element;
+	element.removeAttribute("d");
+	return element;
 };
 
 // todo: would be great if for arguments > 2 it alternated space and comma
 const appendPathCommand = (el, command, ...args) => {
-  el.setAttribute("d", `${getD(el)}${command}${flatten(...args).join(" ")}`);
-  return el;
+	el.setAttribute("d", `${getD(el)}${command}${flatten(...args).join(" ")}`);
+	return el;
 };
 
 const appendPathString = (el, string) => {
-  el.setAttribute("d", `${getD(el)}${string}`);
-  return el;
+	el.setAttribute("d", `${getD(el)}${string}`);
+	return el;
 };
 
 // user got the commands object and is returning it to us
@@ -103,8 +103,8 @@ const appendPathString = (el, string) => {
 
 // user provided one already-formatted path string
 const setPathString = (element, commandsString) => {
-  element.setAttribute("d", commandsString);
-  return element;
+	element.setAttribute("d", commandsString);
+	return element;
 };
 
 // break out the path commands into an array of descriptive objects
@@ -139,23 +139,23 @@ const getCommands = element => parsePathCommands(getD(element));
 //   }
 // };
 
-const methods = {
-  addCommand: appendPathCommand,
-  appendCommand: appendPathCommand,
-  clear,
-  getCommands: getCommands,
-  get: getCommands,
-  getD: el => el.getAttribute("d"),
-  // set: clearAndSet,
-  // add: noClearSet,
+const path_methods = {
+	addCommand: appendPathCommand,
+	appendCommand: appendPathCommand,
+	clear,
+	getCommands: getCommands,
+	get: getCommands,
+	getD: el => el.getAttribute("d"),
+	// set: clearAndSet,
+	// add: noClearSet,
 };
 
 Object.keys(pathCommands).forEach((key) => {
-  methods[pathCommands[key]] = (el, ...args) => appendPathCommand(el, key, ...args);
+	path_methods[pathCommands[key]] = (el, ...args) => appendPathCommand(el, key, ...args);
 });
 
 export default {
-  path: {
-    methods
-  }
+	path: {
+		methods: path_methods
+	}
 };

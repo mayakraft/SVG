@@ -1,37 +1,37 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
-import * as K from "../../environment/keys";
+import * as S from "../../environment/strings";
 import flatten from "../../arguments/flatten";
 import semi_flatten from "../../arguments/semi-flatten";
 import coordinates from "../../arguments/coordinates";
 
 const getPoints = (el) => {
-  const attr = el.getAttribute(K._points);
-  return (attr == null) ? "" : attr;
+	const attr = el.getAttribute(S.str_points);
+	return (attr == null) ? "" : attr;
 };
 
 const polyString = function () {
-  return Array
-    .from(Array(Math.floor(arguments.length / 2)))
-    .map((_, i) => `${arguments[i * 2 + 0]},${arguments[i * 2 + 1]}`)
-    .join(" ");
+	return Array
+		.from(Array(Math.floor(arguments.length / 2)))
+		.map((_, i) => `${arguments[i * 2 + 0]},${arguments[i * 2 + 1]}`)
+		.join(" ");
 };
 
 const stringifyArgs = (...args) => [
-  polyString(...coordinates(...semi_flatten(...args)))
+	polyString(...coordinates(...semi_flatten(...args)))
 ];
 
 const setPoints = (element, ...args) => {
-  element.setAttribute(K._points, stringifyArgs(...args)[0]);
-  return element;
+	element.setAttribute(S.str_points, stringifyArgs(...args)[0]);
+	return element;
 };
 
 const addPoint = (element, ...args) => {
-  element.setAttribute(K._points, [getPoints(element), stringifyArgs(...args)[0]]
-    .filter(a => a !== "")
-    .join(" "));
-  return element;
+	element.setAttribute(S.str_points, [getPoints(element), stringifyArgs(...args)[0]]
+		.filter(a => a !== "")
+		.join(" "));
+	return element;
 };
 
 // this should be improved
@@ -39,24 +39,24 @@ const addPoint = (element, ...args) => {
 // it should be able to take strings or numbers at any point,
 // converting the strings to coordinates
 const Args = function (...args) {
-  return args.length === 1 && typeof args[0] === K._string
-    ? [args[0]]
-    : stringifyArgs(...args);
+	return args.length === 1 && typeof args[0] === S.str_string
+		? [args[0]]
+		: stringifyArgs(...args);
 };
 
 export default {
-  polyline: {
-    args: Args,
-    methods: {
-      setPoints,
-      addPoint
-    }
-  },
-  polygon: {
-    args: Args,
-    methods: {
-      setPoints,
-      addPoint
-    }
-  }
+	polyline: {
+		args: Args,
+		methods: {
+			setPoints,
+			addPoint
+		}
+	},
+	polygon: {
+		args: Args,
+		methods: {
+			setPoints,
+			addPoint
+		}
+	}
 };

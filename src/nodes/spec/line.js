@@ -1,5 +1,5 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import flatten from "../../arguments/flatten";
 import semi_flatten from "../../arguments/semi-flatten";
@@ -9,13 +9,17 @@ import attributes from "../../attributes/singleElements";
 const Args = (...args) => coordinates(...semi_flatten(...args)).slice(0, 4);
 
 const setPoints = (element, ...args) => { Args(...args)
-  .forEach((value, i) => element.setAttribute(attributes.line[i], value)); return element; }
-
+	.forEach((value, i) => element.setAttribute(attributes.line[i], value)); return element; }
+/**
+ * @name line
+ * @description SVG Line element
+ * @memberof SVG
+ */
 export default {
-  line: {
-    args: Args,
-    methods: {
-      setPoints,
-    }
-  }
+	line: {
+		args: Args,
+		methods: {
+			setPoints,
+		}
+	}
 };

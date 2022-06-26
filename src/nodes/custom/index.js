@@ -1,5 +1,5 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 /**
  * This is the entry-point for adding new primitives to the library.
@@ -20,15 +20,15 @@ import Curve from "./curve/index";
 const nodes = {};
 
 Object.assign(nodes,
-  // to include/exclude nodes from this library
-  // comment out nodes below, rebuild
-  Arc,
-  Wedge,
-  Parabola,
-  RegularPolygon,
-  RoundRect,
-  Arrow,
-  Curve
+	// to include/exclude nodes from this library
+	// comment out nodes below, rebuild
+	Arc,
+	Wedge,
+	Parabola,
+	RegularPolygon,
+	RoundRect,
+	Arrow,
+	Curve
 );
 
 export default nodes;

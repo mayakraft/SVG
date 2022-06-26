@@ -1,22 +1,22 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
-import * as K from "./keys";
+import * as S from "./strings";
 
 // compare to "undefined", the string
-const isBrowser = typeof window !== K._undefined
-  && typeof window.document !== K._undefined;
+const isBrowser = typeof window !== S.str_undefined
+	&& typeof window.document !== S.str_undefined;
 
-const isNode = typeof process !== K._undefined
-  && process.versions != null
-  && process.versions.node != null;
+const isNode = typeof process !== S.str_undefined
+	&& process.versions != null
+	&& process.versions.node != null;
 
-const isWebWorker = typeof self === K._object
-  && self.constructor
-  && self.constructor.name === "DedicatedWorkerGlobalScope";
+const isWebWorker = typeof self === S.str_object
+	&& self.constructor
+	&& self.constructor.name === "DedicatedWorkerGlobalScope";
 
 export {
-  isBrowser,
-  isNode,
-  isWebWorker
+	isBrowser,
+	isNode,
+	isWebWorker
 };

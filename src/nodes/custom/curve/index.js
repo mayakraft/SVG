@@ -1,15 +1,15 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import args from "./arguments";
-import methods from "./methods";
-import * as K from "../../../environment/keys";
+import curve_methods from "./methods";
+import * as S from "../../../environment/strings";
 
 export default {
-  curve: {
-    nodeName: K._path,
-    attributes: ["d"],
-    args,  // one function
-    methods  // object of functions
-  }
+	curve: {
+		nodeName: S.str_path,
+		attributes: ["d"],
+		args,  // one function
+		methods: curve_methods  // object of functions
+	}
 };

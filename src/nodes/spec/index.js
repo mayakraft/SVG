@@ -1,5 +1,5 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import svgDef from "./svg/index";
 import gDef from "./g";
@@ -24,16 +24,16 @@ import polyDefs from "./polys";
  *
  */
 export default Object.assign({},
-  svgDef,
-  gDef,
-  circleDef,
-  ellipseDef,
-  lineDef,
-  pathDef,
-  rectDef,
-  styleDef,
-  textDef,
-  // multiple
-  maskTypes,
-  polyDefs,
+	svgDef,
+	gDef,
+	circleDef,
+	ellipseDef,
+	lineDef,
+	pathDef,
+	rectDef,
+	styleDef,
+	textDef,
+	// multiple
+	maskTypes,
+	polyDefs,
 );

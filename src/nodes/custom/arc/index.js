@@ -1,18 +1,18 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import arcPath from "./arcPath";
-import * as K from "../../../environment/keys";
+import * as S from "../../../environment/strings";
 
 const arcArguments = (a, b, c, d, e) => [arcPath(a, b, c, d, e, false)];
 
 export default {
-  arc: {
-    nodeName: K._path,
-    attributes: ["d"],
-    args: arcArguments,
-    methods: {
-      setArc: (el, ...args) => el.setAttribute("d", arcArguments(...args)),
-    }
-  }
+	arc: {
+		nodeName: S.str_path,
+		attributes: ["d"],
+		args: arcArguments,
+		methods: {
+			setArc: (el, ...args) => el.setAttribute("d", arcArguments(...args)),
+		}
+	}
 };

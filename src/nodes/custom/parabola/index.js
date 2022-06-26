@@ -1,13 +1,13 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import args from "./arguments";
-import * as K from "../../../environment/keys";
+import * as S from "../../../environment/strings";
 
 export default {
-  parabola: {
-    nodeName: "polyline",
-    attributes: [K._points],
-    args: args
-  }
+	parabola: {
+		nodeName: "polyline",
+		attributes: [S.str_points],
+		args: args
+	}
 };

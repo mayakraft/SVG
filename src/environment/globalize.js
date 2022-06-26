@@ -1,8 +1,8 @@
 /**
- * SVG (c) Robby Kraft
+ * SVG (c) Kraft
  */
 import window from "./window";
-import * as K from "./environment/keys";
+import * as S from "./environment/strings";
 /**
  * this creates a more accessible interface for beginner coders.
  * similar to the structure of Processing / p5.js
@@ -11,31 +11,31 @@ import * as K from "./environment/keys";
  * this attaches an SVG to the document, and binds member functions to the window
  */
 const bindSVGMethodsTo = function (svg, environment) {
-  // bind all member methods of window.svg to the environment
-  Object.getOwnPropertyNames(svg)
-    .filter(p => typeof svg[p] === K._function)
-    .forEach((name) => { environment[name] = svg[name].bind(svg); });
-  // special case: SVG top level
-  const forbidden = [K._svg, K._style, "setPoints", "setArc", "setEllipticalArc", "setBezier"];
-  Object.keys(window.SVG)
-    .filter(key => environment[key] === undefined)
-    .filter(key => forbidden.indexOf(key) === -1)
-    .forEach((key) => { environment[key] = window.SVG[key]; });
-  // bind events
-  // and other top level svg setters
-  ["mousePressed", "mouseReleased", "mouseMoved", "scroll", "animate", "fps"]
-    .forEach(key => Object.defineProperty(window, key, {
-      set: (value) => { svg[key] = value; },
-      get: () => svg[key]
-    }));
+	// bind all member methods of window.svg to the environment
+	Object.getOwnPropertyNames(svg)
+		.filter(p => typeof svg[p] === S.str_function)
+		.forEach((name) => { environment[name] = svg[name].bind(svg); });
+	// special case: SVG top level
+	const forbidden = [S.str_svg, S.str_style, "setPoints", "setArc", "setEllipticalArc", "setBezier"];
+	Object.keys(window().SVG)
+		.filter(key => environment[key] === undefined)
+		.filter(key => forbidden.indexOf(key) === -1)
+		.forEach((key) => { environment[key] = window().SVG[key]; });
+	// bind events
+	// and other top level svg setters
+	["mousePressed", "mouseReleased", "mouseMoved", "scroll", "animate", "fps"]
+		.forEach(key => Object.defineProperty(window(), key, {
+			set: (value) => { svg[key] = value; },
+			get: () => svg[key]
+		}));
 };
 
 export default (svg, ...args) => {
-  let element = svg;
-  if (element == null) {
-    element = window.SVG(...args);
-  }
-  // attach methods to window
-  bindSVGMethodsTo(element, window);
-  return element;
+	let element = svg;
+	if (element == null) {
+		element = window().SVG(...args);
+	}
+	// attach methods to window
+	bindSVGMethodsTo(element, window());
+	return element;
 };
