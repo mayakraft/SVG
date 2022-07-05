@@ -13,7 +13,7 @@ import libraries from "./libraries";
 const link_rabbitear_math = (svg, ear) => {
 	// give all primitives a .svg() method that turns them into a <path>
 	// ignoring primitives: "vector", "line", "ray", "matrix", "plane"
-	[ "segment",
+	["segment",
 		"circle",
 		"ellipse",
 		"rect",
@@ -48,7 +48,7 @@ const link_rabbitear_graph = (svg, ear) => {
 			const child = ear.graph.svg[key](...args);
 			element.appendChild(child);
 			return child;
-		}
+		};
 	});
 	// give "origami" the ability to act like a <svg> and create children, like <line>
 	NodesChildren[NODE_NAME] = [...NodesChildren.g];

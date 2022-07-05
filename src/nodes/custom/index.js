@@ -19,7 +19,8 @@ import Curve from "./curve/index";
 
 const nodes = {};
 
-Object.assign(nodes,
+Object.assign(
+	nodes,
 	// to include/exclude nodes from this library
 	// comment out nodes below, rebuild
 	Arc,
@@ -28,7 +29,7 @@ Object.assign(nodes,
 	RegularPolygon,
 	RoundRect,
 	Arrow,
-	Curve
+	Curve,
 );
 
 export default nodes;

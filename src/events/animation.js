@@ -5,7 +5,7 @@ import window from "../environment/window";
 import UUID from "../arguments/uuid";
 
 const Animation = function (element) {
-	let fps; // todo: bring this back
+	// let fps; // todo: bring this back
 
 	let start;
 	const handlers = {};
@@ -48,7 +48,7 @@ const Animation = function (element) {
 				requestId = window().requestAnimationFrame(handlers[uuid]);
 			}
 		},
-		enumerable: true
+		enumerable: true,
 	});
 	Object.defineProperty(element, "stop", { value: removeHandlers, enumerable: true });
 };

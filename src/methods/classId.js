@@ -28,5 +28,5 @@ export default {
 	},
 	setId: (element, idName) => {
 		element.setAttributeNS(null, S.str_id, idName);
-	}
+	},
 };

@@ -8,6 +8,6 @@ export default {
 	regularPolygon: {
 		nodeName: "polygon",
 		attributes: [S.str_points],
-		args: args
-	}
+		args: args,
+	},
 };

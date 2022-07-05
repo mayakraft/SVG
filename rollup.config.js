@@ -1,7 +1,7 @@
 import babel from "@rollup/plugin-babel";
 import cleanup from "rollup-plugin-cleanup";
 import { terser } from "rollup-plugin-terser";
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 const input = "src/index.js";
 const name = "SVG";
@@ -27,8 +27,8 @@ module.exports = [{
 	plugins: [
 		nodeResolve(),
 		babel({
-		  babelHelpers: "bundled",
-		  presets: ["@babel/preset-env"]
+			babelHelpers: "bundled",
+			presets: ["@babel/preset-env"],
 		}),
 		cleanup(),
 		terser(),

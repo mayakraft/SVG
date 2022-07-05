@@ -43,7 +43,7 @@ const controlPoint = function (parent, options = {}) {
 			target[property] = value;
 			updateSVG();
 			return true;
-		}
+		},
 	});
 
 	const setPosition = function (...args) {
@@ -75,14 +75,14 @@ const controlPoint = function (parent, options = {}) {
 	[S.str_svg, "updatePosition", "selected"].forEach(key => Object
 		.defineProperty(position, key, {
 			get: () => cp[key],
-			set: (v) => { cp[key] = v; }
+			set: (v) => { cp[key] = v; },
 		}));
 	Object.defineProperty(position, "remove", {
 		value: () => {
 			// todo, do we need to do any other unwinding?
 			removeFromParent(cp.svg);
 			position.delegate = undefined;
-		}
+		},
 	});
 
 	return proxy;

@@ -11,17 +11,17 @@ const makeIDString = function () {
 		.shift() || UUID();
 };
 
-const args = (...args) => [makeIDString(...args)];
+const maskArgs = (...args) => [makeIDString(...args)];
 
 export default {
-	mask: { args: args },
-	clipPath: { args: args },
-	symbol: { args: args },
+	mask: { args: maskArgs },
+	clipPath: { args: maskArgs },
+	symbol: { args: maskArgs },
 	marker: {
-		args: args,
+		args: maskArgs,
 		methods: {
 			size: setViewBox,
-			setViewBox: setViewBox
-		}
+			setViewBox: setViewBox,
+		},
 	},
 };

@@ -8,6 +8,6 @@ export default {
 	roundRect: {
 		nodeName: S.str_path,
 		attributes: ["d"],
-		args: args
-	}
+		args: args,
+	},
 };

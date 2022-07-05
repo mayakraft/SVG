@@ -10,7 +10,6 @@ const bindRabbitEar = (_this, library) => {
 	libraries.math.vector = library.vector;
 };
 
-
 // const possibleFoldObject = (object) => {
 //   if (typeof object !== S.str_object) { return false; }
 //   const foldKeys = ["vertices_coords", "edges_vertices", "faces_vertices", "faces_edges"];
@@ -47,7 +46,6 @@ const bindRabbitEar = (_this, library) => {
 //     return oldInit(element, ...args);
 //   }
 // };
-
 
 const use = function (library) {
 	// check if this is the RabbitEar library

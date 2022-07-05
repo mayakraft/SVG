@@ -11,7 +11,6 @@ import linker from "./environment/linker";
 // import use from "./environment/use";
 import load from "./file/load";
 import save from "./file/save";
-
 // core methods
 import Case from "./arguments/case";
 import coordinates from "./arguments/coordinates";
@@ -72,7 +71,7 @@ SVG.core = Object.assign(Object.create(null), {
 // default export of the library @xmldom/xmldom
 Object.defineProperty(SVG, "window", {
 	enumerable: false,
-	set: value => setWindow(value),
+	set: value => { setWindow(value); },
 });
 
 export default SVG;

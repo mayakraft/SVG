@@ -2,7 +2,6 @@
  * SVG (c) Kraft
  */
 import * as S from "../../environment/strings";
-import flatten from "../../arguments/flatten";
 import semi_flatten from "../../arguments/semi-flatten";
 import coordinates from "../../arguments/coordinates";
 
@@ -19,7 +18,7 @@ const polyString = function () {
 };
 
 const stringifyArgs = (...args) => [
-	polyString(...coordinates(...semi_flatten(...args)))
+	polyString(...coordinates(...semi_flatten(...args))),
 ];
 
 const setPoints = (element, ...args) => {
@@ -49,14 +48,14 @@ export default {
 		args: Args,
 		methods: {
 			setPoints,
-			addPoint
-		}
+			addPoint,
+		},
 	},
 	polygon: {
 		args: Args,
 		methods: {
 			setPoints,
-			addPoint
-		}
-	}
+			addPoint,
+		},
+	},
 };

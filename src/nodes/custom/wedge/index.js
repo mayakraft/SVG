@@ -13,6 +13,6 @@ export default {
 		attributes: ["d"],
 		methods: {
 			setArc: (el, ...args) => el.setAttribute("d", wedgeArguments(...args)),
-		}
-	}
+		},
+	},
 };

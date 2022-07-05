@@ -37,14 +37,15 @@ const fixNegatives = function (arr) {
  * @param {number} width the length along the x dimension
  * @param {number} height the length along the y dimension
  * @returns {Element} an SVG node element
+ * @linkcode SVG ./src/nodes/spec/rect.js 40
  */
 export default {
 	rect: {
 		args: (a, b, c, d) => {
 			const coords = coordinates(...flatten(a, b, c, d)).slice(0, 4);
 			switch (coords.length) {
-				case 0: case 1: case 2: case 3: return fixNegatives([, , ...coords]);
-				default: return fixNegatives(coords);
+			case 0: case 1: case 2: case 3: return fixNegatives([, , ...coords]);
+			default: return fixNegatives(coords);
 			}
 		},
 		methods: {
@@ -54,6 +55,6 @@ export default {
 			setCenter: setRectOrigin,
 			size: setRectSize,
 			setSize: setRectSize,
-		}
-	}
+		},
+	},
 };

@@ -39,7 +39,7 @@ export default Object.assign(Object.create(null), {
 	radialGradient: [
 		"cx", // <radialGradient>
 		"cy", // <radialGradient>
-		"r",  // <radialGradient>
+		"r", // <radialGradient>
 		"fr", // <radialGradient>
 		"fx", // <radialGradient>
 		"fy", // <radialGradient>

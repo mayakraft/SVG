@@ -4,8 +4,7 @@
 import * as S from "../../../environment/strings";
 import viewBox from "../../../arguments/viewBox";
 import coordinates from "../../../arguments/coordinates";
-import methods from "./methods";
-import { loadSVG } from "./methods";
+import methods, { loadSVG } from "./methods";
 import Touch from "../../../events/touch";
 import Animation from "../../../events/animation";
 import Controls from "../../../events/controls";
@@ -29,6 +28,6 @@ export default {
 			Touch(element);
 			Animation(element);
 			Controls(element);
-		}
-	}
+		},
+	},
 };

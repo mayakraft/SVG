@@ -13,6 +13,6 @@ export default {
 		args: arcArguments,
 		methods: {
 			setArc: (el, ...args) => el.setAttribute("d", arcArguments(...args)),
-		}
-	}
+		},
+	},
 };

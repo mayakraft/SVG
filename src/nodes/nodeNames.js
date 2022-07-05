@@ -117,4 +117,3 @@ const embedded = [
 const linking = [
 	"a",  // anywhere
 ];
-

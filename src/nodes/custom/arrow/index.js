@@ -8,8 +8,8 @@ export default {
 	arrow: {
 		nodeName: "g",
 		attributes: [],
-		args: () => [],  // one function
-		methods: ArrowMethods,  // object of functions
+		args: () => [], // one function
+		methods: ArrowMethods, // object of functions
 		init,
-	}
+	},
 };

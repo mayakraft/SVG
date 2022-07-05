@@ -18,5 +18,5 @@ const isWebWorker = typeof self === S.str_object
 export {
 	isBrowser,
 	isNode,
-	isWebWorker
+	isWebWorker,
 };

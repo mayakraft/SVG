@@ -20,10 +20,10 @@ const getCurveEndpoints = (d) => {
 	const move = getMoveTos(d).shift();
 	const curve = getCurveTos(d).shift();
 	const start = move
-		? [move[move.length-2], move[move.length-1]]
+		? [move[move.length - 2], move[move.length - 1]]
 		: [0, 0];
 	const end = curve
-		? [curve[curve.length-2], curve[curve.length-1]]
+		? [curve[curve.length - 2], curve[curve.length - 1]]
 		: [0, 0];
 	return [...start, ...end];
 };

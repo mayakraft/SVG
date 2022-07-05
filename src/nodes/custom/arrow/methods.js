@@ -21,12 +21,23 @@ const setArrowheadOptions = (element, options, which) => {
 	}
 };
 
-const setArrowStyle = (element, options = {}, which) => {
+const setArrowStyle = (element, options = {}, which = S.str_head) => {
 	const path = element.getElementsByClassName(`${S.str_arrow}-${which}`)[0];
+	// find options which translate to object methods (el.stroke("red"))
 	Object.keys(options)
 		.map(key => ({ key, fn: path[Case.toCamel(key)] }))
-		.filter(el => typeof el.fn === S.str_function)
+		.filter(el => typeof el.fn === S.str_function && el.key !== "class")
 		.forEach(el => el.fn(options[el.key]));
+	// find options which don't work as methods, set as attributes
+	// Object.keys(options)
+	// 	.map(key => ({ key, fn: path[Case.toCamel(key)] }))
+	// 	.filter(el => typeof el.fn !== S.str_function && el.key !== "class")
+	// 	.forEach(el => path.setAttribute(el.key, options[el.key]));
+	//
+	// apply a class attribute (add, don't overwrite existing classes)
+	Object.keys(options)
+		.filter(key => key === "class")
+		.forEach(key => path.classList.add(options[key]));
 };
 
 const redraw = (element) => {
@@ -34,7 +45,7 @@ const redraw = (element) => {
 	Object.keys(paths)
 		.map(path => ({
 			path,
-			element: element.getElementsByClassName(`${S.str_arrow}-${path}`)[0]
+			element: element.getElementsByClassName(`${S.str_arrow}-${path}`)[0],
 		}))
 		.filter(el => el.element)
 		.map(el => { el.element.setAttribute("d", paths[el.path]); return el; })
@@ -43,7 +54,8 @@ const redraw = (element) => {
 			"visibility",
 			element.options[el.path].visible
 				? "visible"
-				: "hidden"));
+				: "hidden",
+		));
 	return element;
 };
 

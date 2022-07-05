@@ -20,6 +20,6 @@ export default {
 		init: loadGroup,
 		methods: {
 			load: loadGroup,
-		}
-	}
+		},
+	},
 };

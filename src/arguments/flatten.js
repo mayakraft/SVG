@@ -1,11 +1,9 @@
 /**
  * SVG (c) Kraft
  */
-import * as S from "../environment/strings";
 import svg_semi_flatten from "./semi-flatten";
-
 /**
- * totally flatten, recursive
+ * @description totally flatten, recursive
  * @returns an array, always.
  */
 const svg_flatten_arrays = function () {

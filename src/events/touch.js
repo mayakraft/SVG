@@ -27,9 +27,9 @@ const defineGetter = (obj, prop, value) => Object.defineProperty(obj, prop, {
 });
 
 const assignPress = (e, startPoint) => {
-	["pressX", "pressY"].filter(prop => !e.hasOwnProperty(prop))
+	["pressX", "pressY"].filter(prop => !Object.prototype.hasOwnProperty.call(e, prop))
 		.forEach((prop, i) => defineGetter(e, prop, startPoint[i]));
-	if (!e.hasOwnProperty("press")) {
+	if (!Object.prototype.hasOwnProperty.call(e, "press")) {
 		defineGetter(e, "press", Libraries.math.vector(...startPoint));
 	}
 };
@@ -65,42 +65,46 @@ const TouchEvents = function (element) {
 				startPoint = [];
 			}
 			assignPress(e, startPoint);
-		}
+		},
 	};
 
 	// assign handlers for onMove, onPress, onRelease
 	Object.keys(categories).forEach((category) => {
-		const propName = "on" + Case.capitalized(category);
+		const propName = `on${Case.capitalized(category)}`;
 		Object.defineProperty(element, propName, {
-			set: (handler) => (handler == null)
-				? removeHandler(category)
-				: categories[category].forEach((handlerName) => {
-						const handlerFunc = (e) => {
-							// const pointer = (e.touches != null && e.touches.length
-							const pointer = (e.touches != null
-								? e.touches[0]
-								: e);
-							// onRelease events don't have a pointer
-							if (pointer !== undefined) {
-								const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY)
-									.map(n => isNaN(n) ? undefined : n); // e.target
-								["x", "y"]
-									.filter(prop => !e.hasOwnProperty(prop))
-									.forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
-								if (!e.hasOwnProperty("position")) {
-									defineGetter(e, "position", Libraries.math.vector(...viewPoint));
-								}
-								categoryUpdate[category](e, viewPoint);
+			set: (handler) => {
+				if (handler == null) {
+					removeHandler(category);
+					return;
+				}
+				categories[category].forEach((handlerName) => {
+					const handlerFunc = (e) => {
+						// const pointer = (e.touches != null && e.touches.length
+						const pointer = (e.touches != null
+							? e.touches[0]
+							: e);
+						// onRelease events don't have a pointer
+						if (pointer !== undefined) {
+							const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY)
+								.map(n => (Number.isNaN(n) ? undefined : n)); // e.target
+							["x", "y"]
+								.filter(prop => !Object.prototype.hasOwnProperty.call(e, prop))
+								.forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
+							if (!Object.prototype.hasOwnProperty.call(e, "position")) {
+								defineGetter(e, "position", Libraries.math.vector(...viewPoint));
 							}
-							handler(e);
-						};
-						// node.js doesn't have addEventListener
-						if (element.addEventListener) {
-							handlers[handlerName].push(handlerFunc);
-							element.addEventListener(handlerName, handlerFunc);
+							categoryUpdate[category](e, viewPoint);
 						}
-					}),
-			enumerable: true
+						handler(e);
+					};
+					// node.js doesn't have addEventListener
+					if (element.addEventListener) {
+						handlers[handlerName].push(handlerFunc);
+						element.addEventListener(handlerName, handlerFunc);
+					}
+				});
+			},
+			enumerable: true,
 		});
 	});
 
@@ -108,4 +112,3 @@ const TouchEvents = function (element) {
 };
 
 export default TouchEvents;
-

@@ -3,9 +3,8 @@
  */
 const libraries = {
 	math: {
-		vector: (...args) => [...args]
-	}
+		vector: (...args) => [...args],
+	},
 };
 
 export default libraries;
-

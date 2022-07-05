@@ -7,11 +7,11 @@ import ManyElements from "./manyElements";
 import NodeAttributes from "./singleElements";
 
 Object.values(N)
-	.reduce((a,b) => a.concat(b), [])
+	.reduce((a, b) => a.concat(b), [])
 	.filter(nodeName => NodeAttributes[nodeName] === undefined)
 	.forEach(nodeName => { NodeAttributes[nodeName] = []; });
 
-[ [[S.str_svg, "defs", "g"].concat(N.v, N.t), ManyElements.presentation],
+[[[S.str_svg, "defs", "g"].concat(N.v, N.t), ManyElements.presentation],
 	[["filter"], ManyElements.effects],
 	[N.cT.concat("text"), ManyElements.text], // todo: should we include "svg" here?
 	[N.cF, ManyElements.effects],

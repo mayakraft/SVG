@@ -49,8 +49,8 @@ Object.keys(Nodes).forEach((key) => {
 });
 
 const assignMethods = (groups, Methods) => {
-	groups.forEach(n =>
-		Object.keys(Methods).forEach((method) => {
+	groups.forEach(n => Object
+		.keys(Methods).forEach((method) => {
 			Nodes[n].methods[method] = function () {
 				Methods[method](...arguments);
 				return arguments[0];

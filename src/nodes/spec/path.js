@@ -16,7 +16,7 @@ const pathCommands = {
 	s: "smoothCurve",
 	q: "quadCurve",
 	t: "smoothQuadCurve",
-	z: "close"
+	z: "close",
 };
 
 // const expectedArguments = {
@@ -50,26 +50,26 @@ const parsePathCommands = function (str) {
 	while ((match = markerRegEx.exec(str)) !== null) {
 		results.push(match);
 	}
-	return results.map(match => ({
-		command: str[match.index],
-		index: match.index
+	return results.map(m => ({
+		command: str[m.index],
+		index: m.index,
 	}))
-	.reduceRight((all, cur) => {
-		const chunk = str.substring(cur.index, all.length ? all[all.length - 1].index : str.length);
-		return all.concat([
-			 { command: cur.command,
-			 index: cur.index,
-			 chunk: (chunk.length > 0) ? chunk.substr(1, chunk.length - 1) : chunk }
-		]);
-	}, [])
-	.reverse()
-	.map((el) => {
-		const values = el.chunk.match(digitRegEx);
-		el.en = pathCommands[el.command];
-		el.values = values ? values.map(parseFloat) : [];
-		delete el.chunk;
-		return el;
-	});
+		.reduceRight((all, cur) => {
+			const chunk = str.substring(cur.index, all.length ? all[all.length - 1].index : str.length);
+			return all.concat([{
+				command: cur.command,
+				index: cur.index,
+				chunk: (chunk.length > 0) ? chunk.substr(1, chunk.length - 1) : chunk,
+			}]);
+		}, [])
+		.reverse()
+		.map((el) => {
+			const values = el.chunk.match(digitRegEx);
+			el.en = pathCommands[el.command];
+			el.values = values ? values.map(parseFloat) : [];
+			delete el.chunk;
+			return el;
+		});
 };
 
 /**
@@ -156,6 +156,6 @@ Object.keys(pathCommands).forEach((key) => {
 
 export default {
 	path: {
-		methods: path_methods
-	}
+		methods: path_methods,
+	},
 };

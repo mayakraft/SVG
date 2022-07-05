@@ -26,7 +26,7 @@ const filterWhitespaceNodes = (node) => {
 };
 
 /**
- * parse and checkParseError go together. 
+ * parse and checkParseError go together.
  * checkParseError needs to be called to pull out the .documentElement
  */
 const parse = string => (new (window()).DOMParser())
@@ -51,15 +51,14 @@ export const async = function (input) {
 			fetch(input)
 				.then(response => response.text())
 				.then(str => checkParseError(parse(str)))
-				.then(xml => xml.nodeName === S.str_svg
+				.then(xml => (xml.nodeName === S.str_svg
 					? xml
-					: xml.getElementsByTagName(S.str_svg)[0])
+					: xml.getElementsByTagName(S.str_svg)[0]))
 				.then(svg => (svg == null
-						? reject("valid XML found, but no SVG element")
-						: resolve(svg)))
+					? reject(new Error("valid XML found, but no SVG element"))
+					: resolve(svg)))
 				.catch(err => reject(err));
-		}
-		else if (input instanceof window().Document) {
+		} else if (input instanceof window().Document) {
 			return asyncDone(input);
 		}
 	});
@@ -84,7 +83,7 @@ const isFilename = input => typeof input === S.str_string
 	&& /^[\w,\s-]+\.[A-Za-z]{3}$/.test(input)
 	&& input.length < 10000;
 
-const Load = input => (isFilename(input) 
+const Load = input => (isFilename(input)
 	&& isBrowser
 	&& typeof window().fetch === S.str_function
 	? async(input)

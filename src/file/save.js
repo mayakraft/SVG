@@ -11,7 +11,7 @@ const SAVE_OPTIONS = () => ({
 	download: false, // trigger a file download (browser only)
 	output: S.str_string, // output type ("string", "svg") string or XML DOM object
 	windowStyle: false, // include any external stylesheets present on the window object
-	filename: "image.svg" // if "download" is true, the filename for the downloaded file
+	filename: "image.svg", // if "download" is true, the filename for the downloaded file
 });
 
 const getWindowStylesheets = function () {

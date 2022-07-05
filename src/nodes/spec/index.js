@@ -13,7 +13,6 @@ import textDef from "./text";
 // multiple nodes in one
 import maskTypes from "./maskTypes";
 import polyDefs from "./polys";
-
 /**
  * in each of these instances, arguments maps the arguments to attributes
  * as the attributes are listed in the "attributes" folder.
@@ -23,7 +22,8 @@ import polyDefs from "./polys";
  * make sure it is returning an array.
  *
  */
-export default Object.assign({},
+export default Object.assign(
+	{},
 	svgDef,
 	gDef,
 	circleDef,

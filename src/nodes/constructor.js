@@ -13,8 +13,8 @@ const RequiredAttrMap = {
 		xmlns: svgNS,
 	},
 	style: {
-		type: "text/css"
-	}
+		type: "text/css",
+	},
 };
 
 // required attributes for elements like <svg>, <style>
@@ -47,8 +47,8 @@ const constructor = (nodeName, parent, ...args) => {
 		});
 	});
 	// custom methods from each primitive's definition
-	Object.keys(NodeSpec[nodeName].methods).forEach(methodName =>
-		Object.defineProperty(element, methodName, {
+	Object.keys(NodeSpec[nodeName].methods).forEach(methodName => Object
+		.defineProperty(element, methodName, {
 			value: function () {
 				// all custom methods are attached to the node.
 				// if there is no return value specified,
@@ -56,8 +56,9 @@ const constructor = (nodeName, parent, ...args) => {
 				// to encourage method-chaining design.
 				// nevermind.
 				// things need to be able to return undefined
-				return NodeSpec[nodeName].methods[methodName].call(bound, element, ...arguments);// || element;
-			}
+				return NodeSpec[nodeName].methods[methodName].call(bound, element, ...arguments);
+				// || element;
+			},
 		}));
 	// a method to create a child and automatically append it to this node
 	if (NodesChildren[nodeName]) {

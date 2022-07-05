@@ -6,7 +6,8 @@ export const SVG_Constructor = {
 };
 /**
  * @name svg
- * @description Create an svg element, the object will be bound with instance methods for creating children and styles.
+ * @description Create an svg element, the object will be bound with instance
+ * methods for creating children and styles.
  * @memberof svg
  * @param {Element} [parent=undefined] optional parent DOM element, this will append to.
  * @param {number} [width=undefined] optional width of viewBox (if present, include height)
@@ -20,7 +21,8 @@ export const SVG_Constructor = {
  * ear.svg(640, 480, document.body, (svg) => {
  *   // window did load, and "svg" is scoped
  * })
+ * @linkcode SVG ./src/library.js 24
  */
 export default function () {
 	return SVG_Constructor.init(...arguments);
-};
+}

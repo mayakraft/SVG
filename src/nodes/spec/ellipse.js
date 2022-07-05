@@ -23,8 +23,8 @@ export default {
 		args: (a, b, c, d) => {
 			const coords = coordinates(...flatten(a, b, c, d)).slice(0, 4);
 			switch (coords.length) {
-				case 0: case 1: case 2: return [, , ...coords]
-				default: return coords;
+			case 0: case 1: case 2: return [, , ...coords];
+			default: return coords;
 			}
 		},
 		methods: {
@@ -36,6 +36,6 @@ export default {
 			setCenter,
 			position: setCenter,
 			setPosition: setCenter,
-		}
-	}
+		},
+	},
 };

@@ -38,7 +38,7 @@ export default {
 		"transform-origin", // added by Robby
 		"user-select", // added by Robby
 		"vector-effect",
-		"visibility"
+		"visibility",
 	],
 	animation: [
 		"accumulate", // controls whether or not an animation is cumulative
@@ -112,16 +112,16 @@ export default {
 	text: [
 		// "x",   // <text>
 		// "y",   // <text>
-		"dx",  // <text>
-		"dy",  // <text>
+		"dx", // <text>
+		"dy", // <text>
 		"alignment-baseline", // specifies how a text alignts vertically
 		"baseline-shift",
 		"dominant-baseline",
-		"lengthAdjust",  // <text>
+		"lengthAdjust", // <text>
 		"method", // for <textPath> only
 		"overline-position",
 		"overline-thickness",
-		"rotate",  // rotates each individual glyph
+		"rotate", // rotates each individual glyph
 		"spacing",
 		"startOffset", // <textPath>
 		"strikethrough-position",
@@ -129,7 +129,7 @@ export default {
 		"text-anchor",
 		"text-decoration",
 		"text-rendering",
-		"textLength",   // <text>
+		"textLength", // <text>
 		"underline-position",
 		"underline-thickness",
 		"word-spacing",
@@ -144,12 +144,12 @@ export default {
 
 const unused = [
 	// specific to various elements
-	"marker-end",  // assign to <marker>
-	"marker-mid",  // assign to <marker>
-	"marker-start",  // assign to <marker>
+	"marker-end", // assign to <marker>
+	"marker-mid", // assign to <marker>
+	"marker-start", // assign to <marker>
 	"media", // for <style> only. @media
 	"target", // only used in: <a>
-	"href", // anmations, effect images, gradients, 
+	"href", // anmations, effect images, gradients
 	"requiredExtensions", // used in conjunction with <switch>
 	"systemLanguage", // used in conjunction with <switch>
 ];

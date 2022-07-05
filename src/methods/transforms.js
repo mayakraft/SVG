@@ -6,10 +6,10 @@ import * as S from "../environment/strings";
 const getAttr = (element) => {
 	const t = element.getAttribute(S.str_transform);
 	return (t == null || t === "") ? undefined : t;
-}
+};
 
 const TransformMethods = {
-	clearTransform: (el) => { el.removeAttribute(S.str_transform); return el; }
+	clearTransform: (el) => { el.removeAttribute(S.str_transform); return el; },
 };
 
 ["translate", "rotate", "scale", "matrix"].forEach(key => {
@@ -17,7 +17,8 @@ const TransformMethods = {
 		S.str_transform,
 		[getAttr(element), `${key}(${args.join(" ")})`]
 			.filter(a => a !== undefined)
-			.join(" "));
+			.join(" "),
+	);
 });
 
 export default TransformMethods;

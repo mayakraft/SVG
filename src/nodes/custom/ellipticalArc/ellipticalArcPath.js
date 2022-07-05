@@ -26,4 +26,3 @@
 //   shape.setAttributeNS(null, "d", d);
 //   return shape;
 // };
-

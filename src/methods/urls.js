@@ -2,7 +2,6 @@
  * SVG (c) Kraft
  */
 import * as S from "../environment/strings";
-import Nodes from "../nodes/nodeNames";
 import Case from "../arguments/case";
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string

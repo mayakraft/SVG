@@ -21,7 +21,7 @@ const buildHTMLDocument = (newWindow) => new newWindow.DOMParser()
 export const setWindow = (newWindow) => {
 	// make sure window has a document. xmldom does not, and requires it be built.
 	if (!newWindow.document) { newWindow.document = buildHTMLDocument(newWindow); }
-	svgWindowContainer.window = newWindow
+	svgWindowContainer.window = newWindow;
 	return svgWindowContainer.window;
 };
 // if we are in the browser, by default use the browser's "window".
@@ -32,7 +32,7 @@ if (isBrowser) { svgWindowContainer.window = window; }
  */
 const SVGWindow = () => {
 	if (svgWindowContainer.window === undefined) {
-    throw svgErrors[10];
+		throw svgErrors[10];
 	}
 	return svgWindowContainer.window;
 };

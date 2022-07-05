@@ -2,7 +2,7 @@
  * SVG (c) Kraft
  */
 import window from "./window";
-import * as S from "./environment/strings";
+import * as S from "./strings";
 /**
  * this creates a more accessible interface for beginner coders.
  * similar to the structure of Processing / p5.js
@@ -26,7 +26,7 @@ const bindSVGMethodsTo = function (svg, environment) {
 	["mousePressed", "mouseReleased", "mouseMoved", "scroll", "animate", "fps"]
 		.forEach(key => Object.defineProperty(window(), key, {
 			set: (value) => { svg[key] = value; },
-			get: () => svg[key]
+			get: () => svg[key],
 		}));
 };
 
