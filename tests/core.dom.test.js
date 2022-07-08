@@ -1,9 +1,10 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
 test("removeChildren()", () => {
 	const svg = SVG();
-	svg.line(1,2,3,4);
+	svg.line(1, 2, 3, 4);
 	expect(svg.childNodes.length).toBe(1);
 	svg.removeChildren();
 	expect(svg.childNodes.length).toBe(0);
@@ -37,4 +38,3 @@ test("setAttributes()", () => {
 	svg.setAttributes(props);
 	expect(svg.getAttribute("display")).toBe("block");
 });
-

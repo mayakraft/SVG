@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
@@ -80,7 +81,7 @@ test("node test", () => {
 		expect(node.childNodes.length).toBe(NodeAndChildren[parent].length);
 		NodeAndChildren[parent].forEach((child, i) => expect(node.childNodes[i].nodeName)
 			.toBe(child));
-	})
+	});
 	expect(svg.childNodes.length).toBe(Object.keys(NodeAndChildren).length);
 	Object.keys(NodeAndChildren).forEach((child, i) => expect(svg.childNodes[i].nodeName)
 		.toBe(child));

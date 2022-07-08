@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const fs = require("fs");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
@@ -9,9 +10,9 @@ const testSVG = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="
 </svg>`;
 
 test("loading callback", done => {
-	SVG(400, 400, (svg) => {
+	SVG(400, 400, () => {
 		done();
-	})
+	});
 });
 
 // test("async attempt promises", () => {
@@ -23,7 +24,7 @@ test("loading callback", done => {
 
 test("async using fs", (done) => {
 	const svg = SVG();
-	fs.readFile(path, {encoding: "utf8"}, (err, data) => {
+	fs.readFile(path, { encoding: "utf8" }, (err, data) => {
 		svg.load(data);
 		const polyline = Array.from(svg.childNodes)
 			.filter(a => a.nodeName === "polyline")
@@ -72,7 +73,6 @@ test("import string in argument", () => {
 	// console.log("window", window);
 	// console.log("window.document", window.document);
 });
-
 
 test("import string in argument with attributes", () => {
 	const svgString = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="10 20 800 600" display="none"></svg>`;

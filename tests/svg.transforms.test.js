@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
@@ -6,8 +7,8 @@ test("transforms", () => {
 
 	const transformString = "translate(20 100) rotate(45) translate(50 50) matrix(0 -1 1 0 0 0)";
 
-	["svg", "g", "circle", "ellipse", "line", "path",
-	 "polygon", "polyline", "rect"] // , "text"
+	["svg", "g", "circle", "ellipse", "line", "path", "polygon", "polyline", "rect"]
+	// , "text"
 		.map(node => svg[node]()
 			.translate("20 100")
 			.rotate(45)

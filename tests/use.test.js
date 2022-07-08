@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const ear = require("./ear");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");

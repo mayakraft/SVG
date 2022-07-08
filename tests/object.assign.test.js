@@ -1,37 +1,39 @@
-var test1 = {
+const { test, expect } = require("@jest/globals");
+
+const test1 = {
 	a: {
 		one: {
 			what: true,
 		},
 		two: {
-			whatagain: true
-		}
+			whatagain: true,
+		},
 	},
 	b: {
 		a: {
-			what: true
-		}
-	}
+			what: true,
+		},
+	},
 };
 
-var test2 = {
+const test2 = {
 	a: {
 		three: {
 			hi: true,
 		},
 		four: {
-			whatagain: true
-		}
+			whatagain: true,
+		},
 	},
 	b: {
 		b: {
-			okay: true
-		}
-	}
+			okay: true,
+		},
+	},
 };
 
 test("object assign", () => {
-	Object.assign(test1, test2)
+	Object.assign(test1, test2);
 
 	expect(test1.a.one == null).toBe(true);
 	expect(test1.a.two == null).toBe(true);

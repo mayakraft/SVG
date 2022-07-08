@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
@@ -39,14 +40,14 @@ test("path commands", () => {
 	const pathString = "M20 40V60l10 10";
 	const path = SVG.path(pathString);
 	path.Line(50, 50);
-	expect(path.getAttribute("d")).toBe(pathString + "L50 50");
+	expect(path.getAttribute("d")).toBe(`${pathString}L50 50`);
 
 	const commands = path.getCommands();
 	const expected = [
-		{ command: 'M', values: [ 20, 40 ] },
-		{ command: 'V', values: [ 60 ] },
-		{ command: 'l', values: [ 10, 10 ] },
-		{ command: 'L', values: [ 50, 50 ] }
+		{ command: "M", values: [20, 40] },
+		{ command: "V", values: [60] },
+		{ command: "l", values: [10, 10] },
+		{ command: "L", values: [50, 50] },
 	];
 	expected.forEach((el, i) => {
 		expect(commands[i].command).toBe(expected[i].command);
@@ -55,7 +56,7 @@ test("path commands", () => {
 	});
 
 	// path.add("H20V60");
-	// expect(path.getAttribute("d")).toBe(pathString + "L50 50" + "H20V60");  
+	// expect(path.getAttribute("d")).toBe(pathString + "L50 50" + "H20V60");
 
 	// path.set("H20V60");
 	// expect(path.getAttribute("d")).toBe("H20V60");
@@ -77,7 +78,6 @@ test("path commands", () => {
 	path.clear();
 	expect(path.getAttribute("d") === null || path.getAttribute("d") === "").toBe(true);
 });
-
 
 // test("bezier", () => {
 //   let bez = SVG.bezier(0, 0, 25, 75, 75, 25, 100, 100);

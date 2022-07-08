@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 
 test("arrow", () => {
@@ -13,7 +14,7 @@ test("arrow", () => {
 	//   },
 	//   fill: "red",
 	// };
-	  
+
 	// const layer = svg.g();
 
 	// svg.controls(2)
@@ -28,9 +29,6 @@ test("arrow", () => {
 	//       .stroke("black");
 
 	//   }, true);
-
-
-	
 	expect(true).toBe(true);
 });
 

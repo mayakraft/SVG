@@ -1,11 +1,12 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
 const toCamel = s => s
 	.replace(/([-_][a-z])/ig, $1 => $1
-	.toUpperCase()
-	.replace("-", "")
-	.replace("_", ""));
+		.toUpperCase()
+		.replace("-", "")
+		.replace("_", ""));
 
 const Attributes = {
 	svg: ["viewBox","color","color-interpolation","cursor","direction","display","fill","fill-opacity","fill-rule","font-family","font-size","font-size-adjust","font-stretch","font-style","font-variant","font-weight","image-rendering","letter-spacing","opacity","overflow","paint-order","pointer-events","preserveAspectRatio","shape-rendering","stroke","stroke-dasharray","stroke-dashoffset","stroke-linecap","stroke-linejoin","stroke-miterlimit","stroke-opacity","stroke-width","tabindex","transform-origin","user-select","vector-effect","visibility"],
@@ -76,12 +77,11 @@ test("attributes test", () => {
 		// style: "type" (text/css)
 		let countMod = 0;
 		switch (nodeName) {
-			case "svg": countMod = 2; break;
-			case "style": countMod = 1; break;
-			default: countMod = 0; break;
+		case "svg": countMod = 2; break;
+		case "style": countMod = 1; break;
+		default: countMod = 0; break;
 		}
 		expect(element.attributes.length)
 			.toBe(Attributes[nodeName].length + countMod);
 	});
 });
-

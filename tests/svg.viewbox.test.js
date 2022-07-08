@@ -1,9 +1,10 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
 test("viewBox get and set", () => {
 	const svg = SVG();
-	svg.setViewBox(1,2,3,4);
+	svg.setViewBox(1, 2, 3, 4);
 	expect(svg.getAttribute("viewBox")).toBe("1 2 3 4");
 	svg.setViewBox("-10 -10 400 500");
 	expect(svg.getAttribute("viewBox")).toBe("-10 -10 400 500");

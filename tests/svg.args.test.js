@@ -1,6 +1,9 @@
+const { test, expect } = require("@jest/globals");
+const xmldom = require("@xmldom/xmldom");
 const SVG = require("../svg");
-const { DOMParser } = require("@xmldom/xmldom");
-SVG.window = require("@xmldom/xmldom");
+
+SVG.window = xmldom;
+const { DOMParser } = xmldom;
 
 test("argument parsing, svg", () => {
 	const svg0 = SVG();
@@ -38,4 +41,4 @@ test("svg embed as string", () => {
 	const svg = SVG(svgString);
 	expect(svg.childNodes.length).toBe(1);
 	expect(svg.childNodes[0].nodeName).toBe("line");
-})
+});

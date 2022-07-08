@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
@@ -18,7 +19,6 @@ test("circle arguments", () => {
 	expect(SVG.circle(1, 2, 3, 4).getAttribute("cx")).toBe("1");
 	expect(SVG.circle(1, 2, 3, 4).getAttribute("cy")).toBe("2");
 });
-
 
 test("circle setters", () => {
 	expect(SVG.circle().radius(5).getAttribute("r")).toBe("5");

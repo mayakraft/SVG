@@ -30,12 +30,12 @@ Two sources of documentation:
 
 [SVG docs](https://robbykraft.github.io/SVG/docs/)
 
-[rabbit ear docs](https://rabbitear.org/docs/svg.html)
+[rabbit ear docs](https://rabbitear.org/book/svg.html)
 
 ## Credit
 
 - [vkBeautify](https://github.com/vkiryukhin/vkBeautify) pretty-print for SVG export
-- [XML DOM](https://github.com/xmldom/xmldom) for usage in Node
+- [XML DOM](https://github.com/xmldom/xmldom) for a "window" object in Node
 
 ## License
 

@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
@@ -17,7 +18,7 @@ const defsLevel = [
 	"style",
 	"clipPath",
 	"mask",
-	"script"
+	"script",
 ];
 
 const rootLevel = [
@@ -52,5 +53,3 @@ test("svg and group", () => {
 	// groupLevel.forEach(g => expect(typeof defs[g]).toBe("function"));
 	// defsLevel.forEach(r => expect(typeof defs[r]).toBe("function"));
 });
-
-

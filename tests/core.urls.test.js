@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
@@ -8,15 +9,14 @@ test("custom id names", () => {
 		const test2 = svg[nodeName]("what is");
 		expect(test1.getAttribute("id").length).toBe(5);
 		expect(test2.getAttribute("id")).toBe("what is");
-
-	})
+	});
 });
 
 test("assign to types", () => {
 	const svg = SVG();
 	const things = ["clipPath", "symbol", "mask", "marker", "marker", "marker"]
 		.map(nodeName => svg[nodeName]());
-	const line = svg.line(1,2,3,4);
+	const line = svg.line(1, 2, 3, 4);
 	["clipPath", "mask", "symbol", "markerEnd", "markerMid", "markerStart"]
 		.forEach((method, i) => line[method](things[i]));
 

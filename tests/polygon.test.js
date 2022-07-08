@@ -1,3 +1,4 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
@@ -9,12 +10,12 @@ test("argument parsing, polygon", () => {
 		SVG.polygon([0, 1], [2, 3], [4, 5]),
 		SVG.polygon([[0, 1], [2, 3], [4, 5]]),
 		SVG.polygon([[0, 1]], [[2, 3]], [[4, 5]]),
-		SVG.polygon({x:0, y:1}, {x:2, y:3}, {x:4, y:5}),
-		SVG.polygon([{x:0, y:1}, {x:2, y:3}, {x:4, y:5}]),
+		SVG.polygon({ x: 0, y: 1 }, { x: 2, y: 3 }, { x: 4, y: 5 }),
+		SVG.polygon([{ x: 0, y: 1 }, { x: 2, y: 3 }, { x: 4, y: 5 }]),
 		SVG.polygon([0, 1, 9], [2, 3, 9], [4, 5, 9]),
 		SVG.polygon([[0, 1, 9], [2, 3, 9], [4, 5, 9]]),
 		SVG.polygon([[0, 1, 9]], [[2, 3, 9]], [[4, 5, 9]]),
-		SVG.polygon({x:0, y:1, z:9}, {x:2, y:3, z:9}, {x:4, y:5, z:9}),
+		SVG.polygon({ x: 0, y: 1, z: 9 }, { x: 2, y: 3, z: 9 }, { x: 4, y: 5, z: 9 }),
 		// SVG.polygon([{x:0, y:1}], [{x:2, y:3}], [{x:4, y:5}]),
 		// SVG.polygon([[{x:0, y:1}], [{x:2, y:3}], [{x:4, y:5}]]),
 	];

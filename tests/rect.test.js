@@ -1,14 +1,15 @@
+const { test, expect } = require("@jest/globals");
 const SVG = require("../svg");
 SVG.window = require("@xmldom/xmldom");
 
 test("rect", () => {
-	const rect = SVG.rect(1,2,3,4);
+	const rect = SVG.rect(1, 2, 3, 4);
 	expect(rect.getAttribute("x")).toBe("1");
 	expect(rect.getAttribute("y")).toBe("2");
 	expect(rect.getAttribute("width")).toBe("3");
 	expect(rect.getAttribute("height")).toBe("4");
 
-	const rect2 = SVG.rect(3,4);
+	const rect2 = SVG.rect(3, 4);
 	expect(rect2.getAttribute("y") === null || rect2.getAttribute("y") === "")
 		.toBe(true);
 	expect(rect2.getAttribute("y") === null || rect2.getAttribute("y") === "")
