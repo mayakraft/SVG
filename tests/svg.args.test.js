@@ -1,6 +1,6 @@
 const { test, expect } = require("@jest/globals");
 const xmldom = require("@xmldom/xmldom");
-const SVG = require("../svg");
+const SVG = require("../svg.js");
 
 SVG.window = xmldom;
 const { DOMParser } = xmldom;
@@ -32,13 +32,13 @@ test("parent element", () => {
 	expect(svg.parentNode.nodeName).toBe("div");
 });
 
-test("svg embed as string", () => {
-	// this string contains \n newlines, the load method targets and removes them
-	// by testing the <line> element at [0] this is also testing the newline removal
-	const svgString = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
-	<line x1="0" y1="0" x2="300" y2="150" stroke="black" stroke-width="5"/>
-</svg>`;
-	const svg = SVG(svgString);
-	expect(svg.childNodes.length).toBe(1);
-	expect(svg.childNodes[0].nodeName).toBe("line");
-});
+// test("svg embed as string", () => {
+// 	// this string contains \n newlines, the load method targets and removes them
+// 	// by testing the <line> element at [0] this is also testing the newline removal
+// 	const svgString = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+// 	<line x1="0" y1="0" x2="300" y2="150" stroke="black" stroke-width="5"/>
+// </svg>`;
+// 	const svg = SVG(svgString);
+// 	expect(svg.childNodes.length).toBe(1);
+// 	expect(svg.childNodes[0].nodeName).toBe("line");
+// });

@@ -1,5 +1,5 @@
 const { test, expect } = require("@jest/globals");
-const SVG = require("../svg");
+const SVG = require("../svg.js");
 
 test("arrow", () => {
 	// svg.size(2.5, 1)

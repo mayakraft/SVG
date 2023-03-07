@@ -1,17 +1,27 @@
 /**
  * SVG (c) Kraft
  */
-import * as S from "./strings";
+import {
+	str_undefined,
+	str_object,
+} from "./strings.js";
 
-// compare to "undefined", the string
-const isBrowser = typeof window !== S.str_undefined
-	&& typeof window.document !== S.str_undefined;
-
-const isNode = typeof process !== S.str_undefined
+/**
+ * @constant {boolean}
+ * @note compare to "undefined", the string
+ */
+const isBrowser = typeof window !== str_undefined
+	&& typeof window.document !== str_undefined;
+/**
+ * @constant {boolean}
+ */
+const isNode = typeof process !== str_undefined
 	&& process.versions != null
 	&& process.versions.node != null;
-
-const isWebWorker = typeof self === S.str_object
+/**
+ * @constant {boolean}
+ */
+const isWebWorker = typeof self === str_object
 	&& self.constructor
 	&& self.constructor.name === "DedicatedWorkerGlobalScope";
 

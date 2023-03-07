@@ -1,10 +1,9 @@
 import cleanup from "rollup-plugin-cleanup";
-import { terser } from "rollup-plugin-terser";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
 
 const input = "src/index.js";
-const name = "SVG";
-const banner = "/* SVG (c) Kraft, MIT License */";
+const name = "svg";
+const banner = "/* svg (c) Kraft, MIT License */";
 
 export default [{
 	input,
@@ -14,7 +13,8 @@ export default [{
 		format: "umd",
 		banner,
 	},
-	plugins: [nodeResolve(), cleanup(), terser()],
+	// plugins: [cleanup(), terser()],
+	plugins: [cleanup()],
 }, {
 	input,
 	output: {
@@ -23,7 +23,21 @@ export default [{
 		format: "es",
 		banner,
 	},
-	plugins: [nodeResolve(), cleanup()],
+	plugins: [cleanup()],
+}, {
+	input,
+	output: {
+		name,
+		dir: "module/",
+		format: "es",
+		banner,
+		preserveModules: true,
+		generatedCode: {
+			constBindings: true,
+			objectShorthand: true,
+		},
+	},
+	plugins: [cleanup()],
 }, {
 	input,
 	output: {
@@ -32,5 +46,5 @@ export default [{
 		format: "es",
 		banner,
 	},
-	plugins: [nodeResolve()],
+	plugins: [],
 }];
