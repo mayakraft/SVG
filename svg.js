@@ -1,1 +1,1023 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).SVG=t()}(this,(function(){"use strict";const e={init:()=>{}};function t(){return e.init(...arguments)}const n="class",r="function",o="undefined",i="number",s="string",a="object",c="svg",l="path",d="id",u="style",p="viewBox",f="transform",h="points",m="stroke",g="none",b="arrow",v="head",y="tail",w=typeof window!==o&&typeof window.document!==o,x=typeof process!==o&&null!=process.versions&&null!=process.versions.node,A=[];A[10]='"error 010: window" not set. if using node/deno, include package @xmldom/xmldom, set to the main export ( ear.window = xmldom; )';const E={window:void 0};w&&(E.window=window);const C=()=>{if(void 0===E.window)throw A[10];return E.window};var j="http://www.w3.org/2000/svg",O={s:["svg"],d:["defs"],h:["desc","filter","metadata","style","script","title","view"],c:["cdata"],g:["g"],v:["circle","ellipse","line","path","polygon","polyline","rect"],t:["text"],i:["marker","symbol","clipPath","mask"],p:["linearGradient","radialGradient","pattern"],cT:["textPath","tspan"],cG:["stop"],cF:["feBlend","feColorMatrix","feComponentTransfer","feComposite","feConvolveMatrix","feDiffuseLighting","feDisplacementMap","feDistantLight","feDropShadow","feFlood","feFuncA","feFuncB","feFuncG","feFuncR","feGaussianBlur","feImage","feMerge","feMergeNode","feMorphology","feOffset","fePointLight","feSpecularLighting","feSpotLight","feTile","feTurbulence"]};const k=(e,t)=>[e[0]+t[0],e[1]+t[1]],P=(e,t)=>[e[0]-t[0],e[1]-t[1]],$=(e,t)=>[e[0]*t,e[1]*t],M=e=>e[0]**2+e[1]**2,N=e=>Math.sqrt(M(e)),S=(e,t)=>M(P(e,t)),T=(e,t)=>Math.sqrt(S(e,t)),L=(e,t)=>[Math.cos(e)*t,Math.sin(e)*t];var _=Object.freeze({__proto__:null,svg_add2:k,svg_sub2:P,svg_scale2:$,svg_magnitudeSq2:M,svg_magnitude2:N,svg_distanceSq2:S,svg_distance2:T,svg_polar_to_cart:L});const B=(e,t,n,r,o,i=!1)=>{if(null==o)return"";const s=L(r,n),a=L(o,n),c=[a[0]-s[0],a[1]-s[1]],l=s[0]*a[1]-s[1]*a[0],d=s[0]*a[0]+s[1]*a[1],u=Math.atan2(l,d)>0?0:1;let p=i?`M ${e},${t} l ${s[0]},${s[1]} `:`M ${e+s[0]},${t+s[1]} `;return p+=["a ",n,n,0,u,1,c[0],c[1]].join(" "),i&&(p+=" Z"),p},z=(e,t,n,r,o)=>[B(e,t,n,r,o,!1)];var F={arc:{nodeName:l,attributes:["d"],args:z,methods:{setArc:(e,...t)=>e.setAttribute("d",z(...t))}}};const D=(e,t,n,r,o)=>[B(e,t,n,r,o,!0)];var G={wedge:{nodeName:l,args:D,attributes:["d"],methods:{setArc:(e,...t)=>e.setAttribute("d",D(...t))}}};const R=(e=-1,t=0,n=2,r=1)=>Array.from(Array(129)).map((e,t)=>(t-128)/128*2+1).map(o=>[e+(o+1)*n*.5,t+o**2*r]);var U={parabola:{nodeName:"polyline",attributes:[h],args:(e,t,n,r)=>[R(e,t,n,r).map(e=>`${e[0]},${e[1]}`).join(" ")]}};const q=(e,t,n,r)=>{const o=[t,n];return Array.from(Array(e)).map((t,n)=>2*Math.PI*(n/e)).map(e=>[Math.cos(e),Math.sin(e)]).map(e=>o.map((t,n)=>t+r*e[n]))};var V={regularPolygon:{nodeName:"polygon",attributes:[h],args:(e,t=0,n=0,r=1)=>[q(e,t,n,r).map(e=>`${e[0]},${e[1]}`).join(" ")]}};var Z={roundRect:{nodeName:l,attributes:["d"],args:(e,t,n,r,o=0)=>{o>n/2&&(o=n/2),o>r/2&&(o=r/2);const i=n-2*o,s=r-2*o,a=`A${o} ${o} 0 0 1`;return[[`M${e+(n-i)/2},${t}`,"h"+i,a,`${e+n},${t+(r-s)/2}`,"v"+s,a,`${e+n-o},${t+r}`,"h"+-i,a,`${e},${t+r-o}`,"v"+-s,a,`${e+o},${t}`].join(" ")]}}},X={toCamel:e=>e.replace(/([-_][a-z])/gi,e=>e.toUpperCase().replace("-","").replace("_","")),toKebab:e=>e.replace(/([a-z0-9])([A-Z])/g,"$1-$2").replace(/([A-Z])([A-Z])(?=[a-z])/g,"$1-$2").toLowerCase(),capitalized:e=>e.charAt(0).toUpperCase()+e.slice(1)};const Y=e=>null!=e&&typeof e[Symbol.iterator]===r,H=function(){switch(arguments.length){case void 0:case 0:return Array.from(arguments);case 1:return Y(arguments[0])&&typeof arguments[0]!==s?H(...arguments[0]):[arguments[0]];default:return Array.from(arguments).map(e=>Y(e)?[...H(e)]:e)}};var I=(...e)=>e.filter(e=>typeof e===i).concat(e.filter(e=>typeof e===a&&null!==e).map(e=>typeof e.x===i?[e.x,e.y]:typeof e[0]===i?[e[0],e[1]]:void 0).filter(e=>void 0!==e).reduce((e,t)=>e.concat(t),[]));const Q=[y,v],K=e=>e.join(","),W=e=>"M"+e.map(e=>e.join(",")).join("L")+"Z",J=(e,t,n)=>{"boolean"==typeof t?e.options[n].visible=t:typeof t===a?(Object.assign(e.options[n],t),null==t.visible&&(e.options[n].visible=!0)):null==t&&(e.options[n].visible=!0)},ee=(e,t={},n=v)=>{const o=e.getElementsByClassName("arrow-"+n)[0];Object.keys(t).map(e=>({key:e,fn:o[X.toCamel(e)]})).filter(e=>typeof e.fn===r&&"class"!==e.key).forEach(e=>e.fn(t[e.key])),Object.keys(t).filter(e=>"class"===e).forEach(e=>o.classList.add(t[e]))},te=e=>{const t=function(e){let t=[[0,1],[2,3]].map(t=>t.map(t=>e.points[t]||0)),n=P(t[1],t[0]),r=k(t[0],$(n,.5));const o=N(n),i=Q.map(t=>e[t].visible?(1+e[t].padding)*e[t].height*2.5:0).reduce((e,t)=>e+t,0);if(o<i){const e=0===o?[i,0]:$(n,i/o);t=[P,k].map(t=>t(r,$(e,.5))),n=P(t[1],t[0])}let s=[n[1],-n[0]],a=k(r,$(s,e.bend));const c=t.map(e=>P(a,e)),l=c.map(e=>N(e)),d=c.map((e,t)=>0===l[t]?e:$(e,1/l[t])),u=d.map(e=>$(e,-1)),p=u.map(e=>[e[1],-e[0]]),f=Q.map((t,n)=>e[t].padding?e[t].padding:e.padding?e.padding:0),h=Q.map((t,n)=>e[t].height*(e[t].visible?1:0)).map((e,t)=>e+f[t]),m=t.map((e,t)=>k(e,$(d[t],h[t])));n=P(m[1],m[0]),s=[n[1],-n[0]],r=k(m[0],$(n,.5)),a=k(r,$(s,e.bend));const g=m.map((t,n)=>k(t,$(P(a,t),e.pinch))),b=Q.map((t,n)=>[k(m[n],$(u[n],e[t].height)),k(m[n],$(p[n],e[t].width/2)),k(m[n],$(p[n],-e[t].width/2))]);return{line:`M${K(m[0])}C${K(g[0])},${K(g[1])},${K(m[1])}`,tail:W(b[0]),head:W(b[1])}}(e.options);return Object.keys(t).map(t=>({path:t,element:e.getElementsByClassName("arrow-"+t)[0]})).filter(e=>e.element).map(e=>(e.element.setAttribute("d",t[e.path]),e)).filter(t=>e.options[t.path]).forEach(t=>t.element.setAttribute("visibility",e.options[t.path].visible?"visible":"hidden")),e},ne=(e,...t)=>(e.options.points=I(...H(...t)).slice(0,4),te(e));var re={setPoints:ne,points:ne,bend:(e,t)=>(e.options.bend=t,te(e)),pinch:(e,t)=>(e.options.pinch=t,te(e)),padding:(e,t)=>(e.options.padding=t,te(e)),head:(e,t)=>(J(e,t,v),ee(e,t,v),te(e)),tail:(e,t)=>(J(e,t,y),ee(e,t,y),te(e)),getLine:e=>e.getElementsByClassName("arrow-line")[0],getHead:e=>e.getElementsByClassName("arrow-"+v)[0],getTail:e=>e.getElementsByClassName("arrow-"+y)[0]};const oe=Object.keys({head:{visible:!1,width:8,height:10,padding:0},tail:{visible:!1,width:8,height:10,padding:0},bend:0,padding:0,pinch:.618,points:[]});var ie={arrow:{nodeName:"g",attributes:[],args:()=>[],methods:re,init:function(e,...n){e.classList.add(b);const r=["line",y,v].map(n=>t.path().addClass("arrow-"+n).appendTo(e));r[0].setAttribute(u,"fill:none;"),r[1].setAttribute(m,g),r[2].setAttribute(m,g),e.options={head:{visible:!1,width:8,height:10,padding:0},tail:{visible:!1,width:8,height:10,padding:0},bend:0,padding:0,pinch:.618,points:[]},re.setPoints(e,...n);const o=((...e)=>{for(let t=0;t<e.length;t+=1){if(typeof e[t]!==a)continue;const n=Object.keys(e[t]);for(let r=0;r<n.length;r+=1)if(oe.includes(n[r]))return e[t]}})(...n);return o&&Object.keys(o).filter(e=>re[e]).forEach(t=>re[t](e,o[t])),e}}};const se=function(){return H(arguments).reduce((e,t)=>e.concat(t),[])},ae=(e=[],t=0,n=.5)=>{const r=[e[0]||0,e[1]||0],o=[e[2]||0,e[3]||0],i=P(o,r),s=k(r,$(i,.5)),a=[i[1],-i[0]],c=k(s,$(a,t)),l=k(r,$(P(c,r),n)),d=k(o,$(P(c,o),n));return`M${r[0]},${r[1]}C${l[0]},${l[1]} ${d[0]},${d[1]} ${o[0]},${o[1]}`},ce=e=>e.slice(1).split(/[, ]+/).map(e=>parseFloat(e)),le=e=>{const t=(e=>e.match(/[Mm][(0-9), .-]+/).map(e=>ce(e)))(e).shift(),n=(e=>e.match(/[Cc][(0-9), .-]+/).map(e=>ce(e)))(e).shift();return[...t?[t[t.length-2],t[t.length-1]]:[0,0],...n?[n[n.length-2],n[n.length-1]]:[0,0]]},de=(e,...t)=>{const n=I(...se(...t)).slice(0,4);return e.setAttribute("d",ae(n,e._bend,e._pinch)),e};var ue={curve:{nodeName:l,attributes:["d"],args:(...e)=>[ae(I(...se(...e)))],methods:{setPoints:de,bend:(e,t)=>(e._bend=t,de(e,...le(e.getAttribute("d")))),pinch:(e,t)=>(e._pinch=t,de(e,...le(e.getAttribute("d"))))}}};const pe={};Object.assign(pe,F,G,U,V,Z,ie,ue);const fe=Object.keys(pe),he=[O.h,O.p,O.i],me=[O.g,O.v,O.t,fe],ge={svg:[O.s,O.d].concat(he).concat(me),g:me,text:[O.cT],linearGradient:[O.cG],radialGradient:[O.cG],defs:he,filter:[O.cF],marker:me,symbol:me,clipPath:me,mask:me},be=Object.create(null);Object.keys(ge).forEach(e=>{be[e]=ge[e].reduce((e,t)=>e.concat(t),[])});const ve=function(e,t,n,r,o=0){const i=n/1-n;return[e-i-o,t-i-o,n+2*i+2*o,r+2*i+2*o].join(" ")};function ye(){const e=I(...se(arguments));return 2===e.length&&e.unshift(0,0),4===e.length?ve(...e):void 0}const we=e=>(new(C().DOMParser)).parseFromString("<root></root>","text/xml").createCDATASection(""+e),xe=e=>{for(;e.lastChild;)e.removeChild(e.lastChild);return e},Ae=(e,t)=>{for(;t.childNodes.length>0;){const n=t.childNodes[0];t.removeChild(n),e.appendChild(n)}return e},Ee=(e,t)=>(Array.from(t.attributes).forEach(t=>e.setAttribute(t.name,t.value)),Ae(e,t));var Ce={removeChildren:xe,appendTo:(e,t)=>(null!=t&&t.appendChild(e),e),setAttributes:(e,t)=>Object.keys(t).forEach(n=>e.setAttribute(X.toKebab(n),t[n]))};const je=e=>{if(null===e)return e;for(let t=e.childNodes.length-1;t>=0;t-=1){const n=e.childNodes[t];3===n.nodeType&&n.data.match(/^\s*$/)&&e.removeChild(n),1===n.nodeType&&je(n)}return e},Oe=e=>(new(C().DOMParser)).parseFromString(e,"text/xml"),ke=e=>{const t=e.getElementsByTagName("parsererror");if(t.length>0)throw new Error(t[0]);return je(e.documentElement)},Pe=function(e){if(typeof e===s||e instanceof String)try{return ke(Oe(e))}catch(e){return e}if(null!=e.childNodes)return e},$e=e=>(e=>typeof e===s&&/^[\w,\s-]+\.[A-Za-z]{3}$/.test(e)&&e.length<1e4)(e)&&w&&typeof C().fetch===r?function(e){return new Promise((t,n)=>{if(typeof e===s||e instanceof String)fetch(e).then(e=>e.text()).then(e=>ke(Oe(e))).then(e=>e.nodeName===c?e:e.getElementsByTagName(c)[0]).then(e=>null==e?n(new Error("valid XML found, but no SVG element")):t(e)).catch(e=>n(e));else if(e instanceof C().Document)return asyncDone(e)})}(e):Pe(e);const Me=function(e,t){if((t=Object.assign({download:!1,output:s,windowStyle:!1,filename:"image.svg"},t)).windowStyle){const t=C().document.createElementNS(j,u);t.setAttribute("type","text/css"),t.innerHTML=function(){const e=[];if(C().document.styleSheets)for(let t=0;t<C().document.styleSheets.length;t+=1){const n=C().document.styleSheets[t];try{const t="cssRules"in n?n.cssRules:n.rules;for(let n=0;n<t.length;n+=1){const r=t[n];"cssText"in r?e.push(r.cssText):e.push(`${r.selectorText} {\n${r.style.cssText}\n}\n`)}}catch(e){console.warn(e)}}return e.join("\n")}(),e.appendChild(t)}const n=function(e,t){const n=e.replace(/>\s{0,}</g,"><").replace(/</g,"~::~<").replace(/\s*xmlns\:/g,"~::~xmlns:").split("~::~"),r=n.length;let o=!1,i=0,s="";const a=null!=t&&"string"==typeof t?t:"\t",c=["\n"];for(let e=0;e<100;e+=1)c.push(c[e]+a);for(let e=0;e<r;e+=1)n[e].search(/<!/)>-1?(s+=c[i]+n[e],o=!0,(n[e].search(/-->/)>-1||n[e].search(/\]>/)>-1||n[e].search(/!DOCTYPE/)>-1)&&(o=!1)):n[e].search(/-->/)>-1||n[e].search(/\]>/)>-1?(s+=n[e],o=!1):/^<\w/.exec(n[e-1])&&/^<\/\w/.exec(n[e])&&/^<[\w:\-\.\,]+/.exec(n[e-1])==/^<\/[\w:\-\.\,]+/.exec(n[e])[0].replace("/","")?(s+=n[e],o||(i-=1)):n[e].search(/<\w/)>-1&&-1===n[e].search(/<\//)&&-1===n[e].search(/\/>/)?s=s+=o?n[e]:c[i++]+n[e]:n[e].search(/<\w/)>-1&&n[e].search(/<\//)>-1?s=s+=o?n[e]:c[i]+n[e]:n[e].search(/<\//)>-1?s=s+=o?n[e]:c[--i]+n[e]:n[e].search(/\/>/)>-1?s=s+=o?n[e]:c[i]+n[e]:n[e].search(/<\?/)>-1||n[e].search(/xmlns\:/)>-1||n[e].search(/xmlns\=/)>-1?s+=c[i]+n[e]:s+=n[e];return"\n"===s[0]?s.slice(1):s}((new(C().XMLSerializer)).serializeToString(e));return t.download&&w&&!x&&function(e,t){const n=new(C().Blob)([t],{type:"text/plain"}),r=C().document.createElement("a");r.setAttribute("href",C().URL.createObjectURL(n)),r.setAttribute("download",e),C().document.body.appendChild(r),r.click(),C().document.body.removeChild(r)}(t.filename,n),t.output===c?e:n},Ne=(e,...t)=>{const n=1===t.length&&typeof t[0]===s?t[0]:ye(...t);return n&&e.setAttribute(p,n),e},Se=function(e){const t=e.getAttribute(p);return null==t?void 0:t.split(" ").map(e=>parseFloat(e))},Te=function(e,t,n){const r=e.createSVGPoint();r.x=t,r.y=n;const o=r.matrixTransform(e.getScreenCTM().inverse());return[o.x,o.y]};var Le=Object.freeze({__proto__:null,setViewBox:Ne,getViewBox:Se,convertToViewBox:Te});const _e=(e,t)=>{const n=$e(t);if(null!=n)return typeof n.then===r?n.then(t=>Ee(e,t)):Ee(e,n)},Be=function(e){const t=Se(e);if(void 0!==t)return t;if(typeof e.getBoundingClientRect===r){const t=e.getBoundingClientRect();return[t.x,t.y,t.width,t.height]}return[]},ze="svg-background-rectangle",Fe=function(e,t){let n=function(e){const t=e.getElementsByTagName(u);return 0===t.length?void 0:t[0]}(e);return null==n&&(n=this.Constructor(u),e.insertBefore(n,e.firstChild)),n.textContent="",n.appendChild(we(t)),n};var De={clear:e=>(Array.from(e.attributes).filter(e=>"xmlns"!==e).forEach(t=>e.removeAttribute(t.name)),xe(e)),size:Ne,setViewBox:Ne,getViewBox:Se,padding:function(e,t){const n=Se(e);return void 0!==n&&Ne(e,...[-t,-t,2*t,2*t].map((e,t)=>n[t]+e)),e},background:function(e,t){let r=Array.from(e.childNodes).filter(e=>e.getAttribute(n)===ze).shift();return null==r&&(r=this.Constructor("rect",null,...Be(e)),r.setAttribute(n,ze),r.setAttribute(m,g),e.insertBefore(r,e.firstChild)),r.setAttribute("fill",t),e},getWidth:e=>Be(e)[2],getHeight:e=>Be(e)[3],stylesheet:function(e,t){return Fe.call(this,e,t)},load:_e,save:Me};const Ge={math:{vector:(...e)=>[...e]}},Re={move:["mousemove","touchmove"],press:["mousedown","touchstart"],release:["mouseup","touchend"],leave:["mouseleave","touchcancel"]},Ue=Object.values(Re).reduce((e,t)=>e.concat(t),[]),qe=(e,t,n)=>Object.defineProperty(e,t,{get:()=>n,enumerable:!0,configurable:!0}),Ve=(e,t)=>{["pressX","pressY"].filter(t=>!Object.prototype.hasOwnProperty.call(e,t)).forEach((n,r)=>qe(e,n,t[r])),Object.prototype.hasOwnProperty.call(e,"press")||qe(e,"press",Ge.math.vector(...t))},Ze=function(e){let t=[];const n=[];Object.keys(Re).forEach(e=>{Re[e].forEach(e=>{n[e]=[]})});const r={press:(e,n)=>{t=n,Ve(e,t)},release:()=>{},leave:()=>{},move:(e,n)=>{e.buttons>0&&void 0===t[0]?t=n:0===e.buttons&&void 0!==t[0]&&(t=[]),Ve(e,t)}};Object.keys(Re).forEach(t=>{const o="on"+X.capitalized(t);Object.defineProperty(e,o,{set:o=>{null!=o?Re[t].forEach(i=>{const s=n=>{const i=null!=n.touches?n.touches[0]:n;if(void 0!==i){const o=Te(e,i.clientX,i.clientY).map(e=>Number.isNaN(e)?void 0:e);["x","y"].filter(e=>!Object.prototype.hasOwnProperty.call(n,e)).forEach((e,t)=>qe(n,e,o[t])),Object.prototype.hasOwnProperty.call(n,"position")||qe(n,"position",Ge.math.vector(...o)),r[t](n,o)}o(n)};e.addEventListener&&(n[i].push(s),e.addEventListener(i,s))}):(t=>{Re[t].forEach(t=>n[t].forEach(n=>e.removeEventListener(t,n)))})(t)},enumerable:!0})}),Object.defineProperty(e,"off",{value:()=>((e,t)=>Ue.forEach(n=>{t[n].forEach(t=>e.removeEventListener(n,t)),t[n]=[]}))(e,n)})};var Xe=()=>Math.random().toString(36).replace(/[^a-z]+/g,"").concat("aaaaa").substr(0,5);const Ye=[["cx","cy"],["x","y"]],He=function(e,t={}){const n=[0,0],o={selected:!1,svg:void 0,updatePosition:e=>e},i=()=>{o.svg&&(o.svg.parentNode||e.appendChild(o.svg),Ye.filter(e=>null!=o.svg[e[0]]).forEach(e=>e.forEach((e,t)=>{o.svg.setAttribute(e,n[t])})))},s=new Proxy(n,{set:(e,t,n)=>(e[t]=n,i(),!0)}),a=function(...e){I(...se(...e)).forEach((e,t)=>{n[t]=e}),i(),typeof n.delegate===r&&n.delegate.apply(n.pointsContainer,[s,n.pointsContainer])};return n.delegate=void 0,n.setPosition=a,n.onMouseMove=e=>o.selected?a(o.updatePosition(e)):void 0,n.onMouseUp=()=>{o.selected=!1},n.distance=e=>Math.sqrt(S(e,n)),["x","y"].forEach((e,t)=>Object.defineProperty(n,e,{get:()=>n[t],set:e=>{n[t]=e}})),[c,"updatePosition","selected"].forEach(e=>Object.defineProperty(n,e,{get:()=>o[e],set:t=>{o[e]=t}})),Object.defineProperty(n,"remove",{value:()=>{var e;(e=o.svg)&&e.parentNode&&e.parentNode.removeChild(e),n.delegate=void 0}}),s},Ie=function(e,t,n){let o,i;const s=Array.from(Array(t)).map(()=>He(e,n)),a=e=>typeof i===r?i.call(s,e,o,s):void 0;s.forEach(e=>{e.delegate=a,e.pointsContainer=s});e.onPress=function(e){s.length>0&&(o=s.map((t,n)=>({i:n,d:S(t,[e.x,e.y])})).sort((e,t)=>e.d-t.d).shift().i,s[o].selected=!0)},e.onMove=function(e){s.forEach(t=>t.onMouseMove(e))},e.onRelease=function(){s.forEach(e=>e.onMouseUp()),o=void 0},Object.defineProperty(s,"selectedIndex",{get:()=>o}),Object.defineProperty(s,"selected",{get:()=>s[o]}),Object.defineProperty(s,"add",{value:t=>{s.push(He(e,t))}}),s.removeAll=()=>{for(;s.length>0;)s.pop().remove()};const c={onChange:(e,t)=>{if(i=e,!0===t){const t=s.length-1;e.call(s,s[t],t,s)}},position:e=>s.forEach((t,n)=>t.setPosition(e.call(s,t,n,s))),svg:e=>s.forEach((t,n)=>{t.svg=e.call(s,t,n,s)})};return Object.keys(c).forEach(e=>{s[e]=function(){return typeof arguments[0]===r&&c[e](...arguments),s}}),s.parent=function(e){return null!=e&&null!=e.appendChild&&s.forEach(t=>{e.appendChild(t.svg)}),s},s},Qe=e=>{e.controls=(...t)=>Ie.call(e,e,...t)};var Ke={svg:{args:(...e)=>[ye(I(...e))].filter(e=>null!=e),methods:De,init:(e,...t)=>{t.filter(e=>typeof e===s).forEach(t=>_e(e,t)),t.filter(e=>null!=e).filter(e=>typeof e.appendChild===r).forEach(t=>t.appendChild(e)),Ze(e),function(e){let t;const n={};let r,o=0;const i=()=>{C().cancelAnimationFrame&&C().cancelAnimationFrame(r),Object.keys(n).forEach(e=>delete n[e]),t=void 0,o=0};Object.defineProperty(e,"play",{set:e=>{if(i(),null==e)return;const s=Xe();n[s]=i=>{t||(t=i,o=0),e({time:.001*(i-t),frame:o}),o+=1,n[s]&&(r=C().requestAnimationFrame(n[s]))},C().requestAnimationFrame&&(r=C().requestAnimationFrame(n[s]))},enumerable:!0}),Object.defineProperty(e,"stop",{value:i,enumerable:!0})}(e),Qe(e)}}};const We=(e,...t)=>{const n=t.map(e=>Pe(e)).filter(e=>void 0!==e);return n.filter(e=>e.tagName===c).forEach(t=>Ae(e,t)),n.filter(e=>e.tagName!==c).forEach(t=>e.appendChild(t)),e};var Je={g:{init:We,methods:{load:We}}},et=Object.assign(Object.create(null),{svg:[p],line:["x1","y1","x2","y2"],rect:["x","y","width","height"],circle:["cx","cy","r"],ellipse:["cx","cy","rx","ry"],polygon:[h],polyline:[h],path:["d"],text:["x","y"],mask:[d],symbol:[d],clipPath:[d,"clip-rule"],marker:[d,"markerHeight","markerUnits","markerWidth","orient","refX","refY"],linearGradient:["x1","x2","y1","y2"],radialGradient:["cx","cy","r","fr","fx","fy"],stop:["offset","stop-color","stop-opacity"],pattern:["patternContentUnits","patternTransform","patternUnits"]});const tt=(e,t)=>(e.setAttribute(et.circle[2],t),e),nt=(e,t,n)=>([...I(...se(t,n)).slice(0,2)].forEach((t,n)=>e.setAttribute(et.circle[n],t)),e);var rt={circle:{args:(e,t,n,r)=>{const o=I(...se(e,t,n,r));switch(o.length){case 0:case 1:return[,,...o];case 2:case 3:return o;default:return((e,t,n,r)=>[e,t,T([e,t],[n,r])])(...o)}},methods:{radius:tt,setRadius:tt,origin:nt,setOrigin:nt,center:nt,setCenter:nt,position:nt,setPosition:nt}}};const ot=(e,t,n)=>([,,t,n].forEach((t,n)=>e.setAttribute(et.ellipse[n],t)),e),it=(e,t,n)=>([...I(...se(t,n)).slice(0,2)].forEach((t,n)=>e.setAttribute(et.ellipse[n],t)),e);var st={ellipse:{args:(e,t,n,r)=>{const o=I(...se(e,t,n,r)).slice(0,4);switch(o.length){case 0:case 1:case 2:return[,,...o];default:return o}},methods:{radius:ot,setRadius:ot,origin:it,setOrigin:it,center:it,setCenter:it,position:it,setPosition:it}}};const at=(...e)=>I(...H(...e)).slice(0,4);var ct={line:{args:at,methods:{setPoints:(e,...t)=>(at(...t).forEach((t,n)=>e.setAttribute(et.line[n],t)),e)}}};const lt=/[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g,dt=/-?[0-9]*\.?\d+/g,ut={m:"move",l:"line",v:"vertical",h:"horizontal",a:"ellipse",c:"curve",s:"smoothCurve",q:"quadCurve",t:"smoothQuadCurve",z:"close"};Object.keys(ut).forEach(e=>{const t=ut[e];ut[e.toUpperCase()]=t.charAt(0).toUpperCase()+t.slice(1)});const pt=e=>{const t=e.getAttribute("d");return null==t?"":t},ft=(e,t,...n)=>(e.setAttribute("d",`${pt(e)}${t}${se(...n).join(" ")}`),e),ht=e=>function(e){const t=[];let n;for(;null!==(n=lt.exec(e));)t.push(n);return t.map(t=>({command:e[t.index],index:t.index})).reduceRight((t,n)=>{const r=e.substring(n.index,t.length?t[t.length-1].index:e.length);return t.concat([{command:n.command,index:n.index,chunk:r.length>0?r.substr(1,r.length-1):r}])},[]).reverse().map(e=>{const t=e.chunk.match(dt);return e.en=ut[e.command],e.values=t?t.map(parseFloat):[],delete e.chunk,e})}(pt(e)),mt={addCommand:ft,appendCommand:ft,clear:e=>(e.removeAttribute("d"),e),getCommands:ht,get:ht,getD:e=>e.getAttribute("d")};Object.keys(ut).forEach(e=>{mt[ut[e]]=(t,...n)=>ft(t,e,...n)});var gt={path:{methods:mt}};const bt=(e,t,n)=>([,,t,n].forEach((t,n)=>e.setAttribute(et.rect[n],t)),e),vt=(e,t,n)=>([...I(...se(t,n)).slice(0,2)].forEach((t,n)=>e.setAttribute(et.rect[n],t)),e),yt=function(e){return[0,1].forEach(t=>{e[2+t]<0&&(void 0===e[0+t]&&(e[0+t]=0),e[0+t]+=e[2+t],e[2+t]=-e[2+t])}),e};var wt={rect:{args:(e,t,n,r)=>{const o=I(...se(e,t,n,r)).slice(0,4);switch(o.length){case 0:case 1:case 2:case 3:return yt([,,...o]);default:return yt(o)}},methods:{origin:vt,setOrigin:vt,center:vt,setCenter:vt,size:bt,setSize:bt}}},xt={style:{init:(e,t)=>{e.textContent="",e.appendChild(we(t))},methods:{setTextContent:(e,t)=>(e.textContent="",e.appendChild(we(t)),e)}}},At={text:{args:(e,t,n)=>I(...se(e,t,n)).slice(0,2),init:(e,t,n,r,o)=>{const i=[t,n,r,o].filter(e=>typeof e===s).shift();i&&e.appendChild(C().document.createTextNode(i))}}};const Et=function(){return Array.from(arguments).filter(e=>typeof e===s||e instanceof String).shift()||Xe()},Ct=(...e)=>[Et(...e)];var jt={mask:{args:Ct},clipPath:{args:Ct},symbol:{args:Ct},marker:{args:Ct,methods:{size:Ne,setViewBox:Ne}}};const Ot=e=>{const t=e.getAttribute(h);return null==t?"":t},kt=function(){return Array.from(Array(Math.floor(arguments.length/2))).map((e,t)=>`${arguments[2*t+0]},${arguments[2*t+1]}`).join(" ")},Pt=(...e)=>[kt(...I(...H(...e)))],$t=(e,...t)=>(e.setAttribute(h,Pt(...t)[0]),e),Mt=(e,...t)=>(e.setAttribute(h,[Ot(e),Pt(...t)[0]].filter(e=>""!==e).join(" ")),e),Nt=function(...e){return 1===e.length&&typeof e[0]===s?[e[0]]:Pt(...e)};var St={polyline:{args:Nt,methods:{setPoints:$t,addPoint:Mt}},polygon:{args:Nt,methods:{setPoints:$t,addPoint:Mt}}},Tt=Object.assign({},Ke,Je,rt,st,ct,gt,wt,xt,At,jt,St),Lt={presentation:["color","color-interpolation","cursor","direction","display","fill","fill-opacity","fill-rule","font-family","font-size","font-size-adjust","font-stretch","font-style","font-variant","font-weight","image-rendering","letter-spacing","opacity","overflow","paint-order","pointer-events","preserveAspectRatio","shape-rendering","stroke","stroke-dasharray","stroke-dashoffset","stroke-linecap","stroke-linejoin","stroke-miterlimit","stroke-opacity","stroke-width","tabindex","transform-origin","user-select","vector-effect","visibility"],animation:["accumulate","additive","attributeName","begin","by","calcMode","dur","end","from","keyPoints","keySplines","keyTimes","max","min","repeatCount","repeatDur","restart","to","values"],effects:["azimuth","baseFrequency","bias","color-interpolation-filters","diffuseConstant","divisor","edgeMode","elevation","exponent","filter","filterRes","filterUnits","flood-color","flood-opacity","in","in2","intercept","k1","k2","k3","k4","kernelMatrix","lighting-color","limitingConeAngle","mode","numOctaves","operator","order","pointsAtX","pointsAtY","pointsAtZ","preserveAlpha","primitiveUnits","radius","result","seed","specularConstant","specularExponent","stdDeviation","stitchTiles","surfaceScale","targetX","targetY","type","xChannelSelector","yChannelSelector"],text:["dx","dy","alignment-baseline","baseline-shift","dominant-baseline","lengthAdjust","method","overline-position","overline-thickness","rotate","spacing","startOffset","strikethrough-position","strikethrough-thickness","text-anchor","text-decoration","text-rendering","textLength","underline-position","underline-thickness","word-spacing","writing-mode"],gradient:["gradientTransform","gradientUnits","spreadMethod"]};Object.values(O).reduce((e,t)=>e.concat(t),[]).filter(e=>void 0===et[e]).forEach(e=>{et[e]=[]}),[[[c,"defs","g"].concat(O.v,O.t),Lt.presentation],[["filter"],Lt.effects],[O.cT.concat("text"),Lt.text],[O.cF,Lt.effects],[O.cG,Lt.gradient]].forEach(e=>e[0].forEach(t=>{et[t]=et[t].concat(e[1])}));const _t=e=>{if(null==e)return[];const t=e.getAttribute(n);return null==t?[]:t.split(" ").filter(e=>""!==e)};var Bt={addClass:(e,t)=>{const r=_t(e).filter(e=>e!==t);r.push(t),e.setAttributeNS(null,n,r.join(" "))},removeClass:(e,t)=>{const r=_t(e).filter(e=>e!==t);e.setAttributeNS(null,n,r.join(" "))},setClass:(e,t)=>{e.setAttributeNS(null,n,t)},setId:(e,t)=>{e.setAttributeNS(null,d,t)}};const zt=e=>{const t=e.getAttribute(f);return null==t||""===t?void 0:t},Ft={clearTransform:e=>(e.removeAttribute(f),e)};["translate","rotate","scale","matrix"].forEach(e=>{Ft[e]=(t,...n)=>t.setAttribute(f,[zt(t),`${e}(${n.join(" ")})`].filter(e=>void 0!==e).join(" "))});const Dt={};["clip-path","mask","symbol","marker-end","marker-mid","marker-start"].forEach(e=>{Dt[X.toCamel(e)]=(t,n)=>t.setAttribute(e,function(e){if(null==e)return"";if(typeof e===s)return"url"===e.slice(0,3)?e:`url(#${e})`;if(null!=e.getAttribute)return`url(#${e.getAttribute(d)})`;return""}(n))});const Gt={};O.v.push(...Object.keys(pe)),Object.keys(pe).forEach(e=>{pe[e].attributes=void 0===pe[e].attributes?[...Lt.presentation]:pe[e].attributes.concat(Lt.presentation)}),Object.assign(Gt,Tt,pe),Object.keys(O).forEach(e=>O[e].filter(e=>void 0===Gt[e]).forEach(e=>{Gt[e]={}}));const Rt=function(){return Array.from(arguments)};Object.keys(Gt).forEach(e=>{Gt[e].nodeName||(Gt[e].nodeName=e),Gt[e].init||(Gt[e].init=Rt),Gt[e].args||(Gt[e].args=Rt),Gt[e].methods||(Gt[e].methods={}),Gt[e].attributes||(Gt[e].attributes=et[e]||[])});const Ut=(e,t)=>{e.forEach(e=>Object.keys(t).forEach(n=>{Gt[e].methods[n]=function(){return t[n](...arguments),arguments[0]}}))};Ut(se(O.t,O.v,O.g,O.s,O.p,O.i,O.h,O.d),Bt),Ut(se(O.t,O.v,O.g,O.s,O.p,O.i,O.h,O.d),Ce),Ut(se(O.v,O.g,O.s),Ft),Ut(se(O.t,O.v,O.g),Dt);const qt={svg:{version:"1.1",xmlns:j},style:{type:"text/css"}},Vt={},Zt=(e,t,...n)=>{const r=C().document.createElementNS(j,Gt[e].nodeName);return t&&t.appendChild(r),((e,t)=>{qt[t]&&Object.keys(qt[t]).forEach(n=>e.setAttribute(n,qt[t][n]))})(r,e),Gt[e].init(r,...n),Gt[e].args(...n).forEach((t,n)=>{null!=Gt[e].attributes[n]&&r.setAttribute(Gt[e].attributes[n],t)}),Gt[e].attributes.forEach(e=>{Object.defineProperty(r,X.toCamel(e),{value:function(){return r.setAttribute(e,...arguments),r}})}),Object.keys(Gt[e].methods).forEach(t=>Object.defineProperty(r,t,{value:function(){return Gt[e].methods[t].call(Vt,r,...arguments)}})),be[e]&&be[e].forEach(e=>{const t=function(){return Zt(e,r,...arguments)};Gt[e].static&&Object.keys(Gt[e].static).forEach(n=>{t[n]=function(){return Gt[e].static[n](r,...arguments)}}),Object.defineProperty(r,e,{value:t})}),r};Vt.Constructor=Zt;const Xt={};Object.keys(O).forEach(e=>O[e].forEach(e=>{Xt[e]=(...t)=>Zt(e,null,...t)}));const Yt=(e,t)=>{["segment","circle","ellipse","rect","polygon"].filter(e=>t[e]&&t[e].prototype).forEach(n=>{t[n].prototype.svg=function(){return e.path(this.svgPath())}}),Ge.math.vector=t.vector},Ht=function(e,...t){t.filter(e=>typeof e===r).forEach(t=>t.call(e,e))};return e.init=function(){const e=Zt(c,null,...arguments);return"loading"===C().document.readyState?C().document.addEventListener("DOMContentLoaded",()=>Ht(e,...arguments)):Ht(e,...arguments),e},t.NS=j,t.linker=function(e){e.graph&&e.origami&&(e.svg=this,Yt(this,e),((e,t)=>{const n="origami";Gt.origami={nodeName:"g",init:function(e,...n){return t.graph.svg.drawInto(e,...n)},args:()=>[],methods:Gt.g.methods,attributes:Gt.g.attributes,static:{}},Object.keys(t.graph.svg).forEach(e=>{Gt.origami.static[e]=(n,...r)=>{const o=t.graph.svg[e](...r);return n.appendChild(o),o}}),be.origami=[...be.g],be.svg.push(n),be.g.push(n),e.origami=(...e)=>Zt(n,null,...e),Object.keys(t.graph.svg).forEach(n=>{e.origami[n]=t.graph.svg[n]})})(this,e))}.bind(t),Object.assign(t,Xt),t.core=Object.assign(Object.create(null),{load:$e,save:Me,coordinates:I,flatten:se,attributes:et,children:be,cdata:we},X,Bt,Ce,_,Ft,Le),Object.defineProperty(t,"window",{enumerable:!1,set:e=>{var t;(t=e).document||(t.document=(e=>(new e.DOMParser).parseFromString("<!DOCTYPE html><title>.</title>","text/html"))(t)),E.window=t,E.window}}),t}));
+/* svg (c) Kraft, MIT License */
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.svg = factory());
+})(this, (function () { 'use strict';
+
+	var NS = "http://www.w3.org/2000/svg";
+
+	const toCamel = (s) => s
+		.replace(/([-_][a-z])/ig, $1 => $1
+			.toUpperCase()
+			.replace("-", "")
+			.replace("_", ""));
+	const toKebab = (s) => s
+		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+		.replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2")
+		.toLowerCase();
+	const capitalized = (s) => s
+		.charAt(0).toUpperCase() + s.slice(1);
+
+	var transformCase = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		capitalized: capitalized,
+		toCamel: toCamel,
+		toKebab: toKebab
+	});
+
+	const str_class = "class";
+	const str_function = "function";
+	const str_undefined = "undefined";
+	const str_number = "number";
+	const str_string = "string";
+	const str_object = "object";
+	const str_svg = "svg";
+	const str_id = "id";
+	const str_style = "style";
+	const str_viewBox = "viewBox";
+	const str_transform = "transform";
+	const str_points = "points";
+	const str_stroke = "stroke";
+	const str_fill = "fill";
+	const str_none = "none";
+
+	const makeCoordinates = (...args) => args
+		.filter(a => typeof a === str_number)
+		.concat(args
+			.filter(a => typeof a === str_object && a !== null)
+			.map((el) => {
+				if (typeof el.x === str_number) { return [el.x, el.y]; }
+				if (typeof el[0] === str_number) { return [el[0], el[1]]; }
+				return undefined;
+			}).filter(a => a !== undefined)
+			.reduce((a, b) => a.concat(b), []));
+
+	const makeUUID = () => Math.random()
+		.toString(36)
+		.replace(/[^a-z]+/g, "")
+		.concat("aaaaa")
+		.substr(0, 5);
+
+	const viewBoxValuesToString = function (x, y, width, height, padding = 0) {
+		const scale = 1.0;
+		const d = (width / scale) - width;
+		const X = (x - d) - padding;
+		const Y = (y - d) - padding;
+		const W = (width + d * 2) + padding * 2;
+		const H = (height + d * 2) + padding * 2;
+		return [X, Y, W, H].join(" ");
+	};
+	const makeViewBox = (...args) => {
+		const numbers = makeCoordinates(...args.flat());
+		if (numbers.length === 2) { numbers.unshift(0, 0); }
+		return numbers.length === 4 ? viewBoxValuesToString(...numbers) : undefined;
+	};
+
+	var argumentMethods = {
+		...transformCase,
+		makeCoordinates,
+		makeUUID,
+		makeViewBox,
+	};
+
+	const svg_add2 = (a, b) => [a[0] + b[0], a[1] + b[1]];
+	const svg_sub2 = (a, b) => [a[0] - b[0], a[1] - b[1]];
+	const svg_scale2 = (a, s) => [a[0] * s, a[1] * s];
+	const svg_magnitudeSq2 = (a) => (a[0] ** 2) + (a[1] ** 2);
+	const svg_magnitude2 = (a) => Math.sqrt(svg_magnitudeSq2(a));
+	const svg_distanceSq2 = (a, b) => svg_magnitudeSq2(svg_sub2(a, b));
+	const svg_distance2 = (a, b) => Math.sqrt(svg_distanceSq2(a, b));
+	const svg_polar_to_cart = (a, d) => [Math.cos(a) * d, Math.sin(a) * d];
+
+	var svgMath = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		svg_add2: svg_add2,
+		svg_distance2: svg_distance2,
+		svg_distanceSq2: svg_distanceSq2,
+		svg_magnitude2: svg_magnitude2,
+		svg_magnitudeSq2: svg_magnitudeSq2,
+		svg_polar_to_cart: svg_polar_to_cart,
+		svg_scale2: svg_scale2,
+		svg_sub2: svg_sub2
+	});
+
+	const removeChildren = (element) => {
+		while (element.lastChild) {
+			element.removeChild(element.lastChild);
+		}
+		return element;
+	};
+	const appendTo = (element, parent) => {
+		if (parent && parent.appendChild) {
+			parent.appendChild(element);
+		}
+		return element;
+	};
+	const setAttributes = (element, attrs) => Object.keys(attrs)
+		.forEach(key => element.setAttribute(toKebab(key), attrs[key]));
+	const clearSVG = (element) => {
+		Array.from(element.attributes)
+			.filter(a => a !== "xmlns")
+			.forEach(attr => element.removeAttribute(attr.name));
+		return removeChildren(element);
+	};
+
+	var dom = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		appendTo: appendTo,
+		clearSVG: clearSVG,
+		removeChildren: removeChildren,
+		setAttributes: setAttributes
+	});
+
+	const isBrowser = typeof window !== str_undefined
+		&& typeof window.document !== str_undefined;
+	typeof process !== str_undefined
+		&& process.versions != null
+		&& process.versions.node != null;
+
+	var Messages = {
+		window: "window not set; if using node/deno include package @xmldom/xmldom and set ear.window = xmldom",
+	};
+
+	const svgWindowContainer = { window: undefined };
+	if (isBrowser) { svgWindowContainer.window = window; }
+	const SVGWindow = () => {
+		if (svgWindowContainer.window === undefined) {
+			throw Messages.window;
+		}
+		return svgWindowContainer.window;
+	};
+
+	const makeCDATASection = (text) => (new (SVGWindow()).DOMParser())
+		.parseFromString("<root></root>", "text/xml")
+		.createCDATASection(text);
+
+	const markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
+	const digitRegEx = /-?[0-9]*\.?\d+/g;
+	const pathCommandNames = {
+		m: "move",
+		l: "line",
+		v: "vertical",
+		h: "horizontal",
+		a: "ellipse",
+		c: "curve",
+		s: "smoothCurve",
+		q: "quadCurve",
+		t: "smoothQuadCurve",
+		z: "close",
+	};
+	Object.keys(pathCommandNames).forEach((key) => {
+		const s = pathCommandNames[key];
+		pathCommandNames[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
+	});
+	const add2path = (a, b) => [a[0] + (b[0] || 0), a[1] + (b[1] || 0)];
+	const getEndpoint = (command, values, offset = [0, 0]) => {
+		const upper = command.toUpperCase();
+		const origin = command === upper ? [0, 0] : offset;
+		switch (upper) {
+		case "M":
+		case "L":
+		case "V":
+		case "H":
+		case "T": return add2path(origin, values);
+		case "A": return add2path(origin, [values[5], values[6]]);
+		case "C": return add2path(origin, [values[4], values[5]]);
+		case "S":
+		case "Q": return add2path(origin, [values[2], values[3]]);
+		case "Z": return undefined;
+		default: return origin;
+		}
+	};
+	const parsePathCommands = (d) => {
+		const results = [];
+		let match;
+		while ((match = markerRegEx.exec(d)) !== null) {
+			results.push(match);
+		}
+		return results
+			.map((result, i, arr) => [
+				result[0],
+				result.index,
+				i === arr.length - 1
+					? d.length - 1
+					: arr[(i + 1) % arr.length].index - 1,
+			])
+			.map(el => {
+				const command = el[0];
+				const valueString = d.substring(el[1] + 1, el[2]);
+				const strings = valueString.match(digitRegEx);
+				const values = strings ? strings.map(parseFloat) : [];
+				return { command, values };
+			});
+	};
+	const parsePathCommandsWithEndpoints = (d) => {
+		let pen = [0, 0];
+		const commands = parsePathCommands(d);
+		if (!commands.length) { return commands; }
+		commands.forEach((command, i) => {
+			commands[i].end = getEndpoint(command.command, command.values, pen);
+			commands[i].start = i === 0 ? pen : commands[i - 1].end;
+			pen = commands[i].end;
+		});
+		const last = commands[commands.length - 1];
+		const firstDrawCommand = commands
+			.filter(el => el.command.toUpperCase() !== "M"
+				&& el.command.toUpperCase() !== "Z")
+			.shift();
+		if (last.command.toUpperCase() === "Z") {
+			last.end = [...firstDrawCommand.start];
+		}
+		return commands;
+	};
+
+	var pathMethods = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		parsePathCommands: parsePathCommands,
+		parsePathCommandsWithEndpoints: parsePathCommandsWithEndpoints,
+		pathCommandNames: pathCommandNames
+	});
+
+	const getAttr = (element) => {
+		const t = element.getAttribute(str_transform);
+		return (t == null || t === "") ? undefined : t;
+	};
+	const TransformMethods = {
+		clearTransform: (el) => { el.removeAttribute(str_transform); return el; },
+	};
+	["translate", "rotate", "scale", "matrix"].forEach(key => {
+		TransformMethods[key] = (element, ...args) => element.setAttribute(
+			str_transform,
+			[getAttr(element), `${key}(${args.join(" ")})`]
+				.filter(a => a !== undefined)
+				.join(" "),
+		);
+	});
+
+	const setViewBox = (element, ...args) => {
+		const viewBox = args.length === 1 && typeof args[0] === str_string
+			? args[0]
+			: makeViewBox(...args);
+		if (viewBox) {
+			element.setAttribute(str_viewBox, viewBox);
+		}
+		return element;
+	};
+	const getViewBox = function (element) {
+		const vb = element.getAttribute(str_viewBox);
+		return (vb == null
+			? undefined
+			: vb.split(" ").map(n => parseFloat(n)));
+	};
+	const convertToViewBox = function (svg, x, y) {
+		const pt = svg.createSVGPoint();
+		pt.x = x;
+		pt.y = y;
+		const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+		return [svgPoint.x, svgPoint.y];
+	};
+
+	var viewBox = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		convertToViewBox: convertToViewBox,
+		getViewBox: getViewBox,
+		setViewBox: setViewBox
+	});
+
+	var methods$1 = {
+		...svgMath,
+		...dom,
+		makeCDATASection,
+		...pathMethods,
+		...TransformMethods,
+		...viewBox,
+	};
+
+	const getFrame = function (element) {
+		const viewBox = getViewBox(element);
+		if (viewBox !== undefined) {
+			return viewBox;
+		}
+		if (typeof element.getBoundingClientRect === str_function) {
+			const rr = element.getBoundingClientRect();
+			return [rr.x, rr.y, rr.width, rr.height];
+		}
+		return [];
+	};
+	const setPadding = function (element, padding) {
+		const viewBox = getViewBox(element);
+		if (viewBox !== undefined) {
+			setViewBox(element, ...[-padding, -padding, padding * 2, padding * 2]
+				.map((nudge, i) => viewBox[i] + nudge));
+		}
+		return element;
+	};
+	const bgClass = "svg-background-rectangle";
+	const background = function (element, color) {
+		let backRect = Array.from(element.childNodes)
+			.filter(child => child.getAttribute(str_class) === bgClass)
+			.shift();
+		if (backRect == null) {
+			backRect = this.Constructor("rect", null, ...getFrame(element));
+			backRect.setAttribute(str_class, bgClass);
+			backRect.setAttribute(str_stroke, str_none);
+			element.insertBefore(backRect, element.firstChild);
+		}
+		backRect.setAttribute(str_fill, color);
+		return element;
+	};
+	const findStyleSheet = function (element) {
+		const styles = element.getElementsByTagName(str_style);
+		return styles.length === 0 ? undefined : styles[0];
+	};
+	const stylesheet = function (element, textContent) {
+		let styleSection = findStyleSheet(element);
+		if (styleSection == null) {
+			styleSection = this.Constructor(str_style);
+			element.insertBefore(styleSection, element.firstChild);
+		}
+		styleSection.textContent = "";
+		styleSection.appendChild(makeCDATASection(textContent));
+		return styleSection;
+	};
+	var methods = {
+		size: setViewBox,
+		setViewBox,
+		getViewBox,
+		padding: setPadding,
+		background,
+		getWidth: el => getFrame(el)[2],
+		getHeight: el => getFrame(el)[3],
+		stylesheet: function (el, text) { return stylesheet.call(this, el, text); },
+	};
+
+	var svgDef = {
+		svg: {
+			args: (...args) => [makeViewBox(makeCoordinates(...args))].filter(a => a != null),
+			methods,
+			init: (element, ...args) => {
+			},
+		},
+	};
+
+	const loadGroup = (group, ...sources) => {
+		return group;
+	};
+	var gDef = {
+		g: {
+			init: loadGroup,
+			methods: {
+				load: loadGroup,
+			},
+		},
+	};
+
+	const classes_nodes = {
+		svg: [
+			"svg",
+		],
+		defs: [
+			"defs",
+		],
+		header: [
+			"desc",
+			"filter",
+			"metadata",
+			"style",
+			"script",
+			"title",
+			"view",
+		],
+		cdata: [
+			"cdata",
+		],
+		group: [
+			"g",
+		],
+		visible: [
+			"circle",
+			"ellipse",
+			"line",
+			"path",
+			"polygon",
+			"polyline",
+			"rect",
+		],
+		text: [
+			"text",
+		],
+		invisible: [
+			"marker",
+			"symbol",
+			"clipPath",
+			"mask",
+		],
+		patterns: [
+			"linearGradient",
+			"radialGradient",
+			"pattern",
+		],
+		childrenOfText: [
+			"textPath",
+			"tspan",
+		],
+		gradients: [
+			"stop",
+		],
+		filter: [
+			"feBlend",
+			"feColorMatrix",
+			"feComponentTransfer",
+			"feComposite",
+			"feConvolveMatrix",
+			"feDiffuseLighting",
+			"feDisplacementMap",
+			"feDistantLight",
+			"feDropShadow",
+			"feFlood",
+			"feFuncA",
+			"feFuncB",
+			"feFuncG",
+			"feFuncR",
+			"feGaussianBlur",
+			"feImage",
+			"feMerge",
+			"feMergeNode",
+			"feMorphology",
+			"feOffset",
+			"fePointLight",
+			"feSpecularLighting",
+			"feSpotLight",
+			"feTile",
+			"feTurbulence",
+		],
+	};
+
+	const nodeNames = Object.values(classes_nodes).flat();
+
+	const classes_attributes = {
+		presentation: [
+			"color",
+			"color-interpolation",
+			"cursor",
+			"direction",
+			"display",
+			"fill",
+			"fill-opacity",
+			"fill-rule",
+			"font-family",
+			"font-size",
+			"font-size-adjust",
+			"font-stretch",
+			"font-style",
+			"font-variant",
+			"font-weight",
+			"image-rendering",
+			"letter-spacing",
+			"opacity",
+			"overflow",
+			"paint-order",
+			"pointer-events",
+			"preserveAspectRatio",
+			"shape-rendering",
+			"stroke",
+			"stroke-dasharray",
+			"stroke-dashoffset",
+			"stroke-linecap",
+			"stroke-linejoin",
+			"stroke-miterlimit",
+			"stroke-opacity",
+			"stroke-width",
+			"tabindex",
+			"transform-origin",
+			"user-select",
+			"vector-effect",
+			"visibility",
+		],
+		animation: [
+			"accumulate",
+			"additive",
+			"attributeName",
+			"begin",
+			"by",
+			"calcMode",
+			"dur",
+			"end",
+			"from",
+			"keyPoints",
+			"keySplines",
+			"keyTimes",
+			"max",
+			"min",
+			"repeatCount",
+			"repeatDur",
+			"restart",
+			"to",
+			"values",
+		],
+		effects: [
+			"azimuth",
+			"baseFrequency",
+			"bias",
+			"color-interpolation-filters",
+			"diffuseConstant",
+			"divisor",
+			"edgeMode",
+			"elevation",
+			"exponent",
+			"filter",
+			"filterRes",
+			"filterUnits",
+			"flood-color",
+			"flood-opacity",
+			"in",
+			"in2",
+			"intercept",
+			"k1",
+			"k2",
+			"k3",
+			"k4",
+			"kernelMatrix",
+			"lighting-color",
+			"limitingConeAngle",
+			"mode",
+			"numOctaves",
+			"operator",
+			"order",
+			"pointsAtX",
+			"pointsAtY",
+			"pointsAtZ",
+			"preserveAlpha",
+			"primitiveUnits",
+			"radius",
+			"result",
+			"seed",
+			"specularConstant",
+			"specularExponent",
+			"stdDeviation",
+			"stitchTiles",
+			"surfaceScale",
+			"targetX",
+			"targetY",
+			"type",
+			"xChannelSelector",
+			"yChannelSelector",
+		],
+		text: [
+			"dx",
+			"dy",
+			"alignment-baseline",
+			"baseline-shift",
+			"dominant-baseline",
+			"lengthAdjust",
+			"method",
+			"overline-position",
+			"overline-thickness",
+			"rotate",
+			"spacing",
+			"startOffset",
+			"strikethrough-position",
+			"strikethrough-thickness",
+			"text-anchor",
+			"text-decoration",
+			"text-rendering",
+			"textLength",
+			"underline-position",
+			"underline-thickness",
+			"word-spacing",
+			"writing-mode",
+		],
+		gradient: [
+			"gradientTransform",
+			"gradientUnits",
+			"spreadMethod",
+		],
+	};
+
+	const nodes_attributes = {
+		svg: [str_viewBox],
+		line: ["x1", "y1", "x2", "y2"],
+		rect: ["x", "y", "width", "height"],
+		circle: ["cx", "cy", "r"],
+		ellipse: ["cx", "cy", "rx", "ry"],
+		polygon: [str_points],
+		polyline: [str_points],
+		path: ["d"],
+		text: ["x", "y"],
+		mask: [str_id],
+		symbol: [str_id],
+		clipPath: [str_id, "clip-rule"],
+		marker: [
+			str_id,
+			"markerHeight",
+			"markerUnits",
+			"markerWidth",
+			"orient",
+			"refX",
+			"refY",
+		],
+		linearGradient: ["x1", "x2", "y1", "y2"],
+		radialGradient: ["cx", "cy", "r", "fr", "fx", "fy"],
+		stop: ["offset", "stop-color", "stop-opacity"],
+		pattern: ["patternContentUnits", "patternTransform", "patternUnits"],
+	};
+	nodeNames
+		.filter(nodeName => !nodes_attributes[nodeName])
+		.forEach(nodeName => { nodes_attributes[nodeName] = []; });
+	const additionalNodeAttributes = [{
+		nodes: [str_svg, "defs", "g"].concat(classes_nodes.visible, classes_nodes.text),
+		attr: classes_attributes.presentation,
+	}, {
+		nodes: ["filter"],
+		attr: classes_attributes.effects,
+	}, {
+		nodes: classes_nodes.childrenOfText.concat("text"),
+		attr: classes_attributes.text,
+	}, {
+		nodes: classes_nodes.filter,
+		attr: classes_attributes.effects,
+	}, {
+		nodes: classes_nodes.gradients,
+		attr: classes_attributes.gradient,
+	}];
+	additionalNodeAttributes
+		.forEach(el => el.nodes
+			.forEach(nodeName => {
+				nodes_attributes[nodeName].push(...el.attr);
+			}));
+
+	const setRadius = (el, r) => {
+		el.setAttribute(nodes_attributes.circle[2], r);
+		return el;
+	};
+	const setOrigin$1 = (el, a, b) => {
+		[...makeCoordinates(...[a, b].flat()).slice(0, 2)]
+			.forEach((value, i) => el.setAttribute(nodes_attributes.circle[i], value));
+		return el;
+	};
+	const fromPoints = (a, b, c, d) => [a, b, svg_distance2([a, b], [c, d])];
+	var circleDef = {
+		circle: {
+			args: (a, b, c, d) => {
+				const coords = makeCoordinates(...[a, b, c, d].flat());
+				switch (coords.length) {
+				case 0: case 1: return [, , ...coords];
+				case 2: case 3: return coords;
+				default: return fromPoints(...coords);
+				}
+			},
+			methods: {
+				radius: setRadius,
+				setRadius,
+				origin: setOrigin$1,
+				setOrigin: setOrigin$1,
+				center: setOrigin$1,
+				setCenter: setOrigin$1,
+				position: setOrigin$1,
+				setPosition: setOrigin$1,
+			},
+		},
+	};
+
+	const setRadii = (el, rx, ry) => {
+		[, , rx, ry].forEach((value, i) => el.setAttribute(nodes_attributes.ellipse[i], value));
+		return el;
+	};
+	const setOrigin = (el, a, b) => {
+		[...makeCoordinates(...[a, b].flat()).slice(0, 2)]
+			.forEach((value, i) => el.setAttribute(nodes_attributes.ellipse[i], value));
+		return el;
+	};
+	var ellipseDef = {
+		ellipse: {
+			args: (a, b, c, d) => {
+				const coords = makeCoordinates(...[a, b, c, d].flat()).slice(0, 4);
+				switch (coords.length) {
+				case 0: case 1: case 2: return [, , ...coords];
+				default: return coords;
+				}
+			},
+			methods: {
+				radius: setRadii,
+				setRadius: setRadii,
+				origin: setOrigin,
+				setOrigin,
+				center: setOrigin,
+				setCenter: setOrigin,
+				position: setOrigin,
+				setPosition: setOrigin,
+			},
+		},
+	};
+
+	const svgIsIterable = (obj) => obj != null
+		&& typeof obj[Symbol.iterator] === str_function;
+	const svgSemiFlattenArrays = function () {
+		switch (arguments.length) {
+		case 0: return Array.from(arguments);
+		case 1: return svgIsIterable(arguments[0]) && typeof arguments[0] !== str_string
+			? svgSemiFlattenArrays(...arguments[0])
+			: [arguments[0]];
+		default:
+			return Array.from(arguments).map(a => (svgIsIterable(a)
+				? [...svgSemiFlattenArrays(a)]
+				: a));
+		}
+	};
+
+	const Args$1 = (...args) => makeCoordinates(...svgSemiFlattenArrays(...args)).slice(0, 4);
+	const setPoints$1 = (element, ...args) => {
+		Args$1(...args).forEach((value, i) => element.setAttribute(nodes_attributes.line[i], value));
+		return element;
+	};
+	var lineDef = {
+		line: {
+			args: Args$1,
+			methods: {
+				setPoints: setPoints$1,
+			},
+		},
+	};
+
+	const getD = (el) => {
+		const attr = el.getAttribute("d");
+		return (attr == null) ? "" : attr;
+	};
+	const clear = element => {
+		element.removeAttribute("d");
+		return element;
+	};
+	const appendPathCommand = (el, command, ...args) => {
+		el.setAttribute("d", `${getD(el)}${command}${args.flat().join(" ")}`);
+		return el;
+	};
+	const getCommands = element => parsePathCommands(getD(element));
+	const path_methods = {
+		addCommand: appendPathCommand,
+		appendCommand: appendPathCommand,
+		clear,
+		getCommands: getCommands,
+		get: getCommands,
+		getD: el => el.getAttribute("d"),
+	};
+	Object.keys(pathCommandNames).forEach((key) => {
+		path_methods[pathCommandNames[key]] = (el, ...args) => appendPathCommand(el, key, ...args);
+	});
+	var pathDef = {
+		path: {
+			methods: path_methods,
+		},
+	};
+
+	const setRectSize = (el, rx, ry) => {
+		[, , rx, ry]
+			.forEach((value, i) => el.setAttribute(nodes_attributes.rect[i], value));
+		return el;
+	};
+	const setRectOrigin = (el, a, b) => {
+		[...makeCoordinates(...[a, b].flat()).slice(0, 2)]
+			.forEach((value, i) => el.setAttribute(nodes_attributes.rect[i], value));
+		return el;
+	};
+	const fixNegatives = function (arr) {
+		[0, 1].forEach(i => {
+			if (arr[2 + i] < 0) {
+				if (arr[0 + i] === undefined) { arr[0 + i] = 0; }
+				arr[0 + i] += arr[2 + i];
+				arr[2 + i] = -arr[2 + i];
+			}
+		});
+		return arr;
+	};
+	var rectDef = {
+		rect: {
+			args: (a, b, c, d) => {
+				const coords = makeCoordinates(...[a, b, c, d].flat()).slice(0, 4);
+				switch (coords.length) {
+				case 0: case 1: case 2: case 3: return fixNegatives([, , ...coords]);
+				default: return fixNegatives(coords);
+				}
+			},
+			methods: {
+				origin: setRectOrigin,
+				setOrigin: setRectOrigin,
+				center: setRectOrigin,
+				setCenter: setRectOrigin,
+				size: setRectSize,
+				setSize: setRectSize,
+			},
+		},
+	};
+
+	var styleDef = {
+		style: {
+			init: (el, text) => {
+				el.textContent = "";
+				el.appendChild(makeCDATASection(text));
+			},
+			methods: {
+				setTextContent: (el, text) => {
+					el.textContent = "";
+					el.appendChild(makeCDATASection(text));
+					return el;
+				},
+			},
+		},
+	};
+
+	var textDef = {
+		text: {
+			args: (a, b, c) => makeCoordinates(...[a, b, c].flat()).slice(0, 2),
+			init: (element, a, b, c, d) => {
+				const text = [a, b, c, d].filter(el => typeof el === str_string).shift();
+				element.appendChild(SVGWindow().document.createTextNode(text || ""));
+			},
+		},
+	};
+
+	const makeIDString = function () {
+		return Array.from(arguments)
+			.filter(a => typeof a === str_string || a instanceof String)
+			.shift() || makeUUID();
+	};
+	const maskArgs = (...args) => [makeIDString(...args)];
+	var maskTypes = {
+		mask: { args: maskArgs },
+		clipPath: { args: maskArgs },
+		symbol: { args: maskArgs },
+		marker: {
+			args: maskArgs,
+			methods: {
+				size: setViewBox,
+				setViewBox: setViewBox,
+			},
+		},
+	};
+
+	const getPoints = (el) => {
+		const attr = el.getAttribute(str_points);
+		return (attr == null) ? "" : attr;
+	};
+	const polyString = function () {
+		return Array
+			.from(Array(Math.floor(arguments.length / 2)))
+			.map((_, i) => `${arguments[i * 2 + 0]},${arguments[i * 2 + 1]}`)
+			.join(" ");
+	};
+	const stringifyArgs = (...args) => [
+		polyString(...makeCoordinates(...svgSemiFlattenArrays(...args))),
+	];
+	const setPoints = (element, ...args) => {
+		element.setAttribute(str_points, stringifyArgs(...args)[0]);
+		return element;
+	};
+	const addPoint = (element, ...args) => {
+		element.setAttribute(str_points, [getPoints(element), stringifyArgs(...args)[0]]
+			.filter(a => a !== "")
+			.join(" "));
+		return element;
+	};
+	const Args = function (...args) {
+		return args.length === 1 && typeof args[0] === str_string
+			? [args[0]]
+			: stringifyArgs(...args);
+	};
+	var polyDefs = {
+		polyline: {
+			args: Args,
+			methods: {
+				setPoints,
+				addPoint,
+			},
+		},
+		polygon: {
+			args: Args,
+			methods: {
+				setPoints,
+				addPoint,
+			},
+		},
+	};
+
+	var customDefinitions = {
+		...svgDef,
+		...gDef,
+		...circleDef,
+		...ellipseDef,
+		...lineDef,
+		...pathDef,
+		...rectDef,
+		...styleDef,
+		...textDef,
+		...maskTypes,
+		...polyDefs,
+	};
+
+	const formula = {
+		...customDefinitions,
+	};
+	const passthrough = function () { return Array.from(arguments); };
+	nodeNames
+		.filter(nodeName => !formula[nodeName])
+		.forEach(nodeName => { formula[nodeName] = {}; });
+	nodeNames.forEach((nodeName) => {
+		if (!formula[nodeName].init) { formula[nodeName].init = passthrough; }
+		if (!formula[nodeName].args) { formula[nodeName].args = passthrough; }
+		if (!formula[nodeName].methods) { formula[nodeName].methods = {}; }
+		if (!formula[nodeName].attributes) {
+			formula[nodeName].attributes = nodes_attributes[nodeName] || [];
+		}
+	});
+
+	const headerStuff = [
+		classes_nodes.header,
+		classes_nodes.invisible,
+		classes_nodes.patterns,
+	].flat();
+	const drawingShapes = [
+		classes_nodes.group,
+		classes_nodes.visible,
+		classes_nodes.text,
+	].flat();
+	const nodes_children = {
+		svg: [["svg", "defs"], headerStuff, drawingShapes].flat(),
+		defs: headerStuff,
+		filter: classes_nodes.filter,
+		g: drawingShapes,
+		text: classes_nodes.childrenOfText,
+		marker: drawingShapes,
+		symbol: drawingShapes,
+		clipPath: drawingShapes,
+		mask: drawingShapes,
+		linearGradient: classes_nodes.gradients,
+		radialGradient: classes_nodes.gradients,
+	};
+
+	const RequiredAttrMap = {
+		svg: {
+			version: "1.1",
+			xmlns: NS,
+		},
+		style: {
+			type: "text/css",
+		},
+	};
+	const applyStaticAttributes = (element, nodeName) => {
+		if (!RequiredAttrMap[nodeName]) { return; }
+		Object.keys(RequiredAttrMap[nodeName])
+			.forEach(key => element.setAttribute(key, RequiredAttrMap[nodeName][key]));
+	};
+	const methodThis = {};
+	const constructor = (nodeName, parent, ...initArgs) => {
+		const { init, args: ARGS, methods, attributes } = formula[nodeName];
+		const element = SVGWindow().document.createElementNS(NS, nodeName);
+		if (parent) { parent.appendChild(element); }
+		applyStaticAttributes(element, nodeName);
+		init(element, ...initArgs);
+		ARGS(...initArgs).forEach((v, i) => {
+			element.setAttribute(formula[nodeName].attributes[i], v);
+		});
+		attributes.forEach((attribute) => {
+			Object.defineProperty(element, toCamel(attribute), {
+				value: function () {
+					element.setAttribute(attribute, ...arguments);
+					return element;
+				},
+			});
+		});
+		Object.keys(methods).forEach(methodName => Object
+			.defineProperty(element, methodName, {
+				value: function () {
+					return methods[methodName].call(methodThis, element, ...arguments);
+				},
+			}));
+		if (nodes_children[nodeName]) {
+			nodes_children[nodeName].forEach((childNode) => {
+				const value = function () { return constructor(childNode, element, ...arguments); };
+				Object.defineProperty(element, childNode, { value });
+			});
+		}
+		return element;
+	};
+	methodThis.Constructor = constructor;
+
+	const applyConstructors = (library) => {
+		Object.keys(formula).forEach(nodeName => {
+			library[nodeName] = (...args) => constructor(nodeName, null, ...args);
+		});
+	};
+
+	const svg = {
+		formula,
+		nodes_attributes,
+		nodes_children,
+		NS,
+		...argumentMethods,
+		...methods$1,
+	};
+	applyConstructors(svg);
+
+	return svg;
+
+}));

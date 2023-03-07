@@ -10,15 +10,15 @@
  * note: xmldom supports DOMParser, XMLSerializer, and document, but not
  * cancelAnimationFrame, requestAnimationFrame, fetch, which are used by this library.
  */
-import { isBrowser } from "./detect";
-import svgErrors from "./errors";
+import { isBrowser } from "./detect.js";
+import Messages from "./messages.js";
 
 const svgWindowContainer = { window: undefined };
 
 const buildHTMLDocument = (newWindow) => new newWindow.DOMParser()
 	.parseFromString("<!DOCTYPE html><title>.</title>", "text/html");
 
-export const setWindow = (newWindow) => {
+export const setSVGWindow = (newWindow) => {
 	// make sure window has a document. xmldom does not, and requires it be built.
 	if (!newWindow.document) { newWindow.document = buildHTMLDocument(newWindow); }
 	svgWindowContainer.window = newWindow;
@@ -32,7 +32,7 @@ if (isBrowser) { svgWindowContainer.window = window; }
  */
 const SVGWindow = () => {
 	if (svgWindowContainer.window === undefined) {
-		throw svgErrors[10];
+		throw Messages.window;
 	}
 	return svgWindowContainer.window;
 };

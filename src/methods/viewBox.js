@@ -1,22 +1,25 @@
 /**
  * SVG (c) Kraft
  */
-import viewBoxString from "../arguments/viewBox";
-import * as S from "../environment/strings";
+import makeViewBox from "../arguments/makeViewBox.js";
+import {
+	str_string,
+	str_viewBox,
+} from "../environment/strings.js";
 
 export const setViewBox = (element, ...args) => {
 	// are they giving us pre-formatted string, or a list of numbers
-	const viewBox = args.length === 1 && typeof args[0] === S.str_string
+	const viewBox = args.length === 1 && typeof args[0] === str_string
 		? args[0]
-		: viewBoxString(...args);
+		: makeViewBox(...args);
 	if (viewBox) {
-		element.setAttribute(S.str_viewBox, viewBox);
+		element.setAttribute(str_viewBox, viewBox);
 	}
 	return element;
 };
 
 export const getViewBox = function (element) {
-	const vb = element.getAttribute(S.str_viewBox);
+	const vb = element.getAttribute(str_viewBox);
 	return (vb == null
 		? undefined
 		: vb.split(" ").map(n => parseFloat(n)));
