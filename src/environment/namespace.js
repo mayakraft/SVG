@@ -2,7 +2,7 @@
  * SVG (c) Kraft
  */
 /**
- * @description The namespace of an SVG element, the value of the attribute xmlns
+ * @description The XML namespace for SVG. The value of the SVG attribute xmlns.
  * @constant {string}
  * @default
  */

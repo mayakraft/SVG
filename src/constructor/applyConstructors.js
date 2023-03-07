@@ -1,3 +1,6 @@
+/**
+ * SVG (c) Kraft
+ */
 // import nodeNames from "../spec/nodes.js";
 import formula from "../formula/index.js";
 import constructor from "./constructor.js";

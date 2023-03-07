@@ -22,10 +22,9 @@ export default {
 		init: (element, ...args) => {
 			// args.filter(a => typeof a === S.str_string)
 			// 	.forEach(string => loadSVG(element, string));
-			// args.filter(a => a != null)
-			// 	// .filter(arg => arg instanceof ElementConstructor)
-			// 	.filter(el => typeof el.appendChild === S.str_function)
-			// 	.forEach(parent => parent.appendChild(element));
+			args.filter(a => a != null)
+				.filter(el => el.appendChild)
+				.forEach(parent => parent.appendChild(element));
 			// Touch(element);
 			// Animation(element);
 			// Controls(element);
