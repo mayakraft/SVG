@@ -1,7 +1,6 @@
 /**
  * SVG (c) Kraft
  */
-import nodes from "./nodes.js";
 import classes_attributes from "./classes_attributes.js";
 import classes_nodes from "./classes_nodes.js";
 import {
@@ -49,9 +48,9 @@ const nodes_attributes = {
 
 // Fill out the keys of nodes_attributes, make sure it includes one
 // key for every SVG element type in the SVG spec.
-nodes
-	.filter(nodeName => !nodes_attributes[nodeName])
-	.forEach(nodeName => { nodes_attributes[nodeName] = []; });
+// nodes
+// 	.filter(nodeName => !nodes_attributes[nodeName])
+// 	.forEach(nodeName => { nodes_attributes[nodeName] = []; });
 
 // Fill out the values in nodes_attributes, these are values like
 // "stroke" or "fill" which end up getting repeatedly applied to many
@@ -79,6 +78,7 @@ const additionalNodeAttributes = [{
 additionalNodeAttributes
 	.forEach(el => el.nodes
 		.forEach(nodeName => {
+			if (!nodes_attributes[nodeName]) { nodes_attributes[nodeName] = []; }
 			nodes_attributes[nodeName].push(...el.attr);
 		}));
 

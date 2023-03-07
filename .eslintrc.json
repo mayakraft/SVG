@@ -10,6 +10,11 @@
     "ecmaFeatures": { "jsx": true },
     "sourceType": "module"
   },
+  "ignorePatterns": [
+    "svg.js",
+    "svg.module.js",
+    "svg.module.comments.js"
+  ],
   "rules": {
     "arrow-parens": 0,
     "camelcase": ["error", { "allow": [".*"] }],

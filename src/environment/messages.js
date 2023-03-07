@@ -2,5 +2,5 @@
  * SVG (c) Kraft
  */
 export default {
-	window: "window not set; if using node/deno include package @xmldom/xmldom and set ear.window = xmldom",
+	window: "window not set; svg.window = @xmldom/xmldom",
 };

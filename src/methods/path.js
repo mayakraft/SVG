@@ -64,7 +64,7 @@ export const parsePathCommands = (d) => {
 		])
 		.map(el => {
 			const command = el[0];
-			const valueString = d.substring(el[1] + 1, el[2]);
+			const valueString = d.substring(el[1] + 1, el[2] + 1);
 			const strings = valueString.match(digitRegEx);
 			const values = strings ? strings.map(parseFloat) : [];
 			return { command, values };

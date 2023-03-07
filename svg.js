@@ -5,27 +5,6 @@
 	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.svg = factory());
 })(this, (function () { 'use strict';
 
-	var NS = "http://www.w3.org/2000/svg";
-
-	const toCamel = (s) => s
-		.replace(/([-_][a-z])/ig, $1 => $1
-			.toUpperCase()
-			.replace("-", "")
-			.replace("_", ""));
-	const toKebab = (s) => s
-		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-		.replace(/([A-Z])([A-Z])(?=[a-z])/g, "$1-$2")
-		.toLowerCase();
-	const capitalized = (s) => s
-		.charAt(0).toUpperCase() + s.slice(1);
-
-	var transformCase = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		capitalized: capitalized,
-		toCamel: toCamel,
-		toKebab: toKebab
-	});
-
 	const str_class = "class";
 	const str_function = "function";
 	const str_undefined = "undefined";
@@ -42,6 +21,34 @@
 	const str_fill = "fill";
 	const str_none = "none";
 
+	const isBrowser = typeof window !== str_undefined
+		&& typeof window.document !== str_undefined;
+	typeof process !== str_undefined
+		&& process.versions != null
+		&& process.versions.node != null;
+
+	var Messages = {
+		window: "window not set; svg.window = @xmldom/xmldom",
+	};
+
+	const svgWindowContainer = { window: undefined };
+	const buildHTMLDocument = (newWindow) => new newWindow.DOMParser()
+		.parseFromString("<!DOCTYPE html><title>.</title>", "text/html");
+	const setSVGWindow = (newWindow) => {
+		if (!newWindow.document) { newWindow.document = buildHTMLDocument(newWindow); }
+		svgWindowContainer.window = newWindow;
+		return svgWindowContainer.window;
+	};
+	if (isBrowser) { svgWindowContainer.window = window; }
+	const SVGWindow = () => {
+		if (svgWindowContainer.window === undefined) {
+			throw Messages.window;
+		}
+		return svgWindowContainer.window;
+	};
+
+	var NS = "http://www.w3.org/2000/svg";
+
 	const makeCoordinates = (...args) => args
 		.filter(a => typeof a === str_number)
 		.concat(args
@@ -52,12 +59,6 @@
 				return undefined;
 			}).filter(a => a !== undefined)
 			.reduce((a, b) => a.concat(b), []));
-
-	const makeUUID = () => Math.random()
-		.toString(36)
-		.replace(/[^a-z]+/g, "")
-		.concat("aaaaa")
-		.substr(0, 5);
 
 	const viewBoxValuesToString = function (x, y, width, height, padding = 0) {
 		const scale = 1.0;
@@ -74,33 +75,17 @@
 		return numbers.length === 4 ? viewBoxValuesToString(...numbers) : undefined;
 	};
 
-	var argumentMethods = {
-		...transformCase,
-		makeCoordinates,
-		makeUUID,
-		makeViewBox,
-	};
+	const makeCDATASection = (text) => (new (SVGWindow()).DOMParser())
+		.parseFromString("<root></root>", "text/xml")
+		.createCDATASection(text);
 
-	const svg_add2 = (a, b) => [a[0] + b[0], a[1] + b[1]];
-	const svg_sub2 = (a, b) => [a[0] - b[0], a[1] - b[1]];
-	const svg_scale2 = (a, s) => [a[0] * s, a[1] * s];
-	const svg_magnitudeSq2 = (a) => (a[0] ** 2) + (a[1] ** 2);
-	const svg_magnitude2 = (a) => Math.sqrt(svg_magnitudeSq2(a));
-	const svg_distanceSq2 = (a, b) => svg_magnitudeSq2(svg_sub2(a, b));
-	const svg_distance2 = (a, b) => Math.sqrt(svg_distanceSq2(a, b));
-	const svg_polar_to_cart = (a, d) => [Math.cos(a) * d, Math.sin(a) * d];
-
-	var svgMath = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		svg_add2: svg_add2,
-		svg_distance2: svg_distance2,
-		svg_distanceSq2: svg_distanceSq2,
-		svg_magnitude2: svg_magnitude2,
-		svg_magnitudeSq2: svg_magnitudeSq2,
-		svg_polar_to_cart: svg_polar_to_cart,
-		svg_scale2: svg_scale2,
-		svg_sub2: svg_sub2
-	});
+	const toCamel = (s) => s
+		.replace(/([-_][a-z])/ig, $1 => $1
+			.toUpperCase()
+			.replace("-", "")
+			.replace("_", ""));
+	const capitalized = (s) => s
+		.charAt(0).toUpperCase() + s.slice(1);
 
 	const removeChildren = (element) => {
 		while (element.lastChild) {
@@ -108,152 +93,12 @@
 		}
 		return element;
 	};
-	const appendTo = (element, parent) => {
-		if (parent && parent.appendChild) {
-			parent.appendChild(element);
-		}
-		return element;
-	};
-	const setAttributes = (element, attrs) => Object.keys(attrs)
-		.forEach(key => element.setAttribute(toKebab(key), attrs[key]));
 	const clearSVG = (element) => {
 		Array.from(element.attributes)
-			.filter(a => a !== "xmlns")
+			.filter(attr => attr.name !== "xmlns" && attr.name !== "version")
 			.forEach(attr => element.removeAttribute(attr.name));
 		return removeChildren(element);
 	};
-
-	var dom = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		appendTo: appendTo,
-		clearSVG: clearSVG,
-		removeChildren: removeChildren,
-		setAttributes: setAttributes
-	});
-
-	const isBrowser = typeof window !== str_undefined
-		&& typeof window.document !== str_undefined;
-	typeof process !== str_undefined
-		&& process.versions != null
-		&& process.versions.node != null;
-
-	var Messages = {
-		window: "window not set; if using node/deno include package @xmldom/xmldom and set ear.window = xmldom",
-	};
-
-	const svgWindowContainer = { window: undefined };
-	if (isBrowser) { svgWindowContainer.window = window; }
-	const SVGWindow = () => {
-		if (svgWindowContainer.window === undefined) {
-			throw Messages.window;
-		}
-		return svgWindowContainer.window;
-	};
-
-	const makeCDATASection = (text) => (new (SVGWindow()).DOMParser())
-		.parseFromString("<root></root>", "text/xml")
-		.createCDATASection(text);
-
-	const markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
-	const digitRegEx = /-?[0-9]*\.?\d+/g;
-	const pathCommandNames = {
-		m: "move",
-		l: "line",
-		v: "vertical",
-		h: "horizontal",
-		a: "ellipse",
-		c: "curve",
-		s: "smoothCurve",
-		q: "quadCurve",
-		t: "smoothQuadCurve",
-		z: "close",
-	};
-	Object.keys(pathCommandNames).forEach((key) => {
-		const s = pathCommandNames[key];
-		pathCommandNames[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
-	});
-	const add2path = (a, b) => [a[0] + (b[0] || 0), a[1] + (b[1] || 0)];
-	const getEndpoint = (command, values, offset = [0, 0]) => {
-		const upper = command.toUpperCase();
-		const origin = command === upper ? [0, 0] : offset;
-		switch (upper) {
-		case "M":
-		case "L":
-		case "V":
-		case "H":
-		case "T": return add2path(origin, values);
-		case "A": return add2path(origin, [values[5], values[6]]);
-		case "C": return add2path(origin, [values[4], values[5]]);
-		case "S":
-		case "Q": return add2path(origin, [values[2], values[3]]);
-		case "Z": return undefined;
-		default: return origin;
-		}
-	};
-	const parsePathCommands = (d) => {
-		const results = [];
-		let match;
-		while ((match = markerRegEx.exec(d)) !== null) {
-			results.push(match);
-		}
-		return results
-			.map((result, i, arr) => [
-				result[0],
-				result.index,
-				i === arr.length - 1
-					? d.length - 1
-					: arr[(i + 1) % arr.length].index - 1,
-			])
-			.map(el => {
-				const command = el[0];
-				const valueString = d.substring(el[1] + 1, el[2]);
-				const strings = valueString.match(digitRegEx);
-				const values = strings ? strings.map(parseFloat) : [];
-				return { command, values };
-			});
-	};
-	const parsePathCommandsWithEndpoints = (d) => {
-		let pen = [0, 0];
-		const commands = parsePathCommands(d);
-		if (!commands.length) { return commands; }
-		commands.forEach((command, i) => {
-			commands[i].end = getEndpoint(command.command, command.values, pen);
-			commands[i].start = i === 0 ? pen : commands[i - 1].end;
-			pen = commands[i].end;
-		});
-		const last = commands[commands.length - 1];
-		const firstDrawCommand = commands
-			.filter(el => el.command.toUpperCase() !== "M"
-				&& el.command.toUpperCase() !== "Z")
-			.shift();
-		if (last.command.toUpperCase() === "Z") {
-			last.end = [...firstDrawCommand.start];
-		}
-		return commands;
-	};
-
-	var pathMethods = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		parsePathCommands: parsePathCommands,
-		parsePathCommandsWithEndpoints: parsePathCommandsWithEndpoints,
-		pathCommandNames: pathCommandNames
-	});
-
-	const getAttr = (element) => {
-		const t = element.getAttribute(str_transform);
-		return (t == null || t === "") ? undefined : t;
-	};
-	const TransformMethods = {
-		clearTransform: (el) => { el.removeAttribute(str_transform); return el; },
-	};
-	["translate", "rotate", "scale", "matrix"].forEach(key => {
-		TransformMethods[key] = (element, ...args) => element.setAttribute(
-			str_transform,
-			[getAttr(element), `${key}(${args.join(" ")})`]
-				.filter(a => a !== undefined)
-				.join(" "),
-		);
-	});
 
 	const setViewBox = (element, ...args) => {
 		const viewBox = args.length === 1 && typeof args[0] === str_string
@@ -277,184 +122,6 @@
 		const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
 		return [svgPoint.x, svgPoint.y];
 	};
-
-	var viewBox = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		convertToViewBox: convertToViewBox,
-		getViewBox: getViewBox,
-		setViewBox: setViewBox
-	});
-
-	var methods$1 = {
-		...svgMath,
-		...dom,
-		makeCDATASection,
-		...pathMethods,
-		...TransformMethods,
-		...viewBox,
-	};
-
-	const getFrame = function (element) {
-		const viewBox = getViewBox(element);
-		if (viewBox !== undefined) {
-			return viewBox;
-		}
-		if (typeof element.getBoundingClientRect === str_function) {
-			const rr = element.getBoundingClientRect();
-			return [rr.x, rr.y, rr.width, rr.height];
-		}
-		return [];
-	};
-	const setPadding = function (element, padding) {
-		const viewBox = getViewBox(element);
-		if (viewBox !== undefined) {
-			setViewBox(element, ...[-padding, -padding, padding * 2, padding * 2]
-				.map((nudge, i) => viewBox[i] + nudge));
-		}
-		return element;
-	};
-	const bgClass = "svg-background-rectangle";
-	const background = function (element, color) {
-		let backRect = Array.from(element.childNodes)
-			.filter(child => child.getAttribute(str_class) === bgClass)
-			.shift();
-		if (backRect == null) {
-			backRect = this.Constructor("rect", null, ...getFrame(element));
-			backRect.setAttribute(str_class, bgClass);
-			backRect.setAttribute(str_stroke, str_none);
-			element.insertBefore(backRect, element.firstChild);
-		}
-		backRect.setAttribute(str_fill, color);
-		return element;
-	};
-	const findStyleSheet = function (element) {
-		const styles = element.getElementsByTagName(str_style);
-		return styles.length === 0 ? undefined : styles[0];
-	};
-	const stylesheet = function (element, textContent) {
-		let styleSection = findStyleSheet(element);
-		if (styleSection == null) {
-			styleSection = this.Constructor(str_style);
-			element.insertBefore(styleSection, element.firstChild);
-		}
-		styleSection.textContent = "";
-		styleSection.appendChild(makeCDATASection(textContent));
-		return styleSection;
-	};
-	var methods = {
-		size: setViewBox,
-		setViewBox,
-		getViewBox,
-		padding: setPadding,
-		background,
-		getWidth: el => getFrame(el)[2],
-		getHeight: el => getFrame(el)[3],
-		stylesheet: function (el, text) { return stylesheet.call(this, el, text); },
-	};
-
-	var svgDef = {
-		svg: {
-			args: (...args) => [makeViewBox(makeCoordinates(...args))].filter(a => a != null),
-			methods,
-			init: (element, ...args) => {
-			},
-		},
-	};
-
-	const loadGroup = (group, ...sources) => {
-		return group;
-	};
-	var gDef = {
-		g: {
-			init: loadGroup,
-			methods: {
-				load: loadGroup,
-			},
-		},
-	};
-
-	const classes_nodes = {
-		svg: [
-			"svg",
-		],
-		defs: [
-			"defs",
-		],
-		header: [
-			"desc",
-			"filter",
-			"metadata",
-			"style",
-			"script",
-			"title",
-			"view",
-		],
-		cdata: [
-			"cdata",
-		],
-		group: [
-			"g",
-		],
-		visible: [
-			"circle",
-			"ellipse",
-			"line",
-			"path",
-			"polygon",
-			"polyline",
-			"rect",
-		],
-		text: [
-			"text",
-		],
-		invisible: [
-			"marker",
-			"symbol",
-			"clipPath",
-			"mask",
-		],
-		patterns: [
-			"linearGradient",
-			"radialGradient",
-			"pattern",
-		],
-		childrenOfText: [
-			"textPath",
-			"tspan",
-		],
-		gradients: [
-			"stop",
-		],
-		filter: [
-			"feBlend",
-			"feColorMatrix",
-			"feComponentTransfer",
-			"feComposite",
-			"feConvolveMatrix",
-			"feDiffuseLighting",
-			"feDisplacementMap",
-			"feDistantLight",
-			"feDropShadow",
-			"feFlood",
-			"feFuncA",
-			"feFuncB",
-			"feFuncG",
-			"feFuncR",
-			"feGaussianBlur",
-			"feImage",
-			"feMerge",
-			"feMergeNode",
-			"feMorphology",
-			"feOffset",
-			"fePointLight",
-			"feSpecularLighting",
-			"feSpotLight",
-			"feTile",
-			"feTurbulence",
-		],
-	};
-
-	const nodeNames = Object.values(classes_nodes).flat();
 
 	const classes_attributes = {
 		presentation: [
@@ -595,6 +262,87 @@
 		],
 	};
 
+	const classes_nodes = {
+		svg: [
+			"svg",
+		],
+		defs: [
+			"defs",
+		],
+		header: [
+			"desc",
+			"filter",
+			"metadata",
+			"style",
+			"script",
+			"title",
+			"view",
+		],
+		cdata: [
+			"cdata",
+		],
+		group: [
+			"g",
+		],
+		visible: [
+			"circle",
+			"ellipse",
+			"line",
+			"path",
+			"polygon",
+			"polyline",
+			"rect",
+		],
+		text: [
+			"text",
+		],
+		invisible: [
+			"marker",
+			"symbol",
+			"clipPath",
+			"mask",
+		],
+		patterns: [
+			"linearGradient",
+			"radialGradient",
+			"pattern",
+		],
+		childrenOfText: [
+			"textPath",
+			"tspan",
+		],
+		gradients: [
+			"stop",
+		],
+		filter: [
+			"feBlend",
+			"feColorMatrix",
+			"feComponentTransfer",
+			"feComposite",
+			"feConvolveMatrix",
+			"feDiffuseLighting",
+			"feDisplacementMap",
+			"feDistantLight",
+			"feDropShadow",
+			"feFlood",
+			"feFuncA",
+			"feFuncB",
+			"feFuncG",
+			"feFuncR",
+			"feGaussianBlur",
+			"feImage",
+			"feMerge",
+			"feMergeNode",
+			"feMorphology",
+			"feOffset",
+			"fePointLight",
+			"feSpecularLighting",
+			"feSpotLight",
+			"feTile",
+			"feTurbulence",
+		],
+	};
+
 	const nodes_attributes = {
 		svg: [str_viewBox],
 		line: ["x1", "y1", "x2", "y2"],
@@ -622,9 +370,6 @@
 		stop: ["offset", "stop-color", "stop-opacity"],
 		pattern: ["patternContentUnits", "patternTransform", "patternUnits"],
 	};
-	nodeNames
-		.filter(nodeName => !nodes_attributes[nodeName])
-		.forEach(nodeName => { nodes_attributes[nodeName] = []; });
 	const additionalNodeAttributes = [{
 		nodes: [str_svg, "defs", "g"].concat(classes_nodes.visible, classes_nodes.text),
 		attr: classes_attributes.presentation,
@@ -644,8 +389,432 @@
 	additionalNodeAttributes
 		.forEach(el => el.nodes
 			.forEach(nodeName => {
+				if (!nodes_attributes[nodeName]) { nodes_attributes[nodeName] = []; }
 				nodes_attributes[nodeName].push(...el.attr);
 			}));
+
+	const getSVGFrame = function (element) {
+		const viewBox = getViewBox(element);
+		if (viewBox !== undefined) {
+			return viewBox;
+		}
+		if (typeof element.getBoundingClientRect === str_function) {
+			const rr = element.getBoundingClientRect();
+			return [rr.x, rr.y, rr.width, rr.height];
+		}
+		return [];
+	};
+
+	const bgClass = "svg-background-rectangle";
+	const makeBackground = function (element, color) {
+		let backRect = Array.from(element.childNodes)
+			.filter(child => child.getAttribute(str_class) === bgClass)
+			.shift();
+		if (backRect == null) {
+			backRect = SVGWindow().document.createElementNS(NS, "rect");
+			getSVGFrame(element).forEach((n, i) => backRect.setAttribute(nodes_attributes.rect[i], n));
+			backRect.setAttribute(str_class, bgClass);
+			backRect.setAttribute(str_stroke, str_none);
+			element.insertBefore(backRect, element.firstChild);
+		}
+		backRect.setAttribute(str_fill, color);
+		return element;
+	};
+
+	const getAttr = (element) => {
+		const t = element.getAttribute(str_transform);
+		return (t == null || t === "") ? undefined : t;
+	};
+	const TransformMethods = {
+		clearTransform: (el) => { el.removeAttribute(str_transform); return el; },
+	};
+	["translate", "rotate", "scale", "matrix"].forEach(key => {
+		TransformMethods[key] = (element, ...args) => {
+			element.setAttribute(
+				str_transform,
+				[getAttr(element), `${key}(${args.join(" ")})`]
+					.filter(a => a !== undefined)
+					.join(" "),
+			);
+			return element;
+		};
+	});
+
+	const setPadding = function (element, padding) {
+		const viewBox = getViewBox(element);
+		if (viewBox !== undefined) {
+			setViewBox(element, ...[-padding, -padding, padding * 2, padding * 2]
+				.map((nudge, i) => viewBox[i] + nudge));
+		}
+		return element;
+	};
+	const findOneElement = function (element, nodeName) {
+		const styles = element.getElementsByTagName(nodeName);
+		return styles.length ? styles[0] : null;
+	};
+	const stylesheet = function (element, textContent) {
+		let styleSection = findOneElement(element, str_style);
+		if (styleSection == null) {
+			styleSection = SVGWindow().document.createElementNS(NS, str_style);
+			styleSection.setTextContent = (text) => {
+				styleSection.textContent = "";
+				styleSection.appendChild(makeCDATASection(text));
+				return styleSection;
+			};
+			element.insertBefore(styleSection, element.firstChild);
+		}
+		styleSection.textContent = "";
+		styleSection.appendChild(makeCDATASection(textContent));
+		return styleSection;
+	};
+	var methods$1 = {
+		clear: clearSVG,
+		removeChildren,
+		size: setViewBox,
+		setViewBox,
+		getViewBox,
+		padding: setPadding,
+		background: makeBackground,
+		getWidth: el => getSVGFrame(el)[2],
+		getHeight: el => getSVGFrame(el)[3],
+		stylesheet: function (el, text) { return stylesheet.call(this, el, text); },
+		...TransformMethods,
+	};
+
+	const categories = {
+		move: ["mousemove", "touchmove"],
+		press: ["mousedown", "touchstart"],
+		release: ["mouseup", "touchend"],
+		leave: ["mouseleave", "touchcancel"],
+	};
+	const handlerNames = Object.values(categories)
+		.reduce((a, b) => a.concat(b), []);
+	const off = (element, handlers) => handlerNames.forEach((handlerName) => {
+		handlers[handlerName].forEach(func => element.removeEventListener(handlerName, func));
+		handlers[handlerName] = [];
+	});
+	const defineGetter = (obj, prop, value) => Object.defineProperty(obj, prop, {
+		get: () => value,
+		enumerable: true,
+		configurable: true,
+	});
+	const assignPress = (e, startPoint) => {
+		["pressX", "pressY"].filter(prop => !Object.prototype.hasOwnProperty.call(e, prop))
+			.forEach((prop, i) => defineGetter(e, prop, startPoint[i]));
+		if (!Object.prototype.hasOwnProperty.call(e, "press")) {
+			defineGetter(e, "press", [...startPoint]);
+		}
+	};
+	const TouchEvents = function (element) {
+		let startPoint = [];
+		const handlers = [];
+		Object.keys(categories).forEach((key) => {
+			categories[key].forEach((handler) => {
+				handlers[handler] = [];
+			});
+		});
+		const removeHandler = category => categories[category]
+			.forEach(handlerName => handlers[handlerName]
+				.forEach(func => element.removeEventListener(handlerName, func)));
+		const categoryUpdate = {
+			press: (e, viewPoint) => {
+				startPoint = viewPoint;
+				assignPress(e, startPoint);
+			},
+			release: () => {},
+			leave: () => {},
+			move: (e, viewPoint) => {
+				if (e.buttons > 0 && startPoint[0] === undefined) {
+					startPoint = viewPoint;
+				} else if (e.buttons === 0 && startPoint[0] !== undefined) {
+					startPoint = [];
+				}
+				assignPress(e, startPoint);
+			},
+		};
+		Object.keys(categories).forEach((category) => {
+			const propName = `on${capitalized(category)}`;
+			Object.defineProperty(element, propName, {
+				set: (handler) => {
+					if (handler == null) {
+						removeHandler(category);
+						return;
+					}
+					categories[category].forEach((handlerName) => {
+						const handlerFunc = (e) => {
+							const pointer = (e.touches != null
+								? e.touches[0]
+								: e);
+							if (pointer !== undefined) {
+								const viewPoint = convertToViewBox(element, pointer.clientX, pointer.clientY)
+									.map(n => (Number.isNaN(n) ? undefined : n));
+								["x", "y"]
+									.filter(prop => !Object.prototype.hasOwnProperty.call(e, prop))
+									.forEach((prop, i) => defineGetter(e, prop, viewPoint[i]));
+								if (!Object.prototype.hasOwnProperty.call(e, "position")) {
+									defineGetter(e, "position", [...viewPoint]);
+								}
+								categoryUpdate[category](e, viewPoint);
+							}
+							handler(e);
+						};
+						if (element.addEventListener) {
+							handlers[handlerName].push(handlerFunc);
+							element.addEventListener(handlerName, handlerFunc);
+						}
+					});
+				},
+				enumerable: true,
+			});
+		});
+		Object.defineProperty(element, "off", { value: () => off(element, handlers) });
+	};
+
+	const makeUUID = () => Math.random()
+		.toString(36)
+		.replace(/[^a-z]+/g, "")
+		.concat("aaaaa")
+		.substr(0, 5);
+
+	const Animation = function (element) {
+		let start;
+		const handlers = {};
+		let frame = 0;
+		let requestId;
+		const removeHandlers = () => {
+			if (SVGWindow().cancelAnimationFrame) {
+				SVGWindow().cancelAnimationFrame(requestId);
+			}
+			Object.keys(handlers)
+				.forEach(uuid => delete handlers[uuid]);
+			start = undefined;
+			frame = 0;
+		};
+		Object.defineProperty(element, "play", {
+			set: (handler) => {
+				removeHandlers();
+				if (handler == null) { return; }
+				const uuid = makeUUID();
+				const handlerFunc = (e) => {
+					if (!start) {
+						start = e;
+						frame = 0;
+					}
+					const progress = (e - start) * 0.001;
+					handler({ time: progress, frame });
+					frame += 1;
+					if (handlers[uuid]) {
+						requestId = SVGWindow().requestAnimationFrame(handlers[uuid]);
+					}
+				};
+				handlers[uuid] = handlerFunc;
+				if (SVGWindow().requestAnimationFrame) {
+					requestId = SVGWindow().requestAnimationFrame(handlers[uuid]);
+				}
+			},
+			enumerable: true,
+		});
+		Object.defineProperty(element, "stop", { value: removeHandlers, enumerable: true });
+	};
+
+	const svg_sub2 = (a, b) => [a[0] - b[0], a[1] - b[1]];
+	const svg_magnitudeSq2 = (a) => (a[0] ** 2) + (a[1] ** 2);
+	const svg_distanceSq2 = (a, b) => svg_magnitudeSq2(svg_sub2(a, b));
+	const svg_distance2 = (a, b) => Math.sqrt(svg_distanceSq2(a, b));
+
+	const removeFromParent = svg => (svg && svg.parentNode
+		? svg.parentNode.removeChild(svg)
+		: undefined);
+	const possiblePositionAttributes = [["cx", "cy"], ["x", "y"]];
+	const controlPoint = function (parent, options = {}) {
+		const position = [0, 0];
+		const cp = {
+			selected: false,
+			svg: undefined,
+			updatePosition: input => input,
+		};
+		const updateSVG = () => {
+			if (!cp.svg) { return; }
+			if (!cp.svg.parentNode) {
+				parent.appendChild(cp.svg);
+			}
+			possiblePositionAttributes
+				.filter(coords => cp.svg[coords[0]] != null)
+				.forEach(coords => coords.forEach((attr, i) => {
+					cp.svg.setAttribute(attr, position[i]);
+				}));
+		};
+		const proxy = new Proxy(position, {
+			set: (target, property, value) => {
+				target[property] = value;
+				updateSVG();
+				return true;
+			},
+		});
+		const setPosition = function (...args) {
+			makeCoordinates(...args.flat())
+				.forEach((n, i) => { position[i] = n; });
+			updateSVG();
+			if (typeof position.delegate === str_function) {
+				position.delegate.apply(position.pointsContainer, [proxy, position.pointsContainer]);
+			}
+		};
+		position.delegate = undefined;
+		position.setPosition = setPosition;
+		position.onMouseMove = mouse => (cp.selected
+			? setPosition(cp.updatePosition(mouse))
+			: undefined);
+		position.onMouseUp = () => { cp.selected = false; };
+		position.distance = mouse => Math.sqrt(svg_distanceSq2(mouse, position));
+		["x", "y"].forEach((prop, i) => Object.defineProperty(position, prop, {
+			get: () => position[i],
+			set: (v) => { position[i] = v; }
+		}));
+		[str_svg, "updatePosition", "selected"].forEach(key => Object
+			.defineProperty(position, key, {
+				get: () => cp[key],
+				set: (v) => { cp[key] = v; },
+			}));
+		Object.defineProperty(position, "remove", {
+			value: () => {
+				removeFromParent(cp.svg);
+				position.delegate = undefined;
+			},
+		});
+		return proxy;
+	};
+	const controls = function (svg, number, options) {
+		let selected;
+		let delegate;
+		const points = Array.from(Array(number))
+			.map(() => controlPoint(svg, options));
+		const protocol = point => (typeof delegate === str_function
+			? delegate.call(points, point, selected, points)
+			: undefined);
+		points.forEach((p) => {
+			p.delegate = protocol;
+			p.pointsContainer = points;
+		});
+		const mousePressedHandler = function (mouse) {
+			if (!(points.length > 0)) { return; }
+			selected = points
+				.map((p, i) => ({ i, d: svg_distanceSq2(p, [mouse.x, mouse.y]) }))
+				.sort((a, b) => a.d - b.d)
+				.shift()
+				.i;
+			points[selected].selected = true;
+		};
+		const mouseMovedHandler = function (mouse) {
+			points.forEach(p => p.onMouseMove(mouse));
+		};
+		const mouseReleasedHandler = function () {
+			points.forEach(p => p.onMouseUp());
+			selected = undefined;
+		};
+		svg.onPress = mousePressedHandler;
+		svg.onMove = mouseMovedHandler;
+		svg.onRelease = mouseReleasedHandler;
+		Object.defineProperty(points, "selectedIndex", { get: () => selected });
+		Object.defineProperty(points, "selected", { get: () => points[selected] });
+		Object.defineProperty(points, "add", {
+			value: (opt) => {
+				points.push(controlPoint(svg, opt));
+			},
+		});
+		points.removeAll = () => {
+			while (points.length > 0) {
+				points.pop().remove();
+			}
+		};
+		const functionalMethods = {
+			onChange: (func, runOnceAtStart) => {
+				delegate = func;
+				if (runOnceAtStart === true) {
+					const index = points.length - 1;
+					func.call(points, points[index], index, points);
+				}
+			},
+			position: func => points.forEach((p, i) => p.setPosition(func.call(points, p, i, points))),
+			svg: func => points.forEach((p, i) => { p.svg = func.call(points, p, i, points); }),
+		};
+		Object.keys(functionalMethods).forEach((key) => {
+			points[key] = function () {
+				if (typeof arguments[0] === str_function) {
+					functionalMethods[key](...arguments);
+				}
+				return points;
+			};
+		});
+		points.parent = function (parent) {
+			if (parent != null && parent.appendChild != null) {
+				points.forEach((p) => { parent.appendChild(p.svg); });
+			}
+			return points;
+		};
+		return points;
+	};
+	const applyControlsToSVG = (svg) => {
+		svg.controls = (...args) => controls.call(svg, svg, ...args);
+	};
+
+	var svgDef = {
+		svg: {
+			args: (...args) => [makeViewBox(makeCoordinates(...args))].filter(a => a != null),
+			methods: methods$1,
+			init: (...args) => {
+				const element = SVGWindow().document.createElementNS(NS, "svg");
+				element.setAttribute("version", "1.1");
+				element.setAttribute("xmlns", NS);
+				args.filter(a => a != null)
+					.filter(el => el.appendChild)
+					.forEach(parent => parent.appendChild(element));
+				TouchEvents(element);
+				Animation(element);
+				applyControlsToSVG(element);
+				return element;
+			},
+		},
+	};
+
+	const findIdURL = function (arg) {
+		if (arg == null) { return ""; }
+		if (typeof arg === str_string) {
+			return arg.slice(0, 3) === "url"
+				? arg
+				: `url(#${arg})`;
+		}
+		if (arg.getAttribute != null) {
+			const idString = arg.getAttribute(str_id);
+			return `url(#${idString})`;
+		}
+		return "";
+	};
+	const methods = {};
+	["clip-path",
+		"mask",
+		"symbol",
+		"marker-end",
+		"marker-mid",
+		"marker-start",
+	].forEach(attr => {
+		methods[toCamel(attr)] = (element, parent) => element.setAttribute(attr, findIdURL(parent));
+	});
+
+	const loadGroup = (...sources) => {
+		const group = SVGWindow().document.createElementNS(NS, "g");
+		return group;
+	};
+	var gDef = {
+		g: {
+			init: loadGroup,
+			methods: {
+				load: loadGroup,
+				removeChildren,
+				...TransformMethods,
+				...methods,
+			},
+		},
+	};
 
 	const setRadius = (el, r) => {
 		el.setAttribute(nodes_attributes.circle[2], r);
@@ -676,6 +845,8 @@
 				setCenter: setOrigin$1,
 				position: setOrigin$1,
 				setPosition: setOrigin$1,
+				...TransformMethods,
+				...methods,
 			},
 		},
 	};
@@ -707,6 +878,8 @@
 				setCenter: setOrigin,
 				position: setOrigin,
 				setPosition: setOrigin,
+				...TransformMethods,
+				...methods,
 			},
 		},
 	};
@@ -736,8 +909,51 @@
 			args: Args$1,
 			methods: {
 				setPoints: setPoints$1,
+				...TransformMethods,
+				...methods,
 			},
 		},
+	};
+
+	const markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
+	const digitRegEx = /-?[0-9]*\.?\d+/g;
+	const pathCommandNames = {
+		m: "move",
+		l: "line",
+		v: "vertical",
+		h: "horizontal",
+		a: "ellipse",
+		c: "curve",
+		s: "smoothCurve",
+		q: "quadCurve",
+		t: "smoothQuadCurve",
+		z: "close",
+	};
+	Object.keys(pathCommandNames).forEach((key) => {
+		const s = pathCommandNames[key];
+		pathCommandNames[key.toUpperCase()] = s.charAt(0).toUpperCase() + s.slice(1);
+	});
+	const parsePathCommands = (d) => {
+		const results = [];
+		let match;
+		while ((match = markerRegEx.exec(d)) !== null) {
+			results.push(match);
+		}
+		return results
+			.map((result, i, arr) => [
+				result[0],
+				result.index,
+				i === arr.length - 1
+					? d.length - 1
+					: arr[(i + 1) % arr.length].index - 1,
+			])
+			.map(el => {
+				const command = el[0];
+				const valueString = d.substring(el[1] + 1, el[2] + 1);
+				const strings = valueString.match(digitRegEx);
+				const values = strings ? strings.map(parseFloat) : [];
+				return { command, values };
+			});
 	};
 
 	const getD = (el) => {
@@ -760,6 +976,8 @@
 		getCommands: getCommands,
 		get: getCommands,
 		getD: el => el.getAttribute("d"),
+		...TransformMethods,
+		...methods,
 	};
 	Object.keys(pathCommandNames).forEach((key) => {
 		path_methods[pathCommandNames[key]] = (el, ...args) => appendPathCommand(el, key, ...args);
@@ -806,15 +1024,20 @@
 				setCenter: setRectOrigin,
 				size: setRectSize,
 				setSize: setRectSize,
+				...TransformMethods,
+				...methods,
 			},
 		},
 	};
 
 	var styleDef = {
 		style: {
-			init: (el, text) => {
+			init: (text) => {
+				const el = SVGWindow().document.createElementNS(NS, "style");
+				el.setAttribute("type", "text/css");
 				el.textContent = "";
 				el.appendChild(makeCDATASection(text));
+				return el;
 			},
 			methods: {
 				setTextContent: (el, text) => {
@@ -829,9 +1052,15 @@
 	var textDef = {
 		text: {
 			args: (a, b, c) => makeCoordinates(...[a, b, c].flat()).slice(0, 2),
-			init: (element, a, b, c, d) => {
+			init: (a, b, c, d) => {
+				const element = SVGWindow().document.createElementNS(NS, "text");
 				const text = [a, b, c, d].filter(el => typeof el === str_string).shift();
 				element.appendChild(SVGWindow().document.createTextNode(text || ""));
+				return element;
+			},
+			methods: {
+				...TransformMethods,
+				...methods,
 			},
 		},
 	};
@@ -843,14 +1072,38 @@
 	};
 	const maskArgs = (...args) => [makeIDString(...args)];
 	var maskTypes = {
-		mask: { args: maskArgs },
-		clipPath: { args: maskArgs },
-		symbol: { args: maskArgs },
+		mask: {
+			args: maskArgs,
+			methods: {
+				removeChildren,
+				...TransformMethods,
+				...methods,
+			},
+		},
+		clipPath: {
+			args: maskArgs,
+			methods: {
+				removeChildren,
+				...TransformMethods,
+				...methods,
+			},
+		},
+		symbol: {
+			args: maskArgs,
+			methods: {
+				removeChildren,
+				...TransformMethods,
+				...methods,
+			},
+		},
 		marker: {
 			args: maskArgs,
 			methods: {
 				size: setViewBox,
 				setViewBox: setViewBox,
+				removeChildren,
+				...TransformMethods,
+				...methods,
 			},
 		},
 	};
@@ -889,6 +1142,8 @@
 			methods: {
 				setPoints,
 				addPoint,
+				...TransformMethods,
+				...methods,
 			},
 		},
 		polygon: {
@@ -896,11 +1151,13 @@
 			methods: {
 				setPoints,
 				addPoint,
+				...TransformMethods,
+				...methods,
 			},
 		},
 	};
 
-	var customDefinitions = {
+	var extensions = {
 		...svgDef,
 		...gDef,
 		...circleDef,
@@ -913,22 +1170,6 @@
 		...maskTypes,
 		...polyDefs,
 	};
-
-	const formula = {
-		...customDefinitions,
-	};
-	const passthrough = function () { return Array.from(arguments); };
-	nodeNames
-		.filter(nodeName => !formula[nodeName])
-		.forEach(nodeName => { formula[nodeName] = {}; });
-	nodeNames.forEach((nodeName) => {
-		if (!formula[nodeName].init) { formula[nodeName].init = passthrough; }
-		if (!formula[nodeName].args) { formula[nodeName].args = passthrough; }
-		if (!formula[nodeName].methods) { formula[nodeName].methods = {}; }
-		if (!formula[nodeName].attributes) {
-			formula[nodeName].attributes = nodes_attributes[nodeName] || [];
-		}
-	});
 
 	const headerStuff = [
 		classes_nodes.header,
@@ -954,69 +1195,64 @@
 		radialGradient: classes_nodes.gradients,
 	};
 
-	const RequiredAttrMap = {
-		svg: {
-			version: "1.1",
-			xmlns: NS,
-		},
-		style: {
-			type: "text/css",
-		},
-	};
-	const applyStaticAttributes = (element, nodeName) => {
-		if (!RequiredAttrMap[nodeName]) { return; }
-		Object.keys(RequiredAttrMap[nodeName])
-			.forEach(key => element.setAttribute(key, RequiredAttrMap[nodeName][key]));
-	};
-	const methodThis = {};
-	const constructor = (nodeName, parent, ...initArgs) => {
-		const { init, args: ARGS, methods, attributes } = formula[nodeName];
-		const element = SVGWindow().document.createElementNS(NS, nodeName);
+	const passthroughArgs = (...args) => args;
+	const Constructor = (name, parent, ...initArgs) => {
+		const nodeName = extensions[name] && extensions[name].nodeName
+			? extensions[name].nodeName
+			: name;
+		const { init, args, methods } = extensions[nodeName] || {};
+		const attributes = nodes_attributes[nodeName] || [];
+		const children = nodes_children[nodeName] || [];
+		const element = init
+			?	init(...initArgs)
+			: SVGWindow().document.createElementNS(NS, nodeName);
 		if (parent) { parent.appendChild(element); }
-		applyStaticAttributes(element, nodeName);
-		init(element, ...initArgs);
-		ARGS(...initArgs).forEach((v, i) => {
-			element.setAttribute(formula[nodeName].attributes[i], v);
+		const processArgs = args || passthroughArgs;
+		processArgs(...initArgs).forEach((v, i) => {
+			element.setAttribute(nodes_attributes[nodeName][i], v);
 		});
+		if (methods) {
+			Object.keys(methods)
+				.forEach(methodName => Object.defineProperty(element, methodName, {
+					value: function () {
+						return methods[methodName](element, ...arguments);
+					},
+				}));
+		}
 		attributes.forEach((attribute) => {
-			Object.defineProperty(element, toCamel(attribute), {
+			const attrNameCamel = toCamel(attribute);
+			if (element[attrNameCamel]) { return; }
+			Object.defineProperty(element, attrNameCamel, {
 				value: function () {
 					element.setAttribute(attribute, ...arguments);
 					return element;
 				},
 			});
 		});
-		Object.keys(methods).forEach(methodName => Object
-			.defineProperty(element, methodName, {
-				value: function () {
-					return methods[methodName].call(methodThis, element, ...arguments);
-				},
-			}));
-		if (nodes_children[nodeName]) {
-			nodes_children[nodeName].forEach((childNode) => {
-				const value = function () { return constructor(childNode, element, ...arguments); };
-				Object.defineProperty(element, childNode, { value });
-			});
-		}
+		children.forEach((childNode) => {
+			if (element[childNode]) { return; }
+			const value = function () { return Constructor(childNode, element, ...arguments); };
+			Object.defineProperty(element, childNode, { value });
+		});
 		return element;
 	};
-	methodThis.Constructor = constructor;
 
-	const applyConstructors = (library) => {
-		Object.keys(formula).forEach(nodeName => {
-			library[nodeName] = (...args) => constructor(nodeName, null, ...args);
-		});
-	};
+	const nodeNames = Object.values(classes_nodes).flat();
 
-	const svg = {
-		formula,
+	const svg = (...args) => Constructor("svg", null, ...args);
+	Object.assign(svg, {
+		NS,
 		nodes_attributes,
 		nodes_children,
-		NS,
-		...argumentMethods,
-		...methods$1,
-	};
-	applyConstructors(svg);
+		extensions,
+	});
+	nodeNames.forEach(nodeName => {
+		svg[nodeName] = (...args) => Constructor(nodeName, null, ...args);
+	});
+	Object.defineProperty(svg, "window", {
+		enumerable: false,
+		set: value => { setSVGWindow(value); },
+	});
 
 	return svg;
 

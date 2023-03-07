@@ -1,5 +1,5 @@
 import cleanup from "rollup-plugin-cleanup";
-// import terser from "@rollup/plugin-terser";
+import terser from "@rollup/plugin-terser";
 
 const input = "src/index.js";
 const name = "svg";
@@ -37,6 +37,7 @@ export default [{
 			objectShorthand: true,
 		},
 	},
+	plugins: [cleanup()],
 }, {
 	input,
 	output: {
