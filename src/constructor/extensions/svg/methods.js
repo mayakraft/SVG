@@ -7,18 +7,14 @@ import {
 	// str_function,
 } from "../../../environment/strings.js";
 import NS from "../../../spec/namespace.js";
-import makeCDATASection from "../../../methods/makeCDATASection.js";
-import {
-	clearSVG,
-	removeChildren,
-} from "../shared/dom.js";
-// import { clearSVG, assignSVG } from "../../../methods/dom.js";
+import makeCDATASection from "../../../general/makeCDATASection.js";
 // import Load from "../../../file/load.js";
 // import Save from "../../../file/save.js";
-import { getViewBox, setViewBox } from "../../../methods/viewBox.js";
+import { getViewBox, setViewBox } from "../../../general/viewBox.js";
 import makeBackground from "./makeBackground.js";
 import getSVGFrame from "./getSVGFrame.js";
 import TransformMethods from "../shared/transforms.js";
+import * as DOM from "../shared/dom.js";
 
 // check if the loader is running synchronously or asynchronously
 // export const loadSVG = (target, data) => {
@@ -64,10 +60,16 @@ const stylesheet = function (element, textContent) {
 	return styleSection;
 };
 
+const clearSVG = (element) => {
+	Array.from(element.attributes)
+		.filter(attr => attr.name !== "xmlns" && attr.name !== "version")
+		.forEach(attr => element.removeAttribute(attr.name));
+	return DOM.removeChildren(element);
+};
+
 // these will end up as methods on the <svg> nodes
 export default {
 	clear: clearSVG,
-	removeChildren,
 	size: setViewBox,
 	setViewBox,
 	getViewBox,
@@ -80,6 +82,7 @@ export default {
 	// load: loadSVG,
 	// save: Save,
 	...TransformMethods,
+	...DOM,
 };
 
 // svg.load = function (element, data, callback) {

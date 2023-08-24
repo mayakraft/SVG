@@ -3,9 +3,10 @@
  */
 import makeCoordinates from "../../arguments/makeCoordinates.js";
 import nodes_attributes from "../../spec/nodes_attributes.js";
-import { svg_distance2 } from "../../methods/algebra.js";
+import { svg_distance2 } from "../../general/algebra.js";
 import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";
+import * as DOM from "./shared/dom.js";
 
 const setRadius = (el, r) => {
 	el.setAttribute(nodes_attributes.circle[2], r);
@@ -52,6 +53,7 @@ export default {
 			setPosition: setOrigin,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 };

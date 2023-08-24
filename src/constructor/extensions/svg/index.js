@@ -3,9 +3,6 @@
  */
 import svgNS from "../../../spec/namespace.js";
 import window from "../../../environment/window.js";
-import {
-	str_string,
-} from "../../../environment/strings.js";
 import makeViewBox from "../../../arguments/makeViewBox.js";
 import makeCoordinates from "../../../arguments/makeCoordinates.js";
 import methods from "./methods.js";

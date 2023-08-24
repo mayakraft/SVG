@@ -6,6 +6,7 @@ import semiFlattenArrays from "../../arguments/semiFlattenArrays.js";
 import makeCoordinates from "../../arguments/makeCoordinates.js";
 import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";
+import * as DOM from "./shared/dom.js";
 
 const getPoints = (el) => {
 	const attr = el.getAttribute(S.str_points);
@@ -53,6 +54,7 @@ export default {
 			addPoint,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 	polygon: {
@@ -62,6 +64,7 @@ export default {
 			addPoint,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 };

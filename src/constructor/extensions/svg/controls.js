@@ -3,7 +3,7 @@
  */
 import * as S from "../../../environment/strings.js";
 import makeCoordinates from "../../../arguments/makeCoordinates.js";
-import { svg_distanceSq2 } from "../../../methods/algebra.js";
+import { svg_distanceSq2 } from "../../../general/algebra.js";
 
 const attachToParent = (parent, svg) => (svg && svg.parentNode == null
 	? parent.appendChild(svg)

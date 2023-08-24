@@ -2,11 +2,11 @@
  * SVG (c) Kraft
  */
 import * as S from "../../environment/strings.js";
-import makeUUID from "../../arguments/makeUUID.js";
-import { setViewBox } from "../../methods/viewBox.js";
-import { removeChildren } from "./shared/dom.js";
+import makeUUID from "../../general/makeUUID.js";
+import { setViewBox } from "../../general/viewBox.js";
 import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";
+import * as DOM from "./shared/dom.js";
 
 const makeIDString = function () {
 	return Array.from(arguments)
@@ -20,25 +20,25 @@ export default {
 	mask: {
 		args: maskArgs,
 		methods: {
-			removeChildren,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 	clipPath: {
 		args: maskArgs,
 		methods: {
-			removeChildren,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 	symbol: {
 		args: maskArgs,
 		methods: {
-			removeChildren,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 	marker: {
@@ -46,9 +46,9 @@ export default {
 		methods: {
 			size: setViewBox,
 			setViewBox: setViewBox,
-			removeChildren,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 };

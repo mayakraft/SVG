@@ -3,7 +3,7 @@
  */
 import svgNS from "../../spec/namespace.js";
 import window from "../../environment/window.js";
-import makeCDATASection from "../../methods/makeCDATASection.js";
+import makeCDATASection from "../../general/makeCDATASection.js";
 
 export default {
 	style: {

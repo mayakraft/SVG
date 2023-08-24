@@ -1,3 +1,6 @@
+/**
+ * SVG (c) Kraft
+ */
 const classes_nodes = {
 	svg: [
 		"svg",
@@ -29,6 +32,15 @@ const classes_nodes = {
 		"polygon",
 		"polyline",
 		"rect",
+
+		// extensions to the SVG spec
+		"arc",
+		"arrow",
+		"curve",
+		"parabola",
+		"roundRect",
+		"wedge",
+		"origami",
 	],
 	text: [
 		"text",

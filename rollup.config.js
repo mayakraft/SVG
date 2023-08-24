@@ -2,7 +2,7 @@ import cleanup from "rollup-plugin-cleanup";
 import terser from "@rollup/plugin-terser";
 
 const input = "src/index.js";
-const name = "svg";
+const name = "SVG";
 const banner = "/* svg (c) Kraft, MIT License */";
 
 export default [{
@@ -12,9 +12,14 @@ export default [{
 		file: "svg.js",
 		format: "umd",
 		banner,
+		compact: true,
+		generatedCode: {
+			constBindings: true,
+			objectShorthand: true,
+		},
 	},
-	// plugins: [cleanup(), terser()],
-	plugins: [cleanup()],
+	plugins: [cleanup(), terser()],
+	// plugins: [cleanup()],
 }, {
 	input,
 	output: {
@@ -22,6 +27,10 @@ export default [{
 		file: "svg.module.js",
 		format: "es",
 		banner,
+		generatedCode: {
+			constBindings: true,
+			objectShorthand: true,
+		},
 	},
 	plugins: [cleanup()],
 }, {
@@ -37,14 +46,4 @@ export default [{
 			objectShorthand: true,
 		},
 	},
-	plugins: [cleanup()],
-}, {
-	input,
-	output: {
-		name,
-		file: "svg.module.comments.js",
-		format: "es",
-		banner,
-	},
-	plugins: [],
 }];

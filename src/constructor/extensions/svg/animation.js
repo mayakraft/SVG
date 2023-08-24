@@ -2,55 +2,40 @@
  * SVG (c) Kraft
  */
 import window from "../../../environment/window.js";
-import UUID from "../../../arguments/makeUUID.js";
+import UUID from "../../../general/makeUUID.js";
 
 const Animation = function (element) {
-	// let fps; // todo: bring this back
-
 	let start;
-	const handlers = {};
 	let frame = 0;
 	let requestId;
+	const handlers = {};
 
-	const removeHandlers = () => {
+	const stop = () => {
 		if (window().cancelAnimationFrame) {
 			window().cancelAnimationFrame(requestId);
 		}
-		Object.keys(handlers)
-			.forEach(uuid => delete handlers[uuid]);
-		start = undefined;
-		frame = 0;
+		Object.keys(handlers).forEach(uuid => delete handlers[uuid]);
 	};
 
-	Object.defineProperty(element, "play", {
-		set: (handler) => {
-			removeHandlers();
-			if (handler == null) { return; }
-			const uuid = UUID();
-			const handlerFunc = (e) => {
-				if (!start) {
-					start = e;
-					frame = 0;
-				}
-				const progress = (e - start) * 0.001;
-				handler({ time: progress, frame });
-				// prepare next frame
-				frame += 1;
-				if (handlers[uuid]) {
-					requestId = window().requestAnimationFrame(handlers[uuid]);
-				}
-			};
-			handlers[uuid] = handlerFunc;
-			// node.js doesn't have requestAnimationFrame
-			// we don't need to duplicate this if statement above, because it won't
-			// ever be called if this one is prevented.
-			if (window().requestAnimationFrame) {
+	const play = (handler) => {
+		stop();
+		if (!handler || !(window().requestAnimationFrame)) { return; }
+		start = performance.now();
+		frame = 0;
+		const uuid = UUID();
+		handlers[uuid] = (now) => {
+			const time = (now - start) * 1e-3;
+			handler({ time, frame });
+			frame += 1;
+			if (handlers[uuid]) {
 				requestId = window().requestAnimationFrame(handlers[uuid]);
 			}
-		},
-		enumerable: true,
-	});
-	Object.defineProperty(element, "stop", { value: removeHandlers, enumerable: true });
+		};
+		requestId = window().requestAnimationFrame(handlers[uuid]);
+	};
+
+	Object.defineProperty(element, "play", { set: play, enumerable: true });
+	Object.defineProperty(element, "stop", { value: stop, enumerable: true });
 };
 
 export default Animation;

@@ -6,6 +6,7 @@ import makeCoordinates from "../../arguments/makeCoordinates.js";
 import nodes_attributes from "../../spec/nodes_attributes.js";
 import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";
+import * as DOM from "./shared/dom.js";
 
 const Args = (...args) => makeCoordinates(...semiFlattenArrays(...args)).slice(0, 4);
 
@@ -26,6 +27,7 @@ export default {
 			setPoints,
 			...TransformMethods,
 			...URLMethods,
+			...DOM,
 		},
 	},
 };

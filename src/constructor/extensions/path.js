@@ -4,9 +4,10 @@
 import {
 	pathCommandNames,
 	parsePathCommands,
-} from "../../methods/path.js";
+} from "../../general/path.js";
 import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";
+import * as DOM from "./shared/dom.js";
 /**
  * @param {SVGElement} one svg element, intended to be a <path> element
  * @returns {string} the "d" attribute, or if unset, returns an empty string "".
@@ -85,6 +86,7 @@ const path_methods = {
 	// add: noClearSet,
 	...TransformMethods,
 	...URLMethods,
+	...DOM,
 };
 
 Object.keys(pathCommandNames).forEach((key) => {

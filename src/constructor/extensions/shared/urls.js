@@ -5,7 +5,7 @@ import {
 	str_string,
 	str_id,
 } from "../../../environment/strings.js";
-import { toCamel } from "../../../arguments/transformCase.js";
+import { toCamel } from "../../../general/transformCase.js";
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
 const findIdURL = function (arg) {
@@ -33,7 +33,10 @@ const methods = {};
 	"marker-mid",
 	"marker-start",
 ].forEach(attr => {
-	methods[toCamel(attr)] = (element, parent) => element.setAttribute(attr, findIdURL(parent));
+	methods[toCamel(attr)] = (element, parent) => {
+		element.setAttribute(attr, findIdURL(parent));
+		return element;
+	};
 });
 
 export default methods;

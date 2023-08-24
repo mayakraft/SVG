@@ -7,6 +7,7 @@ import makeCoordinates from "../../arguments/makeCoordinates.js";
 import { str_string } from "../../environment/strings.js";
 import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";
+import { appendTo, setAttributes } from "./shared/dom.js";
 /**
  * @description SVG text element
  * @memberof SVG
@@ -25,6 +26,8 @@ export default {
 		methods: {
 			...TransformMethods,
 			...URLMethods,
+			appendTo,
+			setAttributes,
 		},
 	},
 };

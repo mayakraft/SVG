@@ -13,6 +13,12 @@ import textDef from "./text.js";
 // multiple nodes in one
 import maskTypes from "./maskTypes.js";
 import polyDefs from "./polys.js";
+// extensions
+import arcDef from "./arc/index.js";
+import arrowDef from "./arrow/index.js";
+import curveDef from "./curve/index.js";
+import wedgeDef from "./wedge/index.js";
+import origamiDef from "./origami/index.js";
 /**
  * in each of these instances, arguments maps the arguments to attributes
  * as the attributes are listed in the "attributes" folder.
@@ -35,4 +41,10 @@ export default {
 	// multiple
 	...maskTypes,
 	...polyDefs,
+	// extensions
+	...arcDef,
+	...arrowDef,
+	...curveDef,
+	...wedgeDef,
+	...origamiDef,
 };

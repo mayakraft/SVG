@@ -27,12 +27,16 @@ Object.keys(pathCommandNames).forEach((key) => {
 const add2path = (a, b) => [a[0] + (b[0] || 0), a[1] + (b[1] || 0)];
 const getEndpoint = (command, values, offset = [0, 0]) => {
 	const upper = command.toUpperCase();
-	const origin = command === upper ? [0, 0] : offset;
+	let origin = command === upper ? [0, 0] : offset;
+	// H and V (uppercase) absolutely position themselves along their
+	// horiz or vert axis, but they should carry over the other component
+	if (command === "V") { origin = [offset[0], 0]; }
+	if (command === "H") { origin = [0, offset[1]]; }
 	switch (upper) {
+	case "V": return add2path(origin, [0, values[0]]);
+	case "H": return add2path(origin, [values[0], 0]);
 	case "M":
 	case "L":
-	case "V":
-	case "H":
 	case "T": return add2path(origin, values);
 	case "A": return add2path(origin, [values[5], values[6]]);
 	case "C": return add2path(origin, [values[4], values[5]]);
