@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 const lib = {};
 

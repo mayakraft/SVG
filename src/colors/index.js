@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import cssColors from "./cssColors.js";
 import * as convert from "./convert.js";

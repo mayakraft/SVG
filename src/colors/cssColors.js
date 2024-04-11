@@ -1,3 +1,6 @@
+/**
+ * Rabbit Ear (c) Kraft
+ */
 export default {
 	black: "#000000",
 	silver: "#c0c0c0",

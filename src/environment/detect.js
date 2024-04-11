@@ -1,32 +1,26 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
-import {
-	str_undefined,
-	str_object,
-} from "./strings.js";
 
-/**
- * @constant {boolean}
- * @note compare to "undefined", the string
- */
-const isBrowser = typeof window !== str_undefined
-	&& typeof window.document !== str_undefined;
-/**
- * @constant {boolean}
- */
-const isNode = typeof process !== str_undefined
-	&& process.versions != null
-	&& process.versions.node != null;
-/**
- * @constant {boolean}
- */
-const isWebWorker = typeof self === str_object
+const isBrowser = typeof window === "object"
+	&& typeof window.document === "object";
+
+const isNodeOrBun = typeof process === "object"
+	&& typeof process.versions === "object"
+	&& (process.versions.node != null || process.versions.bun != null);
+
+const isDeno = typeof window === "object"
+	&& "Deno" in window
+	&& typeof window.Deno === "object";
+
+const isBackend = isNodeOrBun || isDeno;
+
+const isWebWorker = typeof self === "object"
 	&& self.constructor
 	&& self.constructor.name === "DedicatedWorkerGlobalScope";
 
 export {
 	isBrowser,
-	isNode,
+	isBackend,
 	isWebWorker,
 };

@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import classes_nodes from "./classes_nodes.js";
 

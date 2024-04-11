@@ -1,6 +1,8 @@
-const { test, expect } = require("@jest/globals");
-const SVG = require("../svg.js");
-SVG.window = require("@xmldom/xmldom");
+import { expect, test } from "vitest";
+import xmldom from "@xmldom/xmldom";
+import SVG from "../src/index.js";
+
+SVG.window = xmldom;
 
 test("viewBox get and set", () => {
 	const svg = SVG();

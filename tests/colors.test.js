@@ -1,5 +1,50 @@
-const { test, expect } = require("@jest/globals");
-const SVG = require("../svg.js");
+import { expect, test } from "vitest";
+import SVG from "../src/index.js";
+
+// anything involving hsl is within 1 unit
+
+test("all conversions with alpha", () => {
+	const rgbaValues = [17, 85, 136, 0.25];
+	const hslaValues = [206, 77.777, 30, 0.25];
+	const hex = "#11558840";
+	const rgb = "rgba(17, 85, 136)";
+	const rgba = "rgba(17, 85, 136, 0.25)";
+	const hsl = "hsla(206, 77.777%, 30%)";
+	const hsla = "hsla(206, 77.777%, 30%, 0.25)";
+
+	// core conversion methods
+	expect(SVG.rgbToHex(...rgbaValues)).toBe(hex);
+	SVG.hexToRgb(hex)
+		.forEach((n, i) => expect(n).toBe(rgbaValues[i]));
+	SVG.hslToRgb(...hslaValues)
+		.map((n, i) => Math.abs(n - rgbaValues[i]))
+		.forEach(diff => expect(diff < 1).toBe(true));
+
+	// parser methods
+	SVG.parseColorToRgb(hex)
+		.forEach((n, i) => expect(n).toBe(rgbaValues[i]));
+	SVG.parseColorToRgb(rgb)
+		.forEach((n, i) => expect(n).toBe(rgbaValues[i]));
+	SVG.parseColorToRgb(rgba)
+		.forEach((n, i) => expect(n).toBe(rgbaValues[i]));
+	SVG.parseColorToRgb(hsl)
+		.map((n, i) => Math.abs(n - rgbaValues[i]))
+		.forEach(diff => expect(diff < 1).toBe(true));
+	SVG.parseColorToRgb(hsla)
+		.map((n, i) => Math.abs(n - rgbaValues[i]))
+		.forEach(diff => expect(diff < 1).toBe(true));
+
+	expect(SVG.parseColorToHex(hex)).toBe(hex);
+	expect(SVG.parseColorToHex(rgb)).toBe("#115588");
+	expect(SVG.parseColorToHex(rgba)).toBe(hex);
+	// these are off by one. 54 instead of 55. unfortunately,
+	// I think we just have to deal with this error in conversion.
+	expect(SVG.parseColorToHex(hsl)).toBe("#115488");
+	expect(SVG.parseColorToHex(hsla)).toBe("#11548840");
+	expect(SVG.parseColorToHex("red")).toBe("#FF0000");
+	expect(SVG.parseColorToHex("blue")).toBe("#0000FF");
+	expect(SVG.parseColorToHex("")).toBe(undefined);
+});
 
 test("colors hexToRgb", () => {
 	const rgb1 = SVG.hexToRgb("#158");

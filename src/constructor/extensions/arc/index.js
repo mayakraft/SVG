@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import makeArcPath from "../shared/makeArcPath.js";
 import { str_path } from "../../../environment/strings.js";

@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import * as S from "../../environment/strings.js";
 import semiFlattenArrays from "../../arguments/semiFlattenArrays.js";

@@ -1,49 +1,28 @@
-/* svg (c) Kraft, MIT License */
-const str_class = "class";
-const str_function = "function";
-const str_undefined = "undefined";
-const str_boolean = "boolean";
-const str_number = "number";
-const str_string = "string";
-const str_object = "object";
-const str_svg = "svg";
-const str_path = "path";
-const str_id = "id";
-const str_style = "style";
-const str_viewBox = "viewBox";
-const str_transform = "transform";
-const str_points = "points";
-const str_stroke = "stroke";
-const str_fill = "fill";
-const str_none = "none";
-const str_arrow = "arrow";
-const str_head = "head";
-const str_tail = "tail";
-
-const isBrowser = typeof window !== str_undefined
-	&& typeof window.document !== str_undefined;
-typeof process !== str_undefined
-	&& process.versions != null
-	&& process.versions.node != null;
+/* SVG (c) Kraft */
+const isBrowser = typeof window === "object"
+	&& typeof window.document === "object";
+typeof process === "object"
+	&& typeof process.versions === "object"
+	&& (process.versions.node != null || process.versions.bun != null);
 
 const Messages = {
 	window: "window not set; svg.window = @xmldom/xmldom",
 };
 
-const svgWindowContainer = { window: undefined };
-const buildHTMLDocument = (newWindow) => new newWindow.DOMParser()
+const windowContainer = { window: undefined };
+if (isBrowser) { windowContainer.window = window; }
+const buildDocument = (newWindow) => new newWindow.DOMParser()
 	.parseFromString("<!DOCTYPE html><title>.</title>", "text/html");
-const setSVGWindow = (newWindow) => {
-	if (!newWindow.document) { newWindow.document = buildHTMLDocument(newWindow); }
-	svgWindowContainer.window = newWindow;
-	return svgWindowContainer.window;
+const setWindow = (newWindow) => {
+	if (!newWindow.document) { newWindow.document = buildDocument(newWindow); }
+	windowContainer.window = newWindow;
+	return windowContainer.window;
 };
-if (isBrowser) { svgWindowContainer.window = window; }
-const SVGWindow = () => {
-	if (svgWindowContainer.window === undefined) {
-		throw Messages.window;
+const RabbitEarWindow = () => {
+	if (windowContainer.window === undefined) {
+		throw new Error(Messages.window);
 	}
-	return svgWindowContainer.window;
+	return windowContainer.window;
 };
 
 const NS = "http://www.w3.org/2000/svg";
@@ -275,6 +254,26 @@ const classes_nodes = {
 	],
 };
 
+const str_class = "class";
+const str_function = "function";
+const str_boolean = "boolean";
+const str_number = "number";
+const str_string = "string";
+const str_object = "object";
+const str_svg = "svg";
+const str_path = "path";
+const str_id = "id";
+const str_style = "style";
+const str_viewBox = "viewBox";
+const str_transform = "transform";
+const str_points = "points";
+const str_stroke = "stroke";
+const str_fill = "fill";
+const str_none = "none";
+const str_arrow = "arrow";
+const str_head = "head";
+const str_tail = "tail";
+
 const nodes_attributes = {
 	svg: [str_viewBox],
 	line: ["x1", "y1", "x2", "y2"],
@@ -348,8 +347,6 @@ const nodes_children = {
 	linearGradient: classes_nodes.gradients,
 	radialGradient: classes_nodes.gradients,
 };
-
-const nodeNames = Object.values(classes_nodes).flat();
 
 const cssColors = {
 	black: "#000000",
@@ -501,7 +498,8 @@ const cssColors = {
 	yellowgreen: "#9acd32",
 };
 
-const hslToRgb = (hue, saturation, lightness) => {
+const roundF = n => Math.round(n * 100) / 100;
+const hslToRgb = (hue, saturation, lightness, alpha) => {
 	const s = saturation / 100;
 	const l = lightness / 100;
 	const k = n => (n + hue / 30) % 12;
@@ -509,7 +507,9 @@ const hslToRgb = (hue, saturation, lightness) => {
 	const f = n => (
 		l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))
 	);
-	return [f(0) * 255, f(8) * 255, f(4) * 255];
+	return alpha === undefined
+		? [f(0) * 255, f(8) * 255, f(4) * 255]
+		: [f(0) * 255, f(8) * 255, f(4) * 255, alpha];
 };
 const mapHexNumbers = (numbers, map) => {
 	const chars = Array.from(Array(map.length))
@@ -526,7 +526,7 @@ const hexToRgb = (string) => {
 		: mapHexNumbers(numbers, [0, 0, 1, 1, 2, 2]);
 	const c = parseInt(hexString, 16);
 	return hasAlpha
-		? [(c >> 24) & 255, (c >> 16) & 255, (c >> 8) & 255, c & 255]
+		? [(c >> 24) & 255, (c >> 16) & 255, (c >> 8) & 255, roundF((c & 255) / 256)]
 		: [(c >> 16) & 255, (c >> 8) & 255, c & 255];
 };
 const rgbToHex = (red, green, blue, alpha) => {
@@ -570,18 +570,20 @@ const parseColorToRgb = (string) => {
 		[0, 1, 2]
 			.filter(i => values[i] === undefined)
 			.forEach(i => { values[i] = 0; });
-		const rgb = hslToRgb(...values);
-		if (values.length === 4) { rgb.push(values[3]); }
-		return rgb;
+		return hslToRgb(values[0], values[1], values[2], values[3]);
 	}
 	return undefined;
 };
 const parseColorToHex = (string) => {
 	if (cssColors[string]) { return cssColors[string].toUpperCase(); }
-	if (string[0] === "#") { return rgbToHex(...hexToRgb(string)); }
+	if (string[0] === "#") {
+		const [r, g, b, a] = hexToRgb(string);
+		return rgbToHex(r, g, b, a);
+	}
 	if (string.substring(0, 4) === "rgba"
 		|| string.substring(0, 3) === "rgb") {
-		return rgbToHex(...getParenNumbers(string));
+		const [r, g, b, a] = getParenNumbers(string);
+		return rgbToHex(r, g, b, a);
 	}
 	if (string.substring(0, 4) === "hsla"
 		|| string.substring(0, 3) === "hsl") {
@@ -589,10 +591,9 @@ const parseColorToHex = (string) => {
 		[0, 1, 2]
 			.filter(i => values[i] === undefined)
 			.forEach(i => { values[i] = 0; });
-		const rgb = hslToRgb(...values);
-		if (values.length === 4) { rgb.push(values[3]); }
-		[0, 1, 2].forEach(i => { rgb[i] *= 255; });
-		rgbToHex(...rgb);
+		const [h, s, l, a] = values;
+		const [r, g, b] = hslToRgb(h, s, l, a);
+		return rgbToHex(r, g, b, a);
 	}
 	return undefined;
 };
@@ -639,7 +640,7 @@ const svgMath = /*#__PURE__*/Object.freeze({
 	svg_sub2
 });
 
-const parseTransform = function (transform) {
+const parseTransform = (transform) => {
 	const parsed = transform.match(/(\w+\((\-?\d+\.?\d*e?\-?\d*,?\s*)+\))+/g);
 	if (!parsed) { return []; }
 	const listForm = parsed.map(a => a.match(/[\w\.\-]+/g));
@@ -703,17 +704,18 @@ const transformStringToMatrix = function (string) {
 
 const transforms = /*#__PURE__*/Object.freeze({
 	__proto__: null,
+	parseTransform,
 	transformStringToMatrix
 });
 
 const xmlStringToElement = (input, mimeType = "text/xml") => {
-	const result = (new (SVGWindow().DOMParser)()).parseFromString(input, mimeType);
+	const result = (new (RabbitEarWindow().DOMParser)()).parseFromString(input, mimeType);
 	return result ? result.documentElement : null;
 };
 const getRootParent = (el) => {
 	let parent = el;
-	while (parent.parentNode != null) {
-		parent = parent.parentNode;
+	while (parent && parent.parentElement != null) {
+		parent = parent.parentElement;
 	}
 	return parent;
 };
@@ -721,9 +723,10 @@ const findElementTypeInParents = (element, nodeName) => {
 	if ((element.nodeName || "") === nodeName) {
 		return element;
 	}
-	return element.parentNode
-		? findElementTypeInParents(element.parentNode, nodeName)
-		: undefined;
+	const parent = element.parentElement;
+	return parent
+		? findElementTypeInParents(parent, nodeName)
+		: null;
 };
 const polyfillClassListAdd = (el, ...classes) => {
 	const hash = {};
@@ -799,9 +802,14 @@ const dom = /*#__PURE__*/Object.freeze({
 	xmlStringToElement
 });
 
-const makeCDATASection = (text) => (new (SVGWindow()).DOMParser())
+const makeCDATASection = (text) => (new (RabbitEarWindow()).DOMParser())
 	.parseFromString("<root></root>", "text/xml")
 	.createCDATASection(text);
+
+const cdata = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	makeCDATASection
+});
 
 const markerRegEx = /[MmLlSsQqLlHhVvCcSsQqTtAaZz]/g;
 const digitRegEx = /-?[0-9]*\.?\d+/g;
@@ -843,21 +851,21 @@ const getEndpoint = (command, values, offset = [0, 0]) => {
 };
 const parsePathCommands = (d) => {
 	const results = [];
-	let match;
-	while ((match = markerRegEx.exec(d)) !== null) {
+	let match = markerRegEx.exec(d);
+	while (match !== null) {
 		results.push(match);
+		match = markerRegEx.exec(d);
 	}
 	return results
-		.map((result, i, arr) => [
-			result[0],
-			result.index,
-			i === arr.length - 1
+		.map((result, i, arr) => ({
+			command: result[0],
+			start: result.index,
+			end: i === arr.length - 1
 				? d.length - 1
 				: arr[(i + 1) % arr.length].index - 1,
-		])
-		.map(el => {
-			const command = el[0];
-			const valueString = d.substring(el[1] + 1, el[2] + 1);
+		}))
+		.map(({ command, start, end }) => {
+			const valueString = d.substring(start + 1, end + 1);
 			const strings = valueString.match(digitRegEx);
 			const values = strings ? strings.map(parseFloat) : [];
 			return { command, values };
@@ -865,7 +873,9 @@ const parsePathCommands = (d) => {
 };
 const parsePathCommandsWithEndpoints = (d) => {
 	let pen = [0, 0];
-	const commands = parsePathCommands(d);
+	const parsedCommands = parsePathCommands(d);
+	const commands = parsedCommands
+		.map(obj => ({ ...obj, end: undefined, start: undefined }));
 	if (!commands.length) { return commands; }
 	commands.forEach((command, i) => {
 		commands[i].end = getEndpoint(command.command, command.values, pen);
@@ -911,9 +921,11 @@ const viewBoxValuesToString = function (x, y, width, height, padding = 0) {
 	return [X, Y, W, H].join(" ");
 };
 const makeViewBox = (...args) => {
-	const numbers = makeCoordinates(...args.flat());
-	if (numbers.length === 2) { numbers.unshift(0, 0); }
-	return numbers.length === 4 ? viewBoxValuesToString(...numbers) : undefined;
+	const nums = makeCoordinates(...args.flat());
+	if (nums.length === 2) { nums.unshift(0, 0); }
+	return nums.length === 4
+		? viewBoxValuesToString(nums[0], nums[1], nums[2], nums[3])
+		: undefined;
 };
 
 const setViewBox = (element, ...args) => {
@@ -938,10 +950,21 @@ const convertToViewBox = function (svg, x, y) {
 	const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
 	return [svgPoint.x, svgPoint.y];
 };
+const foldToViewBox = ({ vertices_coords }) => {
+	if (!vertices_coords) { return undefined; }
+	const min = [Infinity, Infinity];
+	const max = [-Infinity, -Infinity];
+	vertices_coords.forEach(coord => [0, 1].forEach(i => {
+		min[i] = Math.min(coord[i], min[i]);
+		max[i] = Math.max(coord[i], max[i]);
+	}));
+	return [min[0], min[1], max[0] - min[0], max[1] - min[1]].join(" ");
+};
 
 const viewBox = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	convertToViewBox,
+	foldToViewBox,
 	getViewBox,
 	setViewBox
 });
@@ -949,7 +972,7 @@ const viewBox = /*#__PURE__*/Object.freeze({
 const general = {
 	...svgMath,
 	...dom,
-	makeCDATASection,
+	...cdata,
 	...pathMethods,
 	...transforms,
 	...viewBox,
@@ -973,7 +996,7 @@ const makeBackground = function (element, color) {
 		.filter(child => child.getAttribute(str_class) === bgClass)
 		.shift();
 	if (backRect == null) {
-		backRect = SVGWindow().document.createElementNS(NS, "rect");
+		backRect = RabbitEarWindow().document.createElementNS(NS, "rect");
 		getSVGFrame(element).forEach((n, i) => backRect.setAttribute(nodes_attributes.rect[i], n));
 		backRect.setAttribute(str_class, bgClass);
 		backRect.setAttribute(str_stroke, str_none);
@@ -1002,6 +1025,11 @@ const TransformMethods = {
 	};
 });
 
+const makeUUID = () => Math.random()
+	.toString(36)
+	.replace(/[^a-z]+/g, "")
+	.concat("aaaaa")
+	.substring(0, 5);
 const toCamel = (s) => s
 	.replace(/([-_][a-z])/ig, $1 => $1
 		.toUpperCase()
@@ -1054,7 +1082,7 @@ const findOneElement = function (element, nodeName) {
 const stylesheet = function (element, textContent) {
 	let styleSection = findOneElement(element, str_style);
 	if (styleSection == null) {
-		styleSection = SVGWindow().document.createElementNS(NS, str_style);
+		styleSection = RabbitEarWindow().document.createElementNS(NS, str_style);
 		styleSection.setTextContent = (text) => {
 			styleSection.textContent = "";
 			styleSection.appendChild(makeCDATASection(text));
@@ -1144,26 +1172,20 @@ const TouchEvents = function (element) {
 	Object.defineProperty(element, "off", { value: () => off(element, handlers) });
 };
 
-const makeUUID = () => Math.random()
-	.toString(36)
-	.replace(/[^a-z]+/g, "")
-	.concat("aaaaa")
-	.substr(0, 5);
-
 const Animation = function (element) {
 	let start;
 	let frame = 0;
 	let requestId;
 	const handlers = {};
 	const stop = () => {
-		if (SVGWindow().cancelAnimationFrame) {
-			SVGWindow().cancelAnimationFrame(requestId);
+		if (RabbitEarWindow().cancelAnimationFrame) {
+			RabbitEarWindow().cancelAnimationFrame(requestId);
 		}
 		Object.keys(handlers).forEach(uuid => delete handlers[uuid]);
 	};
 	const play = (handler) => {
 		stop();
-		if (!handler || !(SVGWindow().requestAnimationFrame)) { return; }
+		if (!handler || !(RabbitEarWindow().requestAnimationFrame)) { return; }
 		start = performance.now();
 		frame = 0;
 		const uuid = makeUUID();
@@ -1172,10 +1194,10 @@ const Animation = function (element) {
 			handler({ time, frame });
 			frame += 1;
 			if (handlers[uuid]) {
-				requestId = SVGWindow().requestAnimationFrame(handlers[uuid]);
+				requestId = RabbitEarWindow().requestAnimationFrame(handlers[uuid]);
 			}
 		};
-		requestId = SVGWindow().requestAnimationFrame(handlers[uuid]);
+		requestId = RabbitEarWindow().requestAnimationFrame(handlers[uuid]);
 	};
 	Object.defineProperty(element, "play", { set: play, enumerable: true });
 	Object.defineProperty(element, "stop", { value: stop, enumerable: true });
@@ -1185,7 +1207,7 @@ const removeFromParent = svg => (svg && svg.parentNode
 	? svg.parentNode.removeChild(svg)
 	: undefined);
 const possiblePositionAttributes = [["cx", "cy"], ["x", "y"]];
-const controlPoint = function (parent, options = {}) {
+const controlPoint = function (parent) {
 	const position = [0, 0];
 	const cp = {
 		selected: false,
@@ -1246,7 +1268,7 @@ const controls = function (svg, number, options) {
 	let selected;
 	let delegate;
 	const points = Array.from(Array(number))
-		.map(() => controlPoint(svg, options));
+		.map(() => controlPoint(svg));
 	const protocol = point => (typeof delegate === str_function
 		? delegate.call(points, point, selected, points)
 		: undefined);
@@ -1277,7 +1299,7 @@ const controls = function (svg, number, options) {
 	Object.defineProperty(points, "selected", { get: () => points[selected] });
 	Object.defineProperty(points, "add", {
 		value: (opt) => {
-			points.push(controlPoint(svg, opt));
+			points.push(controlPoint(svg));
 		},
 	});
 	points.removeAll = () => {
@@ -1321,7 +1343,7 @@ const svgDef = {
 		args: (...args) => [makeViewBox(makeCoordinates(...args))].filter(a => a != null),
 		methods: methods$2,
 		init: (...args) => {
-			const element = SVGWindow().document.createElementNS(NS, "svg");
+			const element = RabbitEarWindow().document.createElementNS(NS, "svg");
 			element.setAttribute("version", "1.1");
 			element.setAttribute("xmlns", NS);
 			args.filter(a => a != null)
@@ -1553,7 +1575,7 @@ const rectDef = {
 const styleDef = {
 	style: {
 		init: (text) => {
-			const el = SVGWindow().document.createElementNS(NS, "style");
+			const el = RabbitEarWindow().document.createElementNS(NS, "style");
 			el.setAttribute("type", "text/css");
 			el.textContent = "";
 			el.appendChild(makeCDATASection(text));
@@ -1573,9 +1595,9 @@ const textDef = {
 	text: {
 		args: (a, b, c) => makeCoordinates(...[a, b, c].flat()).slice(0, 2),
 		init: (a, b, c, d) => {
-			const element = SVGWindow().document.createElementNS(NS, "text");
+			const element = RabbitEarWindow().document.createElementNS(NS, "text");
 			const text = [a, b, c, d].filter(el => typeof el === str_string).shift();
-			element.appendChild(SVGWindow().document.createTextNode(text || ""));
+			element.appendChild(RabbitEarWindow().document.createTextNode(text || ""));
 			return element;
 		},
 		methods: {
@@ -1713,8 +1735,11 @@ const arcDef = {
 const ends = [str_tail, str_head];
 const stringifyPoint = p => p.join(",");
 const pointsToPath = (points) => "M" + points.map(pt => pt.join(",")).join("L") + "Z";
-const makeArrowPaths = function (options) {
-	let pts = [[0,1], [2,3]].map(pt => pt.map(i => options.points[i] || 0));
+const makeArrowPaths = (options) => {
+	let pts = [
+		[options.points[0] || 0, options.points[1] || 0],
+		[options.points[2] || 0, options.points[3] || 0],
+	];
 	let vector = svg_sub2(pts[1], pts[0]);
 	let midpoint = svg_add2(pts[0], svg_scale2(vector, 0.5));
 	const len = svg_magnitude2(vector);
@@ -1725,21 +1750,27 @@ const makeArrowPaths = function (options) {
 		.reduce((a, b) => a + b, 0);
 	if (len < minLength) {
 		const minVec = len === 0 ? [minLength, 0] : svg_scale2(vector, minLength / len);
-		pts = [svg_sub2, svg_add2].map(f => f(midpoint, svg_scale2(minVec, 0.5)));
+		pts = [
+			svg_sub2(midpoint, svg_scale2(minVec, 0.5)),
+			svg_add2(midpoint, svg_scale2(minVec, 0.5)),
+		];
 		vector = svg_sub2(pts[1], pts[0]);
 	}
 	let perpendicular = [vector[1], -vector[0]];
 	let bezPoint = svg_add2(midpoint, svg_scale2(perpendicular, options.bend));
 	const bezs = pts.map(pt => svg_sub2(bezPoint, pt));
 	const bezsLen = bezs.map(v => svg_magnitude2(v));
-	const bezsNorm = bezs.map((bez, i) => bezsLen[i] === 0
+	const bezsNorm = bezs.map((bez, i) => (bezsLen[i] === 0
 		? bez
-		: svg_scale2(bez, 1 / bezsLen[i]));
+		: svg_scale2(bez, 1 / bezsLen[i])));
 	const vectors = bezsNorm.map(norm => svg_scale2(norm, -1));
-	const normals = vectors.map(vec => [vec[1], -vec[0]]);
-	const pad = ends.map((s, i) => options[s].padding
+	const normals = [
+		[vectors[0][1], -vectors[0][0]],
+		[vectors[1][1], -vectors[1][0]],
+	];
+	const pad = ends.map((s, i) => (options[s].padding
 		? options[s].padding
-		: (options.padding ? options.padding : 0.0));
+		: (options.padding ? options.padding : 0.0)));
 	const scales = ends
 		.map((s, i) => options[s].height * (options[s].visible ? 1 : 0))
 		.map((n, i) => n + pad[i]);
@@ -1873,11 +1904,12 @@ const matchingOptions = (...args) => {
 	}
 	return undefined;
 };
-const init$1 = function (element, ...args) {
-	element.classList.add(str_arrow);
+const init$1 = function (...args) {
+	const element = RabbitEarWindow().document.createElementNS(NS, "g");
+	element.setAttribute(str_class, str_arrow);
 	const paths = ["line", str_tail, str_head].map(key => {
-		const path = SVGWindow().document.createElementNS(NS, str_path);
-		path.className = `${str_arrow}-${key}`;
+		const path = RabbitEarWindow().document.createElementNS(NS, str_path);
+		path.setAttribute(str_class, `${str_arrow}-${key}`);
 		element.appendChild(path);
 		return path;
 	});
@@ -1988,7 +2020,7 @@ const wedgeDef = {
 const lib = {};
 
 const init = (graph, ...args) => {
-	const g = SVGWindow().document.createElementNS(NS, "g");
+	const g = RabbitEarWindow().document.createElementNS(NS, "g");
 	lib.ear.convert.foldToSvg.render(graph, g, ...args);
 	return g;
 };
@@ -2027,6 +2059,8 @@ const extensions = {
 	...origamiDef,
 };
 
+const nodeNames = Object.values(classes_nodes).flat();
+
 const passthroughArgs = (...args) => args;
 const Constructor = (name, parent, ...initArgs) => {
 	const nodeName = extensions[name] && extensions[name].nodeName
@@ -2037,7 +2071,7 @@ const Constructor = (name, parent, ...initArgs) => {
 	const children = nodes_children[nodeName] || [];
 	const element = init
 		?	init(...initArgs)
-		: SVGWindow().document.createElementNS(NS, nodeName);
+		: RabbitEarWindow().document.createElementNS(NS, nodeName);
 	if (parent) { parent.appendChild(element); }
 	const processArgs = args || passthroughArgs;
 	processArgs(...initArgs).forEach((v, i) => {
@@ -2069,32 +2103,37 @@ const Constructor = (name, parent, ...initArgs) => {
 	return element;
 };
 
-const SVG = (...args) => {
-	const svg = Constructor(str_svg, null, ...args);
+const constructorList = {};
+nodeNames.forEach(nodeName => {
+	constructorList[nodeName] = (...args) => Constructor(nodeName, null, ...args);
+});
+const constructors = Object.assign(constructorList);
+const svg = (...args) => {
+	const svgElement = Constructor(str_svg, null, ...args);
 	const initialize = () => args
-		.filter(arg => typeof arg === str_function)
-		.forEach(func => func.call(svg, svg));
-	if (SVGWindow().document.readyState === "loading") {
-		SVGWindow().document.addEventListener("DOMContentLoaded", initialize);
+		.filter(arg => typeof arg === "function")
+		.forEach(func => func.call(svgElement, svgElement));
+	if (RabbitEarWindow().document.readyState === "loading") {
+		RabbitEarWindow().document.addEventListener("DOMContentLoaded", initialize);
 	} else {
 		initialize();
 	}
-	return svg;
+	return svgElement;
 };
-Object.assign(SVG, {
+
+const library = {
 	NS,
 	nodes_attributes,
 	nodes_children,
 	extensions,
 	...colors,
 	...general,
-});
-nodeNames.forEach(nodeName => {
-	SVG[nodeName] = (...args) => Constructor(nodeName, null, ...args);
-});
+	...constructors,
+};
+const SVG = Object.assign(svg, library);
 Object.defineProperty(SVG, "window", {
 	enumerable: false,
-	set: setSVGWindow,
+	set: setWindow,
 });
 
 export { SVG as default };

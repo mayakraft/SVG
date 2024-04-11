@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import ArrowMethods from "./methods.js";
 import init from "./init.js";

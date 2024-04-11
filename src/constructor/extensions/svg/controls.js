@@ -1,13 +1,13 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import * as S from "../../../environment/strings.js";
 import makeCoordinates from "../../../arguments/makeCoordinates.js";
 import { svg_distanceSq2 } from "../../../general/algebra.js";
 
-const attachToParent = (parent, svg) => (svg && svg.parentNode == null
-	? parent.appendChild(svg)
-	: undefined);
+// const attachToParent = (parent, svg) => (svg && svg.parentNode == null
+// 	? parent.appendChild(svg)
+// 	: undefined);
 
 const removeFromParent = svg => (svg && svg.parentNode
 	? svg.parentNode.removeChild(svg)
@@ -15,7 +15,7 @@ const removeFromParent = svg => (svg && svg.parentNode
 
 const possiblePositionAttributes = [["cx", "cy"], ["x", "y"]];
 
-const controlPoint = function (parent, options = {}) {
+const controlPoint = function (parent) { // , options = {}) {
 	// private properties. unless exposed
 	const position = [0, 0]; // initialize below
 	const cp = {

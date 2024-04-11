@@ -1,7 +1,7 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
-import { toKebab } from "../../../general/transformCase.js";
+import { toKebab } from "../../../general/string.js";
 
 export const removeChildren = (element) => {
 	while (element.lastChild) {

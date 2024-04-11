@@ -1,6 +1,8 @@
-const { test, expect } = require("@jest/globals");
-const SVG = require("../svg.js");
-SVG.window = require("@xmldom/xmldom");
+import { expect, test } from "vitest";
+import xmldom from "@xmldom/xmldom";
+import SVG from "../src/index.js";
+
+SVG.window = xmldom;
 
 const NodeAndChildren = {
 	svg: ["svg", "defs", "desc", "filter", "metadata", "style", "script", "title", "view", "linearGradient", "radialGradient", "pattern", "marker", "symbol", "clipPath", "mask", "g", "circle", "ellipse", "line", "path", "polygon", "polyline", "rect", "text"],

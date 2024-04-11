@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import args from "./arguments.js";
 import curve_methods from "./methods.js";

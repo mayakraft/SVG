@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import {
 	pathCommandNames,
@@ -9,7 +9,7 @@ import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";
 import * as DOM from "./shared/dom.js";
 /**
- * @param {SVGElement} one svg element, intended to be a <path> element
+ * @param {SVGElement} el one svg element, intended to be a <path> element
  * @returns {string} the "d" attribute, or if unset, returns an empty string "".
  */
 const getD = (el) => {

@@ -3,7 +3,7 @@ import terser from "@rollup/plugin-terser";
 
 const input = "src/index.js";
 const name = "SVG";
-const banner = "/* svg (c) Kraft, MIT License */";
+const banner = "/* SVG (c) Kraft */";
 
 export default [{
 	input,

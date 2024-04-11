@@ -1,7 +1,8 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import window from "../environment/window.js";
+
 /**
  * @description Create a CDATASection containing text from the method
  * parameter. The CDATA is useful to wrap text which may contain
@@ -9,8 +10,6 @@ import window from "../environment/window.js";
  * @param {string} text the text content to be placed inside the CData
  * @returns {CDATASection} a CDATA containing the given text.
  */
-const makeCDATASection = (text) => (new (window()).DOMParser())
+export const makeCDATASection = (text) => (new (window()).DOMParser())
 	.parseFromString("<root></root>", "text/xml")
 	.createCDATASection(text);
-
-export default makeCDATASection;

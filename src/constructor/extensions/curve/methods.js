@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import makeCoordinates from "../../../arguments/makeCoordinates.js";
 import makeCurvePath from "./makeCurvePath.js";

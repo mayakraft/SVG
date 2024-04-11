@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import makeViewBox from "../arguments/makeViewBox.js";
 import {
@@ -32,6 +32,17 @@ export const convertToViewBox = function (svg, x, y) {
 	// todo: i thought this threw an error once. something about getScreenCTM.
 	const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
 	return [svgPoint.x, svgPoint.y];
+};
+
+export const foldToViewBox = ({ vertices_coords }) => {
+	if (!vertices_coords) { return undefined; }
+	const min = [Infinity, Infinity];
+	const max = [-Infinity, -Infinity];
+	vertices_coords.forEach(coord => [0, 1].forEach(i => {
+		min[i] = Math.min(coord[i], min[i]);
+		max[i] = Math.max(coord[i], max[i]);
+	}));
+	return [min[0], min[1], max[0] - min[0], max[1] - min[1]].join(" ");
 };
 
 /*

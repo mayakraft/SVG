@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import {
 	str_object,
@@ -33,16 +33,15 @@ const matchingOptions = (...args) => {
 	return undefined;
 };
 
-const init = function (element, ...args) {
-	element.classList.add(str_arrow);
-	// element.setAttribute(str_class, str_arrow);
+const init = function (...args) {
+	const element = window().document.createElementNS(NS, "g");
+	element.setAttribute(str_class, str_arrow);
 	const paths = ["line", str_tail, str_head].map(key => {
 		const path = window().document.createElementNS(NS, str_path);
-		path.className = `${str_arrow}-${key}`;
+		path.setAttribute(str_class, `${str_arrow}-${key}`);
 		element.appendChild(path);
 		return path;
 	});
-		// .map(key => Library.path().addClass(`${str_arrow}-${key}`).appendTo(element));
 	paths[0].setAttribute(str_style, "fill:none;");
 	paths[1].setAttribute(str_stroke, str_none);
 	paths[2].setAttribute(str_stroke, str_none);

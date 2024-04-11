@@ -1,8 +1,8 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import * as S from "../../../environment/strings.js";
-import { toCamel } from "../../../general/transformCase.js";
+import { toCamel } from "../../../general/string.js";
 import semiFlatten from "../../../arguments/semiFlattenArrays.js";
 import makeCoordinates from "../../../arguments/makeCoordinates.js";
 import makeArrowPaths from "./makeArrowPaths.js";

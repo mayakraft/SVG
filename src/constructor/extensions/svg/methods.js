@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import window from "../../../environment/window.js";
 import {
@@ -7,7 +7,7 @@ import {
 	// str_function,
 } from "../../../environment/strings.js";
 import NS from "../../../spec/namespace.js";
-import makeCDATASection from "../../../general/makeCDATASection.js";
+import { makeCDATASection } from "../../../general/cdata.js";
 // import Load from "../../../file/load.js";
 // import Save from "../../../file/save.js";
 import { getViewBox, setViewBox } from "../../../general/viewBox.js";

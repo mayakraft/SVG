@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 // import window from "../../../environment/window.js";
 // import NS from "../../../spec/namespace.js";

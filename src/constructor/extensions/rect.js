@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import makeCoordinates from "../../arguments/makeCoordinates.js";
 import nodes_attributes from "../../spec/nodes_attributes.js";

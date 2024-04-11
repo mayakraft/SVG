@@ -1,8 +1,8 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import * as S from "../../environment/strings.js";
-import makeUUID from "../../general/makeUUID.js";
+import { makeUUID } from "../../general/string.js";
 import { setViewBox } from "../../general/viewBox.js";
 import TransformMethods from "./shared/transforms.js";
 import URLMethods from "./shared/urls.js";

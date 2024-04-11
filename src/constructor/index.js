@@ -1,11 +1,11 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import window from "../environment/window.js";
 import svgNS from "../spec/namespace.js";
 import nodes_children from "../spec/nodes_children.js";
 import nodes_attributes from "../spec/nodes_attributes.js";
-import { toCamel } from "../general/transformCase.js";
+import { toCamel } from "../general/string.js";
 import extensions from "./extensions/index.js";
 
 const passthroughArgs = (...args) => args;

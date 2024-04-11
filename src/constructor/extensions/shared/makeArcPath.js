@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import { svg_polar_to_cart } from "../../../general/algebra.js";
 

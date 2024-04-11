@@ -1,11 +1,11 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import {
 	str_string,
 	str_id,
 } from "../../../environment/strings.js";
-import { toCamel } from "../../../general/transformCase.js";
+import { toCamel } from "../../../general/string.js";
 
 // for the clip-path and mask values. looks for the ID as a "url(#id-name)" string
 const findIdURL = function (arg) {

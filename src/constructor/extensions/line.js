@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import semiFlattenArrays from "../../arguments/semiFlattenArrays.js";
 import makeCoordinates from "../../arguments/makeCoordinates.js";

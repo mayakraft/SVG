@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import svgDef from "./svg/index.js";
 import gDef from "./g.js";

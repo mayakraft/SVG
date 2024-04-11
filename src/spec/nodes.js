@@ -1,8 +1,8 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import classes_nodes from "./classes_nodes.js";
 
-const nodeNames = Object.values(classes_nodes).flat();
+export const nodeNames = Object.values(classes_nodes).flat();
 
-export default nodeNames;
+export default classes_nodes;

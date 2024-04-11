@@ -1,8 +1,8 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import window from "../../../environment/window.js";
-import UUID from "../../../general/makeUUID.js";
+import { makeUUID } from "../../../general/string.js";
 
 const Animation = function (element) {
 	let start;
@@ -22,7 +22,7 @@ const Animation = function (element) {
 		if (!handler || !(window().requestAnimationFrame)) { return; }
 		start = performance.now();
 		frame = 0;
-		const uuid = UUID();
+		const uuid = makeUUID();
 		handlers[uuid] = (now) => {
 			const time = (now - start) * 1e-3;
 			handler({ time, frame });

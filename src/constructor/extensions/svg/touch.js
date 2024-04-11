@@ -1,7 +1,7 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
-import { capitalized } from "../../../general/transformCase.js";
+import { capitalized } from "../../../general/string.js";
 import { convertToViewBox } from "../../../general/viewBox.js";
 
 const eventNameCategories = {

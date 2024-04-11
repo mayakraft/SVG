@@ -1,5 +1,5 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import {
 	str_function,
@@ -8,6 +8,7 @@ import {
 
 const svgIsIterable = (obj) => obj != null
 	&& typeof obj[Symbol.iterator] === str_function;
+
 /**
  * @description flatten only until the point of comma separated entities.
  * This will preserve vectors (number[]) in an array of array of vectors.

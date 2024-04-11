@@ -1,9 +1,9 @@
 /**
- * SVG (c) Kraft
+ * Rabbit Ear (c) Kraft
  */
 import svgNS from "../../spec/namespace.js";
 import window from "../../environment/window.js";
-import makeCDATASection from "../../general/makeCDATASection.js";
+import { makeCDATASection } from "../../general/cdata.js";
 
 export default {
 	style: {
